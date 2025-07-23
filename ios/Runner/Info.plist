@@ -45,5 +45,28 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+    
+	    <!-- expensemate  keys -->
+
+	<!-- Photo Library -->
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Xpensemate need access to your photo library to upload images</string>
+
+    <!-- Notification -->
+    <key>NSUserNotificationUsageDescription</key>
+    <string>Xpensemate needs permission to show local notifications.</string>
+    
+    <!-- Camera -->
+    <key>NSCameraUsageDescription</key>
+    <string>Xpensemate need access to your camera to take photos</string>
+    
+    <!-- Location -->
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Xpensemate need access to your location to show nearby places</string>
+    
+    <!-- Microphone (if needed for video recording) -->
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Xpensemate need access to your microphone for video recording</string>
+    
 </dict>
 </plist>

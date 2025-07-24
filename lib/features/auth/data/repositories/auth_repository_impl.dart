@@ -1,0 +1,232 @@
+import 'package:dartz/dartz.dart';
+import 'package:xpensemate/core/error/failures.dart';
+import 'package:xpensemate/core/service/network_info_service.dart';
+import 'package:xpensemate/core/utils/network_mixin.dart';
+import 'package:xpensemate/features/auth/data/datasources/auth_remote_data_source.dart';
+import 'package:xpensemate/features/auth/domain/entities/auth_token.dart';
+import 'package:xpensemate/features/auth/domain/entities/user.dart';
+import 'package:xpensemate/features/auth/domain/repositories/auth_repository.dart';
+
+class AuthRepositoryImpl with NetworkCheckMixin<Failure> implements AuthRepository {
+  AuthRepositoryImpl({
+    required this.remoteDataSource,
+    required this.networkInfo,
+  });
+  final AuthRemoteDataSource remoteDataSource;
+  @override
+  final NetworkInfoService networkInfo;
+
+  // Cache for the current user
+  User? _cachedUser;
+  AuthToken? _cachedToken;
+
+  @override
+  Future<Either<Failure, bool>> isAuthenticated() async {
+    if (_cachedToken != null) {
+      return right(!_cachedToken!.isExpired);
+    }
+    return right(false);
+  }
+
+  /// Get current user
+  @override
+  Future<Either<Failure, User>> getCurrentUser() async {
+    if (_cachedUser != null) return right(_cachedUser!);
+
+    return withNetworkCheck(() async {
+      final result = await remoteDataSource.getCurrentUser();
+      return result.fold(
+        left,
+        (user) {
+          _cachedUser = user.toEntity();
+          return right(_cachedUser!);
+        },
+      );
+    });
+  }
+
+  /// Sign in with email and password
+  @override
+  Future<Either<Failure, User>> signInWithEmailAndPassword({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      return withNetworkCheck(() async {
+        final result = await remoteDataSource.signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+        return result.fold(
+          left,
+          (authTokenModel) async {
+            _cachedToken = authTokenModel.toEntity();
+            final userResult = await getCurrentUser();
+            if (userResult.isLeft()) {
+              return left(const ServerFailure(message: 'User not found'));
+            }
+            return userResult;
+          },
+        );
+      });
+    } on Exception catch (e) {
+      return left(e.toFailure() as AuthenticationFailure);
+    }
+  }
+
+  /// Register with email and password
+  @override
+  Future<Either<Failure, User>> registerWithEmailAndPassword({
+    required String email,
+    required String password,
+    String? name,
+  }) async {
+    try {
+      return withNetworkCheck(() async {
+        final result = await remoteDataSource.registerWithEmailAndPassword(
+          email: email,
+          password: password,
+          name: name,
+        );
+        return result.fold(
+          left,
+          (user) {
+            _cachedUser = user.toEntity();
+            return right(_cachedUser!);
+          },
+        );
+      });
+    } on Exception catch (e) {
+      return left(e.toFailure() as AuthenticationFailure);
+    }
+  }
+
+  /// Sign in with Google
+  @override
+  Future<Either<Failure, User>> signInWithGoogle() async {
+    try {
+      return withNetworkCheck(() async {
+        final result = await remoteDataSource.signInWithGoogle();
+        return result.fold(
+          left,
+          (user) {
+            _cachedUser = user.toEntity();
+            return right(_cachedUser!);
+          },
+        );
+      });
+    } on Exception catch (e) {
+      return left(e.toFailure() as AuthenticationFailure);
+    }
+  }
+
+  /// Sign in with Apple
+  @override
+  Future<Either<Failure, User>> signInWithApple() async {
+    try {
+      return withNetworkCheck(() async {
+        final result = await remoteDataSource.signInWithApple();
+        return result.fold(
+          left,
+          (user) {
+            _cachedUser = user.toEntity();
+            return right(_cachedUser!);
+          },
+        );
+      });
+    } on Exception catch (e) {
+      return left(e.toFailure() as AuthenticationFailure);
+    }
+  }
+
+  /// Sign out
+  @override
+  Future<Either<Failure, void>> signOut() async {
+    try {
+      return withNetworkCheck(() async {
+        final result = await remoteDataSource.logout();
+        return result.fold(
+          left,
+          (_) {
+            _cachedToken = null;
+            _cachedUser = null;
+            return right(null);
+          },
+        );
+      });
+    } on Exception catch (e) {
+      return left(e.toFailure() as AuthenticationFailure);
+    }
+  }
+
+  /// Refresh token
+  @override
+  Future<Either<Failure, AuthToken>> refreshToken(String refreshToken) async {
+    try {
+      return withNetworkCheck(() async {
+        final result = await remoteDataSource.refreshToken(refreshToken);
+        return result.fold(
+          left,
+          (token) {
+            _cachedToken = token.toEntity();
+            return right(_cachedToken!);
+          },
+        );
+      });
+    } on Exception catch (e) {
+      return left(e.toFailure() as AuthenticationFailure);
+    }
+  }
+
+  /// Send password reset email
+  @override
+  Future<Either<Failure, void>> forgotPassword(String email) async {
+    try {
+      return withNetworkCheck(() async {
+        final result = await remoteDataSource.forgotPassword(email);
+        return result.fold(
+          left,
+          (_) => right(null),
+        );
+      });
+    } on Exception catch (e) {
+      return left(e.toFailure() as AuthenticationFailure);
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> verifyEmail(String code) async {
+    try {
+      return withNetworkCheck(() async {
+        final result = await remoteDataSource.verifyEmail(code);
+        return result.fold(
+          left,
+          (_) => right(null),
+        );
+      });
+    } on Exception catch (e) {
+      return left(e.toFailure() as AuthenticationFailure);
+    }
+  }
+
+  @override
+  Future<AuthToken?> getAuthToken() async {
+    try {
+      if (_cachedToken != null && !_cachedToken!.isExpired) {
+        return _cachedToken;
+      }
+
+      if (_cachedToken?.refreshToken != null) {
+        final result = await refreshToken(_cachedToken!.refreshToken!);
+        return result.fold(
+          (failure) => null,
+          (token) => token,
+        );
+      }
+
+      return null;
+    } on Exception {
+      return null;
+    }
+  }
+}

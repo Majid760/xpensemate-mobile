@@ -64,6 +64,7 @@ lib/
 - Emit only **new** state objects (`state.copyWith(...)`).
 - **No logic in widgets**; extract to use-cases or cubits.
 - Use `BlocListener` for side-effects, `BlocBuilder` for UI rebuilds.
+- **No events generation use states e.g ( enum HomeStates { initial, loading, loaded, error })
 
 ## 5. SOLID & Clean
 - **Single Responsibility** – one class per reason to change.
@@ -71,6 +72,10 @@ lib/
 - **Liskov** – subtype must be substitutable; no runtime casts.
 - **Interface Segregation** – small repository contracts (`IFooRepository`).
 - **Dependency Inversion** – widgets & cubits depend on abstractions (`domain/`).
+- **Comment Rule** - comment for configuration/setup files,use this pattern  
+// ------------------------------------------------------------------
+//  Auth & Global headers
+// ------------------------------------------------------------------ 
 
 ## 6. Dependency Injection
 - Register all objects via `@injectable` + `get_it`.

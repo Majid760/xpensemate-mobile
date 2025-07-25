@@ -4,16 +4,16 @@ import 'package:xpensemate/core/usecase/usecase.dart';
 import 'package:xpensemate/features/auth/domain/repositories/auth_repository.dart';
 
 
-class VerifyEmail extends UseCase<void, VerifyEmailParams> {
+class VerifyEmailUseCase extends UseCase<void, VerifyEmailUseCaseParams> {
 
-   VerifyEmail(this.repository);
+   VerifyEmailUseCase(this.repository);
   final AuthRepository repository;
 
   @override
-  Future<Either<Failure, void>> call(VerifyEmailParams params) async => repository.verifyEmail(params.code);
+  Future<Either<Failure, void>> call(VerifyEmailUseCaseParams params) async => repository.verifyEmail(params.code);
 }
 
-class VerifyEmailParams {
-  const VerifyEmailParams({required this.code});
+class VerifyEmailUseCaseParams {
+  const VerifyEmailUseCaseParams({required this.code});
   final String code;
 }

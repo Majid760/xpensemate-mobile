@@ -4,18 +4,18 @@ import 'package:xpensemate/core/usecase/usecase.dart';
 import 'package:xpensemate/features/auth/domain/repositories/auth_repository.dart';
 
 
-class SendPasswordResetEmail
-    extends UseCase<void, SendPasswordResetEmailParams> {
-  SendPasswordResetEmail(this.repository);
+class ForgotPasswordUseCase
+    extends UseCase<void, ForgotPasswordUseCaseParams> {
+  ForgotPasswordUseCase(this.repository);
   final AuthRepository repository;
 
   @override
   Future<Either<Failure, void>> call(
-    SendPasswordResetEmailParams params,
+    ForgotPasswordUseCaseParams params,
   ) async => repository.forgotPassword(params.email);
 }
 
-class SendPasswordResetEmailParams {
-  const SendPasswordResetEmailParams({required this.email});
+class ForgotPasswordUseCaseParams {
+  const ForgotPasswordUseCaseParams({required this.email});
   final String email;
 }

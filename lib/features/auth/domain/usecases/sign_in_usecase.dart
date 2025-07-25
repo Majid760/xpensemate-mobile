@@ -6,23 +6,23 @@ import 'package:xpensemate/features/auth/domain/repositories/auth_repository.dar
 
 
 
-class SignInWithEmailAndPassword
-    extends UseCase<User, SignInWithEmailAndPasswordParams> {
+class SignInWithEmailUseCase
+    extends UseCase<User, SignInWithEmailUseCaseParams> {
 
-  SignInWithEmailAndPassword(this.repository);
+  SignInWithEmailUseCase(this.repository);
   final AuthRepository repository;
 
   @override
-  Future<Either<Failure, User>> call(SignInWithEmailAndPasswordParams params) async => repository.signInWithEmailAndPassword(
+  Future<Either<Failure, User>> call(SignInWithEmailUseCaseParams params) async => repository.signInWithEmailAndPassword(
       email: params.email,
       password: params.password,
     );
 }
 
 
-class SignInWithEmailAndPasswordParams {
+class SignInWithEmailUseCaseParams {
 
-  const SignInWithEmailAndPasswordParams({
+  const SignInWithEmailUseCaseParams({
     required this.email,
     required this.password,
   });

@@ -33,7 +33,7 @@ abstract class AuthRemoteDataSource {
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   AuthRemoteDataSourceImpl(this._client);
-  final NetworkClientContracts _client;
+  final NetworkClient _client;
 
   /// Sign in with email and password
   @override

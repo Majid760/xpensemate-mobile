@@ -8,8 +8,8 @@ import 'package:xpensemate/core/network/interceptors/retry_interceptor.dart';
 import 'package:xpensemate/core/network/network_configs.dart';
 import 'package:xpensemate/core/network/network_contracts.dart';
 
-final class DioNetworkClient implements NetworkClientContracts {
-  DioNetworkClient({
+final class NetworkClientImp implements NetworkClient{
+  NetworkClientImp({
     required String token,
     required Future<String?> Function() refreshToken,
   }) : _dio = Dio(

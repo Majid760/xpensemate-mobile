@@ -2,7 +2,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:xpensemate/core/error/failures.dart';
 
-abstract class NetworkClientContracts {
+abstract class NetworkClient {
   Future<Either<Failure, T>> get<T>(
     String path, {
     Map<String, dynamic>? query,

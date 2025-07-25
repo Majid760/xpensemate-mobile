@@ -1,0 +1,125 @@
+{
+  "@@locale": "en",
+  "@@last_modified": "2024-01-15T10:00:00.000Z",
+  "@@author": "Your Name",
+  "@@version": "1.0.0",
+  
+  "@@navigation_section": "Navigation related strings",
+  "appTitle": "My Flutter App",
+  "@appTitle": {
+      "description": "The title of the application"
+  },
+  "home": "Home",
+  "profile": "Profile",
+  "settings": "Settings",
+  "about": "About",
+  
+  "@@common_actions_section": "Common action buttons and labels",
+  "save": "Save",
+  "@save": {
+      "description": "Save button text used throughout the app"
+  },
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "edit": "Edit",
+  "add": "Add",
+  "confirm": "Confirm",
+  "retry": "Retry",
+  "close": "Close",
+  "next": "Next",
+  "back": "Back",
+  "done": "Done",
+  "loading": "Loading...",
+  
+  "@@authentication_section": "Authentication and user account strings",
+  "login": "Login",
+  "logout": "Logout",
+  "register": "Register",
+  "email": "Email",
+  "@email": {
+      "description": "Email input field label",
+      "context": "Used in login and registration forms"
+  },
+  "password": "Password",
+  "confirmPassword": "Confirm Password",
+  "forgotPassword": "Forgot Password?",
+  "welcomeBack": "Welcome Back!",
+  "createAccount": "Create Account",
+  
+  "@@validation_section": "Form validation error messages",
+  "fieldRequired": "This field is required",
+  "invalidEmail": "Please enter a valid email",
+  "passwordTooShort": "Password must be at least 8 characters",
+  "passwordsDoNotMatch": "Passwords do not match",
+  
+  "@@error_messages_section": "General error messages",
+  "errorGeneric": "Something went wrong. Please try again.",
+  "errorNetwork": "Network error. Please check your connection.",
+  "errorTimeout": "Request timeout. Please try again.",
+  "errorNotFound": "Resource not found.",
+  
+  "@@success_messages_section": "Success feedback messages",
+  "saveSuccess": "Saved successfully!",
+  "deleteSuccess": "Deleted successfully!",
+  "updateSuccess": "Updated successfully!",
+  
+  "@@placeholders_section": "Placeholder texts and empty states",
+  "searchPlaceholder": "Search...",
+  "noDataAvailable": "No data available",
+  "emptyListMessage": "Nothing to show here yet",
+  
+  "@@dialog_messages_section": "Dialog and confirmation messages",
+  "confirmDelete": "Are you sure you want to delete this item?",
+  "@confirmDelete": {
+      "description": "Confirmation dialog when user tries to delete an item",
+      "context": "Shown in delete confirmation dialogs"
+  },
+  "confirmLogout": "Are you sure you want to logout?",
+  "deleteWarning": "This action cannot be undone.",
+  
+  "@@parametrized_section": "Messages with parameters and pluralization",
+  "welcomeUser": "Welcome, {userName}!",
+  "@welcomeUser": {
+      "description": "Welcome message with user name",
+      "placeholders": {
+          "userName": {
+              "type": "String",
+              "example": "John"
+          }
+      }
+  },
+  
+  "itemCount": "{count, plural, =0{No items} =1{1 item} other{{count} items}}",
+  "@itemCount": {
+      "description": "Shows count of items with proper pluralization",
+      "placeholders": {
+          "count": {
+              "type": "int",
+              "example": "5"
+          }
+      }
+  },
+  
+  "lastUpdated": "Last updated: {date}",
+  "@lastUpdated": {
+      "description": "Shows when something was last updated",
+      "placeholders": {
+          "date": {
+              "type": "DateTime",
+              "format": "yMd",
+              "example": "1/15/2024"
+          }
+      }
+  },
+  
+  "@@theme_settings_section": "Theme and appearance settings",
+  "themeMode": "Theme Mode",
+  "lightTheme": "Light",
+  "darkTheme": "Dark",
+  "systemTheme": "System",
+  
+  "@@language_settings_section": "Language and localization settings",
+  "language": "Language",
+  "selectLanguage": "Select Language",
+  "languageChanged": "Language changed successfully"
+}

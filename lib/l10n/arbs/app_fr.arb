@@ -1,0 +1,67 @@
+{
+    "@@locale": "fr",
+    
+    "appTitle": "Mon Application Flutter",
+    "home": "Accueil",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "about": "À propos",
+    
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "confirm": "Confirmer",
+    "retry": "Réessayer",
+    "close": "Fermer",
+    "next": "Suivant",
+    "back": "Retour",
+    "done": "Terminé",
+    "loading": "Chargement...",
+    
+    "login": "Se connecter",
+    "logout": "Se déconnecter",
+    "register": "S'inscrire",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "forgotPassword": "Mot de passe oublié ?",
+    "welcomeBack": "Bon retour !",
+    "createAccount": "Créer un compte",
+    
+    "fieldRequired": "Ce champ est obligatoire",
+    "invalidEmail": "Veuillez saisir un e-mail valide",
+    "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères",
+    "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+    
+    "errorGeneric": "Quelque chose s'est mal passé. Veuillez réessayer.",
+    "errorNetwork": "Erreur réseau. Veuillez vérifier votre connexion.",
+    "errorTimeout": "Délai d'attente dépassé. Veuillez réessayer.",
+    "errorNotFound": "Ressource non trouvée.",
+    
+    "saveSuccess": "Enregistré avec succès !",
+    "deleteSuccess": "Supprimé avec succès !",
+    "updateSuccess": "Mis à jour avec succès !",
+    
+    "searchPlaceholder": "Rechercher...",
+    "noDataAvailable": "Aucune donnée disponible",
+    "emptyListMessage": "Rien à afficher ici pour le moment",
+    
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet élément ?",
+    "confirmLogout": "Êtes-vous sûr de vouloir vous déconnecter ?",
+    "deleteWarning": "Cette action ne peut pas être annulée.",
+    
+    "welcomeUser": "Bienvenue, {userName} !",
+    "itemCount": "{count, plural, =0{Aucun élément} =1{1 élément} other{{count} éléments}}",
+    "lastUpdated": "Dernière mise à jour : {date}",
+    
+    "themeMode": "Mode de thème",
+    "lightTheme": "Clair",
+    "darkTheme": "Sombre",
+    "systemTheme": "Système",
+    
+    "language": "Langue",
+    "selectLanguage": "Sélectionner la langue",
+    "languageChanged": "Langue modifiée avec succès"
+  }

@@ -67,6 +67,15 @@
     <!-- Microphone (if needed for video recording) -->
     <key>NSMicrophoneUsageDescription</key>
     <string>Xpensemate need access to your microphone for video recording</string>
+
+	<key>NSLocalNetworkUsageDescription</key>
+    <string>This app needs local network access for development and debugging purposes.</string>
+
+    <key>NSBonjourServices</key>
+    <array>
+        <string>_dartobservatory._tcp</string>
+        <string>_dartobservatory._udp</string>
+    </array>
     
 </dict>
 </plist>

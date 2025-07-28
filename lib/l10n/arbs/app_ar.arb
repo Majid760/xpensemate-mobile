@@ -1,0 +1,67 @@
+{
+    "@@locale": "ar",
+    
+    "appTitle": "تطبيق فلاتر الخاص بي",
+    "home": "الرئيسية",
+    "profile": "الملف الشخصي",
+    "settings": "الإعدادات",
+    "about": "حول",
+    
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "add": "إضافة",
+    "confirm": "تأكيد",
+    "retry": "إعادة المحاولة",
+    "close": "إغلاق",
+    "next": "التالي",
+    "back": "رجوع",
+    "done": "تم",
+    "loading": "جاري التحميل...",
+    
+    "login": "تسجيل الدخول",
+    "logout": "تسجيل الخروج",
+    "register": "التسجيل",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "welcomeBack": "مرحباً بعودتك!",
+    "createAccount": "إنشاء حساب",
+    
+    "fieldRequired": "هذا الحقل مطلوب",
+    "invalidEmail": "يرجى إدخال بريد إلكتروني صحيح",
+    "passwordTooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+    "passwordsDoNotMatch": "كلمات المرور غير متطابقة",
+    
+    "errorGeneric": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    "errorNetwork": "خطأ في الشبكة. يرجى التحقق من اتصالك.",
+    "errorTimeout": "انتهت مهلة الطلب. يرجى المحاولة مرة أخرى.",
+    "errorNotFound": "المورد غير موجود.",
+    
+    "saveSuccess": "تم الحفظ بنجاح!",
+    "deleteSuccess": "تم الحذف بنجاح!",
+    "updateSuccess": "تم التحديث بنجاح!",
+    
+    "searchPlaceholder": "بحث...",
+    "noDataAvailable": "لا توجد بيانات متاحة",
+    "emptyListMessage": "لا يوجد شيء لعرضه هنا بعد",
+    
+    "confirmDelete": "هل أنت متأكد من حذف هذا العنصر؟",
+    "confirmLogout": "هل أنت متأكد من تسجيل الخروج؟",
+    "deleteWarning": "لا يمكن التراجع عن هذا الإجراء.",
+    
+    "welcomeUser": "مرحباً، {userName}!",
+    "itemCount": "{count, plural, =0{لا توجد عناصر} =1{عنصر واحد} other{{count} عنصر}}",
+    "lastUpdated": "آخر تحديث: {date}",
+    
+    "themeMode": "وضع المظهر",
+    "lightTheme": "فاتح",
+    "darkTheme": "داكن",
+    "systemTheme": "النظام",
+    
+    "language": "اللغة",
+    "selectLanguage": "اختر اللغة",
+    "languageChanged": "تم تغيير اللغة بنجاح"
+  }

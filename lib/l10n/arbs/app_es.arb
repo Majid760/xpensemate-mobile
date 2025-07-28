@@ -1,0 +1,67 @@
+{
+    "@@locale": "es",
+    
+    "appTitle": "Mi Aplicación Flutter",
+    "home": "Inicio",
+    "profile": "Perfil",
+    "settings": "Configuración",
+    "about": "Acerca de",
+    
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "add": "Agregar",
+    "confirm": "Confirmar",
+    "retry": "Reintentar",
+    "close": "Cerrar",
+    "next": "Siguiente",
+    "back": "Atrás",
+    "done": "Hecho",
+    "loading": "Cargando...",
+    
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión",
+    "register": "Registrarse",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "welcomeBack": "¡Bienvenido de vuelta!",
+    "createAccount": "Crear Cuenta",
+    
+    "fieldRequired": "Este campo es obligatorio",
+    "invalidEmail": "Por favor ingresa un correo válido",
+    "passwordTooShort": "La contraseña debe tener al menos 8 caracteres",
+    "passwordsDoNotMatch": "Las contraseñas no coinciden",
+    
+    "errorGeneric": "Algo salió mal. Por favor intenta de nuevo.",
+    "errorNetwork": "Error de red. Por favor verifica tu conexión.",
+    "errorTimeout": "Tiempo de espera agotado. Por favor intenta de nuevo.",
+    "errorNotFound": "Recurso no encontrado.",
+    
+    "saveSuccess": "¡Guardado exitosamente!",
+    "deleteSuccess": "¡Eliminado exitosamente!",
+    "updateSuccess": "¡Actualizado exitosamente!",
+    
+    "searchPlaceholder": "Buscar...",
+    "noDataAvailable": "No hay datos disponibles",
+    "emptyListMessage": "Nada que mostrar aquí aún",
+    
+    "confirmDelete": "¿Estás seguro de que quieres eliminar este elemento?",
+    "confirmLogout": "¿Estás seguro de que quieres cerrar sesión?",
+    "deleteWarning": "Esta acción no se puede deshacer.",
+    
+    "welcomeUser": "¡Bienvenido, {userName}!",
+    "itemCount": "{count, plural, =0{Sin elementos} =1{1 elemento} other{{count} elementos}}",
+    "lastUpdated": "Última actualización: {date}",
+    
+    "themeMode": "Modo de Tema",
+    "lightTheme": "Claro",
+    "darkTheme": "Oscuro",
+    "systemTheme": "Sistema",
+    
+    "language": "Idioma",
+    "selectLanguage": "Seleccionar Idioma",
+    "languageChanged": "Idioma cambiado exitosamente"
+  }

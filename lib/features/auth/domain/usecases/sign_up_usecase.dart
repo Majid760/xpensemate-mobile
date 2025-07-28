@@ -4,13 +4,14 @@ import 'package:xpensemate/core/usecase/usecase.dart';
 import 'package:xpensemate/features/auth/domain/entities/user.dart';
 import 'package:xpensemate/features/auth/domain/repositories/auth_repository.dart';
 
-class RegisterWithEmailAndPassword extends UseCase<User, RegisterWithEmailAndPasswordParams> {
-  RegisterWithEmailAndPassword(this.repository);
+class SignUpUseCase
+    extends UseCase<User, SignUpUseCaseParams> {
+  SignUpUseCase(this.repository);
   final AuthRepository repository;
 
   @override
   Future<Either<Failure, User>> call(
-    RegisterWithEmailAndPasswordParams params,
+    SignUpUseCaseParams params,
   ) async {
     final result = await repository.registerWithEmailAndPassword(
       email: params.email,
@@ -21,8 +22,8 @@ class RegisterWithEmailAndPassword extends UseCase<User, RegisterWithEmailAndPas
   }
 }
 
-class RegisterWithEmailAndPasswordParams {
-  const RegisterWithEmailAndPasswordParams({
+class SignUpUseCaseParams {
+  const SignUpUseCaseParams({
     required this.email,
     required this.password,
     this.name,

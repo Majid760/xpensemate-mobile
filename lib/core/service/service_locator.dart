@@ -27,8 +27,6 @@ final sl = GetIt.instance;
 /// ------------------------------------------------------------------
 Future<void> initLocator() async {
 
-   WidgetsFlutterBinding.ensureInitialized();  
-   await Firebase.initializeApp();
 
   // Initialize services
   AppLogger.init(isDebug: kDebugMode);

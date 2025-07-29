@@ -1,11 +1,14 @@
-
-plugins {
-
-    id 'com.google.gms.google-services' version '4.4.3' apply false
-    id 'com.android.application' version '8.1.4' apply false
-    id 'com.android.application' version '8.1.4' apply false
-
-
+buildscript {
+    ext.kotlin_version = '1.9.0'  // Updated Kotlin version
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.3.0'  // Updated AGP version
+        classpath 'com.google.gms:google-services:4.4.3'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
 }
 
 allprojects {
@@ -15,12 +18,12 @@ allprojects {
     }
 }
 
-rootProject.buildDir = "../build"
+rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
 subprojects {
-    project.evaluationDependsOn(":app")
+    project.evaluationDependsOn(':app')
 }
 
 tasks.register("clean", Delete) {

@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "539073860771",
+    "project_id": "xpensemate-d34e2",
+    "storage_bucket": "xpensemate-d34e2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:539073860771:android:e60e49ca0d7538c4b09b16",
+        "android_client_info": {
+          "package_name": "com.example.xpensemate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "539073860771-rjqkau5527kakifsbkmj4dmosus5247b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.xpensemate",
+            "certificate_hash": "131b8b15ff94495acb9452473efb5050410beb96"
+          }
+        },
+        {
+          "client_id": "539073860771-mjr7ni2kl89b0c13ipkour8tsphd4qme.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEooBv_alHXK64PsgzGROzqksuLgr0xeU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "539073860771-mjr7ni2kl89b0c13ipkour8tsphd4qme.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "539073860771-m9p094jthghcmus84ptrqqaidlj86jjm.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.xpensemate"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

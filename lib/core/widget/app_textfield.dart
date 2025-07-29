@@ -201,10 +201,10 @@ class SearchField extends StatelessWidget {
       controller: controller,
       hint: hint ?? 'Search...',
       prefixIcon: const Icon(Icons.search),
-      suffixIcon: controller?.text.isNotEmpty == true
+      suffixIcon: controller?.text.isNotEmpty ?? false
           ? IconButton(
               icon: const Icon(Icons.clear),
-              onPressed: () {
+              onPressed: () {      
                 controller?.clear();
                 onClear?.call();
               },

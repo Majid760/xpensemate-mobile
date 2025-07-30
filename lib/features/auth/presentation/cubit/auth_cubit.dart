@@ -14,7 +14,7 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
     final loginUseCase = sl<SignInWithEmailUseCase>();
     final result = await loginUseCase.call(SignInWithEmailUseCaseParams(email: email, password: password));
     result.fold(
-      (failure) => emit(state.copyWith(state: AuthStates.error, errorMessage:failure.message)),
+      (failure) => emit(state.copyWith(state: AuthStates.error, errorMessage:failure.message, isAuthenticated: false)),
       (user) => emit(state.copyWith(state: AuthStates.loaded, isAuthenticated: true, user: user.toModel)),
     );
   }

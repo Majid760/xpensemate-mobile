@@ -96,7 +96,7 @@ abstract class AppLocalizations {
   /// The title of the application
   ///
   /// In en, this message translates to:
-  /// **'My Flutter App'**
+  /// **'Xpensemate'**
   String get appTitle;
 
   /// No description provided for @home.
@@ -195,6 +195,12 @@ abstract class AppLocalizations {
   /// **'Loading...'**
   String get loading;
 
+  /// No description provided for @or.
+  ///
+  /// In en, this message translates to:
+  /// **'Or'**
+  String get or;
+
   /// No description provided for @login.
   ///
   /// In en, this message translates to:
@@ -219,11 +225,23 @@ abstract class AppLocalizations {
   /// **'Email'**
   String get email;
 
+  /// Hint text for email input field
+  ///
+  /// In en, this message translates to:
+  /// **'email'**
+  String get hintEmail;
+
   /// No description provided for @password.
   ///
   /// In en, this message translates to:
   /// **'Password'**
   String get password;
+
+  /// Hint text for password input field
+  ///
+  /// In en, this message translates to:
+  /// **'password'**
+  String get hintPassword;
 
   /// No description provided for @confirmPassword.
   ///
@@ -248,6 +266,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create Account'**
   String get createAccount;
+
+  /// No description provided for @passwordOrEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Password or Email is incorrect!'**
+  String get passwordOrEmail;
+
+  /// Error message when email field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required'**
+  String get emailRequired;
+
+  /// Error message when password field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Password is required'**
+  String get passwordRequired;
 
   /// No description provided for @fieldRequired.
   ///

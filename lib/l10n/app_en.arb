@@ -1,11 +1,11 @@
 {
   "@@locale": "en",
   "@@last_modified": "2024-01-15T10:00:00.000Z",
-  "@@author": "Your Name",
+  "@@author": "Majid",
   "@@version": "1.0.0",
   
   "@@navigation_section": "Navigation related strings",
-  "appTitle": "My Flutter App",
+  "appTitle": "Xpensemate",
   "@appTitle": {
       "description": "The title of the application"
   },
@@ -30,6 +30,7 @@
   "back": "Back",
   "done": "Done",
   "loading": "Loading...",
+  "or": "Or",
   
   "@@authentication_section": "Authentication and user account strings",
   "login": "Login",
@@ -40,13 +41,34 @@
       "description": "Email input field label",
       "context": "Used in login and registration forms"
   },
+  "hintEmail": "email",
+  "@hintEmail": {
+      "description": "Hint text for email input field",
+      "context": "Shown in the email TextField when it's empty"
+  },
   "password": "Password",
+  "hintPassword": "password",
+  "@hintPassword": {
+      "description": "Hint text for password input field",
+      "context": "Shown in the password TextField when it's empty"
+  },
   "confirmPassword": "Confirm Password",
   "forgotPassword": "Forgot Password?",
   "welcomeBack": "Welcome Back!",
   "createAccount": "Create Account",
   
   "@@validation_section": "Form validation error messages",
+  "passwordOrEmail": "Password or Email is incorrect!",
+  "emailRequired": "Email is required",
+  "@emailRequired": {
+      "description": "Error message when email field is empty",
+      "context": "Shown when user submits the form without entering an email"
+  },
+  "passwordRequired": "Password is required",
+  "@passwordRequired": {
+      "description": "Error message when password field is empty",
+      "context": "Shown when user submits the form without entering a password"
+  },
   "fieldRequired": "This field is required",
   "invalidEmail": "Please enter a valid email",
   "passwordTooShort": "Password must be at least 8 characters",

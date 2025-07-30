@@ -8,6 +8,7 @@ extension GoRouterExtension on BuildContext {
   void goToLogin() => go('/login');
   void goToHome() => go('/home');
   void goToProfile() => go('/profile');
+  void goToForgotPasword() =>go('/forgot-password');
   
   // Push methods
   void pushLogin() => push('/login');

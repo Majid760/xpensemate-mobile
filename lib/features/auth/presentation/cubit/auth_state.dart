@@ -8,7 +8,7 @@ class AuthState extends Equatable {
 
 const AuthState({
   this.state = AuthStates.initial,
-  this.isAuthenticated = true,
+  this.isAuthenticated = false,
   this.user,
   this.errorMessage,
   this.stackTrace,

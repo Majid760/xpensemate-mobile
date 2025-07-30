@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'My Flutter App';
+  String get appTitle => 'Xpensemate';
 
   @override
   String get home => 'Home';
@@ -60,6 +60,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loading => 'Loading...';
 
   @override
+  String get or => 'Or';
+
+  @override
   String get login => 'Login';
 
   @override
@@ -72,7 +75,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get email => 'Email';
 
   @override
+  String get hintEmail => 'email';
+
+  @override
   String get password => 'Password';
+
+  @override
+  String get hintPassword => 'password';
 
   @override
   String get confirmPassword => 'Confirm Password';
@@ -85,6 +94,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get createAccount => 'Create Account';
+
+  @override
+  String get passwordOrEmail => 'Password or Email is incorrect!';
+
+  @override
+  String get emailRequired => 'Email is required';
+
+  @override
+  String get passwordRequired => 'Password is required';
 
   @override
   String get fieldRequired => 'This field is required';

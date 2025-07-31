@@ -37,6 +37,7 @@
   "logout": "Logout",
   "register": "Register",
   "email": "Email",
+  "dontHaveAccount": "Don't have an account?",
   "@email": {
       "description": "Email input field label",
       "context": "Used in login and registration forms"
@@ -47,12 +48,17 @@
       "context": "Shown in the email TextField when it's empty"
   },
   "password": "Password",
+  "confirmPassword": "Confirm Password",
+  "hintConfirmPassword": "Re-enter your password",
+  "name": "Full Name",
+  "hintName": "Enter your full name",
+  "alreadyHaveAccount": "Already have an account?",
+  "registerNow": "Create Account",
   "hintPassword": "password",
   "@hintPassword": {
       "description": "Hint text for password input field",
       "context": "Shown in the password TextField when it's empty"
   },
-  "confirmPassword": "Confirm Password",
   "forgotPassword": "Forgot Password?",
   "welcomeBack": "Welcome Back!",
   "createAccount": "Create Account",

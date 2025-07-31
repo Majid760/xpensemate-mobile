@@ -75,16 +75,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get email => 'Email';
 
   @override
+  String get dontHaveAccount => 'Don\'t have an account?';
+
+  @override
   String get hintEmail => 'email';
 
   @override
   String get password => 'Password';
 
   @override
-  String get hintPassword => 'password';
+  String get confirmPassword => 'Confirm Password';
 
   @override
-  String get confirmPassword => 'Confirm Password';
+  String get hintConfirmPassword => 'Re-enter your password';
+
+  @override
+  String get name => 'Full Name';
+
+  @override
+  String get hintName => 'Enter your full name';
+
+  @override
+  String get alreadyHaveAccount => 'Already have an account?';
+
+  @override
+  String get registerNow => 'Create Account';
+
+  @override
+  String get hintPassword => 'password';
 
   @override
   String get forgotPassword => 'Forgot Password?';

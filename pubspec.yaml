@@ -123,6 +123,7 @@ flutter:
   generate: true
   assets:
     - lib/l10n/arbs/
+    - assets/images/
 
 flutter_intl:
   enabled: true
@@ -138,9 +139,9 @@ flutter_intl:
   output-class: AppLocalizations
   preferred-supported-locales: ["en"] 
 
-  # To add assets to your application, add an assets section, like this:
-  assets:
-    - assets/images/
+  # # To add assets to your application, add an assets section, like this:
+  # assets:
+  #   - assets/images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -225,6 +225,12 @@ abstract class AppLocalizations {
   /// **'Email'**
   String get email;
 
+  /// No description provided for @dontHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account?'**
+  String get dontHaveAccount;
+
   /// Hint text for email input field
   ///
   /// In en, this message translates to:
@@ -237,17 +243,47 @@ abstract class AppLocalizations {
   /// **'Password'**
   String get password;
 
-  /// Hint text for password input field
-  ///
-  /// In en, this message translates to:
-  /// **'password'**
-  String get hintPassword;
-
   /// No description provided for @confirmPassword.
   ///
   /// In en, this message translates to:
   /// **'Confirm Password'**
   String get confirmPassword;
+
+  /// No description provided for @hintConfirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-enter your password'**
+  String get hintConfirmPassword;
+
+  /// No description provided for @name.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get name;
+
+  /// No description provided for @hintName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your full name'**
+  String get hintName;
+
+  /// No description provided for @alreadyHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account?'**
+  String get alreadyHaveAccount;
+
+  /// No description provided for @registerNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Account'**
+  String get registerNow;
+
+  /// Hint text for password input field
+  ///
+  /// In en, this message translates to:
+  /// **'password'**
+  String get hintPassword;
 
   /// No description provided for @forgotPassword.
   ///

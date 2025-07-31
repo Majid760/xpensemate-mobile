@@ -228,7 +228,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 ? null
                                 : _submitForm,
                             text: l10n.register.toUpperCase(),
-                            textColor: Colors.white,
+                            textColor: colorScheme.onPrimary,
                             isLoading: state.state == AuthStates.loading,
                           ),
 
@@ -253,7 +253,6 @@ class _RegisterPageState extends State<RegisterPage> {
                                   textColor: colorScheme.primary,
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: AppSpacing.sm,
-                                    vertical: AppSpacing.xs,
                                   ),
                                 ),
                               ],

@@ -60,6 +60,11 @@
       "context": "Shown in the password TextField when it's empty"
   },
   "forgotPassword": "Forgot Password?",
+  "forgotPasswordTitle": "Reset Your Password",
+  "forgotPasswordSubtitle": "Enter your email and we'll send you a link to reset your password",
+  "resetPassword": "Reset Password",
+  "resetPasswordSuccess": "Password reset email sent. Please check your inbox.",
+  "rememberPassword": "Remember your password?",
   "welcomeBack": "Welcome Back!",
   "createAccount": "Create Account",
   

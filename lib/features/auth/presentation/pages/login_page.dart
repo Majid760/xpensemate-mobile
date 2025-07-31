@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
@@ -11,6 +13,7 @@ import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_state.dart';
 import 'package:xpensemate/features/auth/presentation/widgets/custom_text_form_field.dart';
+import 'package:xpensemate/features/auth/presentation/widgets/social_button.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -170,7 +173,7 @@ class _LoginPageState extends State<LoginPage> {
                               textColor: colorScheme.primary,
                               padding: EdgeInsets.zero,
                               onPressed: () {
-                                context.goToForgotPasword();
+                                context.pushForgotPasword();
                               },
                             ),
                           ),
@@ -181,7 +184,7 @@ class _LoginPageState extends State<LoginPage> {
                           AppButton.primary(
                             text: l10n.login.toUpperCase(),
                             onPressed: _submitForm,
-                            textColor: Colors.white,
+                            textColor: colorScheme.onPrimary,
                             isLoading: state.state == AuthStates.loading,
                           ),
                           const SizedBox(height: AppSpacing.lg),
@@ -220,55 +223,26 @@ class _LoginPageState extends State<LoginPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               // Google Button
-                              IconButton(
+                              SocialButton.google(
                                 onPressed: () {
-                                  // context.read<AuthBloc>().add(LoginWithGoogleRequested());
+                                  // context.read<AuthCubit>().loginWithGoogle();
                                 },
-                                style: IconButton.styleFrom(
-                                  backgroundColor: colorScheme.surface,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    side: BorderSide(
-                                      color: colorScheme.outlineVariant,
-                                    ),
-                                  ),
-                                  padding: const EdgeInsets.all(16),
-                                ),
-                                icon: Image.asset(
-                                  'assets/images/google.png', // Make sure to add the asset
-                                  height: 24,
-                                  width: 24,
-                                ),
                               ),
                               const SizedBox(width: 16),
-
                               // Apple Button
-                              IconButton(
-                                onPressed: () {
-                                  // context.read<AuthBloc>().add(LoginWithAppleRequested());
-                                },
-                                style: IconButton.styleFrom(
-                                  backgroundColor: colorScheme.surface,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    side: BorderSide(
-                                      color: colorScheme.outlineVariant,
-                                    ),
-                                  ),
-                                  padding: const EdgeInsets.all(16),
+                              if (Platform.isIOS)
+                                SocialButton.apple(
+                                  onPressed: () {
+                                    // context.read<AuthCubit>().loginWithApple();
+                                  },
                                 ),
-                                icon: Icon(
-                                  Icons.apple_rounded,
-                                  size: 28,
-                                  color: colorScheme.onSurface,
-                                ),
-                              ),
                             ],
                           ),
                           const Spacer(),
                           Padding(
                             padding: const EdgeInsets.only(
-                                bottom: AppSpacing.baseUnit),
+                              bottom: AppSpacing.baseUnit,
+                            ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -283,11 +257,10 @@ class _LoginPageState extends State<LoginPage> {
                                   text: l10n.register,
                                   textColor: colorScheme.primary,
                                   onPressed: () {
-                                    context.goToRegister();
+                                    context.pushRegister();
                                   },
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: AppSpacing.sm,
-                                    vertical: AppSpacing.xs,
                                   ),
                                 ),
                               ],

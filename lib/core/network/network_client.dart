@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/core/network/interceptors/auth_interceptor.dart' ;
 import 'package:xpensemate/core/network/interceptors/logging_interceptor.dart';
-import 'package:xpensemate/core/network/interceptors/retry_interceptor.dart';
+// import 'package:xpensemate/core/network/interceptors/retry_interceptor.dart';
 import 'package:xpensemate/core/network/network_configs.dart';
 import 'package:xpensemate/core/network/network_contracts.dart';
 
@@ -25,7 +25,7 @@ final class NetworkClientImp implements NetworkClient{
           ),
         )..interceptors.addAll([
             LoggingInterceptor(),
-            RetryInterceptor(retries: NetworkConfigs.maxRetries),
+            // RetryInterceptor(retries: NetworkConfigs.maxRetries),
             AuthInterceptor(token, refreshToken),
           ]);
 
@@ -38,6 +38,7 @@ final class NetworkClientImp implements NetworkClient{
     String path, {
     Map<String, dynamic>? query,
     T Function(Map<String, dynamic>)? fromJson,
+    bool isConcurrent = false,
   }) =>
       _request(() => _dio.get(path, queryParameters: query), fromJson);
 
@@ -47,6 +48,7 @@ final class NetworkClientImp implements NetworkClient{
     Map<String, dynamic>? body,
     Map<String, dynamic>? query,
     T Function(Map<String, dynamic>)? fromJson,
+    bool isConcurrent = false,
   }) =>
       _request(
           () => _dio.post(path, data: body, queryParameters: query), fromJson,);
@@ -57,6 +59,7 @@ final class NetworkClientImp implements NetworkClient{
     Map<String, dynamic>? body,
     Map<String, dynamic>? query,
     T Function(Map<String, dynamic>)? fromJson,
+    bool isConcurrent = false,
   }) =>
       _request(
           () => _dio.patch(path, data: body, queryParameters: query), fromJson,);
@@ -67,6 +70,7 @@ final class NetworkClientImp implements NetworkClient{
     Map<String, dynamic>? body,
     Map<String, dynamic>? query,
     T Function(Map<String, dynamic>)? fromJson,
+    bool isConcurrent = false,
   }) =>
       _request(() => _dio.delete(path, data: body, queryParameters: query),
           fromJson,);
@@ -77,6 +81,7 @@ final class NetworkClientImp implements NetworkClient{
     Map<String, dynamic>? body,
     Map<String, dynamic>? query,
     T Function(Map<String, dynamic>)? fromJson,
+    bool isConcurrent = false,
   }) =>
       _request(
           () => _dio.put(path, data: body, queryParameters: query), fromJson,);
@@ -105,11 +110,11 @@ final class NetworkClientImp implements NetworkClient{
         DioExceptionType.sendTimeout =>
           const NetworkFailure(message: 'Connection timeout'),
         DioExceptionType.connectionError =>
-          const NetworkFailure(message: 'No internet'),
+          const NetworkFailure(message: 'No internet or connection error'),
         _ => switch (e.response?.statusCode) {
             401 => const ServerFailure(message: 'Unauthorized'),
             402 => const ServerFailure(message: 'Subscription required'),
-            404 => const ServerFailure(message: 'Not found'),
+            404 => const ServerFailure(message: 'Not found! Please check your request'),
             403 => const ServerFailure(message: 'Forbidden'),
             400 => const ServerFailure(message: 'Bad request'),
             409 => const ServerFailure(message: 'Conflict'),

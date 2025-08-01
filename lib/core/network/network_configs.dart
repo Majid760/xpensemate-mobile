@@ -7,9 +7,9 @@ class NetworkConfigs {
   static const _env = String.fromEnvironment('ENV', defaultValue: 'dev');
 
   static String get baseUrl => switch (_env) {
-        'prod' => 'http://localhost:5001/api/v1',
-        'stg'  => 'http://localhost:5001/api/v1',
-        _      => 'http://localhost:5001/api/v1', // dev
+        'prod' => 'http://192.168.15.148:5001/api/v1',
+        'stg'  => 'http://192.168.15.148:5001/api/v1',
+        _      => 'http://192.168.15.148:5001/api/v1', // dev
       };
 
   // ------------------------------------------------------------------
@@ -21,7 +21,7 @@ class NetworkConfigs {
   // ------------------------------------------------------------------
   //  End-points (relative to baseUrl)
   // ------------------------------------------------------------------
-  static const String _auth = '/api/v1/auth';
+  static const String _auth = '/auth';  // ✅ 
 
   static const String register          = '$_auth/register';
   static const String login             = '$_auth/login';
@@ -30,13 +30,13 @@ class NetworkConfigs {
   static const String refreshToken      = '$_auth/refresh-token';
   static const String logout            = '$_auth/logout';
 
-  static const String verifyEmail       = '/api/v1/verify-email';   // + /:token
-  static const String currentUser       = '/api/v1/me';
+  static const String verifyEmail       = '/verify-email';   // ✅ 
+  static const String currentUser       = '/me';             // ✅ 
 
   // ------------------------------------------------------------------
   //  Timeouts & Retry
   // ------------------------------------------------------------------
-  static const Duration connectTimeout = Duration(seconds: 15);
-  static const Duration receiveTimeout = Duration(seconds: 15);
-  static const int maxRetries = 3;
+  static const Duration connectTimeout = Duration(seconds: 10);
+  static const Duration receiveTimeout = Duration(seconds: 10);
+  static const int maxRetries = 2;
 }

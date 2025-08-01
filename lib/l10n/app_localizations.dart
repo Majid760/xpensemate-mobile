@@ -252,7 +252,7 @@ abstract class AppLocalizations {
   /// No description provided for @hintConfirmPassword.
   ///
   /// In en, this message translates to:
-  /// **'Re-enter your password'**
+  /// **'Re-enter password'**
   String get hintConfirmPassword;
 
   /// No description provided for @name.
@@ -264,7 +264,7 @@ abstract class AppLocalizations {
   /// No description provided for @hintName.
   ///
   /// In en, this message translates to:
-  /// **'Enter your full name'**
+  /// **'full name'**
   String get hintName;
 
   /// No description provided for @alreadyHaveAccount.
@@ -374,6 +374,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Passwords do not match'**
   String get passwordsDoNotMatch;
+
+  /// No description provided for @registerSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Account created successfully!'**
+  String get registerSuccess;
+
+  /// No description provided for @verifyEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'We have sent a verification email to your email address. Please check your inbox.'**
+  String get verifyEmail;
+
+  /// No description provided for @verifyEmailSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Email verification sent successfully!'**
+  String get verifyEmailSuccess;
+
+  /// No description provided for @verifyEmailFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Email verification failed. Please try again.'**
+  String get verifyEmailFailed;
 
   /// No description provided for @errorGeneric.
   ///

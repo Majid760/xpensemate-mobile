@@ -87,13 +87,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get confirmPassword => 'Confirm Password';
 
   @override
-  String get hintConfirmPassword => 'Re-enter your password';
+  String get hintConfirmPassword => 'Re-enter password';
 
   @override
   String get name => 'Full Name';
 
   @override
-  String get hintName => 'Enter your full name';
+  String get hintName => 'full name';
 
   @override
   String get alreadyHaveAccount => 'Already have an account?';
@@ -148,6 +148,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passwordsDoNotMatch => 'Passwords do not match';
+
+  @override
+  String get registerSuccess => 'Account created successfully!';
+
+  @override
+  String get verifyEmail => 'We have sent a verification email to your email address. Please check your inbox.';
+
+  @override
+  String get verifyEmailSuccess => 'Email verification sent successfully!';
+
+  @override
+  String get verifyEmailFailed => 'Email verification failed. Please try again.';
 
   @override
   String get errorGeneric => 'Something went wrong. Please try again.';

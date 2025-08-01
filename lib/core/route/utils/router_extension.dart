@@ -9,10 +9,14 @@ extension GoRouterExtension on BuildContext {
   void goToHome() => go('/home');
   void goToProfile() => go('/profile');
   void goToForgotPasword() =>go('/forgot-password');
+  void goToRegister() =>go('/register');
   
   // Push methods
   void pushLogin() => push('/login');
   void pushProfile() => push('/profile');
+  void pushForgotPasword() => push('/forgot-password');
+  void pushRegister() => push('/register');
+  
   
   // Replace methods
   void replaceWithHome() => pushReplacement('/home');

@@ -1,13 +1,10 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:xpensemate/core/localization/locale_manager.dart';
 import 'package:xpensemate/core/network/network_client.dart';
 import 'package:xpensemate/core/network/network_contracts.dart';
-import 'package:xpensemate/core/service/network_info_service.dart';
-import 'package:xpensemate/core/service/storage_service.dart';
+import 'package:xpensemate/core/network/network_info.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:xpensemate/features/auth/data/repositories/auth_repository_impl.dart';
@@ -30,7 +27,6 @@ Future<void> initLocator() async {
 
   // Initialize services
   AppLogger.init(isDebug: kDebugMode);
-  await StorageService.init();
   await LocaleManager().initialize();
 
   // ---------- Network Connectivity ----------
@@ -47,11 +43,6 @@ Future<void> initLocator() async {
       token: '',
       refreshToken: () async => null,
     ),
-  );
-
-  // ---------- Storage ----------
-  sl.registerLazySingleton<StorageService>(
-    StorageService.new,
   );
 
   // ---------- Data sources ----------

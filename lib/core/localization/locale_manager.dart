@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/supported_locales.dart';
-import 'package:xpensemate/core/service/storage_service.dart';
+import 'package:xpensemate/core/service/secure_storage_service.dart';
 class LocaleManager extends ChangeNotifier {
   factory LocaleManager() => _instance;
   LocaleManager._internal();
@@ -15,11 +15,12 @@ class LocaleManager extends ChangeNotifier {
 
   /// Initialize the locale manager
   Future<void> initialize() async {
-    final savedLocale = await StorageService.getSavedLocale();
+    final savedLocale = await SecureStorageService().get(StorageKeys.localeKey);
     if (savedLocale != null) {
+      final parts = savedLocale.split('_');
       _currentLocale = Locale(
-        savedLocale['languageCode']!,
-        savedLocale['countryCode']!.isEmpty ? null : savedLocale['countryCode'],
+        parts[0],
+        parts.length > 1 ? parts[1] : null,
       );
     }
     notifyListeners();
@@ -32,17 +33,15 @@ class LocaleManager extends ChangeNotifier {
     }
 
     _currentLocale = locale;
-    await StorageService.saveLocale(
-      locale.languageCode,
-      locale.countryCode,
-    );
+
+    await SecureStorageService().save(StorageKeys.localeKey, locale.languageCode);
     notifyListeners();
   }
 
   /// Reset to system locale
   Future<void> resetToSystemLocale() async {
     _currentLocale = null;
-    await StorageService.clearLocale();
+    await SecureStorageService().remove(StorageKeys.localeKey);
     notifyListeners();
   }
 

@@ -40,6 +40,7 @@ class AppSnackBar {
     final style = styles[type]!;
 
     // Use a custom content wrapper with animations
+    // move the content to the center of snackbar
     final snackBar = SnackBar(
       content: _AnimatedSnackBarContent(
         message: message,

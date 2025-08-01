@@ -43,30 +43,43 @@ class AppButton extends StatelessWidget {
     double? elevation,
     TextStyle? textStyle,
     bool enabled = true,
-  }) => AppButton._(
-      key: key,
-      text: text,
-      onPressed: onPressed,
-      buttonBuilder: (context, child) => _buildPrimaryButton(
-        context, child, onPressed, backgroundColor, textColor, hasShadow, borderRadius,
-        padding, isFullWidth, minWidth, height, elevation, enabled, isLoading,
-      ),
-      isLoading: isLoading,
-      isFullWidth: isFullWidth,
-      padding: padding,
-      height: height,
-      minWidth: minWidth,
-      backgroundColor: backgroundColor,
-      textColor: textColor,
-      borderRadius: borderRadius,
-      leadingIcon: leadingIcon,
-      trailingIcon: trailingIcon,
-      hasShadow: hasShadow,
-      borderColor: borderColor,
-      elevation: elevation,
-      textStyle: textStyle,
-      enabled: enabled,
-    );
+  }) =>
+      AppButton._(
+        key: key,
+        text: text,
+        onPressed: onPressed,
+        buttonBuilder: (context, child) => _buildPrimaryButton(
+          context,
+          child,
+          onPressed,
+          backgroundColor,
+          textColor,
+          hasShadow,
+          borderRadius,
+          padding,
+          isFullWidth,
+          minWidth,
+          height,
+          elevation,
+          enabled,
+          isLoading,
+        ),
+        isLoading: isLoading,
+        isFullWidth: isFullWidth,
+        padding: padding,
+        height: height,
+        minWidth: minWidth,
+        backgroundColor: backgroundColor,
+        textColor: textColor,
+        borderRadius: borderRadius,
+        leadingIcon: leadingIcon,
+        trailingIcon: trailingIcon,
+        hasShadow: hasShadow,
+        borderColor: borderColor,
+        elevation: elevation,
+        textStyle: textStyle,
+        enabled: enabled,
+      );
 
   // Static method for secondary button
   static AppButton secondary({
@@ -88,30 +101,43 @@ class AppButton extends StatelessWidget {
     double? elevation,
     TextStyle? textStyle,
     bool enabled = true,
-  }) => AppButton._(
-      key: key,
-      text: text,
-      onPressed: onPressed,
-      buttonBuilder: (context, child) => _buildSecondaryButton(
-        context, child, onPressed, backgroundColor, textColor, hasShadow, borderRadius,
-        padding, isFullWidth, minWidth, height, elevation, enabled, isLoading,
-      ),
-      isLoading: isLoading,
-      isFullWidth: isFullWidth,
-      padding: padding,
-      height: height,
-      minWidth: minWidth,
-      backgroundColor: backgroundColor,
-      textColor: textColor,
-      borderRadius: borderRadius,
-      leadingIcon: leadingIcon,
-      trailingIcon: trailingIcon,
-      hasShadow: hasShadow,
-      borderColor: borderColor,
-      elevation: elevation,
-      textStyle: textStyle,
-      enabled: enabled,
-    );
+  }) =>
+      AppButton._(
+        key: key,
+        text: text,
+        onPressed: onPressed,
+        buttonBuilder: (context, child) => _buildSecondaryButton(
+          context,
+          child,
+          onPressed,
+          backgroundColor,
+          textColor,
+          hasShadow,
+          borderRadius,
+          padding,
+          isFullWidth,
+          minWidth,
+          height,
+          elevation,
+          enabled,
+          isLoading,
+        ),
+        isLoading: isLoading,
+        isFullWidth: isFullWidth,
+        padding: padding,
+        height: height,
+        minWidth: minWidth,
+        backgroundColor: backgroundColor,
+        textColor: textColor,
+        borderRadius: borderRadius,
+        leadingIcon: leadingIcon,
+        trailingIcon: trailingIcon,
+        hasShadow: hasShadow,
+        borderColor: borderColor,
+        elevation: elevation,
+        textStyle: textStyle,
+        enabled: enabled,
+      );
 
   // Static method for outline button
   static AppButton outline({
@@ -132,30 +158,42 @@ class AppButton extends StatelessWidget {
     double? elevation,
     TextStyle? textStyle,
     bool enabled = true,
-  }) => AppButton._(
-      key: key,
-      text: text,
-      onPressed: onPressed,
-      buttonBuilder: (context, child) => _buildOutlineButton(
-        context, child, onPressed, backgroundColor, textColor, borderRadius,
-        padding, isFullWidth, minWidth, height, borderColor, enabled, isLoading,
-      ),
-      isLoading: isLoading,
-      isFullWidth: isFullWidth,
-      padding: padding,
-      height: height,
-      minWidth: minWidth,
-      backgroundColor: backgroundColor,
-      textColor: textColor,
-      borderRadius: borderRadius,
-      leadingIcon: leadingIcon,
-      trailingIcon: trailingIcon,
-      hasShadow: false,
-      borderColor: borderColor,
-      elevation: elevation,
-      textStyle: textStyle,
-      enabled: enabled,
-    );
+  }) =>
+      AppButton._(
+        key: key,
+        text: text,
+        onPressed: onPressed,
+        buttonBuilder: (context, child) => _buildOutlineButton(
+          context,
+          child,
+          onPressed,
+          backgroundColor,
+          textColor,
+          borderRadius,
+          padding,
+          isFullWidth,
+          minWidth,
+          height,
+          borderColor,
+          enabled,
+          isLoading,
+        ),
+        isLoading: isLoading,
+        isFullWidth: isFullWidth,
+        padding: padding,
+        height: height,
+        minWidth: minWidth,
+        backgroundColor: backgroundColor,
+        textColor: textColor,
+        borderRadius: borderRadius,
+        leadingIcon: leadingIcon,
+        trailingIcon: trailingIcon,
+        hasShadow: false,
+        borderColor: borderColor,
+        elevation: elevation,
+        textStyle: textStyle,
+        enabled: enabled,
+      );
 
   // Static method for text button
   static AppButton textButton({
@@ -176,30 +214,41 @@ class AppButton extends StatelessWidget {
     double? elevation,
     TextStyle? textStyle,
     bool enabled = true,
-  }) => AppButton._(
-      key: key,
-      text: text,
-      onPressed: onPressed,
-      buttonBuilder: (context, child) => _buildTextButton(
-        context, child, onPressed, backgroundColor, textColor, borderRadius,
-        padding, isFullWidth, minWidth, height, enabled, isLoading,
-      ),
-      isLoading: isLoading,
-      isFullWidth: isFullWidth,
-      padding: padding,
-      height: height,
-      minWidth: minWidth,
-      backgroundColor: backgroundColor,
-      textColor: textColor,
-      borderRadius: borderRadius,
-      leadingIcon: leadingIcon,
-      trailingIcon: trailingIcon,
-      hasShadow: false,
-      borderColor: borderColor,
-      elevation: elevation,
-      textStyle: textStyle,
-      enabled: enabled,
-    );
+  }) =>
+      AppButton._(
+        key: key,
+        text: text,
+        onPressed: onPressed,
+        buttonBuilder: (context, child) => _buildTextButton(
+          context,
+          child,
+          onPressed,
+          backgroundColor,
+          textColor,
+          borderRadius,
+          padding,
+          isFullWidth,
+          minWidth,
+          height,
+          enabled,
+          isLoading,
+        ),
+        isLoading: isLoading,
+        isFullWidth: isFullWidth,
+        padding: padding,
+        height: height,
+        minWidth: minWidth,
+        backgroundColor: backgroundColor,
+        textColor: textColor,
+        borderRadius: borderRadius,
+        leadingIcon: leadingIcon,
+        trailingIcon: trailingIcon,
+        hasShadow: false,
+        borderColor: borderColor,
+        elevation: elevation,
+        textStyle: textStyle,
+        enabled: enabled,
+      );
 
   // Static method for icon button
   static AppButton icon({
@@ -221,31 +270,45 @@ class AppButton extends StatelessWidget {
     double? elevation,
     TextStyle? textStyle,
     bool enabled = true,
-  }) => AppButton._(
-      key: key,
-      text: text,
-      onPressed: onPressed,
-      buttonBuilder: (context, child) => _buildIconButton(
-        context, text, leadingIcon, onPressed, backgroundColor, textColor, hasShadow, 
-        borderRadius, padding, isFullWidth, minWidth, height, elevation, 
-        textStyle, enabled, isLoading,
-      ),
-      isLoading: isLoading,
-      isFullWidth: isFullWidth,
-      padding: padding,
-      height: height,
-      minWidth: minWidth,
-      backgroundColor: backgroundColor,
-      textColor: textColor,
-      borderRadius: borderRadius,
-      leadingIcon: leadingIcon,
-      trailingIcon: trailingIcon,
-      hasShadow: hasShadow,
-      borderColor: borderColor,
-      elevation: elevation,
-      textStyle: textStyle,
-      enabled: enabled,
-    );
+  }) =>
+      AppButton._(
+        key: key,
+        text: text,
+        onPressed: onPressed,
+        buttonBuilder: (context, child) => _buildIconButton(
+          context,
+          text,
+          leadingIcon,
+          onPressed,
+          backgroundColor,
+          textColor,
+          hasShadow,
+          borderRadius,
+          padding,
+          isFullWidth,
+          minWidth,
+          height,
+          elevation,
+          textStyle,
+          enabled,
+          isLoading,
+        ),
+        isLoading: isLoading,
+        isFullWidth: isFullWidth,
+        padding: padding,
+        height: height,
+        minWidth: minWidth,
+        backgroundColor: backgroundColor,
+        textColor: textColor,
+        borderRadius: borderRadius,
+        leadingIcon: leadingIcon,
+        trailingIcon: trailingIcon,
+        hasShadow: hasShadow,
+        borderColor: borderColor,
+        elevation: elevation,
+        textStyle: textStyle,
+        enabled: enabled,
+      );
 
   // Static method for icon outline button
   static AppButton iconOutline({
@@ -266,31 +329,44 @@ class AppButton extends StatelessWidget {
     double? elevation,
     TextStyle? textStyle,
     bool enabled = true,
-  }) => AppButton._(
-      key: key,
-      text: text,
-      onPressed: onPressed,
-      buttonBuilder: (context, child) => _buildIconOutlineButton(
-        context, text, leadingIcon, onPressed, backgroundColor, textColor, borderRadius,
-        padding, isFullWidth, minWidth, height, borderColor, textStyle, 
-        enabled, isLoading,
-      ),
-      isLoading: isLoading,
-      isFullWidth: isFullWidth,
-      padding: padding,
-      height: height,
-      minWidth: minWidth,
-      backgroundColor: backgroundColor,
-      textColor: textColor,
-      borderRadius: borderRadius,
-      leadingIcon: leadingIcon,
-      trailingIcon: trailingIcon,
-      hasShadow: false,
-      borderColor: borderColor,
-      elevation: elevation,
-      textStyle: textStyle,
-      enabled: enabled,
-    );
+  }) =>
+      AppButton._(
+        key: key,
+        text: text,
+        onPressed: onPressed,
+        buttonBuilder: (context, child) => _buildIconOutlineButton(
+          context,
+          text,
+          leadingIcon,
+          onPressed,
+          backgroundColor,
+          textColor,
+          borderRadius,
+          padding,
+          isFullWidth,
+          minWidth,
+          height,
+          borderColor,
+          textStyle,
+          enabled,
+          isLoading,
+        ),
+        isLoading: isLoading,
+        isFullWidth: isFullWidth,
+        padding: padding,
+        height: height,
+        minWidth: minWidth,
+        backgroundColor: backgroundColor,
+        textColor: textColor,
+        borderRadius: borderRadius,
+        leadingIcon: leadingIcon,
+        trailingIcon: trailingIcon,
+        hasShadow: false,
+        borderColor: borderColor,
+        elevation: elevation,
+        textStyle: textStyle,
+        enabled: enabled,
+      );
 
   final String text;
   final VoidCallback? onPressed;
@@ -319,18 +395,36 @@ class AppButton extends StatelessWidget {
 
   Widget _buildButtonChild(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
 
     if (isLoading) {
-      return SizedBox(
-        width: 20,
-        height: 20,
-        child: CircularProgressIndicator(
-          strokeWidth: 2,
-          valueColor: AlwaysStoppedAnimation<Color>(
-            textColor ?? colorScheme.primary,
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator.adaptive(
+              strokeWidth: 2.5,
+              valueColor: AlwaysStoppedAnimation<Color>(
+                theme.colorScheme.onPrimary,
+              ),
+            ),
           ),
-        ),
+          const SizedBox(width: 12),
+          Opacity(
+            opacity: 0.7,
+            child: Text(
+              text,
+              style: textStyle ??
+                  theme.textTheme.labelLarge?.copyWith(
+                    color: textColor ?? Colors.white,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.5,
+                  ), 
+            ),
+          ),
+        ],
       );
     }
 
@@ -344,11 +438,12 @@ class AppButton extends StatelessWidget {
         ],
         Text(
           text,
-          style: textStyle ?? theme.textTheme.labelLarge?.copyWith(
-            color: textColor,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
-          ),
+          style: textStyle ??
+              theme.textTheme.labelLarge?.copyWith(
+                color: textColor,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.5,
+              ),
         ),
         if (trailingIcon != null) ...[
           const SizedBox(width: 8),
@@ -360,14 +455,24 @@ class AppButton extends StatelessWidget {
 
   // Static button builders - Using ElevatedButton for primary/secondary
   static Widget _buildPrimaryButton(
-    BuildContext context, Widget child, VoidCallback? onPressed, Color? backgroundColor, 
-    Color? textColor, bool hasShadow, double borderRadius, EdgeInsetsGeometry? padding,
-    bool isFullWidth, double? minWidth, double height, double? elevation, 
-    bool enabled, bool isLoading, {
+    BuildContext context,
+    Widget child,
+    VoidCallback? onPressed,
+    Color? backgroundColor,
+    Color? textColor,
+    bool hasShadow,
+    double borderRadius,
+    EdgeInsetsGeometry? padding,
+    bool isFullWidth,
+    double? minWidth,
+    double height,
+    double? elevation,
+    bool enabled,
+    bool isLoading, {
     bool useGradient = true,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     // Default gradient colors
     const gradient = LinearGradient(
       colors: [
@@ -377,12 +482,14 @@ class AppButton extends StatelessWidget {
       begin: Alignment.bottomLeft,
       end: Alignment.topRight,
     );
-    
+
     // If gradient is disabled or button is disabled, use solid color
     final bgColor = !useGradient || !enabled || isLoading
-        ? (backgroundColor ?? const Color(0xFF6366F1)) // Default to indigo-500 if no color provided
+        ? (backgroundColor ??
+            const Color(
+                0xFF6366F1)) // Default to indigo-500 if no color provided
         : null;
-    
+
     final buttonChild = Container(
       width: isFullWidth ? double.infinity : null,
       constraints: minWidth != null ? BoxConstraints(minWidth: minWidth) : null,
@@ -394,7 +501,7 @@ class AppButton extends StatelessWidget {
               boxShadow: hasShadow && enabled
                   ? [
                       BoxShadow(
-                        color: Colors.black.withValues  (alpha: 0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),
@@ -404,20 +511,26 @@ class AppButton extends StatelessWidget {
           : null,
       child: child,
     );
-    
+
     return ElevatedButton(
       onPressed: (enabled && !isLoading) ? onPressed : null,
       style: ElevatedButton.styleFrom(
         backgroundColor: bgColor,
-        foregroundColor: textColor ?? Colors.white, // Default text color to white for better contrast
+        foregroundColor: textColor ??
+            Colors.white, // Default text color to white for better contrast
         disabledBackgroundColor: colorScheme.onSurface.withValues(alpha: 0.12),
         disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
         elevation: 0, // We'll handle shadow in the container
         shadowColor: Colors.transparent,
+        overlayColor: Colors.white
+            .withValues(alpha: 0.1), // Nice white overlay on press/hover
+        animationDuration:
+            const Duration(milliseconds: 200), // Smooth animation
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        padding: EdgeInsets.zero, // Remove default padding since we're using container
+        padding: EdgeInsets
+            .zero, // Remove default padding since we're using container
         minimumSize: Size.zero, // Remove minimum size constraints
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
@@ -426,13 +539,23 @@ class AppButton extends StatelessWidget {
   }
 
   static Widget _buildSecondaryButton(
-    BuildContext context, Widget child, VoidCallback? onPressed, Color? backgroundColor, 
-    Color? textColor, bool hasShadow, double borderRadius, EdgeInsetsGeometry? padding,
-    bool isFullWidth, double? minWidth, double height, double? elevation, 
-    bool enabled, bool isLoading,
+    BuildContext context,
+    Widget child,
+    VoidCallback? onPressed,
+    Color? backgroundColor,
+    Color? textColor,
+    bool hasShadow,
+    double borderRadius,
+    EdgeInsetsGeometry? padding,
+    bool isFullWidth,
+    double? minWidth,
+    double height,
+    double? elevation,
+    bool enabled,
+    bool isLoading,
   ) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     return ElevatedButton(
       onPressed: (enabled && !isLoading) ? onPressed : null,
       style: ElevatedButton.styleFrom(
@@ -441,11 +564,17 @@ class AppButton extends StatelessWidget {
         disabledBackgroundColor: colorScheme.onSurface.withValues(alpha: 0.12),
         disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
         elevation: hasShadow ? (elevation ?? 1) : 0,
-        shadowColor: hasShadow ? colorScheme.shadow.withValues(alpha: 0.2) : null,
+        shadowColor:
+            hasShadow ? colorScheme.shadow.withValues(alpha: 0.2) : null,
+        overlayColor:
+            Colors.white.withValues(alpha: 0.15), // Nice white overlay
+        animationDuration:
+            const Duration(milliseconds: 200), // Smooth animation
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        padding: padding ?? const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        padding:
+            padding ?? const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           height,
@@ -458,18 +587,32 @@ class AppButton extends StatelessWidget {
 
   // Using OutlinedButton for outline buttons
   static Widget _buildOutlineButton(
-    BuildContext context, Widget child, VoidCallback? onPressed, Color? backgroundColor, 
-    Color? textColor, double borderRadius, EdgeInsetsGeometry? padding, bool isFullWidth,
-    double? minWidth, double height, Color? borderColor, bool enabled, bool isLoading,
+    BuildContext context,
+    Widget child,
+    VoidCallback? onPressed,
+    Color? backgroundColor,
+    Color? textColor,
+    double borderRadius,
+    EdgeInsetsGeometry? padding,
+    bool isFullWidth,
+    double? minWidth,
+    double height,
+    Color? borderColor,
+    bool enabled,
+    bool isLoading,
   ) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     return OutlinedButton(
       onPressed: (enabled && !isLoading) ? onPressed : null,
       style: OutlinedButton.styleFrom(
         backgroundColor: backgroundColor ?? Colors.transparent,
         foregroundColor: textColor ?? colorScheme.primary,
         disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
+        overlayColor: (textColor ?? colorScheme.primary)
+            .withValues(alpha: 0.08), // Subtle primary color splash
+        animationDuration:
+            const Duration(milliseconds: 200), // Smooth animation
         side: BorderSide(
           color: borderColor ?? colorScheme.primary.withValues(alpha: 0.38),
           width: 1.5,
@@ -477,7 +620,8 @@ class AppButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        padding: padding ?? const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        padding:
+            padding ?? const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           height,
@@ -490,22 +634,36 @@ class AppButton extends StatelessWidget {
 
   // Using TextButton for text buttons
   static Widget _buildTextButton(
-    BuildContext context, Widget child, VoidCallback? onPressed, Color? backgroundColor, 
-    Color? textColor, double borderRadius, EdgeInsetsGeometry? padding, bool isFullWidth,
-    double? minWidth, double height, bool enabled, bool isLoading,
+    BuildContext context,
+    Widget child,
+    VoidCallback? onPressed,
+    Color? backgroundColor,
+    Color? textColor,
+    double borderRadius,
+    EdgeInsetsGeometry? padding,
+    bool isFullWidth,
+    double? minWidth,
+    double height,
+    bool enabled,
+    bool isLoading,
   ) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     return TextButton(
       onPressed: (enabled && !isLoading) ? onPressed : null,
       style: TextButton.styleFrom(
         backgroundColor: backgroundColor,
         foregroundColor: textColor ?? colorScheme.primary,
         disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
+        overlayColor: (textColor ?? colorScheme.primary)
+            .withValues(alpha: 0.08), // Subtle primary color splash
+        animationDuration:
+            const Duration(milliseconds: 200), // Smooth animation
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        padding: padding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding:
+            padding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           height,
@@ -518,24 +676,36 @@ class AppButton extends StatelessWidget {
 
   // Using ElevatedButton.icon for icon buttons
   static Widget _buildIconButton(
-    BuildContext context, String text, Widget leadingIcon, VoidCallback? onPressed,
-    Color? backgroundColor, Color? textColor, bool hasShadow, double borderRadius, 
-    EdgeInsetsGeometry? padding, bool isFullWidth, double? minWidth, double height, 
-    double? elevation, TextStyle? textStyle, bool enabled, bool isLoading,
+    BuildContext context,
+    String text,
+    Widget leadingIcon,
+    VoidCallback? onPressed,
+    Color? backgroundColor,
+    Color? textColor,
+    bool hasShadow,
+    double borderRadius,
+    EdgeInsetsGeometry? padding,
+    bool isFullWidth,
+    double? minWidth,
+    double height,
+    double? elevation,
+    TextStyle? textStyle,
+    bool enabled,
+    bool isLoading,
   ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return ElevatedButton.icon(
       onPressed: (enabled && !isLoading) ? onPressed : null,
       icon: isLoading
           ? SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator.adaptive(
                 strokeWidth: 2,
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  textColor ?? colorScheme.onPrimary,
+                  colorScheme.onPrimary,
                 ),
               ),
             )
@@ -547,44 +717,62 @@ class AppButton extends StatelessWidget {
         disabledBackgroundColor: colorScheme.onSurface.withValues(alpha: 0.12),
         disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
         elevation: hasShadow ? (elevation ?? 2) : 0,
-        shadowColor: hasShadow ? colorScheme.shadow.withValues(alpha: 0.3) : null,
+        shadowColor:
+            hasShadow ? colorScheme.shadow.withValues(alpha: 0.3) : null,
+        overlayColor:
+            Colors.white.withValues(alpha: 0.12), // Nice white overlay
+        animationDuration:
+            const Duration(milliseconds: 200), // Smooth animation
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        padding: padding ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        padding:
+            padding ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           height,
         ),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        textStyle: textStyle ?? theme.textTheme.labelLarge?.copyWith(
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.5,
-        ),
+        textStyle: textStyle ??
+            theme.textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.5,
+            ),
       ),
     );
   }
 
   // Using OutlinedButton.icon for icon outline buttons
   static Widget _buildIconOutlineButton(
-    BuildContext context, String text, Widget leadingIcon, VoidCallback? onPressed,
-    Color? backgroundColor, Color? textColor, double borderRadius, 
-    EdgeInsetsGeometry? padding, bool isFullWidth, double? minWidth, double height, 
-    Color? borderColor, TextStyle? textStyle, bool enabled, bool isLoading,
+    BuildContext context,
+    String text,
+    Widget leadingIcon,
+    VoidCallback? onPressed,
+    Color? backgroundColor,
+    Color? textColor,
+    double borderRadius,
+    EdgeInsetsGeometry? padding,
+    bool isFullWidth,
+    double? minWidth,
+    double height,
+    Color? borderColor,
+    TextStyle? textStyle,
+    bool enabled,
+    bool isLoading,
   ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return OutlinedButton.icon(
       onPressed: (enabled && !isLoading) ? onPressed : null,
       icon: isLoading
           ? SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator.adaptive(
                 strokeWidth: 2,
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  textColor ?? colorScheme.primary,
+                  colorScheme.onPrimary,
                 ),
               ),
             )
@@ -593,7 +781,11 @@ class AppButton extends StatelessWidget {
       style: OutlinedButton.styleFrom(
         backgroundColor: backgroundColor ?? Colors.transparent,
         foregroundColor: textColor ?? colorScheme.primary,
-        disabledForegroundColor: colorScheme.onSurface.withValues(alpha:0.38),
+        disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
+        overlayColor: (textColor ?? colorScheme.primary)
+            .withValues(alpha: 0.08), // Subtle primary color splash
+        animationDuration:
+            const Duration(milliseconds: 200), // Smooth animation
         side: BorderSide(
           color: borderColor ?? colorScheme.primary,
           width: 1.5,
@@ -601,16 +793,18 @@ class AppButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        padding: padding ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        padding:
+            padding ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           height,
         ),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        textStyle: textStyle ?? theme.textTheme.labelLarge?.copyWith(
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.5,
-        ),
+        textStyle: textStyle ??
+            theme.textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.5,
+            ),
       ),
     );
   }

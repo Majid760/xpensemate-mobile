@@ -54,6 +54,8 @@ dependencies:
   bloc_test: ^10.0.0
   hydrated_bloc: ^10.1.1
   bloc_concurrency: ^0.3.0
+  timezone: ^0.10.1
+
 
 
   flutter_local_notifications: ^19.3.1

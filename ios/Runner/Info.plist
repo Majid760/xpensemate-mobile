@@ -55,6 +55,16 @@
     <!-- Notification -->
     <key>NSUserNotificationUsageDescription</key>
     <string>Xpensemate needs permission to show local notifications.</string>
+	<!-- Background modes for notifications -->
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>fetch</string>
+        <string>remote-notification</string>
+    </array>
+    
+    <!-- Notification permissions -->
+    <key>NSUserNotificationAlertStyle</key>
+    <string>alert</string>
     
     <!-- Camera -->
     <key>NSCameraUsageDescription</key>
@@ -76,6 +86,8 @@
         <string>_dartobservatory._tcp</string>
         <string>_dartobservatory._udp</string>
     </array>
+
+
     
 </dict>
 </plist>

@@ -14,6 +14,9 @@ class AppLogger {
     );
   }
 
+   static void log(String message, [dynamic error]) {
+    _logger?.d(message, error: error);
+  }
   // Simple logging methods
   static void d(String message, [dynamic error]) {
     _logger?.d(message, error: error);
@@ -77,46 +80,11 @@ extension LogExt on Object {
   void logE(String message, [dynamic error]) => AppLogger.tag(runtimeType.toString(), message, level: LogLevel.error);
 }
 
-// ============ USAGE ============
 
-/*
-// 1. Add to pubspec.yaml:
-dependencies:
-  logger: ^2.0.2+1
-
-// 2. Initialize in main.dart:
-void main() {
-  AppLogger.init(isDebug: kDebugMode);
-  runApp(MyApp());
+// extension for logger class
+extension LoggerExt on Logger {
+  void logD(String message) => AppLogger.tag(runtimeType.toString(), message, level: LogLevel.debug);
+  void logI(String message) => AppLogger.tag(runtimeType.toString(), message);
+  void logW(String message) => AppLogger.tag(runtimeType.toString(), message, level: LogLevel.warning);
+  void logE(String message, [dynamic error]) => AppLogger.tag(runtimeType.toString(), message, level: LogLevel.error);
 }
-
-// 3. Use anywhere:
-AppLogger.d('Debug message');
-AppLogger.i('Info message');
-AppLogger.w('Warning message');
-AppLogger.e('Error message', error);
-
-// Tagged logging:
-AppLogger.tag('AUTH', 'User logged in');
-AppLogger.tag('API', 'Request failed', level: LogLevel.error);
-
-// Network logging:
-AppLogger.network('GET', '/api/users', statusCode: 200);
-AppLogger.network('POST', '/api/login', statusCode: 401, error: 'Unauthorized');
-
-// User actions:
-AppLogger.userAction('button_tap', {'screen': 'login', 'button': 'submit'});
-
-// Class-based logging:
-class UserService {
-  void login() {
-    logI('Login attempt started');  // Auto-tagged as [UserService]
-    try {
-      // login logic
-      logI('Login successful');
-    } catch (e) {
-      logE('Login failed', e);
-    }
-  }
-}
-*/

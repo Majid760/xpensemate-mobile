@@ -2,6 +2,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:xpensemate/core/route/utils/route_constants.dart';
 import 'package:xpensemate/core/route/utils/router_middleware_guard.dart';
+import 'package:xpensemate/features/auth/presentation/pages/email_verify_page.dart';
 import 'package:xpensemate/features/auth/presentation/pages/forgot_password_page.dart';
 import 'package:xpensemate/features/auth/presentation/pages/login_page.dart';
 import 'package:xpensemate/features/auth/presentation/pages/register_page.dart';
@@ -12,7 +13,7 @@ abstract class AuthRoutes {
       path: RouteConstants.login,
       name: RouteNames.login,
       redirect: RouteGuards.requireGuest,
-      builder: (context, state) => const LoginPage(),
+      builder: (context, state) => const EmailVerificationScreen(email: 'themuhmand@gmail.com'),
     ),
     GoRoute(
       path: RouteConstants.register,
@@ -25,6 +26,12 @@ abstract class AuthRoutes {
       name: RouteNames.forgotPassword,
       redirect: RouteGuards.requireGuest,
       builder: (context, state) => const ForgotPasswordPage(),
+    ),
+    GoRoute(
+      path: RouteConstants.emailVerify,
+      name: RouteNames.emailVerify,
+      redirect: RouteGuards.requireGuest,
+      builder: (context, state) => EmailVerificationScreen(email: 'themuhmand@gmail.com'),
     ),
   ];
 }

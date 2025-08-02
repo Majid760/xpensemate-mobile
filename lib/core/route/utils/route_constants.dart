@@ -5,6 +5,7 @@ abstract class RouteConstants {
   static const String login = '/login';
   static const String register = '/register';
   static const String forgotPassword = '/forgot-password';
+  static const String emailVerify = '/email-verify';
   
   // Home Routes
   static const String home = '/home';
@@ -26,6 +27,7 @@ abstract class RouteNames {
   static const String login = 'login';
   static const String register = 'register';
   static const String forgotPassword = 'forgot-password';
+  static const String emailVerify = 'email-verify';
   
   // Home Routes
   static const String home = 'home';

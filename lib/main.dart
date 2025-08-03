@@ -11,6 +11,7 @@ import 'package:xpensemate/core/theme/app_theme.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:xpensemate/firebase_options.dart';
 import 'package:xpensemate/l10n/app_localizations.dart';
+
 void main() async {
 
    WidgetsFlutterBinding.ensureInitialized();  

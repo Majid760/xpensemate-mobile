@@ -333,6 +333,36 @@ abstract class AppLocalizations {
   /// **'Create Account'**
   String get createAccount;
 
+  /// No description provided for @verifyYourEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify Your Email'**
+  String get verifyYourEmail;
+
+  /// No description provided for @verificationEmailSentTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification email sent to'**
+  String get verificationEmailSentTo;
+
+  /// No description provided for @verificationInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check your email for the verification link.'**
+  String get verificationInstructions;
+
+  /// No description provided for @resendVerificationEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend Verification Email'**
+  String get resendVerificationEmail;
+
+  /// No description provided for @backToLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Login'**
+  String get backToLogin;
+
   /// No description provided for @passwordOrEmail.
   ///
   /// In en, this message translates to:

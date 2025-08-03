@@ -9,5 +9,5 @@ class SignOutUseCase extends UseCase<void, NoParams> {
   final AuthRepository repository;
 
   @override
-  Future<Either<Failure, void>> call(NoParams params) async => repository.signOut();
+  Future<Either<Failure, void>> call(NoParams params) => repository.signOut();
 }

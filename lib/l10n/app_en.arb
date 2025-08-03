@@ -67,6 +67,11 @@
   "rememberPassword": "Remember your password?",
   "welcomeBack": "Welcome Back!",
   "createAccount": "Create Account",
+  "verifyYourEmail": "Verify Your Email",
+  "verificationEmailSentTo": "Verification email sent to",
+  "verificationInstructions": "Please check your email for the verification link.",
+  "resendVerificationEmail": "Resend Verification Email",
+  "backToLogin": "Back to Login",
   
   "@@validation_section": "Form validation error messages",
   "passwordOrEmail": "Password or Email is incorrect!",

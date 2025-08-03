@@ -12,7 +12,7 @@ class ForgotPasswordUseCase
   @override
   Future<Either<Failure, void>> call(
     ForgotPasswordUseCaseParams params,
-  ) async => repository.forgotPassword(params.email);
+  ) => repository.forgotPassword(params.email);
 }
 
 class ForgotPasswordUseCaseParams {

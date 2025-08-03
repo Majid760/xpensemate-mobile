@@ -13,7 +13,7 @@ class SignInWithEmailUseCase
   final AuthRepository repository;
 
   @override
-  Future<Either<Failure, User>> call(SignInWithEmailUseCaseParams params) async => repository.signInWithEmailAndPassword(
+  Future<Either<Failure, User>> call(SignInWithEmailUseCaseParams params) => repository.signInWithEmailAndPassword(
       email: params.email,
       password: params.password,
     );

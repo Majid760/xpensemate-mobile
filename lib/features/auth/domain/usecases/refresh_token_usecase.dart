@@ -11,7 +11,7 @@ class RefreshTokenUseCase extends UseCase<AuthToken, RefreshTokenUseCaseParams> 
   final AuthRepository repository;
 
   @override
-  Future<Either<Failure, AuthToken>> call(RefreshTokenUseCaseParams params) async => repository.refreshToken(params.refreshToken);
+  Future<Either<Failure, AuthToken>> call(RefreshTokenUseCaseParams params) => repository.refreshToken(params.refreshToken);
 }
 
 class RefreshTokenUseCaseParams {

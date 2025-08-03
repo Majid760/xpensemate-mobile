@@ -10,10 +10,11 @@ abstract class AuthRemoteDataSource {
     required String email,
     required String password,
   });
-  Future<Either<Failure, UserModel>> registerWithEmailAndPassword({
+  Future<Either<Failure, void>> registerWithEmailAndPassword({
     required String email,
     required String password,
-    String? name,
+    required String firstName,
+    required String lastName,
   });
 
   Future<Either<Failure, UserModel>> signInWithGoogle();
@@ -29,6 +30,7 @@ abstract class AuthRemoteDataSource {
   Future<Either<Failure, AuthTokenModel>> refreshToken(String refreshToken);
   Future<Either<Failure, UserModel>> getCurrentUser();
   Future<Either<Failure, void>> logout();
+  Future<Either<Failure, void>> sendVerificationEmail(String email);
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -60,19 +62,20 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   /// Register with email and password
   @override
-  Future<Either<Failure, UserModel>> registerWithEmailAndPassword({
+  Future<Either<Failure, void>> registerWithEmailAndPassword({
     required String email,
     required String password,
-    String? name,
+    required String firstName,
+    required String lastName, 
   }) =>
       _client.post(
         NetworkConfigs.register,
         body: {
           'email': email,
           'password': password,
-          if (name != null) 'name': name,
+          'firstName': firstName,
+          'lastName': lastName,
         },
-        fromJson: UserModel.fromJson,
       );
 
   
@@ -92,7 +95,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         '${NetworkConfigs.resetPassword}/$token',
         body: {'password': newPassword},
       );
-  
+
 
   /// Verify email
   @override
@@ -111,6 +114,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<Either<Failure, UserModel>> getCurrentUser() =>
       _client.get(NetworkConfigs.currentUser, fromJson: UserModel.fromJson);
+
+  /// Send verification email
+  @override
+  Future<Either<Failure, dynamic>> sendVerificationEmail(String email) =>
+      _client.post(NetworkConfigs.sendVerificationEmail, body: {'email': email});
+
   
   /// Logout
   @override

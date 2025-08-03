@@ -1,13 +1,16 @@
 import 'package:dartz/dartz.dart';
 import 'package:xpensemate/core/error/failures.dart';
-import 'package:xpensemate/core/service/network_info_service.dart';
+import 'package:xpensemate/core/network/network_info.dart';
+import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/core/utils/network_mixin.dart';
 import 'package:xpensemate/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:xpensemate/features/auth/domain/entities/auth_token.dart';
 import 'package:xpensemate/features/auth/domain/entities/user.dart';
 import 'package:xpensemate/features/auth/domain/repositories/auth_repository.dart';
 
-class AuthRepositoryImpl with NetworkCheckMixin<Failure> implements AuthRepository {
+class AuthRepositoryImpl
+    with NetworkCheckMixin<Failure>
+    implements AuthRepository {
   AuthRepositoryImpl({
     required this.remoteDataSource,
     required this.networkInfo,
@@ -32,7 +35,6 @@ class AuthRepositoryImpl with NetworkCheckMixin<Failure> implements AuthReposito
   @override
   Future<Either<Failure, User>> getCurrentUser() async {
     if (_cachedUser != null) return right(_cachedUser!);
-
     return withNetworkCheck(() async {
       final result = await remoteDataSource.getCurrentUser();
       return result.fold(
@@ -70,32 +72,29 @@ class AuthRepositoryImpl with NetworkCheckMixin<Failure> implements AuthReposito
         );
       });
     } on Exception catch (e) {
+      logE("thissi excepiton occurs $e");
       return left(e.toFailure() as AuthenticationFailure);
     }
   }
 
   /// Register with email and password
   @override
-  Future<Either<Failure, User>> registerWithEmailAndPassword({
+  Future<Either<Failure, void>> registerWithEmailAndPassword({
     required String email,
     required String password,
-    String? name,
+    required String fullName,
   }) async {
     try {
-      return withNetworkCheck(() async {
-        final result = await remoteDataSource.registerWithEmailAndPassword(
-          email: email,
-          password: password,
-          name: name,
-        );
-        return result.fold(
-          left,
-          (user) {
-            _cachedUser = user.toEntity();
-            return right(_cachedUser!);
-          },
-        );
-      });
+      final result = await remoteDataSource.registerWithEmailAndPassword(
+        email: email,
+        password: password,
+        firstName: fullName.split(' ').first,
+        lastName: fullName.split(' ').last,
+      );
+      return result.fold(
+        left,
+        (_) => right(null),
+      );
     } on Exception catch (e) {
       return left(e.toFailure() as AuthenticationFailure);
     }
@@ -116,6 +115,7 @@ class AuthRepositoryImpl with NetworkCheckMixin<Failure> implements AuthReposito
         );
       });
     } on Exception catch (e) {
+      logE("thissi excepiton occurs $e");
       return left(e.toFailure() as AuthenticationFailure);
     }
   }
@@ -135,6 +135,7 @@ class AuthRepositoryImpl with NetworkCheckMixin<Failure> implements AuthReposito
         );
       });
     } on Exception catch (e) {
+      logE("thissi excepiton occurs $e");
       return left(e.toFailure() as AuthenticationFailure);
     }
   }
@@ -155,6 +156,7 @@ class AuthRepositoryImpl with NetworkCheckMixin<Failure> implements AuthReposito
         );
       });
     } on Exception catch (e) {
+      logE("thissi excepiton occurs $e");
       return left(e.toFailure() as AuthenticationFailure);
     }
   }
@@ -174,6 +176,7 @@ class AuthRepositoryImpl with NetworkCheckMixin<Failure> implements AuthReposito
         );
       });
     } on Exception catch (e) {
+      logE("thissi excepiton occurs $e");
       return left(e.toFailure() as AuthenticationFailure);
     }
   }
@@ -190,24 +193,12 @@ class AuthRepositoryImpl with NetworkCheckMixin<Failure> implements AuthReposito
         );
       });
     } on Exception catch (e) {
+      logE("thissi excepiton occurs $e");
       return left(e.toFailure() as AuthenticationFailure);
     }
   }
 
-  @override
-  Future<Either<Failure, void>> verifyEmail(String code) async {
-    try {
-      return withNetworkCheck(() async {
-        final result = await remoteDataSource.verifyEmail(code);
-        return result.fold(
-          left,
-          (_) => right(null),
-        );
-      });
-    } on Exception catch (e) {
-      return left(e.toFailure() as AuthenticationFailure);
-    }
-  }
+
 
   @override
   Future<AuthToken?> getAuthToken() async {
@@ -225,8 +216,22 @@ class AuthRepositoryImpl with NetworkCheckMixin<Failure> implements AuthReposito
       }
 
       return null;
-    } on Exception {
+    } on Exception catch (e) {
+      logE("thissi excepiton occurs $e");
       return null;
+    }
+  }
+  
+  @override
+  Future<Either<Failure, void>> sendVerificationEmail(String email) async {
+    try {
+      return withNetworkCheck(() async {
+        final result = await remoteDataSource.sendVerificationEmail(email);
+        return result.fold(left, (_) => right(null));
+      });
+    } on Exception catch (e) {
+      logE("thissi excepiton occurs $e");
+      return left(e.toFailure() as AuthenticationFailure);
     }
   }
 }

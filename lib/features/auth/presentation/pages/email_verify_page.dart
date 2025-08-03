@@ -126,11 +126,10 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
 
                         // Resend Button
                         AppButton.primary(
-                          onPressed: () {
-                            // TODO: Implement resend verification email
-                            // context.read<AuthCubit>().resendVerificationEmail(
-                            //       email: widget.email,
-                            //     );
+                          onPressed: () async {
+                            await context.read<AuthCubit>().sendVerificationEmail(
+                                  email: widget.email,
+                                );
                           },
                           text: l10n.resendVerificationEmail,
                           isLoading: state.state == AuthStates.loading,

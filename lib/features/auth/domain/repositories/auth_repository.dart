@@ -17,10 +17,10 @@ Future<Either<Failure, bool>> isAuthenticated();
   });
   
   // Register with email and password
-  Future<Either<Failure, User>> registerWithEmailAndPassword({
+  Future<Either<Failure, void>> registerWithEmailAndPassword({
     required String email,
     required String password,
-    String? name,
+    required String fullName,
   });
   
   // Sign in with Google
@@ -38,8 +38,10 @@ Future<Either<Failure, bool>> isAuthenticated();
   // Forgot password
   Future<Either<Failure, void>> forgotPassword(String email);
   
-  // Verify email
-  Future<Either<Failure, void>> verifyEmail(String code);
+
+  // Send verification email
+  Future<Either<Failure, void>> sendVerificationEmail(String email);
+  
   
   // Get auth tokens
   Future<AuthToken?> getAuthToken();

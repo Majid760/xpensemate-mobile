@@ -129,6 +129,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createAccount => 'Create Account';
 
   @override
+  String get verifyYourEmail => 'Verify Your Email';
+
+  @override
+  String get verificationEmailSentTo => 'Verification email sent to';
+
+  @override
+  String get verificationInstructions => 'Please check your email for the verification link.';
+
+  @override
+  String get resendVerificationEmail => 'Resend Verification Email';
+
+  @override
+  String get backToLogin => 'Back to Login';
+
+  @override
   String get passwordOrEmail => 'Password or Email is incorrect!';
 
   @override

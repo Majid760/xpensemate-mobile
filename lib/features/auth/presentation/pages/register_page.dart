@@ -43,6 +43,7 @@ class _RegisterPageState extends State<RegisterPage> {
       await context.read<AuthCubit>().registerWithEmail(
             email: _emailController.text.trim(),
             password: _passwordController.text,
+            fullName: _nameController.text.trim(),
           );
     }
   }
@@ -57,16 +58,27 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
+          logI("register state is ==> ${state.state}");
           if (state.state == AuthStates.error) {
-            AppLogger.e(state.stackTrace.toString());
+            logE("error is ==> ${state.errorMessage ?? ""}");
             AppSnackBar.show(
               context: context,
               message: state.errorMessage ?? l10n.errorGeneric,
               type: SnackBarType.error,
             );
           } else if (state.state == AuthStates.loaded) {
-            context.goToHome();
-          }
+            logI("register success");  
+            AppSnackBar.show(
+              context: context,
+              message: l10n.registerSuccess,
+              duration: const Duration(seconds: 4),
+              type: SnackBarType.success,
+            );
+
+            context.goToVerifyEmail();
+          }else {
+            logI("register loading");
+          } 
         },
         builder: (context, state) => SafeArea(
           child: LayoutBuilder(
@@ -84,13 +96,13 @@ class _RegisterPageState extends State<RegisterPage> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           // Logo and Welcome Text
-                          const SizedBox(height: AppSpacing.xxl),
+                          const SizedBox(height: AppSpacing.xl),
                           AppImage.asset(
                             AssetPaths.logo,
                             height: 64,
                             color: colorScheme.primary,
                           ),
-                          const SizedBox(height: AppSpacing.xxxl),
+                          const SizedBox(height: AppSpacing.lg),
                           Text(
                             l10n.registerNow,
                             style: textTheme.headlineMedium?.copyWith(
@@ -99,7 +111,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          const SizedBox(height: AppSpacing.xl),
+                          const SizedBox(height: AppSpacing.lg),
 
                           // Name Field
                           CustomTextFormField(

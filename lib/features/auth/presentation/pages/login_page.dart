@@ -82,13 +82,13 @@ class _LoginPageState extends State<LoginPage> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           // Logo and Welcome Text
-                          const SizedBox(height: AppSpacing.xxl),
+                          const SizedBox(height: AppSpacing.lg),
                           AppImage.asset(
                             AssetPaths.logo,
                             height: 64,
                             color: colorScheme.primary,
                           ),
-                          const SizedBox(height: AppSpacing.xxxl),
+                          const SizedBox(height: AppSpacing.lg),
                           Text(
                             l10n.welcomeBack,
                             style: textTheme.headlineMedium?.copyWith(
@@ -98,7 +98,7 @@ class _LoginPageState extends State<LoginPage> {
                             textAlign: TextAlign.center,
                           ),
 
-                          const SizedBox(height: AppSpacing.xxl),
+                          const SizedBox(height: AppSpacing.lg),
                           // Email Field
                           CustomTextFormField(
                             labelText: l10n.email,

@@ -9,7 +9,7 @@ class NetworkConfigs {
   static String get baseUrl => switch (_env) {
         'prod' => 'http://192.168.15.148:5001/api/v1',
         'stg'  => 'http://192.168.15.148:5001/api/v1',
-        _      => 'http://192.168.15.148:5001/api/v1', // dev
+        _      => 'http://192.168.0.100:5001/api/v1', // dev
       };
 
   // ------------------------------------------------------------------
@@ -29,6 +29,7 @@ class NetworkConfigs {
   static const String resetPassword     = '$_auth/reset-password'; // + /:token
   static const String refreshToken      = '$_auth/refresh-token';
   static const String logout            = '$_auth/logout';
+  static const String sendVerificationEmail       = '$_auth/resend-verification';
 
   static const String verifyEmail       = '/verify-email';   // ✅ 
   static const String currentUser       = '/me';             // ✅ 

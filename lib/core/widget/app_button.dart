@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class AppButton extends StatelessWidget {
+class AppButton extends StatefulWidget {
   const AppButton._({
     super.key,
     required this.text,
@@ -21,6 +21,9 @@ class AppButton extends StatelessWidget {
     this.elevation,
     this.textStyle,
     this.enabled = true,
+    this.animationDuration = const Duration(milliseconds: 200),
+    this.scaleOnTap = true,
+    this.hoverEffect = true,
   });
 
   // Static method for primary button
@@ -43,6 +46,9 @@ class AppButton extends StatelessWidget {
     double? elevation,
     TextStyle? textStyle,
     bool enabled = true,
+    Duration? animationDuration,
+    bool scaleOnTap = true,
+    bool hoverEffect = true,
   }) =>
       AppButton._(
         key: key,
@@ -63,6 +69,9 @@ class AppButton extends StatelessWidget {
           elevation,
           enabled,
           isLoading,
+          animationDuration ?? const Duration(milliseconds: 200),
+          scaleOnTap,
+          hoverEffect,
         ),
         isLoading: isLoading,
         isFullWidth: isFullWidth,
@@ -79,6 +88,9 @@ class AppButton extends StatelessWidget {
         elevation: elevation,
         textStyle: textStyle,
         enabled: enabled,
+        animationDuration: animationDuration ?? const Duration(milliseconds: 200),
+        scaleOnTap: scaleOnTap,
+        hoverEffect: hoverEffect,
       );
 
   // Static method for secondary button
@@ -101,6 +113,9 @@ class AppButton extends StatelessWidget {
     double? elevation,
     TextStyle? textStyle,
     bool enabled = true,
+    Duration? animationDuration,
+    bool scaleOnTap = true,
+    bool hoverEffect = true,
   }) =>
       AppButton._(
         key: key,
@@ -121,6 +136,9 @@ class AppButton extends StatelessWidget {
           elevation,
           enabled,
           isLoading,
+          animationDuration ?? const Duration(milliseconds: 200),
+          scaleOnTap,
+          hoverEffect,
         ),
         isLoading: isLoading,
         isFullWidth: isFullWidth,
@@ -137,6 +155,9 @@ class AppButton extends StatelessWidget {
         elevation: elevation,
         textStyle: textStyle,
         enabled: enabled,
+        animationDuration: animationDuration ?? const Duration(milliseconds: 200),
+        scaleOnTap: scaleOnTap,
+        hoverEffect: hoverEffect,
       );
 
   // Static method for outline button
@@ -158,6 +179,9 @@ class AppButton extends StatelessWidget {
     double? elevation,
     TextStyle? textStyle,
     bool enabled = true,
+    Duration? animationDuration,
+    bool scaleOnTap = true,
+    bool hoverEffect = true,
   }) =>
       AppButton._(
         key: key,
@@ -177,6 +201,9 @@ class AppButton extends StatelessWidget {
           borderColor,
           enabled,
           isLoading,
+          animationDuration ?? const Duration(milliseconds: 200),
+          scaleOnTap,
+          hoverEffect,
         ),
         isLoading: isLoading,
         isFullWidth: isFullWidth,
@@ -193,6 +220,9 @@ class AppButton extends StatelessWidget {
         elevation: elevation,
         textStyle: textStyle,
         enabled: enabled,
+        animationDuration: animationDuration ?? const Duration(milliseconds: 200),
+        scaleOnTap: scaleOnTap,
+        hoverEffect: hoverEffect,
       );
 
   // Static method for text button
@@ -214,6 +244,9 @@ class AppButton extends StatelessWidget {
     double? elevation,
     TextStyle? textStyle,
     bool enabled = true,
+    Duration? animationDuration,
+    bool scaleOnTap = true,
+    bool hoverEffect = true,
   }) =>
       AppButton._(
         key: key,
@@ -232,6 +265,9 @@ class AppButton extends StatelessWidget {
           height,
           enabled,
           isLoading,
+          animationDuration ?? const Duration(milliseconds: 200),
+          scaleOnTap,
+          hoverEffect,
         ),
         isLoading: isLoading,
         isFullWidth: isFullWidth,
@@ -248,6 +284,9 @@ class AppButton extends StatelessWidget {
         elevation: elevation,
         textStyle: textStyle,
         enabled: enabled,
+        animationDuration: animationDuration ?? const Duration(milliseconds: 200),
+        scaleOnTap: scaleOnTap,
+        hoverEffect: hoverEffect,
       );
 
   // Static method for icon button
@@ -270,6 +309,9 @@ class AppButton extends StatelessWidget {
     double? elevation,
     TextStyle? textStyle,
     bool enabled = true,
+    Duration? animationDuration,
+    bool scaleOnTap = true,
+    bool hoverEffect = true,
   }) =>
       AppButton._(
         key: key,
@@ -292,6 +334,9 @@ class AppButton extends StatelessWidget {
           textStyle,
           enabled,
           isLoading,
+          animationDuration ?? const Duration(milliseconds: 200),
+          scaleOnTap,
+          hoverEffect,
         ),
         isLoading: isLoading,
         isFullWidth: isFullWidth,
@@ -308,6 +353,9 @@ class AppButton extends StatelessWidget {
         elevation: elevation,
         textStyle: textStyle,
         enabled: enabled,
+        animationDuration: animationDuration ?? const Duration(milliseconds: 200),
+        scaleOnTap: scaleOnTap,
+        hoverEffect: hoverEffect,
       );
 
   // Static method for icon outline button
@@ -329,6 +377,9 @@ class AppButton extends StatelessWidget {
     double? elevation,
     TextStyle? textStyle,
     bool enabled = true,
+    Duration? animationDuration,
+    bool scaleOnTap = true,
+    bool hoverEffect = true,
   }) =>
       AppButton._(
         key: key,
@@ -350,6 +401,9 @@ class AppButton extends StatelessWidget {
           textStyle,
           enabled,
           isLoading,
+          animationDuration ?? const Duration(milliseconds: 200),
+          scaleOnTap,
+          hoverEffect,
         ),
         isLoading: isLoading,
         isFullWidth: isFullWidth,
@@ -366,6 +420,9 @@ class AppButton extends StatelessWidget {
         elevation: elevation,
         textStyle: textStyle,
         enabled: enabled,
+        animationDuration: animationDuration ?? const Duration(milliseconds: 200),
+        scaleOnTap: scaleOnTap,
+        hoverEffect: hoverEffect,
       );
 
   final String text;
@@ -386,72 +443,12 @@ class AppButton extends StatelessWidget {
   final double? elevation;
   final TextStyle? textStyle;
   final bool enabled;
+  final Duration animationDuration;
+  final bool scaleOnTap;
+  final bool hoverEffect;
 
   @override
-  Widget build(BuildContext context) {
-    final child = _buildButtonChild(context);
-    return buttonBuilder(context, child);
-  }
-
-  Widget _buildButtonChild(BuildContext context) {
-    final theme = Theme.of(context);
-
-    if (isLoading) {
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: 20,
-            height: 20,
-            child: CircularProgressIndicator.adaptive(
-              strokeWidth: 2.5,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                theme.colorScheme.onPrimary,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Opacity(
-            opacity: 0.7,
-            child: Text(
-              text,
-              style: textStyle ??
-                  theme.textTheme.labelLarge?.copyWith(
-                    color: textColor ?? Colors.white,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.5,
-                  ), 
-            ),
-          ),
-        ],
-      );
-    }
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (leadingIcon != null) ...[
-          leadingIcon!,
-          const SizedBox(width: 8),
-        ],
-        Text(
-          text,
-          style: textStyle ??
-              theme.textTheme.labelLarge?.copyWith(
-                color: textColor,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.5,
-              ),
-        ),
-        if (trailingIcon != null) ...[
-          const SizedBox(width: 8),
-          trailingIcon!,
-        ],
-      ],
-    );
-  }
+  State<AppButton> createState() => _AppButtonState();
 
   // Static button builders - Using ElevatedButton for primary/secondary
   static Widget _buildPrimaryButton(
@@ -468,9 +465,11 @@ class AppButton extends StatelessWidget {
     double height,
     double? elevation,
     bool enabled,
-    bool isLoading, {
-    bool useGradient = true,
-  }) {
+    bool isLoading,
+    Duration animationDuration,
+    bool scaleOnTap,
+    bool hoverEffect,
+  ) {
     final colorScheme = Theme.of(context).colorScheme;
 
     // Default gradient colors
@@ -484,17 +483,15 @@ class AppButton extends StatelessWidget {
     );
 
     // If gradient is disabled or button is disabled, use solid color
-    final bgColor = !useGradient || !enabled || isLoading
-        ? (backgroundColor ??
-            const Color(
-                0xFF6366F1)) // Default to indigo-500 if no color provided
+    final bgColor = !enabled || isLoading
+        ? (backgroundColor ?? const Color(0xFF6366F1))
         : null;
 
     final buttonChild = Container(
       width: isFullWidth ? double.infinity : null,
       constraints: minWidth != null ? BoxConstraints(minWidth: minWidth) : null,
       height: height,
-      decoration: useGradient && enabled && !isLoading
+      decoration: enabled && !isLoading
           ? BoxDecoration(
               gradient: gradient,
               borderRadius: BorderRadius.circular(borderRadius),
@@ -516,22 +513,18 @@ class AppButton extends StatelessWidget {
       onPressed: (enabled && !isLoading) ? onPressed : null,
       style: ElevatedButton.styleFrom(
         backgroundColor: bgColor,
-        foregroundColor: textColor ??
-            Colors.white, // Default text color to white for better contrast
+        foregroundColor: textColor ?? Colors.white,
         disabledBackgroundColor: colorScheme.onSurface.withValues(alpha: 0.12),
         disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
-        elevation: 0, // We'll handle shadow in the container
+        elevation: 0,
         shadowColor: Colors.transparent,
-        overlayColor: Colors.white
-            .withValues(alpha: 0.1), // Nice white overlay on press/hover
-        animationDuration:
-            const Duration(milliseconds: 200), // Smooth animation
+        overlayColor: Colors.white.withValues(alpha: 0.1),
+        animationDuration: animationDuration,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        padding: EdgeInsets
-            .zero, // Remove default padding since we're using container
-        minimumSize: Size.zero, // Remove minimum size constraints
+        padding: EdgeInsets.zero,
+        minimumSize: Size.zero,
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
       child: buttonChild,
@@ -553,6 +546,9 @@ class AppButton extends StatelessWidget {
     double? elevation,
     bool enabled,
     bool isLoading,
+    Duration animationDuration,
+    bool scaleOnTap,
+    bool hoverEffect,
   ) {
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -564,17 +560,13 @@ class AppButton extends StatelessWidget {
         disabledBackgroundColor: colorScheme.onSurface.withValues(alpha: 0.12),
         disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
         elevation: hasShadow ? (elevation ?? 1) : 0,
-        shadowColor:
-            hasShadow ? colorScheme.shadow.withValues(alpha: 0.2) : null,
-        overlayColor:
-            Colors.white.withValues(alpha: 0.15), // Nice white overlay
-        animationDuration:
-            const Duration(milliseconds: 200), // Smooth animation
+        shadowColor: hasShadow ? colorScheme.shadow.withValues(alpha: 0.2) : null,
+        overlayColor: Colors.white.withValues(alpha: 0.15),
+        animationDuration: animationDuration,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        padding:
-            padding ?? const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        padding: padding ?? const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           height,
@@ -600,6 +592,9 @@ class AppButton extends StatelessWidget {
     Color? borderColor,
     bool enabled,
     bool isLoading,
+    Duration animationDuration,
+    bool scaleOnTap,
+    bool hoverEffect,
   ) {
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -609,10 +604,8 @@ class AppButton extends StatelessWidget {
         backgroundColor: backgroundColor ?? Colors.transparent,
         foregroundColor: textColor ?? colorScheme.primary,
         disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
-        overlayColor: (textColor ?? colorScheme.primary)
-            .withValues(alpha: 0.08), // Subtle primary color splash
-        animationDuration:
-            const Duration(milliseconds: 200), // Smooth animation
+        overlayColor: (textColor ?? colorScheme.primary).withValues(alpha: 0.08),
+        animationDuration: animationDuration,
         side: BorderSide(
           color: borderColor ?? colorScheme.primary.withValues(alpha: 0.38),
           width: 1.5,
@@ -620,8 +613,7 @@ class AppButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        padding:
-            padding ?? const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        padding: padding ?? const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           height,
@@ -646,6 +638,9 @@ class AppButton extends StatelessWidget {
     double height,
     bool enabled,
     bool isLoading,
+    Duration animationDuration,
+    bool scaleOnTap,
+    bool hoverEffect,
   ) {
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -655,15 +650,12 @@ class AppButton extends StatelessWidget {
         backgroundColor: backgroundColor,
         foregroundColor: textColor ?? colorScheme.primary,
         disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
-        overlayColor: (textColor ?? colorScheme.primary)
-            .withValues(alpha: 0.08), // Subtle primary color splash
-        animationDuration:
-            const Duration(milliseconds: 200), // Smooth animation
+        overlayColor: (textColor ?? colorScheme.primary).withValues(alpha: 0.08),
+        animationDuration: animationDuration,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        padding:
-            padding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: padding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           height,
@@ -692,6 +684,9 @@ class AppButton extends StatelessWidget {
     TextStyle? textStyle,
     bool enabled,
     bool isLoading,
+    Duration animationDuration,
+    bool scaleOnTap,
+    bool hoverEffect,
   ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -717,17 +712,13 @@ class AppButton extends StatelessWidget {
         disabledBackgroundColor: colorScheme.onSurface.withValues(alpha: 0.12),
         disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
         elevation: hasShadow ? (elevation ?? 2) : 0,
-        shadowColor:
-            hasShadow ? colorScheme.shadow.withValues(alpha: 0.3) : null,
-        overlayColor:
-            Colors.white.withValues(alpha: 0.12), // Nice white overlay
-        animationDuration:
-            const Duration(milliseconds: 200), // Smooth animation
+        shadowColor: hasShadow ? colorScheme.shadow.withValues(alpha: 0.3) : null,
+        overlayColor: Colors.white.withValues(alpha: 0.12),
+        animationDuration: animationDuration,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        padding:
-            padding ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        padding: padding ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           height,
@@ -759,6 +750,9 @@ class AppButton extends StatelessWidget {
     TextStyle? textStyle,
     bool enabled,
     bool isLoading,
+    Duration animationDuration,
+    bool scaleOnTap,
+    bool hoverEffect,
   ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -782,10 +776,8 @@ class AppButton extends StatelessWidget {
         backgroundColor: backgroundColor ?? Colors.transparent,
         foregroundColor: textColor ?? colorScheme.primary,
         disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
-        overlayColor: (textColor ?? colorScheme.primary)
-            .withValues(alpha: 0.08), // Subtle primary color splash
-        animationDuration:
-            const Duration(milliseconds: 200), // Smooth animation
+        overlayColor: (textColor ?? colorScheme.primary).withValues(alpha: 0.08),
+        animationDuration: animationDuration,
         side: BorderSide(
           color: borderColor ?? colorScheme.primary,
           width: 1.5,
@@ -793,8 +785,7 @@ class AppButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        padding:
-            padding ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        padding: padding ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           height,
@@ -806,6 +797,156 @@ class AppButton extends StatelessWidget {
               letterSpacing: 0.5,
             ),
       ),
+    );
+  }
+}
+
+class _AppButtonState extends State<AppButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _elevationAnimation;
+  bool _isHovered = false;
+  bool _isPressed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: widget.animationDuration,
+      vsync: this,
+    );
+
+    _scaleAnimation = Tween<double>(
+      begin: 1,
+      end: 0.95,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ),);
+
+    _elevationAnimation = Tween<double>(
+      begin: 1,
+      end: 0.8,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ),);
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _onTapDown(TapDownDetails details) {
+    if (widget.enabled && !widget.isLoading && widget.scaleOnTap) {
+      setState(() => _isPressed = true);
+      _animationController.forward();
+    }
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    if (widget.enabled && !widget.isLoading && widget.scaleOnTap) {
+      setState(() => _isPressed = false);
+      _animationController.reverse();
+    }
+  }
+
+  void _onTapCancel() {
+    if (widget.enabled && !widget.isLoading && widget.scaleOnTap) {
+      setState(() => _isPressed = false);
+      _animationController.reverse();
+    }
+  }
+
+  void _onHover(bool isHovered) {
+    if (widget.enabled && !widget.isLoading && widget.hoverEffect) {
+      setState(() => _isHovered = isHovered);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final child = _buildButtonChild(context);
+    
+    return AnimatedBuilder(
+      animation: _animationController,
+      builder: (context, childWidget) => Transform.scale(
+          scale: _scaleAnimation.value,
+          child: GestureDetector(
+            onTapDown: _onTapDown,
+            onTapUp: _onTapUp,
+            onTapCancel: _onTapCancel,
+            child: MouseRegion(
+              onEnter: (_) => _onHover(true),
+              onExit: (_) => _onHover(false),
+              child: widget.buttonBuilder(context, childWidget!),
+            ),
+          ),
+        ),
+      child: child,
+    );
+  }
+
+  Widget _buildButtonChild(BuildContext context) {
+    final theme = Theme.of(context);
+
+    if (widget.isLoading) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator.adaptive(
+              strokeWidth: 2.5,
+              valueColor: AlwaysStoppedAnimation<Color>(
+                theme.colorScheme.onPrimary,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Opacity(
+            opacity: 0.7,
+            child: Text(
+              widget.text,
+              style: widget.textStyle ??
+                  theme.textTheme.labelLarge?.copyWith(
+                    color: widget.textColor ?? Colors.white,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.5,
+                  ), 
+            ),
+          ),
+        ],
+      );
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (widget.leadingIcon != null) ...[
+          widget.leadingIcon!,
+          const SizedBox(width: 8),
+        ],
+        Text(
+          widget.text,
+          style: widget.textStyle ??
+              theme.textTheme.labelLarge?.copyWith(
+                color: widget.textColor,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.5,
+              ),
+        ),
+        if (widget.trailingIcon != null) ...[
+          const SizedBox(width: 8),
+          widget.trailingIcon!,
+        ],
+      ],
     );
   }
 }

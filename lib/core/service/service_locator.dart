@@ -10,12 +10,7 @@ import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:xpensemate/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:xpensemate/features/auth/domain/repositories/auth_repository.dart';
-import 'package:xpensemate/features/auth/domain/usecases/forgot_password_usercase.dart';
-import 'package:xpensemate/features/auth/domain/usecases/refresh_token_usecase.dart';
-import 'package:xpensemate/features/auth/domain/usecases/sign_in_usecase.dart';
-import 'package:xpensemate/features/auth/domain/usecases/sign_out_usecase.dart';
-import 'package:xpensemate/features/auth/domain/usecases/sign_up_usecase.dart';
-import 'package:xpensemate/features/auth/domain/usecases/verify_email_usecase.dart';
+import 'package:xpensemate/features/auth/domain/usecases/cases_export.dart';
 /// Global, lazy singleton
 final sl = GetIt.instance;
 
@@ -68,7 +63,7 @@ Future<void> initLocator() async {
     sl.registerLazySingleton(() => SignInWithEmailUseCase(sl()));
     sl.registerLazySingleton(() => SignOutUseCase(sl()));
     sl.registerLazySingleton(() => SignUpUseCase(sl()));
-    sl.registerLazySingleton(() => VerifyEmailUseCase(sl()));
+    sl.registerLazySingleton(() => SendVerificationEmailUseCase(sl()));
   } on Exception catch (e) {
     if (kDebugMode) {
       print('Error initializing services: $e');

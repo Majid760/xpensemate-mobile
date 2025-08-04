@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 
@@ -9,7 +10,6 @@ sealed class NetworkInfoService {
 }
 
 class NetworkInfoServiceImpl implements NetworkInfoService {
-
   NetworkInfoServiceImpl(this._connectivity) {
     // Start listening to connectivity changes when created
     _initConnectivityListener();

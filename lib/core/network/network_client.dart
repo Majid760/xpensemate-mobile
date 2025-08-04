@@ -8,6 +8,8 @@ import 'package:xpensemate/core/network/interceptors/logging_interceptor.dart';
 import 'package:xpensemate/core/network/network_configs.dart';
 import 'package:xpensemate/core/network/network_contracts.dart';
 
+
+
 final class NetworkClientImp implements NetworkClient{
   NetworkClientImp({
     required String token,
@@ -93,14 +95,44 @@ final class NetworkClientImp implements NetworkClient{
   ) async {
     try {
       final res = await call();
-      if (fromJson != null) {
-        return Right(fromJson(res.data as Map<String, dynamic>));
+      final responseData = res.data as Map<String, dynamic>;
+      
+      // Handle standardized API response
+      final apiResponse = ApiResponse.fromJson(responseData, fromJson);
+      
+      if (apiResponse.isSuccess) {
+        // If fromJson is provided, return the parsed data
+        if (fromJson != null && apiResponse.data != null) {
+          return Right(apiResponse.data as T);
+        }
+        // If no fromJson but we have data, return the raw data
+        if (apiResponse.data != null) {
+          return Right(apiResponse.data as T);
+        }
+        // For void operations, return the response itself
+        return Right(apiResponse as T);
+      } else {
+        // Handle error responses
+        return Left(_handleApiError(apiResponse));
       }
-      return Right(res.data as T);
     } on DioException catch (e) {
       return Left(_mapDioError(e));
     } on Exception catch (e) {
       return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
+  /// Handle API error responses
+  Failure _handleApiError(ApiResponse<dynamic> response) {
+    switch (response.type) {
+      case 'error':
+        return ServerFailure(message: response.message);
+      case 'warning':
+        return ServerFailure(message: response.message);
+      case 'info':
+        return ServerFailure(message: response.message);
+      default:
+        return ServerFailure(message: response.message);
     }
   }
 
@@ -131,4 +163,37 @@ final class NetworkClientImp implements NetworkClient{
   void setToken(String token) {
     _dio.options.headers['Authorization'] = 'Bearer $token';
   }
+}
+
+
+
+
+
+/// Standard API response model
+class ApiResponse<T> {
+  const ApiResponse({
+    required this.type,
+    required this.title,
+    required this.message,
+    this.data,
+  });
+
+  factory ApiResponse.fromJson(Map<String, dynamic> json, T Function(Map<String, dynamic>)? fromJson) => ApiResponse<T>(
+      type: json['type'] as String? ?? 'unknown',
+      title: json['title'] as String? ?? '',
+      message: json['message'] as String? ?? '',
+      data: json['data'] != null && fromJson != null 
+          ? fromJson(json['data'] as Map<String, dynamic>)
+          : null,
+    );
+
+  final String type;
+  final String title;
+  final String message;
+  final T? data;
+
+  bool get isSuccess => type.toLowerCase() == 'success';
+  bool get isError => type.toLowerCase() == 'error';
+  bool get isWarning => type.toLowerCase() == 'warning';
+  bool get isInfo => type.toLowerCase() == 'info';
 }

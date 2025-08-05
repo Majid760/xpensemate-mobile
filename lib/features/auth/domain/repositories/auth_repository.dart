@@ -40,7 +40,7 @@ Future<Either<Failure, bool>> isAuthenticated();
   
 
   // Send verification email
-  Future<Either<Failure, void>> sendVerificationEmail(String email);
+  Future<Either<Failure, dynamic>> sendVerificationEmail(String email);
   
   
   // Get auth tokens

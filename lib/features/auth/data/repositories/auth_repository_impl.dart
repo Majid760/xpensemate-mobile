@@ -223,11 +223,11 @@ class AuthRepositoryImpl
   }
   
   @override
-  Future<Either<Failure, void>> sendVerificationEmail(String email) async {
+  Future<Either<Failure, dynamic>> sendVerificationEmail(String email) async {
     try {
       return withNetworkCheck(() async {
         final result = await remoteDataSource.sendVerificationEmail(email);
-        return result.fold(left, (_) => right(null));
+        return result.fold(left, right);
       });
     } on Exception catch (e) {
       logE("thissi excepiton occurs $e");

@@ -8,7 +8,9 @@ import 'package:xpensemate/core/route/utils/router_extension.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/utils/assset_path.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
+import 'package:xpensemate/core/widget/app_dialogs.dart';
 import 'package:xpensemate/core/widget/app_image.dart';
+import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_state.dart';
 
@@ -64,6 +66,12 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           // Handle state changes if needed
+          if (state.state == AuthStates.loaded) {
+            AppDialogs.showTopSnackBar(context, message: '${l10n.verificationEmailSentTo} ${widget.email}', type: MessageType.success);
+          }else if (state.state == AuthStates.error) {
+            AppSnackBar.show(context:context, message:state.errorMessage ?? '' ,type: SnackBarType.error);
+          }
+        
         },
         builder: (context, state) => SafeArea(
           child: LayoutBuilder(

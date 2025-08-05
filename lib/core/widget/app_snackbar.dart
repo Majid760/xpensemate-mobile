@@ -303,3 +303,12 @@ class SnackBarStyle {
 
 // Enum for different SnackBar types
 enum SnackBarType { success, error, warning, info }
+
+
+
+
+// extension on BuildContext for showing snackbar
+extension on BuildContext {
+  void showSnackBar(String message, {SnackBarType type = SnackBarType.info}) =>
+    AppSnackBar.show(context: this, message: message, type: type);
+}

@@ -74,7 +74,7 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
     result.fold(
       (failure) => emit(state.copyWith(
           state: AuthStates.error, errorMessage: failure.message,),),
-      (user) => emit(state.copyWith(state: AuthStates.loaded)),
+      (res) => emit(state.copyWith(state: AuthStates.loaded)),
     );
   }
 

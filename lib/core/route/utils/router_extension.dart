@@ -10,7 +10,7 @@ extension GoRouterExtension on BuildContext {
   void goToProfile() => go('/profile');
   void goToForgotPasword() =>go('/forgot-password');
   void goToRegister() =>go('/register');
-  void goToVerifyEmail() =>go('/email-verify');
+  void goToVerifyEmail({required String email}) =>go('/email-verify', extra:email);
   
   // Push methods
   void pushLogin() => push('/login');

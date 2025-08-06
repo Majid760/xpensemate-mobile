@@ -13,7 +13,7 @@ abstract class AuthRoutes {
       path: RouteConstants.login,
       name: RouteNames.login,
       redirect: RouteGuards.requireGuest,
-      builder: (context, state) => const EmailVerificationScreen(email: 'themuhmand@gmail.com'),
+      builder: (context, state) =>  const LoginPage(),
     ),
     GoRoute(
       path: RouteConstants.register,
@@ -31,7 +31,7 @@ abstract class AuthRoutes {
       path: RouteConstants.emailVerify,
       name: RouteNames.emailVerify,
       redirect: RouteGuards.requireGuest,
-      builder: (context, state) => EmailVerificationScreen(email: 'themuhmand@gmail.com'),
+      builder: (context, state) => EmailVerificationScreen(email: state.extra! as String),
     ),
   ];
 }

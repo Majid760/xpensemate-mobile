@@ -39,6 +39,7 @@ class RouteGuards {
       RouteConstants.login,
       RouteConstants.register,
       RouteConstants.forgotPassword,
+      RouteConstants.emailVerify,
     ];
     return authRoutes.contains(location);
   }

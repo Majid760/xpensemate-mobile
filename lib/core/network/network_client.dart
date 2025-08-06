@@ -7,6 +7,7 @@ import 'package:xpensemate/core/network/interceptors/logging_interceptor.dart';
 // import 'package:xpensemate/core/network/interceptors/retry_interceptor.dart';
 import 'package:xpensemate/core/network/network_configs.dart';
 import 'package:xpensemate/core/network/network_contracts.dart';
+import 'package:xpensemate/core/utils/app_logger.dart';
 
 
 
@@ -95,11 +96,14 @@ final class NetworkClientImp implements NetworkClient{
   ) async {
     try {
       final res = await call();
+      logI("res: ${res.data}");
       final responseData = res.data as Map<String, dynamic>;
-      
+
+      logI("responseData: $responseData");
       // Handle standardized API response
       final apiResponse = ApiResponse.fromJson(responseData, fromJson);
-      
+            logI("api error: ${apiResponse.message}");
+
       if (apiResponse.isSuccess) {
         // If fromJson is provided, return the parsed data
         if (fromJson != null && apiResponse.data != null) {
@@ -116,6 +120,25 @@ final class NetworkClientImp implements NetworkClient{
         return Left(_handleApiError(apiResponse));
       }
     } on DioException catch (e) {
+      logI("dio error: ${e.response?.data}");
+      
+      // Try to parse structured error response first
+      if (e.response?.data != null && e.response?.data is Map<String, dynamic>) {
+        try {
+          final responseData = e.response!.data as Map<String, dynamic>;
+          final apiResponse = ApiResponse<dynamic>.fromJson(responseData, null);
+          
+          // If we successfully parsed an API response, use it
+          if (apiResponse.message.isNotEmpty) {
+            return Left(_handleApiError(apiResponse));
+          }
+        } on Exception catch (parseError) {
+          // If parsing fails, fall back to status code mapping
+          logI("Failed to parse error response: $parseError");
+        }
+      }
+      
+      // Fall back to status code mapping
       return Left(_mapDioError(e));
     } on Exception catch (e) {
       return Left(ServerFailure(message: e.toString()));

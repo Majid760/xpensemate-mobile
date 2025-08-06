@@ -14,8 +14,36 @@ class AppDialogs {
     MessageType type = MessageType.defaultType,
   }) {
     final theme = Theme.of(context);
-    final backgroundColor = theme.colorScheme.primary;
-    final textColor = theme.colorScheme.onPrimary;
+    
+    // Define the primary button gradient
+    const primaryGradient = LinearGradient(
+      colors: [
+        Color(0xFF6366F1), // indigo-500
+        Color(0xFFA855F7), // purple-500
+      ],
+      begin: Alignment.bottomLeft,
+      end: Alignment.topRight,
+    );
+    
+    // Determine background color and gradient based on type
+    Color backgroundColor;
+    LinearGradient? gradient;
+    
+    switch (type) {
+      case MessageType.success:
+      case MessageType.info:
+      case MessageType.defaultType:
+        backgroundColor = theme.colorScheme.primary;
+        gradient = primaryGradient;
+        break;
+      default:
+        backgroundColor = getColorFromType(type, context);
+        gradient = null;
+        break;
+    }
+    
+    const textColor = Colors.white; // Always use white text for better contrast
+    
     top_snack_bar.showTopSnackBar(
       Overlay.of(context),
       Material(
@@ -26,10 +54,11 @@ class AppDialogs {
             vertical: 18,
           ),
           decoration: BoxDecoration(
-            color: backgroundColor,
+            gradient: gradient,
+            color: gradient == null ? backgroundColor : null,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Center(child: Text(message, style: TextStyle(color: textColor, fontSize: 16))),
+          child: Center(child: Text(message, style: const TextStyle(color: textColor, fontSize: 16))),
         ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 12),

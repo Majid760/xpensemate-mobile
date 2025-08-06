@@ -13,12 +13,23 @@ class AppSnackBar {
 
     final theme = Theme.of(context);
 
+    // Define the primary button gradient
+    const primaryGradient = LinearGradient(
+      colors: [
+        Color(0xFF6366F1), // indigo-500
+        Color(0xFFA855F7), // purple-500
+      ],
+      begin: Alignment.bottomLeft,
+      end: Alignment.topRight,
+    );
+
     // Define colors based on type
     final styles = <SnackBarType, SnackBarStyle>{
       SnackBarType.success: SnackBarStyle(
         backgroundColor: Colors.green.shade800,
         iconData: Icons.check_circle_outline,
         borderColor: Colors.green.shade600,
+        gradient: primaryGradient,
       ),
       SnackBarType.error: SnackBarStyle(
         backgroundColor: Colors.red.shade800,
@@ -34,6 +45,7 @@ class AppSnackBar {
         backgroundColor: Colors.blue.shade800,
         iconData: Icons.info_outline,
         borderColor: Colors.blue.shade600,
+        gradient: primaryGradient,
       ),
     };
 
@@ -187,7 +199,8 @@ class _AnimatedSnackBarContentState extends State<_AnimatedSnackBarContent> with
               scale: _scaleAnimation.value,
               child: Container(
                 decoration: BoxDecoration(
-                  color: widget.style.backgroundColor,
+                  gradient: widget.style.gradient,
+                  color: widget.style.gradient == null ? widget.style.backgroundColor : null,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: widget.style.borderColor,
@@ -195,7 +208,9 @@ class _AnimatedSnackBarContentState extends State<_AnimatedSnackBarContent> with
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: widget.style.backgroundColor.withValues(alpha: 0.4),
+                      color: (widget.style.gradient != null 
+                          ? const Color(0xFF6366F1) 
+                          : widget.style.backgroundColor).withValues(alpha: 0.4),
                       blurRadius: 12 * _pulseAnimation.value,
                       offset: const Offset(0, 4),
                     ),
@@ -203,6 +218,7 @@ class _AnimatedSnackBarContentState extends State<_AnimatedSnackBarContent> with
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Transform.scale(
                       scale: _iconScaleAnimation.value,
@@ -216,7 +232,7 @@ class _AnimatedSnackBarContentState extends State<_AnimatedSnackBarContent> with
                       ),
                     ),
                     const SizedBox(width: 16),
-                    Expanded(
+                    Flexible(
                       child: _buildAnimatedText(),
                     ),
                     if (widget.actionLabel != null && widget.onActionPressed != null) ...[
@@ -295,10 +311,12 @@ class SnackBarStyle {
     required this.backgroundColor,
     required this.iconData,
     required this.borderColor,
+    this.gradient,
   });
   final Color backgroundColor;
   final IconData iconData;
   final Color borderColor;
+  final LinearGradient? gradient;
 }
 
 // Enum for different SnackBar types

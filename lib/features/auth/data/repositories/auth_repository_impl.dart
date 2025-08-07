@@ -20,7 +20,7 @@ class AuthRepositoryImpl
   final NetworkInfoService networkInfo;
 
   // Cache for the current user
-  User? _cachedUser;
+  UserEntity? _cachedUser;
   AuthToken? _cachedToken;
 
   @override
@@ -33,7 +33,7 @@ class AuthRepositoryImpl
 
   /// Get current user
   @override
-  Future<Either<Failure, User>> getCurrentUser() async {
+  Future<Either<Failure, UserEntity>> getCurrentUser() async {
     if (_cachedUser != null) return right(_cachedUser!);
     return withNetworkCheck(() async {
       final result = await remoteDataSource.getCurrentUser();
@@ -49,7 +49,7 @@ class AuthRepositoryImpl
 
   /// Sign in with email and password
   @override
-  Future<Either<Failure, User>> signInWithEmailAndPassword({
+  Future<Either<Failure, UserEntity>> signInWithEmailAndPassword({
     required String email,
     required String password,
   }) async {
@@ -61,13 +61,10 @@ class AuthRepositoryImpl
         );
         return result.fold(
           left,
-          (authTokenModel) async {
-            _cachedToken = authTokenModel.toEntity();
-            final userResult = await getCurrentUser();
-            if (userResult.isLeft()) {
-              return left(const ServerFailure(message: 'User not found'));
-            }
-            return userResult;
+          (userModel) {
+            // Store the user in cache
+            _cachedUser = userModel.toEntity();
+            return right(_cachedUser!);
           },
         );
       });
@@ -102,7 +99,7 @@ class AuthRepositoryImpl
 
   /// Sign in with Google
   @override
-  Future<Either<Failure, User>> signInWithGoogle() async {
+  Future<Either<Failure, UserEntity>> signInWithGoogle() async {
     try {
       return withNetworkCheck(() async {
         final result = await remoteDataSource.signInWithGoogle();
@@ -122,7 +119,7 @@ class AuthRepositoryImpl
 
   /// Sign in with Apple
   @override
-  Future<Either<Failure, User>> signInWithApple() async {
+  Future<Either<Failure, UserEntity>> signInWithApple() async {
     try {
       return withNetworkCheck(() async {
         final result = await remoteDataSource.signInWithApple();

@@ -19,7 +19,7 @@ class AuthState extends Equatable {
   const AuthState.loading() : this(status: AuthStatus.loading);
 
 /// Authenticated state
-  const AuthState.authenticated(User user)
+  const AuthState.authenticated(UserEntity user)
       : this(
           status: AuthStatus.authenticated,
           user: user,
@@ -40,7 +40,7 @@ class AuthState extends Equatable {
 
 
   final AuthStatus status;
-  final User? user;
+  final UserEntity? user;
   final String? errorMessage;
   final StackTrace? stackTrace;
 
@@ -49,7 +49,7 @@ class AuthState extends Equatable {
   /// Copy with method for immutability
   AuthState copyWith({
     AuthStatus? status,
-    User? user,
+    UserEntity? user,
     String? errorMessage,
     StackTrace? stackTrace,
   }) => AuthState(

@@ -7,13 +7,13 @@ import 'package:xpensemate/features/auth/domain/repositories/auth_repository.dar
 
 
 class SignInWithEmailUseCase
-    extends UseCase<User, SignInWithEmailUseCaseParams> {
+    extends UseCase<UserEntity, SignInWithEmailUseCaseParams> {
 
   SignInWithEmailUseCase(this.repository);
   final AuthRepository repository;
 
   @override
-  Future<Either<Failure, User>> call(SignInWithEmailUseCaseParams params) => repository.signInWithEmailAndPassword(
+  Future<Either<Failure, UserEntity>> call(SignInWithEmailUseCaseParams params) => repository.signInWithEmailAndPassword(
       email: params.email,
       password: params.password,
     );

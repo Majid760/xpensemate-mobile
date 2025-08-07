@@ -2,8 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:xpensemate/features/auth/data/models/user_model.dart';
 
 
-class User extends Equatable {
-  const User({
+class UserEntity extends Equatable {
+  const UserEntity({
     required this.id,
     required this.email,
     this.name,
@@ -20,12 +20,12 @@ class User extends Equatable {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
-  static const empty = User(id: '', email: '');
+  static const empty = UserEntity(id: '', email: '');
 
-  bool get isEmpty => this == User.empty;
-  bool get isNotEmpty => this != User.empty;
+  bool get isEmpty => this == UserEntity.empty;
+  bool get isNotEmpty => this != UserEntity.empty;
 
-  User copyWith({
+  UserEntity copyWith({
     String? id,
     String? email,
     String? name,
@@ -34,7 +34,7 @@ class User extends Equatable {
     DateTime? createdAt,
     DateTime? updatedAt,
   }) =>
-      User(
+      UserEntity(
         id: id ?? this.id,
         email: email ?? this.email,
         name: name ?? this.name,

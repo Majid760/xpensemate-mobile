@@ -4,9 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/route/utils/router_extension.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
-import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/core/utils/assset_path.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
+import 'package:xpensemate/core/widget/app_dialogs.dart';
 import 'package:xpensemate/core/widget/app_image.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
@@ -58,26 +58,20 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
-          logI("register state is ==> ${state.state}");
           if (state.state == AuthStates.error) {
-            logE("error is ==> ${state.errorMessage ?? ""}");
             AppSnackBar.show(
               context: context,
               message: state.errorMessage ?? l10n.errorGeneric,
               type: SnackBarType.error,
             );
           } else if (state.state == AuthStates.loaded) {
-            logI("register success");  
-            AppSnackBar.show(
-              context: context,
+            AppDialogs.showTopSnackBar(
+               context,
               message: l10n.registerSuccess,
-              duration: const Duration(seconds: 4),
-              type: SnackBarType.success,
+              type: MessageType.info,
             );
-
-            context.goToVerifyEmail();
+            context.goToVerifyEmail(email: _emailController.text.trim().toLowerCase());
           }else {
-            logI("register loading");
           } 
         },
         builder: (context, state) => SafeArea(
@@ -111,7 +105,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          const SizedBox(height: AppSpacing.lg),
+                          const SizedBox(height: AppSpacing.xl),
 
                           // Name Field
                           CustomTextFormField(
@@ -150,7 +144,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter your email';
                               }
-                              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                              if (!RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
                                   .hasMatch(value)) {
                                 return 'Please enter a valid email';
                               }

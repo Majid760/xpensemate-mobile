@@ -1,6 +1,10 @@
-import 'package:xpensemate/features/auth/domain/entities/user.dart';
+import 'dart:math';
 
-class UserModel extends User {
+import 'package:flutter/material.dart';
+import 'package:xpensemate/features/auth/domain/entities/user.dart';
+import 'package:xpensemate/l10n/app_localizations_en.dart';
+
+class UserModel extends UserEntity {
 
   const UserModel({
     required super.id,
@@ -12,7 +16,7 @@ class UserModel extends User {
     super.updatedAt,
   });
 
-  factory UserModel.fromEntity(User user) => UserModel(
+  factory UserModel.fromEntity(UserEntity user) => UserModel(
       id: user.id,
       email: user.email,
       name: user.name,
@@ -22,19 +26,31 @@ class UserModel extends User {
       updatedAt: user.updatedAt,
     );
 
-  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-      id: json['id'] as String,
-      email: json['email'] as String,
-      name: json['name'] as String?,
-      photoUrl: json['photoUrl'] as String?,
-      isEmailVerified: json['isEmailVerified'] as bool? ?? false,
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'] as String)
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    try{
+    // Handle nested user structure
+    final userData = json['user'] as Map<String, dynamic>? ?? json;
+    
+    return UserModel(
+      id: userData['_id'] as String? ?? userData['id'] as String? ?? '',
+      email: userData['email'] as String,
+      name: userData['firstName'] != null && userData['lastName'] != null
+          ? '${userData['firstName']} ${userData['lastName']}'
+          : userData['name'] as String?,
+      photoUrl: userData['profilePhotoUrl'] as String? ?? userData['photoUrl'] as String?,
+      isEmailVerified: userData['isVerified'] as bool? ?? userData['isEmailVerified'] as bool? ?? false,
+      createdAt: userData['createdAt'] != null
+          ? DateTime.parse(userData['createdAt'] as String)
           : null,
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'] as String)
+      updatedAt: userData['updatedAt'] != null
+          ? DateTime.parse(userData['updatedAt'] as String)
           : null,
     );
+    }on Exception catch(error){
+      debugPrint('errror in user modle mapping $error');
+      rethrow;
+    }
+  }
 
 
   Map<String, dynamic> toJson() => {
@@ -47,7 +63,7 @@ class UserModel extends User {
       if (updatedAt != null) 'updatedAt': updatedAt!.toIso8601String(),
     };
 
-  User toEntity() => User(
+  UserEntity toEntity() => UserEntity(
       id: id,
       email: email,
       name: name,

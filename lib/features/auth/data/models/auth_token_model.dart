@@ -17,11 +17,14 @@ class AuthTokenModel extends Equatable {
           : 3600,
     );
 
-  factory AuthTokenModel.fromJson(Map<String, dynamic> json) => AuthTokenModel(
-      accessToken: json['access_token'] as String,
-      refreshToken: json['refresh_token'] as String?,
-      expiresIn: json['expires_in'] as int? ?? 3600,
+
+  factory AuthTokenModel.fromJson(Map<String, dynamic> json) {
+    return AuthTokenModel(
+      accessToken: json['token'] as String? ?? (throw ArgumentError('token is required')),
+      refreshToken: json['refreshToken'] as String?,
+      expiresIn: json['expiresIn'] as int? ?? 3600,
     );
+  }
   final String accessToken;
   final String? refreshToken;
   final int expiresIn;

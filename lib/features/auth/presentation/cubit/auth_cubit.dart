@@ -8,7 +8,7 @@ import 'package:xpensemate/features/auth/presentation/cubit/auth_state.dart';
 class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
   AuthCubit() : super(const AuthState());
 
-  /// logi with email
+  /// login with email
   Future<void> loginWithEmail(
       {required String email, required String password,}) async {
     emit(state.copyWith(state: AuthStates.loading));

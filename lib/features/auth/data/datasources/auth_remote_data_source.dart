@@ -2,11 +2,12 @@ import 'package:dartz/dartz.dart';
 import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/core/network/network_configs.dart';
 import 'package:xpensemate/core/network/network_contracts.dart';
+import 'package:xpensemate/core/service/secure_storage_service.dart';
 import 'package:xpensemate/features/auth/data/models/auth_token_model.dart';
 import 'package:xpensemate/features/auth/data/models/user_model.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<Either<Failure, AuthTokenModel>> signInWithEmailAndPassword({
+  Future<Either<Failure, UserModel>> signInWithEmailAndPassword({
     required String email,
     required String password,
   });
@@ -34,21 +35,48 @@ abstract class AuthRemoteDataSource {
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  AuthRemoteDataSourceImpl(this._client);
+  AuthRemoteDataSourceImpl(this._client, this._tokenStorage);
   final NetworkClient _client;
+  final IStorageService _tokenStorage;
+
 
   /// Sign in with email and password
   @override
-  Future<Either<Failure, AuthTokenModel>> signInWithEmailAndPassword({
+  Future<Either<Failure, UserModel>> signInWithEmailAndPassword({
     required String email,
     required String password,
-  }) =>
-      _client.post(
+  }) async {
+    try {
+      final response = await _client.post<dynamic>(
         NetworkConfigs.login,
         body: {'email': email, 'password': password},
-        fromJson: AuthTokenModel.fromJson,
       );
-
+    
+      return response.fold(
+        Left.new,
+        (rawResponse) async {
+          if (rawResponse is Map<String, dynamic>) {
+            final user = UserModel.fromJson(rawResponse);
+            
+            // Store tokens using generic methods
+            if (rawResponse['token'] != null) {
+              await _tokenStorage.save(StorageKeys.accessTokenKey, rawResponse['token'] as String);
+              
+              if (rawResponse['refreshToken'] != null) {
+                await _tokenStorage.save(StorageKeys.refreshTokenKey, rawResponse['refreshToken'] as String);
+              }
+            }
+            
+            return Right(user);
+          }
+          
+          return const Left(ServerFailure(message: 'Invalid response format'));
+        },
+      );
+    } on Exception catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
   /// Sign in with Google
   @override
   Future<Either<Failure, UserModel>> signInWithGoogle() => 
@@ -106,8 +134,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   /// Refresh token
   @override
   Future<Either<Failure, AuthTokenModel>> refreshToken(String refreshToken) =>
-      _client
-          .post(NetworkConfigs.refreshToken, body: {'refresh': refreshToken});
+      _client.post(
+        NetworkConfigs.refreshToken, 
+        body: {'refresh': refreshToken},
+        fromJson: AuthTokenModel.fromJson,
+      );
  
 
   /// Get current user

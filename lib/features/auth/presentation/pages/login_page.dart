@@ -98,7 +98,7 @@ class _LoginPageState extends State<LoginPage> {
                             textAlign: TextAlign.center,
                           ),
 
-                          const SizedBox(height: AppSpacing.lg),
+                          const SizedBox(height: AppSpacing.xl),
                           // Email Field
                           CustomTextFormField(
                             labelText: l10n.email,
@@ -117,10 +117,9 @@ class _LoginPageState extends State<LoginPage> {
                                 return l10n
                                     .emailRequired; // Updated to use emailRequired
                               }
-                              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                             if (!RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
                                   .hasMatch(value)) {
-                                return l10n
-                                    .invalidEmail; // Using existing invalidEmail message
+                                return 'Please enter a valid email';
                               }
                               return null;
                             },

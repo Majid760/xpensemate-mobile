@@ -7,13 +7,14 @@ import 'package:xpensemate/core/network/interceptors/logging_interceptor.dart';
 // import 'package:xpensemate/core/network/interceptors/retry_interceptor.dart';
 import 'package:xpensemate/core/network/network_configs.dart';
 import 'package:xpensemate/core/network/network_contracts.dart';
+import 'package:xpensemate/core/service/secure_storage_service.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 
 
 
 final class NetworkClientImp implements NetworkClient{
   NetworkClientImp({
-    required String token,
+    required IStorageService tokenStorage,
     required Future<String?> Function() refreshToken,
   }) : _dio = Dio(
           BaseOptions(
@@ -23,13 +24,12 @@ final class NetworkClientImp implements NetworkClient{
             headers: {
               'Content-Type': 'application/json',
               'Accept': 'application/json',
-              'Authorization': 'Bearer $token',
             },
           ),
         )..interceptors.addAll([
             LoggingInterceptor(),
             // RetryInterceptor(retries: NetworkConfigs.maxRetries),
-            AuthInterceptor(token, refreshToken),
+            AuthInterceptor(tokenStorage, refreshToken),
           ]);
 
   final Dio _dio;

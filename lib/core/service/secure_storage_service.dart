@@ -16,19 +16,23 @@ class StorageKeys {
   static const userEmail = 'user_email';
   static const localeKey = 'selected_locale';
   static const themeKey = 'theme_mode';
+  static const accessTokenKey = 'access_token';
+  static const refreshTokenKey = 'refresh_token';
 }
 
 // Main storage service - Singleton with static methods
 class SecureStorageService implements IStorageService {
-  factory SecureStorageService() => _instance;
   SecureStorageService._internal();
+  
+  // Singleton instance
   static final SecureStorageService _instance = SecureStorageService._internal();
+  static SecureStorageService get instance => _instance;
 
-  static FlutterSecureStorage? _storage;
-  static bool _isInitialized = false;
+  FlutterSecureStorage? _storage;
+  bool _isInitialized = false;
 
   // Initialize the storage service
-  static Future<void> initialize() async {
+  Future<void> initialize() async {
     try {
       if (!_isInitialized) {
         _storage = const FlutterSecureStorage();
@@ -83,7 +87,7 @@ class SecureStorageService implements IStorageService {
   }
 
   // Ensure storage is initialized before use
-  static Future<void> _ensureInitialized() async {
+  Future<void> _ensureInitialized() async {
     if (!_isInitialized || _storage == null) {
       await initialize();
     }

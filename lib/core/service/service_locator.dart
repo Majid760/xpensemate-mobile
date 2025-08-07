@@ -23,7 +23,7 @@ Future<void> initLocator() async {
     AppLogger.init(isDebug: kDebugMode);
     
     // Initialize SecureStorageService first
-    await SecureStorageService.initialize();
+    await SecureStorageService.instance.initialize();
     
     // Then initialize LocaleManager
     await LocaleManager().initialize();
@@ -35,18 +35,22 @@ Future<void> initLocator() async {
       ),
     );
    
+    // ---------- Secure Storage Service ----------
+    sl.registerLazySingleton<IStorageService>(
+      () => SecureStorageService.instance,
+    );
 
     // ---------- Network Client ----------
     sl.registerLazySingleton<NetworkClient>(
       () => NetworkClientImp(
-        token: '',
+        tokenStorage: sl(),
         refreshToken: () async => null,
       ),
     );
 
     // ---------- Data sources ----------
     sl.registerLazySingleton<AuthRemoteDataSource>(
-      () => AuthRemoteDataSourceImpl(sl()),
+      () => AuthRemoteDataSourceImpl(sl(), sl()),
     );
 
     // ---------- Repositories ----------

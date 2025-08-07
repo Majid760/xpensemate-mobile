@@ -18,7 +18,7 @@ class LocaleManager extends ChangeNotifier {
   /// Initialize the locale manager
   Future<void> initialize() async {
     try {
-      final savedLocale = await SecureStorageService().get(StorageKeys.localeKey);
+      final savedLocale = await SecureStorageService.instance.get(StorageKeys.localeKey);
       if (savedLocale != null) {
         final parts = savedLocale.split('_');
         _currentLocale = Locale(
@@ -41,7 +41,7 @@ class LocaleManager extends ChangeNotifier {
     _currentLocale = locale;
 
     try {
-      await SecureStorageService().save(StorageKeys.localeKey, locale.languageCode);
+      await SecureStorageService.instance.save(StorageKeys.localeKey, locale.languageCode);
     } on Exception catch (e) {
       logE('Error saving locale: $e');
     }
@@ -52,7 +52,7 @@ class LocaleManager extends ChangeNotifier {
   Future<void> resetToSystemLocale() async {
     _currentLocale = null;
     try {
-      await SecureStorageService().remove(StorageKeys.localeKey);
+      await SecureStorageService.instance.remove(StorageKeys.localeKey);
     } on Exception catch (e) {
       logE('Error removing locale: $e');
     }

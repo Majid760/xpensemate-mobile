@@ -15,7 +15,11 @@ class RouteGuards {
     final isLoggedIn = _authCubit.state.isAuthenticated;
     final isLoginRoute = _isAuthRoute(state.matchedLocation);
     final isSplashRoute = state.matchedLocation == RouteConstants.splash;
+    final isEmailVerified = _authCubit.state.user?.isEmailVerified ?? false;
 
+    if (!isEmailVerified) {
+      return RouteConstants.emailVerify;
+    }
     // Handle splash screen logic
     if (isSplashRoute) {
       return null; // Let splash screen handle the redirect

@@ -15,7 +15,6 @@ import 'package:xpensemate/core/utils/app_logger.dart';
 final class NetworkClientImp implements NetworkClient{
   NetworkClientImp({
     required IStorageService tokenStorage,
-    required Future<String?> Function() refreshToken,
   }) : _dio = Dio(
           BaseOptions(
             baseUrl: NetworkConfigs.baseUrl,
@@ -29,7 +28,7 @@ final class NetworkClientImp implements NetworkClient{
         )..interceptors.addAll([
             LoggingInterceptor(),
             // RetryInterceptor(retries: NetworkConfigs.maxRetries),
-            AuthInterceptor(tokenStorage, refreshToken),
+            AuthInterceptor(tokenStorage),
           ]);
 
   final Dio _dio;
@@ -102,7 +101,6 @@ final class NetworkClientImp implements NetworkClient{
       logI("responseData: $responseData");
       // Handle standardized API response
       final apiResponse = ApiResponse.fromJson(responseData, fromJson);
-            logI("api error: ${apiResponse.message}");
 
       if (apiResponse.isSuccess) {
         // If fromJson is provided, return the parsed data

@@ -12,7 +12,7 @@ abstract class HomeRoutes {
       path: RouteConstants.home,
       name: RouteNames.home,
       redirect: RouteGuards.requireAuth,
-      builder: (context, state) => const EmailVerificationScreen(email: 'themuhmand@gmail.com'),
+      builder: (context, state) => const HomePage(),
       routes: [
         // GoRoute(
         //   path: 'dashboard',

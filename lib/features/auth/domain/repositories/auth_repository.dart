@@ -8,10 +8,10 @@ abstract class AuthRepository {
 Future<Either<Failure, bool>> isAuthenticated();
   
   // Get current user
- Future<Either<Failure, User>> getCurrentUser();
+ Future<Either<Failure, UserEntity>> getCurrentUser();
   
   // Sign in with email and password
-  Future<Either<Failure, User>> signInWithEmailAndPassword({
+  Future<Either<Failure, UserEntity>> signInWithEmailAndPassword({
     required String email,
     required String password,
   });
@@ -24,10 +24,10 @@ Future<Either<Failure, bool>> isAuthenticated();
   });
   
   // Sign in with Google
-  Future<Either<Failure, User>> signInWithGoogle();
+  Future<Either<Failure, UserEntity>> signInWithGoogle();
   
   // Sign in with Apple
-  Future<Either<Failure, User>> signInWithApple();
+  Future<Either<Failure, UserEntity>> signInWithApple();
   
   // Sign out
   Future<Either<Failure, void>> signOut();

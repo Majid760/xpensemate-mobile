@@ -62,7 +62,6 @@ class AuthRepositoryImpl
         return result.fold(
           left,
           (userModel) {
-            // Store the user in cache
             _cachedUser = userModel.toEntity();
             return right(_cachedUser!);
           },

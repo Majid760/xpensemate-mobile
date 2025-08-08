@@ -7,16 +7,26 @@ class UserEntity extends Equatable {
     required this.id,
     required this.email,
     this.name,
-    this.photoUrl,
+    this.profilePhotoUrl,
+    this.coverPhotoUrl,
     this.isEmailVerified = false,
+    this.gender,
+    this.about,
+    this.phoneNumber,
+    this.dob,
     this.createdAt,
     this.updatedAt,
   });
   final String id;
   final String email;
   final String? name;
-  final String? photoUrl;
+  final String? profilePhotoUrl;
+  final String? coverPhotoUrl;
   final bool isEmailVerified;
+  final String? phoneNumber;
+  final String? dob;
+  final String? gender;
+  final String? about;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -29,8 +39,13 @@ class UserEntity extends Equatable {
     String? id,
     String? email,
     String? name,
-    String? photoUrl,
+    String? profilePhotoUrl,
+    String? coverPhotoUrl,
     bool? isEmailVerified,
+    String? gender,
+    String? phoneNumber,
+    String? dob,
+    String? about,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) =>
@@ -38,8 +53,13 @@ class UserEntity extends Equatable {
         id: id ?? this.id,
         email: email ?? this.email,
         name: name ?? this.name,
-        photoUrl: photoUrl ?? this.photoUrl,
+        gender: gender ?? this.gender,
+        about: about ?? this.about,
+        profilePhotoUrl: profilePhotoUrl ?? this.profilePhotoUrl,
+        coverPhotoUrl: coverPhotoUrl ?? this.coverPhotoUrl,
         isEmailVerified: isEmailVerified ?? this.isEmailVerified,
+        phoneNumber: phoneNumber ?? this.phoneNumber,
+        dob: dob ?? this.dob,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
@@ -49,7 +69,12 @@ class UserEntity extends Equatable {
       id: id,
       email: email,
       name: name,
-      photoUrl: photoUrl,
+      gender: gender,
+      about: about,
+      profilePhotoUrl: profilePhotoUrl,
+      coverPhotoUrl: coverPhotoUrl,
+      phoneNumber: phoneNumber,
+      dob: dob,
       isEmailVerified: isEmailVerified,
       createdAt: createdAt,
       updatedAt: updatedAt,
@@ -60,7 +85,12 @@ class UserEntity extends Equatable {
         id,
         email,
         name,
-        photoUrl,
+        gender,
+        about,
+        profilePhotoUrl,
+        phoneNumber,
+        dob,
+        coverPhotoUrl,
         isEmailVerified,
         createdAt,
         updatedAt,

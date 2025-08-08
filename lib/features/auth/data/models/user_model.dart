@@ -1,8 +1,6 @@
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:xpensemate/features/auth/domain/entities/user.dart';
-import 'package:xpensemate/l10n/app_localizations_en.dart';
 
 class UserModel extends UserEntity {
 
@@ -10,7 +8,12 @@ class UserModel extends UserEntity {
     required super.id,
     required super.email,
     super.name,
-    super.photoUrl,
+    super.profilePhotoUrl,
+    super.coverPhotoUrl,
+    super.gender,
+    super.about,
+    super.phoneNumber,
+    super.dob,
     super.isEmailVerified,
     super.createdAt,
     super.updatedAt,
@@ -20,7 +23,12 @@ class UserModel extends UserEntity {
       id: user.id,
       email: user.email,
       name: user.name,
-      photoUrl: user.photoUrl,
+      profilePhotoUrl: user.profilePhotoUrl,
+      coverPhotoUrl: user.coverPhotoUrl,
+      gender: user.gender,
+      about: user.about,
+      phoneNumber: user.phoneNumber,
+      dob: user.dob,
       isEmailVerified: user.isEmailVerified,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
@@ -28,24 +36,29 @@ class UserModel extends UserEntity {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     try{
-    // Handle nested user structure
-    final userData = json['user'] as Map<String, dynamic>? ?? json;
-    
-    return UserModel(
-      id: userData['_id'] as String? ?? userData['id'] as String? ?? '',
-      email: userData['email'] as String,
-      name: userData['firstName'] != null && userData['lastName'] != null
-          ? '${userData['firstName']} ${userData['lastName']}'
-          : userData['name'] as String?,
-      photoUrl: userData['profilePhotoUrl'] as String? ?? userData['photoUrl'] as String?,
-      isEmailVerified: userData['isVerified'] as bool? ?? userData['isEmailVerified'] as bool? ?? false,
-      createdAt: userData['createdAt'] != null
-          ? DateTime.parse(userData['createdAt'] as String)
-          : null,
-      updatedAt: userData['updatedAt'] != null
-          ? DateTime.parse(userData['updatedAt'] as String)
-          : null,
-    );
+      // Handle nested user structure
+      final userData = json['user'] as Map<String, dynamic>? ?? json;
+      
+      return UserModel(
+        id: userData['_id'] as String? ?? userData['id'] as String? ?? '',
+        email: userData['email'] as String,
+        name: userData['firstName'] != null && userData['lastName'] != null
+            ? '${userData['firstName']} ${userData['lastName']}'
+            : userData['name'] as String?,
+        profilePhotoUrl: userData['profilePhotoUrl'] as String? ?? userData['photoUrl'] as String?,
+        coverPhotoUrl: userData['coverPhotoUrl'] as String?,
+        isEmailVerified: userData['isVerified'] as bool? ?? userData['isEmailVerified'] as bool? ?? false,
+        createdAt: userData['createdAt'] != null
+            ? DateTime.parse(userData['createdAt'] as String)
+            : null,
+        updatedAt: userData['updatedAt'] != null
+            ? DateTime.parse(userData['updatedAt'] as String)
+            : null,
+        gender: userData['gender'] as String?,
+        about: userData['about'] as String?,
+        phoneNumber: userData['phoneNumber'] as String?,
+        dob: userData['dob'] as String?,
+      );
     }on Exception catch(error){
       debugPrint('errror in user modle mapping $error');
       rethrow;
@@ -57,17 +70,26 @@ class UserModel extends UserEntity {
       'id': id,
       'email': email,
       if (name != null) 'name': name,
-      if (photoUrl != null) 'photoUrl': photoUrl,
+      if (profilePhotoUrl != null) 'photoUrl': profilePhotoUrl,
       'isEmailVerified': isEmailVerified,
       if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
       if (updatedAt != null) 'updatedAt': updatedAt!.toIso8601String(),
+      if (gender != null) 'gender': gender,
+      if (about != null) 'about': about,
+      if (phoneNumber != null) 'phoneNumber': phoneNumber,
+      if (dob != null) 'dob': dob,
     };
 
   UserEntity toEntity() => UserEntity(
       id: id,
       email: email,
       name: name,
-      photoUrl: photoUrl,
+      profilePhotoUrl: profilePhotoUrl,
+      coverPhotoUrl: coverPhotoUrl,
+      gender: gender,
+      about: about,
+      phoneNumber: phoneNumber,
+      dob: dob,
       isEmailVerified: isEmailVerified,
       createdAt: createdAt,
       updatedAt: updatedAt,
@@ -79,7 +101,12 @@ class UserModel extends UserEntity {
         id,
         email,
         name,
-        photoUrl,
+        profilePhotoUrl,
+        coverPhotoUrl,
+        gender,
+        about,
+        phoneNumber,
+        dob,
         isEmailVerified,
         createdAt,
         updatedAt,

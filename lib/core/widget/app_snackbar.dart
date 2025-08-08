@@ -80,7 +80,6 @@ class AppSnackBar {
 
 // Animated SnackBar Content
 class _AnimatedSnackBarContent extends StatefulWidget {
-
   const _AnimatedSnackBarContent({
     required this.message,
     required this.style,
@@ -95,10 +94,12 @@ class _AnimatedSnackBarContent extends StatefulWidget {
   final VoidCallback? onActionPressed;
 
   @override
-  State<_AnimatedSnackBarContent> createState() => _AnimatedSnackBarContentState();
+  State<_AnimatedSnackBarContent> createState() =>
+      _AnimatedSnackBarContentState();
 }
 
-class _AnimatedSnackBarContentState extends State<_AnimatedSnackBarContent> with SingleTickerProviderStateMixin {
+class _AnimatedSnackBarContentState extends State<_AnimatedSnackBarContent>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _slideAnimation;
   late Animation<double> _opacityAnimation;
@@ -190,8 +191,8 @@ class _AnimatedSnackBarContentState extends State<_AnimatedSnackBarContent> with
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
-      animation: _animationController,
-      builder: (context, child) => Transform.translate(
+        animation: _animationController,
+        builder: (context, child) => Transform.translate(
           offset: Offset(0, _slideAnimation.value),
           child: Opacity(
             opacity: _opacityAnimation.value,
@@ -200,7 +201,9 @@ class _AnimatedSnackBarContentState extends State<_AnimatedSnackBarContent> with
               child: Container(
                 decoration: BoxDecoration(
                   gradient: widget.style.gradient,
-                  color: widget.style.gradient == null ? widget.style.backgroundColor : null,
+                  color: widget.style.gradient == null
+                      ? widget.style.backgroundColor
+                      : null,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: widget.style.borderColor,
@@ -208,15 +211,17 @@ class _AnimatedSnackBarContentState extends State<_AnimatedSnackBarContent> with
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: (widget.style.gradient != null 
-                          ? const Color(0xFF6366F1) 
-                          : widget.style.backgroundColor).withValues(alpha: 0.4),
+                      color: (widget.style.gradient != null
+                              ? const Color(0xFF6366F1)
+                              : widget.style.backgroundColor)
+                          .withValues(alpha: 0.4),
                       blurRadius: 12 * _pulseAnimation.value,
                       offset: const Offset(0, 4),
                     ),
                   ],
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -235,7 +240,8 @@ class _AnimatedSnackBarContentState extends State<_AnimatedSnackBarContent> with
                     Flexible(
                       child: _buildAnimatedText(),
                     ),
-                    if (widget.actionLabel != null && widget.onActionPressed != null) ...[
+                    if (widget.actionLabel != null &&
+                        widget.onActionPressed != null) ...[
                       const SizedBox(width: 8),
                       _buildAnimatedButton(),
                     ],
@@ -245,14 +251,14 @@ class _AnimatedSnackBarContentState extends State<_AnimatedSnackBarContent> with
             ),
           ),
         ),
-    );
+      );
 
   Widget _buildAnimatedText() =>
-    // Instead of animating each character individually, animate the entire text
-    // with a simple slide-up and fade-in effect
-     AnimatedBuilder(
-      animation: _textAnimation,
-      builder: (context, child) => Opacity(
+      // Instead of animating each character individually, animate the entire text
+      // with a simple slide-up and fade-in effect
+      AnimatedBuilder(
+        animation: _textAnimation,
+        builder: (context, child) => Opacity(
           opacity: _textAnimation.value,
           child: Transform.translate(
             offset: Offset(0, 20 * (1 - _textAnimation.value)),
@@ -267,8 +273,7 @@ class _AnimatedSnackBarContentState extends State<_AnimatedSnackBarContent> with
             ),
           ),
         ),
-    );
-  
+      );
 
   Widget _buildAnimatedButton() {
     final buttonAnimation = Tween<double>(begin: 0, end: 1).animate(
@@ -281,32 +286,31 @@ class _AnimatedSnackBarContentState extends State<_AnimatedSnackBarContent> with
     return AnimatedBuilder(
       animation: buttonAnimation,
       builder: (context, child) => Transform.scale(
-          scale: buttonAnimation.value,
-          child: TextButton(
-            onPressed: widget.onActionPressed,
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: widget.style.borderColor.withValues(alpha: 0.3),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
+        scale: buttonAnimation.value,
+        child: TextButton(
+          onPressed: widget.onActionPressed,
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.white,
+            backgroundColor: widget.style.borderColor.withValues(alpha: 0.3),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
             ),
-            child: Text(
-              widget.actionLabel!,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
+          ),
+          child: Text(
+            widget.actionLabel!,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
+      ),
     );
   }
 }
 
 // Style model for SnackBar types
 class SnackBarStyle {
-
   SnackBarStyle({
     required this.backgroundColor,
     required this.iconData,
@@ -322,11 +326,8 @@ class SnackBarStyle {
 // Enum for different SnackBar types
 enum SnackBarType { success, error, warning, info }
 
-
-
-
 // extension on BuildContext for showing snackbar
 extension on BuildContext {
   void showSnackBar(String message, {SnackBarType type = SnackBarType.info}) =>
-    AppSnackBar.show(context: this, message: message, type: type);
+      AppSnackBar.show(context: this, message: message, type: type);
 }

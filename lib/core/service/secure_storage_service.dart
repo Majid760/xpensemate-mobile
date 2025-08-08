@@ -7,6 +7,7 @@ sealed class IStorageService {
   Future<String?> get(String key);
   Future<void> remove(String key);
   Future<void> clear();
+  Future<bool> hasValidToken();
 }
 
 // Storage keys
@@ -84,6 +85,13 @@ class SecureStorageService implements IStorageService {
     } catch (e) {
       throw Exception('Failed to clear storage: $e');
     }
+  }
+
+  @override
+  Future<bool> hasValidToken() async {
+    await _ensureInitialized();
+    final accessToken = await get(StorageKeys.accessTokenKey);
+    return accessToken != null && accessToken.isNotEmpty;
   }
 
   // Ensure storage is initialized before use

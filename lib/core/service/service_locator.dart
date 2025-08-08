@@ -44,7 +44,6 @@ Future<void> initLocator() async {
     sl.registerLazySingleton<NetworkClient>(
       () => NetworkClientImp(
         tokenStorage: sl(),
-        refreshToken: () async => null,
       ),
     );
 

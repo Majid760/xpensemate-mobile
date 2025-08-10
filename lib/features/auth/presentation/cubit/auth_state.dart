@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:xpensemate/features/auth/data/models/user_model.dart';
+import 'package:xpensemate/features/auth/domain/entities/user.dart';
 
 enum AuthStates { initial, loading, loaded, error }
 
@@ -15,14 +15,14 @@ const AuthState({
 });
 
 final AuthStates state;
-final UserModel? user;
+final UserEntity? user;
 final String? errorMessage;
 final StackTrace? stackTrace;
 final bool isAuthenticated;
 
 AuthState copyWith({
   AuthStates? state,
-  UserModel? user,
+  UserEntity? user,
   String? errorMessage,
   StackTrace? stackTrace,
   bool? isAuthenticated,

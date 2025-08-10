@@ -2,26 +2,77 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/usecase/usecase.dart';
+import 'package:xpensemate/features/auth/data/datasources/auth_local_storage.dart';
 import 'package:xpensemate/features/auth/domain/usecases/cases_export.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
-  AuthCubit() : super(const AuthState());
+  AuthCubit(this._authLocalDataSource) : super(const AuthState()) {
+    _initializeAuth();
+  }
+
+  final AuthLocalDataSource _authLocalDataSource;
+
+  Future<void> _initializeAuth() async {
+    final userResult = await _authLocalDataSource.getStoredUser();
+    userResult.fold(
+      (failure) {
+        // Failed to get user data, clear tokens and set as unauthenticated
+        _authLocalDataSource.clearTokens();
+        emit(
+          state.copyWith(
+            state: AuthStates.error,
+            isAuthenticated: false,
+            errorMessage: 'Failed to retrieve user data',
+          ),
+        );
+      },
+      (userModel) {
+        if (userModel != null) {
+          emit(
+            state.copyWith(
+              state: AuthStates.loaded,
+              isAuthenticated: true,
+              user: userModel.toEntity(),
+            ),
+          );
+        } else {
+          _authLocalDataSource.clearTokens();
+          emit(
+            state.copyWith(
+              state: AuthStates.loaded,
+              isAuthenticated: false,
+            ),
+          );
+        }
+      },
+    );
+  }
 
   /// login with email
-  Future<void> loginWithEmail(
-      {required String email, required String password,}) async {
+  Future<void> loginWithEmail({
+    required String email,
+    required String password,
+  }) async {
     emit(state.copyWith(state: AuthStates.loading));
     final loginUseCase = sl<SignInWithEmailUseCase>();
     final result = await loginUseCase
         .call(SignInWithEmailUseCaseParams(email: email, password: password));
     result.fold(
-      (failure) => emit(state.copyWith(
+      (failure) => emit(
+        state.copyWith(
           state: AuthStates.error,
           errorMessage: failure.message,
-          isAuthenticated: false,),),
-      (user) => emit(state.copyWith(
-          state: AuthStates.loaded, isAuthenticated: true, user: user.toModel,),),
+          isAuthenticated: false,
+        ),
+      ),
+      (user) => emit(
+        state.copyWith(
+          state: AuthStates.loaded,
+          isAuthenticated: true,
+          user: user.toModel,
+        ),
+      ),
     );
   }
 
@@ -60,8 +111,12 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
     final result = await forgotPasswordUseCase
         .call(ForgotPasswordUseCaseParams(email: email));
     result.fold(
-      (failure) => emit(state.copyWith(
-          state: AuthStates.error, errorMessage: failure.message,),),
+      (failure) => emit(
+        state.copyWith(
+          state: AuthStates.error,
+          errorMessage: failure.message,
+        ),
+      ),
       (user) => emit(state.copyWith(state: AuthStates.loaded)),
     );
   }
@@ -70,10 +125,15 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
   Future<void> sendVerificationEmail({required String email}) async {
     emit(state.copyWith(state: AuthStates.loading));
     final sendVerificationEmailUseCase = sl<SendVerificationEmailUseCase>();
-    final result = await sendVerificationEmailUseCase.call(SendVerificationEmailUseCaseParams(email: email));
+    final result = await sendVerificationEmailUseCase
+        .call(SendVerificationEmailUseCaseParams(email: email));
     result.fold(
-      (failure) => emit(state.copyWith(
-          state: AuthStates.error, errorMessage: failure.message,),),
+      (failure) => emit(
+        state.copyWith(
+          state: AuthStates.error,
+          errorMessage: failure.message,
+        ),
+      ),
       (res) => emit(state.copyWith(state: AuthStates.loaded)),
     );
   }
@@ -88,10 +148,15 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
     final signOutUseCase = sl<SignOutUseCase>();
     final result = await signOutUseCase.call(const NoParams());
     result.fold(
-      (failure) => emit(state.copyWith(
-          state: AuthStates.error, errorMessage: failure.message,),),
+      (failure) => emit(
+        state.copyWith(
+          state: AuthStates.error,
+          errorMessage: failure.message,
+        ),
+      ),
       (user) => emit(
-          state.copyWith(state: AuthStates.loaded, isAuthenticated: false),),
+        state.copyWith(state: AuthStates.loaded, isAuthenticated: false),
+      ),
     );
   }
 

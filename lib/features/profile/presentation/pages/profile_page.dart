@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -581,6 +584,7 @@ class _ProfilePageState extends State<ProfilePage>
           ),
           TextButton(
             onPressed: () {
+              context.read<AuthCubit>().signOut();
               Navigator.pop(context);
               // Implement logout logic here
             },

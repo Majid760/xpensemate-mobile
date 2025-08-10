@@ -70,7 +70,7 @@ class UserModel extends UserEntity {
       'id': id,
       'email': email,
       if (name != null) 'name': name,
-      if (profilePhotoUrl != null) 'photoUrl': profilePhotoUrl,
+      if (profilePhotoUrl != null) 'profilePhotoUrl': profilePhotoUrl,
       'isEmailVerified': isEmailVerified,
       if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
       if (updatedAt != null) 'updatedAt': updatedAt!.toIso8601String(),

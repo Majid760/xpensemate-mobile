@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/core/network/network_configs.dart';
 import 'package:xpensemate/core/network/network_contracts.dart';
-import 'package:xpensemate/core/service/secure_storage_service.dart';
-import 'package:xpensemate/core/utils/app_logger.dart';
+import 'package:xpensemate/features/auth/data/datasources/auth_local_storage.dart';
+
 import 'package:xpensemate/features/auth/data/models/auth_token_model.dart';
 import 'package:xpensemate/features/auth/data/models/user_model.dart';
 
@@ -37,9 +39,9 @@ abstract class AuthRemoteDataSource {
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  AuthRemoteDataSourceImpl(this._client, this._tokenStorage);
+  AuthRemoteDataSourceImpl(this._client, this._localDataSource);
   final NetworkClient _client;
-  final IStorageService _tokenStorage;
+  final AuthLocalDataSource _localDataSource;
 
   /// Sign in with email and password
   @override
@@ -57,10 +59,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         Left.new,
         (json) async {
           // Parse user data using compute for better performance
-          final user = await compute(_parseUserFromJson, json);
-          // Store tokens synchronously (IStorageService can't be passed to compute)
-          _storeTokensFromResponse(json);
-
+          final (user, token) = await compute(_parseUserFromJson, json);
+          unawaited(_localDataSource.storeTokens(token));
+          unawaited(_localDataSource.storeUser(user));
           return Right(user);
         },
       );
@@ -140,21 +141,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   /// Logout
   @override
-  Future<Either<Failure, void>> logout() => _client.post(NetworkConfigs.logout);
-
-  // Helper method to store tokens from response
-  void _storeTokensFromResponse(Map<String, dynamic> json) {
-    // Store tokens using generic methods
-    if (json['token'] != null) {
-      _tokenStorage.save(StorageKeys.accessTokenKey, json['token'] as String);
-      
-      if (json['refreshToken'] != null) {
-        _tokenStorage.save(StorageKeys.refreshTokenKey, json['refreshToken'] as String);
-      }
-    }
+  Future<Either<Failure, void>> logout() {
+    _localDataSource.clearUser();
+    return _client.post(NetworkConfigs.logout);
   }
 }
 
 // Compute functions for better performance
-UserModel _parseUserFromJson(Map<String, dynamic> json) =>
-    UserModel.fromJson(json);
+(UserModel, AuthTokenModel) _parseUserFromJson(Map<String, dynamic> json) =>
+    (UserModel.fromJson(json), AuthTokenModel.fromJson(json));

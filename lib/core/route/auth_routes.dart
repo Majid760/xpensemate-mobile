@@ -31,7 +31,7 @@ abstract class AuthRoutes {
       path: RouteConstants.emailVerify,
       name: RouteNames.emailVerify,
       redirect: RouteGuards.requireGuest,
-      builder: (context, state) => EmailVerificationScreen(email: state.extra! as String),
+      builder: (context, state) => EmailVerificationScreen(email: state.extra as String? ?? ''),
     ),
   ];
 }

@@ -19,6 +19,7 @@ class StorageKeys {
   static const themeKey = 'theme_mode';
   static const accessTokenKey = 'access_token';
   static const refreshTokenKey = 'refresh_token';
+  static const userData = 'user_data';
 }
 
 // Main storage service - Singleton with static methods

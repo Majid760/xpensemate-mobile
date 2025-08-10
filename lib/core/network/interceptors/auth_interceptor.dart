@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:xpensemate/core/network/network_configs.dart';
 import 'package:xpensemate/core/service/secure_storage_service.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
-import 'package:xpensemate/core/network/network_configs.dart';
 import 'package:xpensemate/features/auth/data/models/auth_token_model.dart';
 
 /// Uses QueuedInterceptor to avoid race conditions.

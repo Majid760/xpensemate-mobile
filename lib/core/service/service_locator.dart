@@ -7,10 +7,13 @@ import 'package:xpensemate/core/network/network_contracts.dart';
 import 'package:xpensemate/core/network/network_info.dart';
 import 'package:xpensemate/core/service/secure_storage_service.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
+import 'package:xpensemate/features/auth/data/datasources/auth_local_storage.dart';
 import 'package:xpensemate/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:xpensemate/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:xpensemate/features/auth/domain/repositories/auth_repository.dart';
 import 'package:xpensemate/features/auth/domain/usecases/cases_export.dart';
+import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
+
 /// Global, lazy singleton
 final sl = GetIt.instance;
 
@@ -21,10 +24,10 @@ Future<void> initLocator() async {
   try {
     // Initialize services
     AppLogger.init(isDebug: kDebugMode);
-    
+
     // Initialize SecureStorageService first
     await SecureStorageService.instance.initialize();
-    
+
     // Then initialize LocaleManager
     await LocaleManager().initialize();
 
@@ -34,10 +37,15 @@ Future<void> initLocator() async {
         Connectivity(),
       ),
     );
-   
+
     // ---------- Secure Storage Service ----------
     sl.registerLazySingleton<IStorageService>(
       () => SecureStorageService.instance,
+    );
+
+    // ---------- Secure Storage token ----------
+    sl.registerLazySingleton<AuthLocalDataSource>(
+      () =>  AuthLocalDataSourceImpl(sl()),
     );
 
     // ---------- Network Client ----------
@@ -56,7 +64,7 @@ Future<void> initLocator() async {
     sl.registerLazySingleton<AuthRepository>(
       () => AuthRepositoryImpl(
         remoteDataSource: sl(),
-        networkInfo: sl(),// AuthLocalDataSource if you need caching
+        networkInfo: sl(), // AuthLocalDataSource if you need caching
       ),
     );
 
@@ -67,6 +75,9 @@ Future<void> initLocator() async {
     sl.registerLazySingleton(() => SignOutUseCase(sl()));
     sl.registerLazySingleton(() => SignUpUseCase(sl()));
     sl.registerLazySingleton(() => SendVerificationEmailUseCase(sl()));
+    
+    // ---------- Presentation Layer ----------
+    sl.registerFactory(() => AuthCubit(sl()));
   } on Exception catch (e) {
     if (kDebugMode) {
       print('Error initializing services: $e');

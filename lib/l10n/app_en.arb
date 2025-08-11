@@ -163,5 +163,43 @@
   "@@language_settings_section": "Language and localization settings",
   "language": "Language",
   "selectLanguage": "Select Language",
-  "languageChanged": "Language changed successfully"
+  "languageChanged": "Language changed successfully",
+
+  "totalSpent": "Total Spent",
+  "thisMonth": "This Month",
+  "categories": "Categories",
+
+  "account": "Account",
+  "preferences": "Preferences",
+  "support": "Support",
+
+  "editProfile": "Edit Profile",
+  "updatePersonalInfo": "Update your personal information",
+  "privacySecurity": "Privacy & Security",
+  "managePrivacySettings": "Manage your privacy settings",
+  "notifications": "Notifications",
+  "configureNotifications": "Configure your notifications",
+
+  "choosePreferredLanguage": "Choose your preferred language",
+  "darkMode": "Dark Mode",
+  "switchBetweenLightAndDarkTheme": "Switch between light and dark theme",
+
+  "helpSupport": "Help & Support",
+  "getHelpWhenNeeded": "Get help when you need it",
+  "learnMoreAboutExpenseTracker": "Learn more about Xpensemate",
+  "signOut": "Sign Out",
+  "logoutFromAccount": "Logout from your account",
+
+  "expenseTracker": "Xpensemate",
+  "version": "Version 1.0.0 • Build 2024.1",
+  "craftedWithLove": "Crafted with ❤️ for smarter expense tracking",
+
+  "changeProfilePhoto": "Change Profile Photo",
+  "gotIt": "Got it!",
+  "areYouSureYouWantToSignOut": "Are you sure you want to sign out?",
+  "comingSoonMessage": "This amazing feature is coming soon!\nStay tuned for updates.",
+  "signOutConfirmation": "Are you sure you want to sign out?",
+  "signOutConfirmationMessage": "You will be signed out of your account and need to sign in again to continue.",
+  "signOutConfirmationButton": "Sign Out",
+  "signOutConfirmationCancel": "Cancel"
 }

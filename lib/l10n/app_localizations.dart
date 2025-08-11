@@ -566,6 +566,192 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Language changed successfully'**
   String get languageChanged;
+
+  /// No description provided for @totalSpent.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Spent'**
+  String get totalSpent;
+
+  /// No description provided for @thisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This Month'**
+  String get thisMonth;
+
+  /// No description provided for @categories.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get categories;
+
+  /// No description provided for @account.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get account;
+
+  /// No description provided for @preferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get preferences;
+
+  /// No description provided for @support.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get support;
+
+  /// No description provided for @editProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get editProfile;
+
+  /// No description provided for @updatePersonalInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your personal information'**
+  String get updatePersonalInfo;
+
+  /// No description provided for @privacySecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy & Security'**
+  String get privacySecurity;
+
+  /// No description provided for @managePrivacySettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your privacy settings'**
+  String get managePrivacySettings;
+
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// No description provided for @configureNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure your notifications'**
+  String get configureNotifications;
+
+  /// No description provided for @choosePreferredLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your preferred language'**
+  String get choosePreferredLanguage;
+
+  /// No description provided for @darkMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get darkMode;
+
+  /// No description provided for @switchBetweenLightAndDarkTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch between light and dark theme'**
+  String get switchBetweenLightAndDarkTheme;
+
+  /// No description provided for @helpSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support'**
+  String get helpSupport;
+
+  /// No description provided for @getHelpWhenNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Get help when you need it'**
+  String get getHelpWhenNeeded;
+
+  /// No description provided for @learnMoreAboutExpenseTracker.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn more about Xpensemate'**
+  String get learnMoreAboutExpenseTracker;
+
+  /// No description provided for @signOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Out'**
+  String get signOut;
+
+  /// No description provided for @logoutFromAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout from your account'**
+  String get logoutFromAccount;
+
+  /// No description provided for @expenseTracker.
+  ///
+  /// In en, this message translates to:
+  /// **'Xpensemate'**
+  String get expenseTracker;
+
+  /// No description provided for @version.
+  ///
+  /// In en, this message translates to:
+  /// **'Version 1.0.0 • Build 2024.1'**
+  String get version;
+
+  /// No description provided for @craftedWithLove.
+  ///
+  /// In en, this message translates to:
+  /// **'Crafted with ❤️ for smarter expense tracking'**
+  String get craftedWithLove;
+
+  /// No description provided for @changeProfilePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Profile Photo'**
+  String get changeProfilePhoto;
+
+  /// No description provided for @gotIt.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it!'**
+  String get gotIt;
+
+  /// No description provided for @areYouSureYouWantToSignOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to sign out?'**
+  String get areYouSureYouWantToSignOut;
+
+  /// No description provided for @comingSoonMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This amazing feature is coming soon!\nStay tuned for updates.'**
+  String get comingSoonMessage;
+
+  /// No description provided for @signOutConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to sign out?'**
+  String get signOutConfirmation;
+
+  /// No description provided for @signOutConfirmationMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You will be signed out of your account and need to sign in again to continue.'**
+  String get signOutConfirmationMessage;
+
+  /// No description provided for @signOutConfirmationButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Out'**
+  String get signOutConfirmationButton;
+
+  /// No description provided for @signOutConfirmationCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get signOutConfirmationCancel;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -260,4 +260,97 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageChanged => 'Language changed successfully';
+
+  @override
+  String get totalSpent => 'Total Spent';
+
+  @override
+  String get thisMonth => 'This Month';
+
+  @override
+  String get categories => 'Categories';
+
+  @override
+  String get account => 'Account';
+
+  @override
+  String get preferences => 'Preferences';
+
+  @override
+  String get support => 'Support';
+
+  @override
+  String get editProfile => 'Edit Profile';
+
+  @override
+  String get updatePersonalInfo => 'Update your personal information';
+
+  @override
+  String get privacySecurity => 'Privacy & Security';
+
+  @override
+  String get managePrivacySettings => 'Manage your privacy settings';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get configureNotifications => 'Configure your notifications';
+
+  @override
+  String get choosePreferredLanguage => 'Choose your preferred language';
+
+  @override
+  String get darkMode => 'Dark Mode';
+
+  @override
+  String get switchBetweenLightAndDarkTheme => 'Switch between light and dark theme';
+
+  @override
+  String get helpSupport => 'Help & Support';
+
+  @override
+  String get getHelpWhenNeeded => 'Get help when you need it';
+
+  @override
+  String get learnMoreAboutExpenseTracker => 'Learn more about Xpensemate';
+
+  @override
+  String get signOut => 'Sign Out';
+
+  @override
+  String get logoutFromAccount => 'Logout from your account';
+
+  @override
+  String get expenseTracker => 'Xpensemate';
+
+  @override
+  String get version => 'Version 1.0.0 • Build 2024.1';
+
+  @override
+  String get craftedWithLove => 'Crafted with ❤️ for smarter expense tracking';
+
+  @override
+  String get changeProfilePhoto => 'Change Profile Photo';
+
+  @override
+  String get gotIt => 'Got it!';
+
+  @override
+  String get areYouSureYouWantToSignOut => 'Are you sure you want to sign out?';
+
+  @override
+  String get comingSoonMessage => 'This amazing feature is coming soon!\nStay tuned for updates.';
+
+  @override
+  String get signOutConfirmation => 'Are you sure you want to sign out?';
+
+  @override
+  String get signOutConfirmationMessage => 'You will be signed out of your account and need to sign in again to continue.';
+
+  @override
+  String get signOutConfirmationButton => 'Sign Out';
+
+  @override
+  String get signOutConfirmationCancel => 'Cancel';
 }

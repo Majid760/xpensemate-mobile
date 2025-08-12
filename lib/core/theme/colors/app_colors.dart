@@ -19,7 +19,7 @@ abstract class AppColors {
   // Background
   static const Color background = Color(0xFFFFFBFE);
 
-  // Text colors
+  // Text colorss
   static const Color onPrimary = Color(0xFFFFFFFF);
   static const Color onPrimaryContainer = Color(0xFF21005D);
   static const Color onSecondary = Color(0xFFFFFFFF);
@@ -35,8 +35,8 @@ abstract class AppColors {
   static const Color onErrorContainer = Color(0xFF410002);
 
   // Outline
-  static const Color outline = Color(0xFF79747E);
-  static const Color outlineVariant = Color(0xFFCAC4D0);
+  static const Color outline = Color(0xFF6366F1);
+  static const Color outlineVariant = Color.fromARGB(255, 165, 97, 233);
 
   // Additional semantic colors
   static const Color success = Color(0xFF146C2E);

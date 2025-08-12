@@ -1,10 +1,13 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xpensemate/core/localization/locale_manager.dart';
 import 'package:xpensemate/core/network/network_client.dart';
 import 'package:xpensemate/core/network/network_contracts.dart';
 import 'package:xpensemate/core/network/network_info.dart';
+import 'package:xpensemate/core/service/permission_service.dart';
 import 'package:xpensemate/core/service/secure_storage_service.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/features/auth/data/datasources/auth_local_storage.dart';
@@ -31,6 +34,17 @@ Future<void> initLocator() async {
     // Then initialize LocaleManager
     await LocaleManager().initialize();
 
+    // ---------- Core Services ----------
+
+    // SharedPreferences (required for PermissionService)
+    final sharedPrefs = await SharedPreferences.getInstance();
+    sl.registerSingleton<SharedPreferences>(sharedPrefs);
+
+    // Permission Service
+    sl.registerLazySingleton<PermissionService>(
+      PermissionService.new,
+    );
+
     // ---------- Network Connectivity ----------
     sl.registerLazySingleton<NetworkInfoService>(
       () => NetworkInfoServiceImpl(
@@ -45,7 +59,7 @@ Future<void> initLocator() async {
 
     // ---------- Secure Storage token ----------
     sl.registerLazySingleton<AuthLocalDataSource>(
-      () =>  AuthLocalDataSourceImpl(sl()),
+      () => AuthLocalDataSourceImpl(sl()),
     );
 
     // ---------- Network Client ----------
@@ -75,16 +89,40 @@ Future<void> initLocator() async {
     sl.registerLazySingleton(() => SignOutUseCase(sl()));
     sl.registerLazySingleton(() => SignUpUseCase(sl()));
     sl.registerLazySingleton(() => SendVerificationEmailUseCase(sl()));
-    
+
     // ---------- Presentation Layer ----------
     sl.registerFactory(() => AuthCubit(sl()));
+
+    AppLogger.i('Service locator initialized successfully');
   } on Exception catch (e) {
+    AppLogger.e('Error initializing services: $e');
     if (kDebugMode) {
       print('Error initializing services: $e');
     }
+    rethrow;
   }
 }
 
+
+
+
+
 /// ------------------------------------------------------------------
-/// 2️⃣  Helpers (token retrieval)
+/// 3️⃣  Cleanup (for testing or app reset)
 /// ------------------------------------------------------------------
+Future<void> resetServiceLocator() async {
+  await sl.reset();
+}
+
+/// ------------------------------------------------------------------
+/// 4️⃣  Extension for easy access
+/// ------------------------------------------------------------------
+extension ServiceLocatorExtension on GetIt {
+  /// Quick access to PermissionService
+  PermissionService get permissions => this<PermissionService>();
+
+  /// Quick access to other commonly used services
+  NetworkInfoService get networkInfo => this<NetworkInfoService>();
+  IStorageService get storage => this<IStorageService>();
+  SharedPreferences get sharedPrefs => this<SharedPreferences>();
+}

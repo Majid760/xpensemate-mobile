@@ -9,6 +9,8 @@ trigger: always_on
 
 ## 0. Meta
 - ALWAYS read this file before answering.
+- ALWAYS read analysis_options.yaml and generate the code which comply 
+  mentioned rules in file.
 - NEVER violate a rule unless explicitly asked (and justify the exception).
 - When uncertain, ask the user for clarification instead of guessing.
 

@@ -353,4 +353,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signOutConfirmationCancel => 'Cancel';
+
+  @override
+  String get selectImage => 'Select Image';
+
+  @override
+  String get gallery => 'Gallery';
+
+  @override
+  String get camera => 'Camera';
+
+  @override
+  String get permissionRequired => 'Permission Required';
+
+  @override
+  String get permissionRationale => 'We need this permission to provide you with the best experience.';
+
+  @override
+  String get notNow => 'Not Now';
+
+  @override
+  String get proceed => 'Continue';
+
+  @override
+  String get openSettings => 'Settings';
+
+  @override
+  String get permissionDenied => 'Permission Denied';
+
+  @override
+  String get permissionDeniedMessage => 'Please enable this permission from settings to use this feature.';
+
+  @override
+  String get cameraPermissionMessage => 'We need camera access to take photos.';
+
+  @override
+  String get galleryPermissionMessage => 'We need gallery access to choose photos.';
 }

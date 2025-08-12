@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
 
 class AppButton extends StatefulWidget {
   const AppButton._({
@@ -470,13 +471,13 @@ class AppButton extends StatefulWidget {
     bool scaleOnTap,
     bool hoverEffect,
   ) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
 
-    // Default gradient colors
-    const gradient = LinearGradient(
+    // Use system theme colors for gradient
+    final gradient = LinearGradient(
       colors: [
-        Color(0xFF6366F1), // indigo-500
-        Color(0xFFA855F7), // purple-500
+        colorScheme.primary,
+        colorScheme.secondary,
       ],
       begin: Alignment.bottomLeft,
       end: Alignment.topRight,
@@ -484,50 +485,48 @@ class AppButton extends StatefulWidget {
 
     // If gradient is disabled or button is disabled, use solid color
     final bgColor = !enabled || isLoading
-        ? (backgroundColor ?? const Color(0xFF6366F1))
+        ? (backgroundColor ?? colorScheme.primary)
         : null;
 
-    final buttonChild = Container(
-      width: isFullWidth ? double.infinity : null,
-      constraints: minWidth != null ? BoxConstraints(minWidth: minWidth) : null,
-      height: height,
-      decoration: enabled && !isLoading
-          ? BoxDecoration(
-              gradient: gradient,
-              borderRadius: BorderRadius.circular(borderRadius),
-              boxShadow: hasShadow && enabled
-                  ? [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ]
-                  : null,
-            )
-          : null,
-      child: child,
-    );
-
-    return ElevatedButton(
-      onPressed: (enabled && !isLoading) ? onPressed : null,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: bgColor,
-        foregroundColor: textColor ?? Colors.white,
-        disabledBackgroundColor: colorScheme.onSurface.withValues(alpha: 0.12),
-        disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
-        elevation: 0,
-        shadowColor: Colors.transparent,
-        overlayColor: Colors.white.withValues(alpha: 0.1),
-        animationDuration: animationDuration,
-        shape: RoundedRectangleBorder(
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+        width: isFullWidth ? double.infinity : null,
+        constraints: minWidth != null ? BoxConstraints(minWidth: minWidth) : null,
+        height: height,
+        decoration: enabled && !isLoading
+            ? BoxDecoration(
+                gradient: gradient,
+                borderRadius: BorderRadius.circular(borderRadius),
+                boxShadow: hasShadow && enabled
+                    ? [
+                        BoxShadow(
+                          color: colorScheme.shadow.withValues(alpha: 0.15),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ]
+                    : null,
+              )
+            : BoxDecoration(
+                color: bgColor,
+                borderRadius: BorderRadius.circular(borderRadius),
+              ),
+        child: Material(
+          color: Colors.transparent,
           borderRadius: BorderRadius.circular(borderRadius),
+          child: InkWell(
+            onTap: (enabled && !isLoading) ? onPressed : null,
+            borderRadius: BorderRadius.circular(borderRadius),
+            child: Container(
+              width: double.infinity,
+              height: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
+              child: Center(child: child),
+            ),
+          ),
         ),
-        padding: EdgeInsets.zero,
-        minimumSize: Size.zero,
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
-      child: buttonChild,
     );
   }
 
@@ -550,23 +549,23 @@ class AppButton extends StatefulWidget {
     bool scaleOnTap,
     bool hoverEffect,
   ) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
 
     return ElevatedButton(
       onPressed: (enabled && !isLoading) ? onPressed : null,
       style: ElevatedButton.styleFrom(
         backgroundColor: backgroundColor ?? colorScheme.secondary,
         foregroundColor: textColor ?? colorScheme.onSecondary,
-        disabledBackgroundColor: colorScheme.onSurface.withValues(alpha: 0.12),
-        disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
-        elevation: hasShadow ? (elevation ?? 1) : 0,
-        shadowColor: hasShadow ? colorScheme.shadow.withValues(alpha: 0.2) : null,
-        overlayColor: Colors.white.withValues(alpha: 0.15),
+        disabledBackgroundColor: colorScheme.surfaceContainerHighest,
+        disabledForegroundColor: colorScheme.onSurfaceVariant,
+        elevation: hasShadow ? (elevation ?? 2) : 0,
+        shadowColor: hasShadow ? colorScheme.shadow.withValues(alpha: 0.15) : null,
+        overlayColor: colorScheme.onSecondary.withValues(alpha: 0.1),
         animationDuration: animationDuration,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        padding: padding ?? const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        padding: padding ?? EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           height,
@@ -596,24 +595,24 @@ class AppButton extends StatefulWidget {
     bool scaleOnTap,
     bool hoverEffect,
   ) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
 
     return OutlinedButton(
       onPressed: (enabled && !isLoading) ? onPressed : null,
       style: OutlinedButton.styleFrom(
-        backgroundColor: backgroundColor ?? Colors.transparent,
-        foregroundColor: textColor ?? colorScheme.primary,
-        disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
-        overlayColor: (textColor ?? colorScheme.primary).withValues(alpha: 0.08),
+        backgroundColor: backgroundColor ?? colorScheme.surfaceContainer,
+        foregroundColor: textColor ?? colorScheme.onSurface,
+        disabledForegroundColor: colorScheme.onSurfaceVariant,
+        overlayColor: colorScheme.primary.withValues(alpha: 0.08),
         animationDuration: animationDuration,
         side: BorderSide(
-          color: borderColor ?? colorScheme.primary.withValues(alpha: 0.38),
+          color: borderColor ?? colorScheme.outlineVariant,
           width: 1.5,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        padding: padding ?? const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        padding: padding ?? EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           height,
@@ -642,20 +641,20 @@ class AppButton extends StatefulWidget {
     bool scaleOnTap,
     bool hoverEffect,
   ) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
 
     return TextButton(
       onPressed: (enabled && !isLoading) ? onPressed : null,
       style: TextButton.styleFrom(
-        backgroundColor: backgroundColor,
+        backgroundColor: backgroundColor ?? Colors.transparent,
         foregroundColor: textColor ?? colorScheme.primary,
-        disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
-        overlayColor: (textColor ?? colorScheme.primary).withValues(alpha: 0.08),
+        disabledForegroundColor: colorScheme.onSurfaceVariant,
+        overlayColor: colorScheme.primary.withValues(alpha: 0.08),
         animationDuration: animationDuration,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        padding: padding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: padding ?? EdgeInsets.symmetric(horizontal: context.md, vertical: context.sm),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           height,
@@ -688,8 +687,8 @@ class AppButton extends StatefulWidget {
     bool scaleOnTap,
     bool hoverEffect,
   ) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
 
     return ElevatedButton.icon(
       onPressed: (enabled && !isLoading) ? onPressed : null,
@@ -709,23 +708,23 @@ class AppButton extends StatefulWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: backgroundColor ?? colorScheme.primary,
         foregroundColor: textColor ?? colorScheme.onPrimary,
-        disabledBackgroundColor: colorScheme.onSurface.withValues(alpha: 0.12),
-        disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
+        disabledBackgroundColor: colorScheme.surfaceContainerHighest,
+        disabledForegroundColor: colorScheme.onSurfaceVariant,
         elevation: hasShadow ? (elevation ?? 2) : 0,
-        shadowColor: hasShadow ? colorScheme.shadow.withValues(alpha: 0.3) : null,
-        overlayColor: Colors.white.withValues(alpha: 0.12),
+        shadowColor: hasShadow ? colorScheme.shadow.withValues(alpha: 0.15) : null,
+        overlayColor: colorScheme.onPrimary.withValues(alpha: 0.1),
         animationDuration: animationDuration,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        padding: padding ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        padding: padding ?? EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           height,
         ),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         textStyle: textStyle ??
-            theme.textTheme.labelLarge?.copyWith(
+            textTheme.labelLarge?.copyWith(
               fontWeight: FontWeight.w600,
               letterSpacing: 0.5,
             ),
@@ -754,8 +753,8 @@ class AppButton extends StatefulWidget {
     bool scaleOnTap,
     bool hoverEffect,
   ) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
 
     return OutlinedButton.icon(
       onPressed: (enabled && !isLoading) ? onPressed : null,
@@ -766,33 +765,33 @@ class AppButton extends StatefulWidget {
               child: CircularProgressIndicator.adaptive(
                 strokeWidth: 2,
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  colorScheme.onPrimary,
+                  colorScheme.primary,
                 ),
               ),
             )
           : leadingIcon,
       label: Text(text),
       style: OutlinedButton.styleFrom(
-        backgroundColor: backgroundColor ?? Colors.transparent,
-        foregroundColor: textColor ?? colorScheme.primary,
-        disabledForegroundColor: colorScheme.onSurface.withValues(alpha: 0.38),
-        overlayColor: (textColor ?? colorScheme.primary).withValues(alpha: 0.08),
+        backgroundColor: backgroundColor ?? colorScheme.surfaceContainer,
+        foregroundColor: textColor ?? colorScheme.onSurface,
+        disabledForegroundColor: colorScheme.onSurfaceVariant,
+        overlayColor: colorScheme.primary.withValues(alpha: 0.08),
         animationDuration: animationDuration,
         side: BorderSide(
-          color: borderColor ?? colorScheme.primary,
+          color: borderColor ?? colorScheme.outlineVariant,
           width: 1.5,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        padding: padding ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        padding: padding ?? EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           height,
         ),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         textStyle: textStyle ??
-            theme.textTheme.labelLarge?.copyWith(
+            textTheme.labelLarge?.copyWith(
               fontWeight: FontWeight.w600,
               letterSpacing: 0.5,
             ),
@@ -891,7 +890,8 @@ class _AppButtonState extends State<AppButton>
   }
 
   Widget _buildButtonChild(BuildContext context) {
-    final theme = Theme.of(context);
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
 
     if (widget.isLoading) {
       return Row(
@@ -904,18 +904,18 @@ class _AppButtonState extends State<AppButton>
             child: CircularProgressIndicator.adaptive(
               strokeWidth: 2.5,
               valueColor: AlwaysStoppedAnimation<Color>(
-                theme.colorScheme.onPrimary,
+                colorScheme.onPrimary,
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: context.sm),
           Opacity(
             opacity: 0.7,
             child: Text(
               widget.text,
               style: widget.textStyle ??
-                  theme.textTheme.labelLarge?.copyWith(
-                    color: widget.textColor ?? Colors.white,
+                  textTheme.labelLarge?.copyWith(
+                    color: widget.textColor ?? colorScheme.onSurface,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.5,
                   ), 
@@ -931,19 +931,19 @@ class _AppButtonState extends State<AppButton>
       children: [
         if (widget.leadingIcon != null) ...[
           widget.leadingIcon!,
-          const SizedBox(width: 8),
+          SizedBox(width: context.xs),
         ],
         Text(
           widget.text,
           style: widget.textStyle ??
-              theme.textTheme.labelLarge?.copyWith(
+              textTheme.labelLarge?.copyWith(
                 color: widget.textColor,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.5,
               ),
         ),
         if (widget.trailingIcon != null) ...[
-          const SizedBox(width: 8),
+          SizedBox(width: context.xs),
           widget.trailingIcon!,
         ],
       ],

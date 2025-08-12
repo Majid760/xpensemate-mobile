@@ -752,6 +752,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancel'**
   String get signOutConfirmationCancel;
+
+  /// No description provided for @selectImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Image'**
+  String get selectImage;
+
+  /// No description provided for @gallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get gallery;
+
+  /// No description provided for @camera.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get camera;
+
+  /// No description provided for @permissionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Permission Required'**
+  String get permissionRequired;
+
+  /// No description provided for @permissionRationale.
+  ///
+  /// In en, this message translates to:
+  /// **'We need this permission to provide you with the best experience.'**
+  String get permissionRationale;
+
+  /// No description provided for @notNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Now'**
+  String get notNow;
+
+  /// No description provided for @proceed.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get proceed;
+
+  /// No description provided for @openSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get openSettings;
+
+  /// No description provided for @permissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Permission Denied'**
+  String get permissionDenied;
+
+  /// No description provided for @permissionDeniedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enable this permission from settings to use this feature.'**
+  String get permissionDeniedMessage;
+
+  /// No description provided for @cameraPermissionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'We need camera access to take photos.'**
+  String get cameraPermissionMessage;
+
+  /// No description provided for @galleryPermissionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'We need gallery access to choose photos.'**
+  String get galleryPermissionMessage;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

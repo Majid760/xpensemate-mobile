@@ -33,7 +33,7 @@ class AppRouter {
       
       // Auth Routes
       ...AuthRoutes.routes,
-      
+  
       // Main App Shell with Bottom Navigation
       ShellRoute(
         navigatorKey: _shellNavigatorKey,

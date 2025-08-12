@@ -1,11 +1,17 @@
+import 'dart:ui' show lerpDouble;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/service/permission_service.dart';
+import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/widget/app_dialogs.dart' hide AppPermission;
+import 'package:xpensemate/core/widget/app_image.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
-import 'dart:ui' show lerpDouble;
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -21,7 +27,6 @@ class _ProfilePageState extends State<ProfilePage>
   late AnimationController _pulseController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  late Animation<double> _pulseAnimation;
 
   final ScrollController _scrollController = ScrollController();
   bool _showUserName = false;
@@ -35,9 +40,9 @@ class _ProfilePageState extends State<ProfilePage>
 
   // Modern gradient colors
   static const _gradientColors = [
-    Color(0xFF6366F1),
-    Color(0xFF8B5CF6),
-    Color(0xFFA855F7),
+    AppColors.primary,
+    AppColors.secondary,
+    AppColors.tertiary,
   ];
 
   @override
@@ -81,10 +86,6 @@ class _ProfilePageState extends State<ProfilePage>
       CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
     );
 
-    _pulseAnimation = Tween<double>(begin: 1, end: 1.08).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOutSine),
-    );
-
     _fadeController.forward();
     _slideController.forward();
     _pulseController.repeat(reverse: true);
@@ -126,7 +127,6 @@ class _ProfilePageState extends State<ProfilePage>
             slivers: [
               SliverAppBar(
                 expandedHeight: 180,
-                floating: false,
                 pinned: true,
                 elevation: 0,
                 backgroundColor: Colors.transparent,
@@ -140,7 +140,7 @@ class _ProfilePageState extends State<ProfilePage>
                         context.l10n.profile,
                         style: context.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w800,
-                          color: Colors.white,
+                          color: context.colorScheme.onPrimary,
                           letterSpacing: 0.5,
                         ),
                       ),
@@ -151,7 +151,7 @@ class _ProfilePageState extends State<ProfilePage>
                         userName,
                         style: context.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w800,
-                          color: Colors.white,
+                          color: context.colorScheme.onPrimary,
                           letterSpacing: 0.5,
                         ),
                       ),
@@ -159,31 +159,43 @@ class _ProfilePageState extends State<ProfilePage>
                   ],
                 ),
                 leading: Padding(
-                    padding: const EdgeInsets.only(left: 16),
-                    child: GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: const Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        color:  Colors.white,
-                      ),
-                    )),
+                  padding: EdgeInsets.only(left: context.md),
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      color: context.colorScheme.onPrimary,
+                    ),
+                  ),
+                ),
                 actions: [
                   Padding(
-                    padding: const EdgeInsets.only(right: 16),
-                    child: Opacity(
-                      opacity: (1.0 - _titleProgress).clamp(0.0, 1.0),
-                      child: IgnorePointer(
-                        ignoring: _titleProgress > 0.05,
-                        child: _buildGlassmorphicButton(
-                          icon: Icons.edit_rounded,
-                          onTap: () => _showComingSoon(context.l10n.edit),
+                    padding: EdgeInsets.only(right: context.md),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // Edit button - shows when not scrolled
+                        Opacity(
+                          opacity: (1.0 - _titleProgress).clamp(0.0, 1.0),
+                          child: IgnorePointer(
+                            ignoring: _titleProgress > 0.05,
+                            child: _buildGlassmorphicButton(
+                              icon: Icons.edit_rounded,
+                              onTap: () => _showComingSoon(context.l10n.edit),
+                            ),
+                          ),
                         ),
-                      ),
+                        // Profile image - shows when scrolled, same position as edit button
+                        Opacity(
+                          opacity: _titleProgress,
+                          child: _buildCompactProfileImage(),
+                        ),
+                      ],
                     ),
                   ),
                 ],
                 flexibleSpace: FlexibleSpaceBar(
-                  background: Container(
+                  background: DecoratedBox(
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
@@ -195,14 +207,18 @@ class _ProfilePageState extends State<ProfilePage>
                     child: SafeArea(
                       child: LayoutBuilder(
                         builder: (context, constraints) {
-                          final Alignment targetAlignment = Alignment.lerp(
+                          final targetAlignment = Alignment.lerp(
                                 const Alignment(0, 0.25),
-                                const Alignment(0.85, -0.75),
+                                const Alignment(
+                                    0, 0.25,), // Keep it centered when expanded
                                 _titleProgress,
                               ) ??
                               const Alignment(0, 0.25);
-                          final double scale = lerpDouble(1.0, 0.5, _titleProgress) ?? 1.0;
-                          final double topBarHeight = MediaQuery.of(context).padding.top + kToolbarHeight;
+                          final scale = lerpDouble(1.0, 0.0, _titleProgress) ??
+                              1.0; // Scale to 0 to hide it
+                          final topBarHeight =
+                              MediaQuery.of(context).padding.top +
+                                  kToolbarHeight;
                           return Stack(
                             children: [
                               // Gradient overlay for the app bar area when collapsed
@@ -210,7 +226,8 @@ class _ProfilePageState extends State<ProfilePage>
                                 top: 0,
                                 left: 0,
                                 right: 0,
-                                height: topBarHeight + 20, // Extend slightly to cover shadow area
+                                height: topBarHeight +
+                                    20, // Extend slightly to cover shadow area
                                 child: Opacity(
                                   opacity: _titleProgress,
                                   child: const DecoratedBox(
@@ -228,11 +245,15 @@ class _ProfilePageState extends State<ProfilePage>
                                 alignment: targetAlignment,
                                 child: Transform.scale(
                                   scale: scale,
-                                  child: FadeTransition(
-                                    opacity: _fadeAnimation,
-                                    child: SlideTransition(
-                                      position: _slideAnimation,
-                                      child: _buildFloatingProfileImage(),
+                                  child: Opacity(
+                                    opacity: 1.0 -
+                                        _titleProgress, // Fade out the large profile image
+                                    child: FadeTransition(
+                                      opacity: _fadeAnimation,
+                                      child: SlideTransition(
+                                        position: _slideAnimation,
+                                        child: _buildFloatingProfileImage(),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -246,7 +267,7 @@ class _ProfilePageState extends State<ProfilePage>
                 ),
               ),
               SliverToBoxAdapter(
-                child: Container(
+                child: DecoratedBox(
                   decoration: BoxDecoration(
                     color: context.colorScheme.surface,
                     borderRadius: const BorderRadius.only(
@@ -255,7 +276,8 @@ class _ProfilePageState extends State<ProfilePage>
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
+                        color:
+                            context.colorScheme.shadow.withValues(alpha: 0.1),
                         blurRadius: 20,
                         offset: const Offset(0, -5),
                       ),
@@ -275,22 +297,92 @@ class _ProfilePageState extends State<ProfilePage>
         ),
       );
 
-  Widget _buildGlassmorphicButton(
-          {required IconData icon, required VoidCallback onTap}) =>
+  // New compact profile image for the collapsed app bar - matches edit button style
+  Widget _buildCompactProfileImage() => Container(
+        padding: EdgeInsets.all(
+            context.xs,), // Same padding as edit button (8-5=3 for image border)
+        decoration: BoxDecoration(
+          color: context.colorScheme.onPrimary.withValues(alpha: 0.2),
+          borderRadius:
+              BorderRadius.circular(14), // Same border radius as edit button
+          border: Border.all(
+            color: context.colorScheme.onPrimary.withValues(alpha: 0.3),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: context.colorScheme.shadow.withValues(alpha: 0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Container(
+          width: 32, // Adjusted to fit within the button frame
+          height: 32,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(
+                10,), // Slightly smaller radius for inner content
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppColors.primary,
+                AppColors.secondary,
+                AppColors.tertiary,
+              ],
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(
+                1.5,), // Keep small value for visual balance
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8.5),
+                color: context.colorScheme.onPrimary,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8.5),
+                child: AppImage.network(
+                  profileImageUrl,
+                  customErrorWidget: const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: _gradientColors,
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(8.5)),
+                    ),
+                    child: Icon(
+                      Icons.person_rounded,
+                      size: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+  Widget _buildGlassmorphicButton({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) =>
       GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.all(8),
+          padding: EdgeInsets.all(context.sm),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.2),
+            color: context.colorScheme.onPrimary.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.3),
+              color: context.colorScheme.onPrimary.withValues(alpha: 0.3),
               width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
+                color: context.colorScheme.shadow.withValues(alpha: 0.1),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -298,7 +390,7 @@ class _ProfilePageState extends State<ProfilePage>
           ),
           child: Icon(
             icon,
-            color: Colors.white,
+            color: context.colorScheme.onPrimary,
             size: 20,
           ),
         ),
@@ -315,14 +407,14 @@ class _ProfilePageState extends State<ProfilePage>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Color(0xFF6366F1),
-                  Color(0xFF8B5CF6),
-                  Color(0xFFA855F7),
+                  AppColors.primary,
+                  AppColors.secondary,
+                  AppColors.tertiary,
                 ],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF6366F1).withValues(alpha: 0.3),
+                  color: AppColors.primary.withValues(alpha: 0.3),
                   blurRadius: 20,
                   spreadRadius: 2,
                   offset: const Offset(0, 8),
@@ -330,18 +422,16 @@ class _ProfilePageState extends State<ProfilePage>
               ],
             ),
             child: Padding(
-              padding: const EdgeInsets.all(3),
+              padding: EdgeInsets.all(context.xs),
               child: DecoratedBox(
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                   color: Colors.white,
                 ),
                 child: ClipOval(
-                  child: Image.network(
+                  child: AppImage.network(
                     profileImageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        const DecoratedBox(
+                    customErrorWidget: const DecoratedBox(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: _gradientColors,
@@ -350,7 +440,8 @@ class _ProfilePageState extends State<ProfilePage>
                       child: Icon(
                         Icons.person_rounded,
                         size: 50,
-                        color: Colors.white,
+                        color:
+                            Colors.white, // Keep white for gradient background
                       ),
                     ),
                   ),
@@ -362,18 +453,31 @@ class _ProfilePageState extends State<ProfilePage>
             bottom: 2,
             right: 2,
             child: GestureDetector(
-              onTap: () => _showComingSoon(context.l10n.changeProfilePhoto),
+              onTap: () async {
+                final result = await sl.permissions.requestMultiplePermissions(
+                  [AppPermission.camera, AppPermission.gallery],
+                );
+                if (mounted && (result[AppPermission.camera]?.isGranted ?? false)) {
+                  AppDialogs.showImagePicker(
+                    context: context,
+                    onImageSelected: (file) {
+                    },
+                  );
+                }
+              
+              },
               child: Container(
-                padding: const EdgeInsets.all(6),
+                padding: EdgeInsets.all(context.xs),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                    colors: [AppColors.primary, AppColors.secondary],
                   ),
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 2),
+                  border: Border.all(
+                      color: context.colorScheme.onPrimary, width: 2,),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.15),
+                      color: context.colorScheme.shadow.withValues(alpha: 0.15),
                       blurRadius: 10,
                       offset: const Offset(0, 3),
                     ),
@@ -404,7 +508,7 @@ class _ProfilePageState extends State<ProfilePage>
 
   Widget _buildUserInfoCard(BuildContext context) => Container(
         margin: EdgeInsets.symmetric(horizontal: context.lg),
-        padding: const EdgeInsets.symmetric(vertical: 20),
+        padding: EdgeInsets.symmetric(vertical: context.lg),
         child: Column(
           children: [
             Text(
@@ -417,19 +521,20 @@ class _ProfilePageState extends State<ProfilePage>
             ),
             SizedBox(height: context.sm),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              padding: EdgeInsets.symmetric(
+                  horizontal: context.sm, vertical: context.xs,),
               decoration: BoxDecoration(
-                color: const Color(0xFF6366F1).withValues(alpha: 0.1),
+                color: context.colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(18),
                 border: Border.all(
-                  color: const Color(0xFF6366F1).withValues(alpha: 0.2),
+                  color: context.colorScheme.primary.withValues(alpha: 0.2),
                 ),
               ),
               child: Text(
                 userEmail,
                 style: context.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF6366F1),
+                  color: context.colorScheme.primary,
                 ),
               ),
             ),
@@ -437,117 +542,26 @@ class _ProfilePageState extends State<ProfilePage>
         ),
       );
 
-  Widget _buildCompactStatCard(BuildContext context, String title,
-          String amount, IconData icon, Color color, String change) =>
-      Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: color.withValues(alpha: 0.15),
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Icon(
-                  icon,
-                  color: color,
-                  size: 20,
-                ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    change,
-                    style: context.textTheme.labelSmall?.copyWith(
-                      color: color,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 10,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              amount,
-              style: context.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w900,
-                color: context.colorScheme.onSurface,
-                letterSpacing: -0.3,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              title,
-              style: context.textTheme.bodySmall?.copyWith(
-                color: context.colorScheme.onSurfaceVariant,
-                fontWeight: FontWeight.w600,
-                fontSize: 11,
-              ),
-            ),
-          ],
-        ),
-      );
 
-  Widget _buildQuickActionButton(
-          BuildContext context, String label, IconData icon, Color color) =>
-      GestureDetector(
-        onTap: () => _showComingSoon(label),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                color.withValues(alpha: 0.1),
-                color.withValues(alpha: 0.05),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: color.withValues(alpha: 0.2),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                color: color,
-                size: 18,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: context.textTheme.bodyMedium?.copyWith(
-                  color: color,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
 
   List<Widget> _buildMenuSections(BuildContext context) => [
         _buildModernMenuSection(
-            context, context.l10n.account, _getAccountMenuItems(context)),
-        SizedBox(height: context.lg),
-        _buildModernMenuSection(context, context.l10n.preferences,
-            _getPreferencesMenuItems(context)),
+          context,
+          context.l10n.account,
+          _getAccountMenuItems(context),
+        ),
         SizedBox(height: context.lg),
         _buildModernMenuSection(
-            context, context.l10n.support, _getSupportMenuItems(context)),
+          context,
+          context.l10n.preferences,
+          _getPreferencesMenuItems(context),
+        ),
+        SizedBox(height: context.lg),
+        _buildModernMenuSection(
+          context,
+          context.l10n.support,
+          _getSupportMenuItems(context),
+        ),
       ];
 
   List<MenuItemData> _getAccountMenuItems(BuildContext context) => [
@@ -613,14 +627,17 @@ class _ProfilePageState extends State<ProfilePage>
       ];
 
   Widget _buildModernMenuSection(
-          BuildContext context, String title, List<dynamic> items) =>
+    BuildContext context,
+    String title,
+    List<dynamic> items,
+  ) =>
       Container(
-        margin: EdgeInsets.symmetric(horizontal: context.lg),
+        margin: EdgeInsets.symmetric(horizontal: context.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 8, bottom: 16),
+              padding: EdgeInsets.only(left: context.sm, bottom: context.md),
               child: Text(
                 title,
                 style: context.textTheme.titleMedium?.copyWith(
@@ -636,13 +653,13 @@ class _ProfilePageState extends State<ProfilePage>
                 borderRadius: BorderRadius.circular(18),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
+                    color: context.colorScheme.shadow.withValues(alpha: 0.04),
                     blurRadius: 15,
                     offset: const Offset(0, 4),
                   ),
                 ],
                 border: Border.all(
-                  color: const Color(0xFF6366F1).withValues(alpha: 0.08),
+                  color: context.colorScheme.primary.withValues(alpha: 0.08),
                 ),
               ),
               child: Column(
@@ -665,7 +682,7 @@ class _ProfilePageState extends State<ProfilePage>
                       child,
                       if (!isLast)
                         Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 18),
+                          margin: EdgeInsets.symmetric(horizontal: context.lg),
                           height: 1,
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
@@ -696,11 +713,11 @@ class _ProfilePageState extends State<ProfilePage>
           },
           borderRadius: BorderRadius.circular(18),
           child: Container(
-            padding: const EdgeInsets.all(18),
+            padding: EdgeInsets.all(context.md),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: EdgeInsets.all(context.sm),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
@@ -725,7 +742,7 @@ class _ProfilePageState extends State<ProfilePage>
                         style: context.textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.w700,
                           color: item.isDestructive
-                              ? const Color(0xFFEF4444)
+                              ? context.colorScheme.error
                               : context.colorScheme.onSurface,
                         ),
                       ),
@@ -741,7 +758,7 @@ class _ProfilePageState extends State<ProfilePage>
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.all(6),
+                  padding: EdgeInsets.all(context.xs),
                   decoration: BoxDecoration(
                     color: context.colorScheme.onSurfaceVariant
                         .withValues(alpha: 0.08),
@@ -760,26 +777,26 @@ class _ProfilePageState extends State<ProfilePage>
       );
 
   Widget _buildModernThemeToggle(BuildContext context) => Container(
-        padding: const EdgeInsets.all(18),
+        padding: EdgeInsets.all(context.md),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(context.sm),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    const Color(0xFF8B5CF6).withValues(alpha: 0.18),
-                    const Color(0xFFA855F7).withValues(alpha: 0.08),
+                    context.colorScheme.secondary.withValues(alpha: 0.18),
+                    context.colorScheme.tertiary.withValues(alpha: 0.08),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: const Color(0xFF8B5CF6).withValues(alpha: 0.22),
+                  color: context.colorScheme.secondary.withValues(alpha: 0.22),
                 ),
               ),
               child: Icon(
                 isDarkMode ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
-                color: const Color(0xFF8B5CF6),
+                color: context.colorScheme.secondary,
                 size: 20,
               ),
             ),
@@ -806,21 +823,30 @@ class _ProfilePageState extends State<ProfilePage>
                 ],
               ),
             ),
-            DecoratedBox(
+            Container(
+              height: 35,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
                 gradient: isDarkMode
-                    ? const LinearGradient(colors: [Color(0xFF8B5CF6), Color(0xFFA855F7)])
-                    : const LinearGradient(colors: [Color(0xFFE5E7EB), Color(0xFFD1D5DB)]),
+                    ? LinearGradient(colors: [
+                        context.colorScheme.secondary,
+                        context.colorScheme.tertiary,
+                      ],)
+                    : LinearGradient(colors: [
+                        context.colorScheme.outlineVariant,
+                        context.colorScheme.outline,
+                      ],),
                 boxShadow: [
                   BoxShadow(
-                    color: (isDarkMode ? const Color(0xFF8B5CF6) : Colors.black)
+                    color: (isDarkMode
+                            ? context.colorScheme.secondary
+                            : context.colorScheme.shadow)
                         .withValues(alpha: 0.08),
                     blurRadius: 8,
                     offset: const Offset(0, 3),
                   ),
                 ],
-              ), 
+              ),
               child: Transform.scale(
                 scale: 0.6,
                 child: Switch.adaptive(
@@ -829,8 +855,8 @@ class _ProfilePageState extends State<ProfilePage>
                     setState(() => isDarkMode = value);
                     HapticFeedback.selectionClick();
                   },
-                  activeColor: Colors.white,
-                  inactiveThumbColor: Colors.white,
+                  activeColor: context.colorScheme.onSecondary,
+                  inactiveThumbColor: context.colorScheme.onPrimary,
                   inactiveTrackColor: Colors.transparent,
                   activeTrackColor: Colors.transparent,
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -842,29 +868,32 @@ class _ProfilePageState extends State<ProfilePage>
       );
 
   Widget _buildModernFooter(BuildContext context) => Container(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(context.lg),
         margin: EdgeInsets.symmetric(horizontal: context.lg),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              const Color(0xFF6366F1).withValues(alpha: 0.03),
-              const Color(0xFF8B5CF6).withValues(alpha: 0.03),
+              context.colorScheme.primary.withValues(alpha: 0.03),
+              context.colorScheme.secondary.withValues(alpha: 0.03),
             ],
           ),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: const Color(0xFF6366F1).withValues(alpha: 0.1),
+            color: context.colorScheme.primary.withValues(alpha: 0.1),
           ),
         ),
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.all(14),
+              padding: EdgeInsets.all(context.sm),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                  colors: [
+                    AppColors.primary,
+                    AppColors.secondary,
+                  ],
                 ),
                 borderRadius: BorderRadius.circular(14),
               ),
@@ -913,27 +942,27 @@ class _ProfilePageState extends State<ProfilePage>
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
+                  color: context.colorScheme.shadow.withValues(alpha: 0.1),
                   blurRadius: 30,
                   offset: const Offset(0, 15),
                 ),
               ],
             ),
             child: Padding(
-              padding: const EdgeInsets.all(28),
+              padding: EdgeInsets.all(context.xl),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(20),
+                    padding: EdgeInsets.all(context.lg),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                        colors: [AppColors.primary, AppColors.secondary],
                       ),
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF6366F1).withValues(alpha: 0.3),
+                          color: AppColors.primary.withValues(alpha: 0.3),
                           blurRadius: 20,
                           offset: const Offset(0, 8),
                         ),
@@ -968,8 +997,8 @@ class _ProfilePageState extends State<ProfilePage>
                       onPressed: () => Navigator.pop(context),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        foregroundColor: context.colorScheme.onPrimary,
+                        padding: EdgeInsets.symmetric(vertical: context.md),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
@@ -981,13 +1010,13 @@ class _ProfilePageState extends State<ProfilePage>
                       child: Ink(
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
-                            colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                            colors: [AppColors.primary, AppColors.secondary],
                           ),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Container(
                           alignment: Alignment.center,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          padding: EdgeInsets.symmetric(vertical: context.md),
                           child: Text(
                             context.l10n.gotIt,
                             style: context.textTheme.bodyLarge?.copyWith(
@@ -1016,35 +1045,35 @@ class _ProfilePageState extends State<ProfilePage>
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
+                  color: context.colorScheme.shadow.withValues(alpha: 0.1),
                   blurRadius: 30,
                   offset: const Offset(0, 15),
                 ),
               ],
             ),
             child: Padding(
-              padding: const EdgeInsets.all(28),
+              padding: EdgeInsets.all(context.xl),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(20),
+                    padding: EdgeInsets.all(context.lg),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          const Color(0xFFEF4444).withValues(alpha: 0.1),
-                          const Color(0xFFEF4444).withValues(alpha: 0.05),
+                          context.colorScheme.error.withValues(alpha: 0.1),
+                          context.colorScheme.error.withValues(alpha: 0.05),
                         ],
                       ),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: const Color(0xFFEF4444).withValues(alpha: 0.2),
+                        color: context.colorScheme.error.withValues(alpha: 0.2),
                         width: 2,
                       ),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.logout_rounded,
-                      color: Color(0xFFEF4444),
+                      color: context.colorScheme.error,
                       size: 40,
                     ),
                   ),
@@ -1071,7 +1100,7 @@ class _ProfilePageState extends State<ProfilePage>
                         child: TextButton(
                           onPressed: () => Navigator.pop(context),
                           style: TextButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            padding: EdgeInsets.symmetric(vertical: context.md),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
@@ -1097,8 +1126,8 @@ class _ProfilePageState extends State<ProfilePage>
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.transparent,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            foregroundColor: context.colorScheme.onError,
+                            padding: EdgeInsets.symmetric(vertical: context.md),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
@@ -1109,14 +1138,19 @@ class _ProfilePageState extends State<ProfilePage>
                           ),
                           child: Ink(
                             decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
+                              gradient: LinearGradient(
+                                colors: [
+                                  context.colorScheme.error,
+                                  context.colorScheme.error
+                                      .withValues(alpha: 0.8),
+                                ],
                               ),
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: Container(
                               alignment: Alignment.center,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              padding:
+                                  EdgeInsets.symmetric(vertical: context.md),
                               child: Text(
                                 context.l10n.signOut,
                                 style: context.textTheme.bodyLarge?.copyWith(

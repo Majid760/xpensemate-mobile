@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/theme/colors/app_colors.dart';
-import 'dart:ui';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/widget/morphic_button.dart';
+import 'dart:ui'; // Add this import for ImageFilter
 
 class ModernBottomSheet extends StatefulWidget {
   const ModernBottomSheet({
@@ -53,29 +54,30 @@ class ModernBottomSheet extends StatefulWidget {
     bool isExpandable = false,
     double? initialHeight,
     double? maxHeight,
-  }) => showModalBottomSheet<T>(
-      context: context,
-      isScrollControlled: isScrollControlled,
-      useRootNavigator: useRootNavigator,
-      isDismissible: isDismissible,
-      enableDrag: enableDrag,
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      builder: (context) => ModernBottomSheet(
-        title: title,
-        height: height,
-        showHandle: showHandle,
+  }) =>
+      showModalBottomSheet<T>(
+        context: context,
+        isScrollControlled: isScrollControlled,
+        useRootNavigator: useRootNavigator,
+        isDismissible: isDismissible,
         enableDrag: enableDrag,
-        showCloseButton: showCloseButton,
-        backgroundColor: backgroundColor,
-        borderRadius: borderRadius,
-        padding: padding,
-        isExpandable: isExpandable,
-        initialHeight: initialHeight,
-        maxHeight: maxHeight,
-        child: child,
-      ),
-    );
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        builder: (context) => ModernBottomSheet(
+          title: title,
+          height: height,
+          showHandle: showHandle,
+          enableDrag: enableDrag,
+          showCloseButton: showCloseButton,
+          backgroundColor: backgroundColor,
+          borderRadius: borderRadius,
+          padding: padding,
+          isExpandable: isExpandable,
+          initialHeight: initialHeight,
+          maxHeight: maxHeight,
+          child: child,
+        ),
+      );
 }
 
 class _ModernBottomSheetState extends State<ModernBottomSheet>
@@ -86,10 +88,10 @@ class _ModernBottomSheetState extends State<ModernBottomSheet>
   late Animation<double> _slideAnimation;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
-  
+
   late AnimationController _dragController;
   late Animation<double> _dragAnimation;
-  
+
   double _currentHeight = 0;
   double _dragStartHeight = 0;
   bool _isDragging = false;
@@ -121,28 +123,34 @@ class _ModernBottomSheetState extends State<ModernBottomSheet>
     );
 
     _slideAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.easeOutCubic,
-    ));
+      begin: 1,
+      end: 0,
+    ).animate(
+      CurvedAnimation(
+        parent: _slideController,
+        curve: Curves.easeOutCubic,
+      ),
+    );
 
     _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeOut,
-    ));
+      begin: 0,
+      end: 1,
+    ).animate(
+      CurvedAnimation(
+        parent: _fadeController,
+        curve: Curves.easeOut,
+      ),
+    );
 
     _scaleAnimation = Tween<double>(
       begin: 0.8,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _scaleController,
-      curve: Curves.elasticOut,
-    ));
+      end: 1,
+    ).animate(
+      CurvedAnimation(
+        parent: _scaleController,
+        curve: Curves.elasticOut,
+      ),
+    );
 
     // Start animations
     _slideController.forward();
@@ -155,14 +163,16 @@ class _ModernBottomSheetState extends State<ModernBottomSheet>
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    
+
     _dragAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _dragController,
-      curve: Curves.easeOutCubic,
-    ));
+      begin: 0,
+      end: 1,
+    ).animate(
+      CurvedAnimation(
+        parent: _dragController,
+        curve: Curves.easeOutCubic,
+      ),
+    );
   }
 
   @override
@@ -180,15 +190,15 @@ class _ModernBottomSheetState extends State<ModernBottomSheet>
       _fadeController.reverse(),
       _scaleController.reverse(),
     ]);
-    
+
     if (mounted) {
       Navigator.of(context).pop();
     }
   }
 
   void _onDragStart(DragStartDetails details) {
-    if (!widget.isExpandable) return;
-    
+    if (!widget.enableDrag) return;
+
     setState(() {
       _isDragging = true;
       _dragStartHeight = _currentHeight;
@@ -196,47 +206,82 @@ class _ModernBottomSheetState extends State<ModernBottomSheet>
   }
 
   void _onDragUpdate(DragUpdateDetails details) {
-    if (!widget.isExpandable) return;
-    
-    final newHeight = _dragStartHeight - details.primaryDelta!;
-    final screenHeight = MediaQuery.of(context).size.height;
-    final minHeight = widget.initialHeight ?? screenHeight * 0.3;
-    final maxHeight = widget.maxHeight ?? screenHeight * 0.9;
-    
-    setState(() {
-      _currentHeight = newHeight.clamp(minHeight, maxHeight);
-    });
-    
-    _dragController.value = (_currentHeight - minHeight) / (maxHeight - minHeight);
+    if (!widget.enableDrag) return;
+
+    // Handle null primaryDelta safely
+    final delta = details.primaryDelta;
+    if (delta == null) return;
+
+    if (widget.isExpandable) {
+      // Expandable mode: resize the bottom sheet
+      final newHeight = _dragStartHeight - delta;
+      final screenHeight = MediaQuery.of(context).size.height;
+      final minHeight = widget.initialHeight ?? screenHeight * 0.3;
+      final maxHeight = widget.maxHeight ?? screenHeight * 0.9;
+
+      setState(() {
+        _currentHeight = newHeight.clamp(minHeight, maxHeight);
+      });
+
+      _dragController.value =
+          (_currentHeight - minHeight) / (maxHeight - minHeight);
+    } else {
+      // Non-expandable mode: allow dragging down to dismiss
+      if (delta > 0) { // Only allow dragging down
+        final progress = (delta / 200).clamp(0.0, 1.0); // Normalize drag distance
+        _dragController.value = progress;
+      }
+    }
   }
 
   void _onDragEnd(DragEndDetails details) {
-    if (!widget.isExpandable) return;
-    
+    if (!widget.enableDrag) return;
+
     setState(() {
       _isDragging = false;
     });
-    
-    final screenHeight = MediaQuery.of(context).size.height;
-    final minHeight = widget.initialHeight ?? screenHeight * 0.3;
-    final maxHeight = widget.maxHeight ?? screenHeight * 0.9;
-    
-    // Snap to nearest position
-    if (_currentHeight < (minHeight + maxHeight) / 2) {
-      _animateToHeight(minHeight);
+
+    if (widget.isExpandable) {
+      // Expandable mode: snap to nearest position
+      final screenHeight = MediaQuery.of(context).size.height;
+      final minHeight = widget.initialHeight ?? screenHeight * 0.3;
+      final maxHeight = widget.maxHeight ?? screenHeight * 0.9;
+
+      if (_currentHeight < (minHeight + maxHeight) / 2) {
+        _animateToHeight(minHeight);
+      } else {
+        _animateToHeight(maxHeight);
+      }
     } else {
-      _animateToHeight(maxHeight);
+      // Non-expandable mode: close if dragged down enough
+      final velocity = details.velocity.pixelsPerSecond.dy;
+      
+      if (_dragController.value > 0.3 || velocity > 300) {
+        // Close the bottom sheet
+        _closeBottomSheet();
+      } else {
+        // Snap back to original position
+        _dragController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOutCubic,
+        );
+      }
     }
   }
 
   void _animateToHeight(double targetHeight) {
     _dragController.animateTo(
-      (targetHeight - (widget.initialHeight ?? MediaQuery.of(context).size.height * 0.3)) / 
-      ((widget.maxHeight ?? MediaQuery.of(context).size.height * 0.9) - (widget.initialHeight ?? MediaQuery.of(context).size.height * 0.3)),
+      (targetHeight -
+              (widget.initialHeight ??
+                  MediaQuery.of(context).size.height * 0.3)) /
+          ((widget.maxHeight ?? MediaQuery.of(context).size.height * 0.9) -
+              (widget.initialHeight ??
+                  MediaQuery.of(context).size.height * 0.3)),
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOutCubic,
     );
-    
+
     setState(() {
       _currentHeight = targetHeight;
     });
@@ -246,7 +291,7 @@ class _ModernBottomSheetState extends State<ModernBottomSheet>
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final bottomSheetHeight = widget.height ?? screenHeight * 0.7;
-    
+
     if (_currentHeight == 0) {
       _currentHeight = widget.initialHeight ?? bottomSheetHeight;
     }
@@ -273,40 +318,49 @@ class _ModernBottomSheetState extends State<ModernBottomSheet>
                   sigmaX: 8 * _fadeAnimation.value,
                   sigmaY: 8 * _fadeAnimation.value,
                 ),
+                child: Container(),
               ),
             ),
           ),
-          
+
           // Bottom sheet
           Positioned(
             bottom: 0,
             left: 0,
             right: 0,
             child: Transform.translate(
-              offset: Offset(0, bottomSheetHeight * _slideAnimation.value),
+              offset: Offset(
+                0, 
+                (bottomSheetHeight * _slideAnimation.value) + 
+                (widget.isExpandable ? 0 : _dragController.value * 100) // Add drag offset for dismissal
+              ),
               child: Transform.scale(
-                scale: _scaleAnimation.value,
+                scale: _scaleAnimation.value * (1 - (_dragController.value * 0.1)), // Slightly shrink when dragging
                 child: GestureDetector(
                   onPanStart: _onDragStart,
                   onPanUpdate: _onDragUpdate,
                   onPanEnd: _onDragEnd,
                   child: Container(
-                    height: widget.isExpandable ? _currentHeight : bottomSheetHeight,
+                    height: widget.isExpandable
+                        ? _currentHeight
+                        : bottomSheetHeight,
                     decoration: BoxDecoration(
-                      color: widget.backgroundColor ?? context.colorScheme.surface,
+                      color:
+                          widget.backgroundColor ?? context.colorScheme.surface,
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(widget.borderRadius),
                         topRight: Radius.circular(widget.borderRadius),
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: context.colorScheme.shadow.withValues(alpha: 0.15),
+                          color: context.colorScheme.shadow
+                              .withValues(alpha: 0.15 * (1 - _dragController.value)),
                           blurRadius: 30,
                           offset: const Offset(0, -10),
                           spreadRadius: 5,
                         ),
                         BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.1),
+                          color: AppColors.primary.withValues(alpha: 0.1 * (1 - _dragController.value)),
                           blurRadius: 20,
                           offset: const Offset(0, -5),
                           spreadRadius: 2,
@@ -321,7 +375,8 @@ class _ModernBottomSheetState extends State<ModernBottomSheet>
                         // Content
                         Expanded(
                           child: Padding(
-                            padding: widget.padding ?? EdgeInsets.all(context.lg),
+                            padding:
+                                widget.padding ?? EdgeInsets.all(context.lg),
                             child: widget.child,
                           ),
                         ),
@@ -356,6 +411,8 @@ class _ModernBottomSheetState extends State<ModernBottomSheet>
           ),
         if (widget.title != null || widget.showCloseButton)
           Row(
+            // FIX: Align title and close button at the same level
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               if (widget.title != null)
                 Expanded(
@@ -369,28 +426,10 @@ class _ModernBottomSheetState extends State<ModernBottomSheet>
                   ),
                 ),
               if (widget.showCloseButton)
-                GestureDetector(
+                GlassmorphicButton(
+                  icon: Icons.close_rounded,
                   onTap: _closeBottomSheet,
-                  child: Container(
-                    padding: EdgeInsets.all(context.sm),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          context.colorScheme.surfaceContainerHighest,
-                          context.colorScheme.surfaceContainerHighest.withValues(alpha: 0.8),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(
-                        color: context.colorScheme.outline.withValues(alpha: 0.1),
-                      ),
-                    ),
-                    child: Icon(
-                      Icons.close_rounded,
-                      size: 20,
-                      color: context.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
+                  isGradientBg: true,
                 ),
             ],
           ),

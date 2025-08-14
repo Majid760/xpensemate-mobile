@@ -687,6 +687,12 @@ abstract class AppLocalizations {
   /// **'Logout from your account'**
   String get logoutFromAccount;
 
+  /// No description provided for @completeYourProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile'**
+  String get completeYourProfile;
+
   /// No description provided for @expenseTracker.
   ///
   /// In en, this message translates to:
@@ -752,6 +758,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancel'**
   String get signOutConfirmationCancel;
+
+  /// No description provided for @fullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get fullName;
+
+  /// No description provided for @gender.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get gender;
+
+  /// No description provided for @dateOfBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of Birth'**
+  String get dateOfBirth;
+
+  /// No description provided for @phoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumber;
+
+  /// No description provided for @bio.
+  ///
+  /// In en, this message translates to:
+  /// **'Bio'**
+  String get bio;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get saveChanges;
+
+  /// No description provided for @profileUpdatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated successfully'**
+  String get profileUpdatedSuccessfully;
+
+  /// No description provided for @enterYourName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your name'**
+  String get enterYourName;
+
+  /// No description provided for @enterYourBio.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your bio'**
+  String get enterYourBio;
+
+  /// No description provided for @selectDateOfBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date of birth'**
+  String get selectDateOfBirth;
+
+  /// No description provided for @nameIsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Name is required'**
+  String get nameIsRequired;
+
+  /// No description provided for @nameMustBeAtLeast2Characters.
+  ///
+  /// In en, this message translates to:
+  /// **'Name must be at least 2 characters'**
+  String get nameMustBeAtLeast2Characters;
+
+  /// No description provided for @phoneNumberMustBeAtLeast10Digits.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number must be at least 10 digits'**
+  String get phoneNumberMustBeAtLeast10Digits;
 
   /// No description provided for @selectImage.
   ///

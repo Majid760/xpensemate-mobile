@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/theme/colors/app_colors.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_image.dart';
 
 class ProfileImageWidget extends StatelessWidget {
@@ -62,7 +62,7 @@ class ProfileImageWidget extends StatelessWidget {
             ),
             child: Padding(
               padding: EdgeInsets.all(context.xs),
-              child: Container(
+              child: DecoratedBox(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: backgroundColor,
@@ -84,7 +84,7 @@ class ProfileImageWidget extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.all(context.sm),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
+                    gradient: const LinearGradient(
                       colors: [
                         AppColors.primary,
                         AppColors.secondary,

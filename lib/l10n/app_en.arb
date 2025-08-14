@@ -189,6 +189,7 @@
   "learnMoreAboutExpenseTracker": "Learn more about Xpensemate",
   "signOut": "Sign Out",
   "logoutFromAccount": "Logout from your account",
+  "completeYourProfile": "Complete your profile",
 
   "expenseTracker": "Xpensemate",
   "version": "Version 1.0.0 • Build 2024.1",
@@ -202,6 +203,21 @@
   "signOutConfirmationMessage": "You will be signed out of your account and need to sign in again to continue.",
   "signOutConfirmationButton": "Sign Out",
   "signOutConfirmationCancel": "Cancel",
+
+  "fullName": "Full Name",
+  "gender": "Gender",
+  "dateOfBirth": "Date of Birth",
+  "phoneNumber": "Phone Number", 
+  "bio": "Bio",
+  "saveChanges": "Save Changes",
+  "profileUpdatedSuccessfully": "Profile updated successfully",
+  "enterYourName": "Enter your name",
+  "enterYourBio": "Enter your bio",
+  "selectDateOfBirth": "Select date of birth",
+  "nameIsRequired": "Name is required",
+  "nameMustBeAtLeast2Characters": "Name must be at least 2 characters",
+  "phoneNumberMustBeAtLeast10Digits": "Phone number must be at least 10 digits",
+
   
   "@@image_picker_section": "Image picker related strings",
   "selectImage": "Select Image",

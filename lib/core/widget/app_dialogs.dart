@@ -3,6 +3,7 @@
 // import 'package:xpensemate/core/service/storage_service.dart';
 // import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart' as top_snack_bar;
@@ -21,7 +22,7 @@ class AppDialogs {
     MessageType type = MessageType.defaultType,
   }) {
     final theme = Theme.of(context);
-    
+
     // Define the primary button gradient
     const primaryGradient = LinearGradient(
       colors: [
@@ -31,11 +32,11 @@ class AppDialogs {
       begin: Alignment.bottomLeft,
       end: Alignment.topRight,
     );
-    
+
     // Determine background color and gradient based on type
     Color backgroundColor;
     LinearGradient? gradient;
-    
+
     switch (type) {
       case MessageType.success:
       case MessageType.info:
@@ -48,9 +49,9 @@ class AppDialogs {
         gradient = null;
         break;
     }
-    
+
     const textColor = Colors.white; // Always use white text for better contrast
-    
+
     top_snack_bar.showTopSnackBar(
       Overlay.of(context),
       Material(
@@ -65,7 +66,9 @@ class AppDialogs {
             color: gradient == null ? backgroundColor : null,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Center(child: Text(message, style: const TextStyle(color: textColor, fontSize: 16))),
+          child: Center(
+              child: Text(message,
+                  style: const TextStyle(color: textColor, fontSize: 16))),
         ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -125,6 +128,8 @@ class AppDialogs {
       ),
     );
   }
+
+
 }
 
 class PermissionDialog extends StatefulWidget {
@@ -150,16 +155,17 @@ class PermissionDialog extends StatefulWidget {
     required String message,
     AppPermission? permission,
     bool showSettings = false,
-  }) => showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => PermissionDialog(
-        title: title,
-        message: message,
-        permission: permission,
-        showSettings: showSettings,
-      ),
-    );
+  }) =>
+      showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => PermissionDialog(
+          title: title,
+          message: message,
+          permission: permission,
+          showSettings: showSettings,
+        ),
+      );
 }
 
 class _PermissionDialogState extends State<PermissionDialog>
@@ -202,26 +208,32 @@ class _PermissionDialogState extends State<PermissionDialog>
     _scaleAnimation = Tween<double>(
       begin: 0.8,
       end: 1,
-    ).animate(CurvedAnimation(
-      parent: _scaleController,
-      curve: Curves.elasticOut,
-    ),);
+    ).animate(
+      CurvedAnimation(
+        parent: _scaleController,
+        curve: Curves.elasticOut,
+      ),
+    );
 
     _fadeAnimation = Tween<double>(
       begin: 0,
       end: 1,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeOut,
-    ),);
+    ).animate(
+      CurvedAnimation(
+        parent: _fadeController,
+        curve: Curves.easeOut,
+      ),
+    );
 
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.3),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.easeOutCubic,
-    ),);
+    ).animate(
+      CurvedAnimation(
+        parent: _slideController,
+        curve: Curves.easeOutCubic,
+      ),
+    );
 
     _fadeController.forward();
     _slideController.forward();
@@ -238,7 +250,8 @@ class _PermissionDialogState extends State<PermissionDialog>
             child: Dialog(
               backgroundColor: Colors.transparent,
               child: Container(
-                margin: EdgeInsets.symmetric(horizontal: context.sm, vertical: context.md),
+                margin: EdgeInsets.symmetric(
+                    horizontal: context.sm, vertical: context.md),
                 constraints: BoxConstraints(
                   maxWidth: MediaQuery.of(context).size.width * 0.95,
                   minWidth: MediaQuery.of(context).size.width * 0.8,
@@ -266,7 +279,8 @@ class _PermissionDialogState extends State<PermissionDialog>
                           end: Alignment.bottomRight,
                           colors: [
                             context.colorScheme.primary.withValues(alpha: 0.1),
-                            context.colorScheme.secondary.withValues(alpha: 0.05),
+                            context.colorScheme.secondary
+                                .withValues(alpha: 0.05),
                           ],
                         ),
                         borderRadius: const BorderRadius.only(
@@ -289,7 +303,8 @@ class _PermissionDialogState extends State<PermissionDialog>
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
-                                  color: context.colorScheme.primary.withValues(alpha: 0.3),
+                                  color: context.colorScheme.primary
+                                      .withValues(alpha: 0.3),
                                   blurRadius: 15,
                                   offset: const Offset(0, 6),
                                 ),
@@ -334,15 +349,20 @@ class _PermissionDialogState extends State<PermissionDialog>
                             children: [
                               Expanded(
                                 child: AppButton.outline(
-                                  text: widget.showSettings ? context.l10n.cancel : context.l10n.notNow,
-                                  onPressed: () => Navigator.pop(context, false),
+                                  text: widget.showSettings
+                                      ? context.l10n.cancel
+                                      : context.l10n.notNow,
+                                  onPressed: () =>
+                                      Navigator.pop(context, false),
                                   borderRadius: 16,
                                 ),
                               ),
                               SizedBox(width: context.sm),
                               Expanded(
                                 child: AppButton.primary(
-                                  text: widget.showSettings ? context.l10n.openSettings : 'Continue',
+                                  text: widget.showSettings
+                                      ? context.l10n.openSettings
+                                      : 'Continue',
                                   onPressed: () => Navigator.pop(context, true),
                                   borderRadius: 16,
                                   isFullWidth: false,
@@ -382,5 +402,3 @@ class _PermissionDialogState extends State<PermissionDialog>
     }
   }
 }
-
-

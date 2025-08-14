@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/usecase/usecase.dart';
 import 'package:xpensemate/features/auth/data/datasources/auth_local_storage.dart';
+import 'package:xpensemate/features/auth/domain/entities/user.dart';
 import 'package:xpensemate/features/auth/domain/usecases/cases_export.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_state.dart';
 
@@ -168,6 +169,9 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
       emit(state.copyWith(state: AuthStates.error));
     }
   }
+  // getter of user
+
+  UserEntity? get user => state.user; 
 }
 
 // add ssome nice extensions to get the controller in ui/widget

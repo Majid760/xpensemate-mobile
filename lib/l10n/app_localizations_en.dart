@@ -322,6 +322,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logoutFromAccount => 'Logout from your account';
 
   @override
+  String get completeYourProfile => 'Complete your profile';
+
+  @override
   String get expenseTracker => 'Xpensemate';
 
   @override
@@ -353,6 +356,45 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signOutConfirmationCancel => 'Cancel';
+
+  @override
+  String get fullName => 'Full Name';
+
+  @override
+  String get gender => 'Gender';
+
+  @override
+  String get dateOfBirth => 'Date of Birth';
+
+  @override
+  String get phoneNumber => 'Phone Number';
+
+  @override
+  String get bio => 'Bio';
+
+  @override
+  String get saveChanges => 'Save Changes';
+
+  @override
+  String get profileUpdatedSuccessfully => 'Profile updated successfully';
+
+  @override
+  String get enterYourName => 'Enter your name';
+
+  @override
+  String get enterYourBio => 'Enter your bio';
+
+  @override
+  String get selectDateOfBirth => 'Select date of birth';
+
+  @override
+  String get nameIsRequired => 'Name is required';
+
+  @override
+  String get nameMustBeAtLeast2Characters => 'Name must be at least 2 characters';
+
+  @override
+  String get phoneNumberMustBeAtLeast10Digits => 'Phone number must be at least 10 digits';
 
   @override
   String get selectImage => 'Select Image';

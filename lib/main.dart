@@ -9,6 +9,7 @@ import 'package:xpensemate/core/route/utils/router_middleware_guard.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/theme/app_theme.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
 import 'package:xpensemate/firebase_options.dart';
 import 'package:xpensemate/l10n/app_localizations.dart';
 
@@ -32,7 +33,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) => MultiBlocProvider(
       providers: [
         BlocProvider<AuthCubit>(
-          create: (context) => sl<AuthCubit>()..checkAuthStatus(),
+          create: (context) => sl.authCubit..checkAuthStatus(),
+          lazy: false,
+        ),
+        BlocProvider<ProfileCubit>(
+          create: (context) => sl.profileCubit,
           lazy: false,
         ),
         // Other cubits/blocs

@@ -1,6 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xpensemate/core/localization/locale_manager.dart';
@@ -16,11 +15,12 @@ import 'package:xpensemate/features/auth/data/repositories/auth_repository_impl.
 import 'package:xpensemate/features/auth/domain/repositories/auth_repository.dart';
 import 'package:xpensemate/features/auth/domain/usecases/cases_export.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
 
 /// Global, lazy singleton
 final sl = GetIt.instance;
 
-/// ------------------------------------------------------------------
+/// ------------------------------------------------------------------s
 /// 1️⃣  Register everything before `runApp`
 /// ------------------------------------------------------------------
 Future<void> initLocator() async {
@@ -92,6 +92,7 @@ Future<void> initLocator() async {
 
     // ---------- Presentation Layer ----------
     sl.registerFactory(() => AuthCubit(sl()));
+    sl.registerFactory(() => ProfileCubit(sl()));
 
     AppLogger.i('Service locator initialized successfully');
   } on Exception catch (e) {
@@ -125,4 +126,8 @@ extension ServiceLocatorExtension on GetIt {
   NetworkInfoService get networkInfo => this<NetworkInfoService>();
   IStorageService get storage => this<IStorageService>();
   SharedPreferences get sharedPrefs => this<SharedPreferences>();
+
+  /// Quick access to Presentation Cubits
+  AuthCubit get authCubit => this<AuthCubit>();
+  ProfileCubit get profileCubit => this<ProfileCubit>();
 }

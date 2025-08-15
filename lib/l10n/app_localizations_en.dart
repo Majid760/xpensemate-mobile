@@ -96,6 +96,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hintName => 'full name';
 
   @override
+  String get minNameLength => 'name must be at least 4 characters';
+
+  @override
   String get alreadyHaveAccount => 'Already have an account?';
 
   @override
@@ -163,6 +166,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passwordsDoNotMatch => 'Passwords do not match';
+
+  @override
+  String get mustContainSpecialChar => 'Must contain at least one special character';
+
+  @override
+  String get passwordMismatch => 'Passwords do not match';
 
   @override
   String get registerSuccess => 'Account created successfully!';
@@ -431,4 +440,47 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get galleryPermissionMessage => 'We need gallery access to choose photos.';
+
+  @override
+  String get personalInformation => 'Enter your bio';
+
+  @override
+  String get male => 'Male';
+
+  @override
+  String get female => 'Female';
+
+  @override
+  String get other => 'Other';
+
+  @override
+  String get enterPhoneNumber => 'Enter phone number';
+
+  @override
+  String phoneNumberMinLength(int min) {
+    return 'Phone number must be at least $min digits';
+  }
+
+  @override
+  String get phoneNumberTooShort => 'Phone number is not valid (too short)';
+
+  @override
+  String get selectGender => 'Select Gender';
+
+  @override
+  String nameMinLength(int min) {
+    return 'Name must be at least $min characters';
+  }
+
+  @override
+  String get tellUsAboutYourself => 'Tell us about yourself...';
+
+  @override
+  String get changePhoto => 'Change Photo';
+
+  @override
+  String get saving => 'Saving...';
+
+  @override
+  String get errorSavingProfile => 'Error saving profile';
 }

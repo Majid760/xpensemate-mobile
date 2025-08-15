@@ -267,6 +267,12 @@ abstract class AppLocalizations {
   /// **'full name'**
   String get hintName;
 
+  /// No description provided for @minNameLength.
+  ///
+  /// In en, this message translates to:
+  /// **'name must be at least 4 characters'**
+  String get minNameLength;
+
   /// No description provided for @alreadyHaveAccount.
   ///
   /// In en, this message translates to:
@@ -404,6 +410,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Passwords do not match'**
   String get passwordsDoNotMatch;
+
+  /// No description provided for @mustContainSpecialChar.
+  ///
+  /// In en, this message translates to:
+  /// **'Must contain at least one special character'**
+  String get mustContainSpecialChar;
+
+  /// No description provided for @passwordMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwordMismatch;
 
   /// No description provided for @registerSuccess.
   ///
@@ -908,6 +926,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'We need gallery access to choose photos.'**
   String get galleryPermissionMessage;
+
+  /// No description provided for @personalInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your bio'**
+  String get personalInformation;
+
+  /// No description provided for @male.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get male;
+
+  /// No description provided for @female.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get female;
+
+  /// No description provided for @other.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get other;
+
+  /// No description provided for @enterPhoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter phone number'**
+  String get enterPhoneNumber;
+
+  /// Phone number min length message
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number must be at least {min} digits'**
+  String phoneNumberMinLength(int min);
+
+  /// No description provided for @phoneNumberTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number is not valid (too short)'**
+  String get phoneNumberTooShort;
+
+  /// No description provided for @selectGender.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Gender'**
+  String get selectGender;
+
+  /// Name min length message
+  ///
+  /// In en, this message translates to:
+  /// **'Name must be at least {min} characters'**
+  String nameMinLength(int min);
+
+  /// No description provided for @tellUsAboutYourself.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us about yourself...'**
+  String get tellUsAboutYourself;
+
+  /// No description provided for @changePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Photo'**
+  String get changePhoto;
+
+  /// No description provided for @saving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving...'**
+  String get saving;
+
+  /// No description provided for @errorSavingProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Error saving profile'**
+  String get errorSavingProfile;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

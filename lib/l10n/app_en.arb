@@ -52,6 +52,7 @@
   "hintConfirmPassword": "Re-enter password",
   "name": "Full Name",
   "hintName": "full name",
+  "minNameLength": "name must be at least 4 characters",
   "alreadyHaveAccount": "Already have an account?",
   "registerNow": "Create Account",
   "hintPassword": "password",
@@ -87,8 +88,10 @@
   },
   "fieldRequired": "This field is required",
   "invalidEmail": "Please enter a valid email",
-  "passwordTooShort": "Password must be at least 8 characters",
+  "passwordTooShort": "Password must be at least 6 characters",
   "passwordsDoNotMatch": "Passwords do not match",
+  "mustContainSpecialChar" : "Must contain at least one special character",
+  "passwordMismatch": "Passwords do not match",
   "registerSuccess": "Account created successfully!",
   "verifyEmail": "We have sent a verification email to your email address. Please check your inbox.",
   "verifyEmailSuccess": "Email verification sent successfully!",
@@ -233,5 +236,41 @@
   "permissionDenied": "Permission Denied",
   "permissionDeniedMessage": "Please enable this permission from settings to use this feature.",
   "cameraPermissionMessage": "We need camera access to take photos.",
-  "galleryPermissionMessage": "We need gallery access to choose photos."
+  "galleryPermissionMessage": "We need gallery access to choose photos.",
+
+  "personalInformation": "Enter your bio",
+
+  "male": "Male",
+  "female": "Female",
+  "other": "Other",
+  "enterPhoneNumber": "Enter phone number",
+
+  "phoneNumberMinLength": "Phone number must be at least {min} digits",
+  "@phoneNumberMinLength": {
+    "description": "Phone number min length message",
+    "placeholders": {
+      "min": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+
+  "phoneNumberTooShort" : "Phone number is not valid (too short)",
+  "selectGender":"Select Gender",
+  "nameMinLength": "Name must be at least {min} characters",
+  "@nameMinLength": {
+    "description": "Name min length message",
+    "placeholders": {
+      "min": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+
+  "tellUsAboutYourself": "Tell us about yourself...",
+  "changePhoto": "Change Photo",
+  "saving": "Saving...",
+  "errorSavingProfile": "Error saving profile"
 }

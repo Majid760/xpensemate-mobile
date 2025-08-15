@@ -6,14 +6,14 @@ extension ThemeContext on BuildContext {
   ThemeData get theme => Theme.of(this);
   ColorScheme get colorScheme => theme.colorScheme;
   TextTheme get textTheme => theme.textTheme;
-  
+
   // Color shortcuts
   Color get primaryColor => colorScheme.primary;
   Color get secondaryColor => colorScheme.secondary;
   Color get backgroundColor => colorScheme.surface;
   Color get surfaceColor => colorScheme.surface;
   Color get errorColor => colorScheme.error;
-  
+
   // Text style shortcuts
   TextStyle? get headlineLarge => textTheme.headlineLarge;
   TextStyle? get headlineMedium => textTheme.headlineMedium;
@@ -27,7 +27,7 @@ extension ThemeContext on BuildContext {
   TextStyle? get labelLarge => textTheme.labelLarge;
   TextStyle? get labelMedium => textTheme.labelMedium;
   TextStyle? get labelSmall => textTheme.labelSmall;
-  
+
   // Media query shortcuts
   Size get screenSize => MediaQuery.of(this).size;
   double get screenWidth => screenSize.width;
@@ -38,10 +38,12 @@ extension ThemeContext on BuildContext {
   // Spacing shortcuts
   double get xs => AppSpacing.xs;
   double get sm => AppSpacing.sm;
+  double get sm1 => AppSpacing.sm1;
+
   double get md => AppSpacing.md;
   double get lg => AppSpacing.lg;
   double get xl => AppSpacing.xl;
-  
+
   // Responsive helpers
   bool get isMobile => screenWidth < 600;
   bool get isTablet => screenWidth >= 600 && screenWidth < 1024;

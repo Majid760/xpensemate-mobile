@@ -1,4 +1,5 @@
 import 'dart:ui' show lerpDouble;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,8 +13,8 @@ import 'package:xpensemate/core/widget/morphic_button.dart';
 import 'package:xpensemate/core/widget/profile_image_widget.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_state.dart';
+import 'package:xpensemate/features/profile/presentation/pages/profile_edit_page.dart';
 import 'package:xpensemate/features/profile/presentation/widgets/profile_content_item_widget.dart';
-import 'package:xpensemate/features/profile/presentation/widgets/profile_edit_sheet.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -158,11 +159,13 @@ class _ProfilePageState extends State<ProfilePage>
                       child: _AppBarActions(
                         progress: _titleProgress,
                         profileState: profileState,
-                        onEditTap: () => showEditProfile(
-                          context,
-                          () {},
-                          (user) => {},
-                        ),
+                        onEditTap: () => {},
+                        
+                        // showEditProfile(
+                        //   context,
+                        //   () {},
+                        //   (user) => {},
+                        // ),
                       ),
                     ),
                   ],
@@ -198,11 +201,12 @@ class _ProfilePageState extends State<ProfilePage>
                         child: ModernContent(
                           profileState: profileState,
                           onLogoutTap: () {},
-                          onComingSoon: (str) => showEditProfile(
-                            context,
-                            () {},
-                            (user) => {},
-                          ),
+                          onComingSoon: (str) => {},
+                          // showEditProfile(
+                          //   context,
+                          //   () {},
+                          //   (user) => {},
+                          // ),
                           isDarkMode: isDarkMode,
                           onThemeChanged: (bool value) {
                             setState(() => isDarkMode = value);

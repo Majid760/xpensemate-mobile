@@ -2,7 +2,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:xpensemate/core/route/utils/route_constants.dart';
 import 'package:xpensemate/core/route/utils/router_middleware_guard.dart';
-import 'package:xpensemate/features/profile/presentation/pages/edit_profile_page.dart';
+import 'package:xpensemate/features/profile/presentation/pages/profile_edit_page.dart';
 import 'package:xpensemate/features/profile/presentation/pages/profile_page.dart';
 import 'package:xpensemate/features/profile/presentation/pages/setting_page.dart';
 
@@ -22,7 +22,7 @@ abstract class ProfileRoutes {
         GoRoute(
           path: 'edit',
           name: RouteNames.editProfile,
-          builder: (context, state) => const EditProfilePage(),
+          builder: (context, state) => const ProfilePage(),
         ),
       ],
     ),

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reactive_forms/reactive_forms.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/route/utils/router_extension.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
@@ -23,25 +24,48 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _obscurePassword = true;
+  late final FormGroup _form;
+
+  @override
+  void initState() {
+    super.initState();
+    _form = FormGroup({
+      'email': FormControl<String>(
+        validators: [
+          Validators.required,
+          Validators.email,
+        ],
+      ),
+      'password': FormControl<String>(
+        validators: [
+          Validators.required,
+          // Validators.minLength(6),
+          //special character including
+        ],
+      ),
+    });
+
+   
+  }
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
+    _form.dispose();
     super.dispose();
   }
 
   Future<void> _submitForm() async {
-    if (_formKey.currentState?.validate() ?? false) {
-      await context.read<AuthCubit>().loginWithEmail(
-            email: _emailController.text.trim(),
-            password: _passwordController.text,
-          );
-    }
+   
+    // Mark all fields as touched to trigger validation display
+    _form.markAllAsTouched();
+    // Check if form is valid
+    if (!_form.valid)return;
+
+    // Form is valid, proceed with login
+    await context.read<AuthCubit>().loginWithEmail(
+          email: (_form.control('email').value as String?)?.trim() ?? '',
+          password: _form.control('password').value as String? ?? '',
+        );
   }
 
   @override
@@ -76,8 +100,8 @@ class _LoginPageState extends State<LoginPage> {
                 child: IntrinsicHeight(
                   child: Padding(
                     padding: const EdgeInsets.all(AppSpacing.md),
-                    child: Form(
-                      key: _formKey,
+                    child: ReactiveForm(
+                      formGroup: _form,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
@@ -100,66 +124,38 @@ class _LoginPageState extends State<LoginPage> {
 
                           const SizedBox(height: AppSpacing.xl),
                           // Email Field
-                          CustomTextFormField(
+                          ReactiveAppField(
+                            formControlName: 'email',
                             labelText: l10n.email,
-                            hintText:
-                                l10n.hintEmail, // Updated to use hintEmail
-                            keyboardType: TextInputType.emailAddress,
+                            fieldType: FieldType.email,
+                            hintText: l10n.hintEmail,
                             textInputAction: TextInputAction.next,
-                            controller: _emailController,
                             prefixIcon: Icon(
                               Icons.email_outlined,
                               color: colorScheme.onSurfaceVariant
                                   .withValues(alpha: 0.6),
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return l10n
-                                    .emailRequired; // Updated to use emailRequired
-                              }
-                             if (!RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
-                                  .hasMatch(value)) {
-                                return 'Please enter a valid email';
-                              }
-                              return null;
+                            validationMessages: {
+                              'required': (error) => l10n.emailRequired,
+                              'email': (error) => l10n.invalidEmail,
                             },
                           ),
                           const SizedBox(height: AppSpacing.lg),
                           // Password Field
-                          CustomTextFormField(
+                          ReactiveAppField(
+                            formControlName: 'password',
                             labelText: l10n.password,
-                            hintText: l10n
-                                .hintPassword, // Updated to use hintPassword
-                            obscureText: _obscurePassword,
+                            fieldType: FieldType.password,
+                            hintText: l10n.hintPassword,
                             textInputAction: TextInputAction.done,
-                            controller: _passwordController,
                             prefixIcon: Icon(
                               Icons.lock_outline_rounded,
                               color: colorScheme.onSurfaceVariant
                                   .withValues(alpha: 0.6),
                             ),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscurePassword
-                                    ? Icons.visibility_outlined
-                                    : Icons.visibility_off_outlined,
-                                color: colorScheme.onSurfaceVariant
-                                    .withValues(alpha: 0.6),
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _obscurePassword = !_obscurePassword;
-                                });
-                              },
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return l10n.passwordRequired;
-                              }
-                              if (value.length < 4) {
-                                return l10n.passwordTooShort;
-                              }
-                              return null;
+                            validationMessages: {
+                              'required': (error) => l10n.passwordRequired,
+                              'minLength': (error) => l10n.passwordTooShort,
                             },
                           ),
                           const SizedBox(height: AppSpacing.sm),
@@ -186,8 +182,8 @@ class _LoginPageState extends State<LoginPage> {
                             textColor: colorScheme.onPrimary,
                             isLoading: state.state == AuthStates.loading,
                           ),
-                          const SizedBox(height: AppSpacing.lg),
 
+                          const SizedBox(height: AppSpacing.lg),
                           // Divider with "or"
                           Row(
                             children: [

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:reactive_forms/reactive_forms.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/route/utils/router_extension.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
@@ -21,31 +22,59 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
-  bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
+  late final FormGroup _form;
+
+  @override
+  void initState() {
+    super.initState();
+    _form = FormGroup(
+      {
+        'name': FormControl<String>(
+          validators: [
+            Validators.required,
+            Validators.minLength(4),
+          ],
+        ),
+        'email': FormControl<String>(
+          validators: [
+            Validators.required,
+            Validators.email,
+          ],
+        ),
+        'password': FormControl<String>(
+          validators: [
+            Validators.required,
+            Validators.minLength(6),
+            Validators.pattern(
+              RegExp(r'[!@#$%^&*(),.?":{}|<>]'),
+            ),
+          ],
+        ),
+        'confirmPassword': FormControl<String>(
+          validators: [
+            Validators.required,
+          ],
+        ),
+      },
+    );
+  }
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
+    _form.dispose();
     super.dispose();
   }
 
   Future<void> _submitForm() async {
-    if (_formKey.currentState?.validate() ?? false) {
-      await context.read<AuthCubit>().registerWithEmail(
-            email: _emailController.text.trim(),
-            password: _passwordController.text,
-            fullName: _nameController.text.trim(),
-          );
-    }
+    _form.markAllAsTouched();
+    // Check if form is valid
+    if (!_form.valid) return;
+
+    await context.read<AuthCubit>().registerWithEmail(
+          email: (_form.control('email').value as String?)?.trim() ?? '',
+          password: (_form.control('password').value as String?)?.trim() ?? '',
+          fullName: (_form.control('name').value as String?)?.trim() ?? '',
+        );
   }
 
   @override
@@ -66,13 +95,17 @@ class _RegisterPageState extends State<RegisterPage> {
             );
           } else if (state.state == AuthStates.loaded) {
             AppDialogs.showTopSnackBar(
-               context,
+              context,
               message: l10n.registerSuccess,
               type: MessageType.info,
             );
-            context.goToVerifyEmail(email: _emailController.text.trim().toLowerCase());
-          }else {
-          } 
+            context.goToVerifyEmail(
+              email: (_form.control('email').value as String?)
+                      ?.trim()
+                      .toLowerCase() ??
+                  '',
+            );
+          } else {}
         },
         builder: (context, state) => SafeArea(
           child: LayoutBuilder(
@@ -84,8 +117,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 child: IntrinsicHeight(
                   child: Padding(
                     padding: const EdgeInsets.all(AppSpacing.md),
-                    child: Form(
-                      key: _formKey,
+                    child: ReactiveForm(
+                      formGroup: _form,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
@@ -108,123 +141,86 @@ class _RegisterPageState extends State<RegisterPage> {
                           const SizedBox(height: AppSpacing.xl),
 
                           // Name Field
-                          CustomTextFormField(
+                          ReactiveAppField(
+                            formControlName: 'name',
                             labelText: l10n.name,
                             hintText: l10n.hintName,
-                            keyboardType: TextInputType.name,
                             textInputAction: TextInputAction.next,
-                            controller: _nameController,
                             prefixIcon: Icon(
                               Icons.person_outline_rounded,
                               color: colorScheme.onSurfaceVariant
                                   .withValues(alpha: 0.6),
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your name';
-                              }
-                              return null;
+                            validationMessages: {
+                              'required': (error) => l10n.nameIsRequired,
+                              'minLength': (error) => l10n.minNameLength,
                             },
                           ),
                           const SizedBox(height: AppSpacing.lg),
 
                           // Email Field
-                          CustomTextFormField(
+                          ReactiveAppField(
+                            formControlName: 'email',
                             labelText: l10n.email,
+                            fieldType: FieldType.email,
                             hintText: l10n.hintEmail,
-                            keyboardType: TextInputType.emailAddress,
                             textInputAction: TextInputAction.next,
-                            controller: _emailController,
                             prefixIcon: Icon(
                               Icons.email_outlined,
                               color: colorScheme.onSurfaceVariant
                                   .withValues(alpha: 0.6),
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your email';
-                              }
-                              if (!RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
-                                  .hasMatch(value)) {
-                                return 'Please enter a valid email';
-                              }
-                              return null;
+                            validationMessages: {
+                              'required': (error) => l10n.emailRequired,
+                              'email': (error) => l10n.invalidEmail,
                             },
                           ),
                           const SizedBox(height: AppSpacing.lg),
 
                           // Password Field
-                          CustomTextFormField(
+                          ReactiveAppField(
+                            formControlName: 'password',
                             labelText: l10n.password,
+                            fieldType: FieldType.password,
                             hintText: l10n.hintPassword,
-                            obscureText: _obscurePassword,
                             textInputAction: TextInputAction.next,
-                            controller: _passwordController,
                             prefixIcon: Icon(
                               Icons.lock_outline_rounded,
                               color: colorScheme.onSurfaceVariant
                                   .withValues(alpha: 0.6),
                             ),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscurePassword
-                                    ? Icons.visibility_outlined
-                                    : Icons.visibility_off_outlined,
-                                color: colorScheme.onSurfaceVariant
-                                    .withValues(alpha: 0.6),
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _obscurePassword = !_obscurePassword;
-                                });
-                              },
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter a password';
-                              }
-                              if (value.length < 8) {
-                                return 'Password must be at least 8 characters';
-                              }
-                              return null;
+                            validationMessages: {
+                              'required': (error) => l10n.passwordRequired,
+                              'minLength': (error) => l10n.passwordTooShort,
+                              'pattern': (error) =>
+                                  context.l10n.mustContainSpecialChar,
+                              'specialChar': (error) =>
+                                  l10n.mustContainSpecialChar,
+                              'validationMessage': (error) =>
+                                  l10n.mustContainSpecialChar,
                             },
                           ),
                           const SizedBox(height: AppSpacing.lg),
 
                           // Confirm Password Field
-                          CustomTextFormField(
+                          ReactiveAppField(
+                            formControlName: 'confirmPassword',
                             labelText: l10n.confirmPassword,
+                            fieldType: FieldType.password,
                             hintText: l10n.hintConfirmPassword,
-                            obscureText: _obscureConfirmPassword,
                             textInputAction: TextInputAction.done,
-                            controller: _confirmPasswordController,
                             prefixIcon: Icon(
                               Icons.lock_outline_rounded,
                               color: colorScheme.onSurfaceVariant
                                   .withValues(alpha: 0.6),
                             ),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscureConfirmPassword
-                                    ? Icons.visibility_outlined
-                                    : Icons.visibility_off_outlined,
-                                color: colorScheme.onSurfaceVariant
-                                    .withValues(alpha: 0.6),
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _obscureConfirmPassword = !_obscureConfirmPassword;
-                                });
-                              },
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please confirm your password';
-                              }
-                              if (value != _passwordController.text) {
-                                return 'Passwords do not match';
-                              }
-                              return null;
+                            validationMessages: {
+                              'required': (error) =>
+                                  '${l10n.confirmPassword} is required',
+                              'passwordMismatch': (error) =>
+                                  context.l10n.passwordsDoNotMatch,
+                              'mustMatch': (error) =>
+                                  context.l10n.passwordsDoNotMatch,
                             },
                           ),
                           const SizedBox(height: AppSpacing.xxl),
@@ -242,7 +238,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
                           // Already have an account? Login
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxl),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: AppSpacing.xxl,
+                            ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:reactive_forms/reactive_forms.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/utils/assset_path.dart';
@@ -19,21 +20,35 @@ class ForgotPasswordPage extends StatefulWidget {
 }
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+  late final FormGroup _form;
+
+  @override
+  void initState() {
+    super.initState();
+    _form = FormGroup({
+      'email': FormControl<String>(
+        validators: [
+          Validators.required,
+          Validators.email,
+        ],
+      ),
+    });
+  }
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _form.dispose();
     super.dispose();
   }
 
   Future<void> _submitForm() async {
-    if (_formKey.currentState?.validate() ?? false) {
-      await context.read<AuthCubit>().forgotPassword(
-            email: _emailController.text.trim(),
-          );
-    }
+    _form.markAllAsTouched();
+
+    if (!_form.valid) return;
+
+    await context.read<AuthCubit>().forgotPassword(
+          email: (_form.control('email').value as String?)?.trim() ?? '',
+        );
   }
 
   @override
@@ -65,9 +80,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               type: SnackBarType.success,
               duration: const Duration(seconds: 4),
             );
+            final currentContext = context;
             Future.delayed(const Duration(seconds: 2), () {
               if (mounted) {
-                context.pop();
+                currentContext.pop();
               }
             });
           }
@@ -82,8 +98,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 child: IntrinsicHeight(
                   child: Padding(
                     padding: const EdgeInsets.all(AppSpacing.md),
-                    child: Form(
-                      key: _formKey,
+                    child: ReactiveForm(
+                      formGroup: _form,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
@@ -113,26 +129,20 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           const SizedBox(height: AppSpacing.xxl),
 
                           // Email Field
-                          CustomTextFormField(
+                          ReactiveAppField(
+                            formControlName: 'email',
                             labelText: l10n.email,
+                            fieldType: FieldType.email,
                             hintText: l10n.hintEmail,
-                            keyboardType: TextInputType.emailAddress,
                             textInputAction: TextInputAction.done,
-                            controller: _emailController,
                             prefixIcon: Icon(
                               Icons.email_outlined,
                               color: colorScheme.onSurfaceVariant
                                   .withValues(alpha: 0.6),
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return l10n.emailRequired;
-                              }
-                              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                                  .hasMatch(value)) {
-                                return l10n.invalidEmail;
-                              }
-                              return null;
+                            validationMessages: {
+                              'required': (error) => l10n.emailRequired,
+                              'email': (error) => l10n.invalidEmail,
                             },
                           ),
                           const SizedBox(height: AppSpacing.xxl),

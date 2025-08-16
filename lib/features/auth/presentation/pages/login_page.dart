@@ -39,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
       'password': FormControl<String>(
         validators: [
           Validators.required,
-          // Validators.minLength(6),
+          Validators.minLength(6),
           //special character including
         ],
       ),
@@ -195,7 +195,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               Padding(
                                 padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
+                                    const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                                 child: Text(
                                   l10n.or,
                                   style: textTheme.bodySmall?.copyWith(
@@ -211,7 +211,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: AppSpacing.lg),
 
                           // Social Login Buttons
                           Row(
@@ -247,7 +247,7 @@ class _LoginPageState extends State<LoginPage> {
                                     color: colorScheme.onSurfaceVariant,
                                   ),
                                 ),
-                                const SizedBox(width: 4),
+                                const SizedBox(width: AppSpacing.xs),
                                 AppButton.textButton(
                                   text: l10n.register,
                                   textColor: colorScheme.primary,

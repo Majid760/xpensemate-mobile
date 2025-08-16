@@ -32,7 +32,6 @@ class _RegisterPageState extends State<RegisterPage> {
         'name': FormControl<String>(
           validators: [
             Validators.required,
-            Validators.minLength(4),
           ],
         ),
         'email': FormControl<String>(
@@ -44,10 +43,7 @@ class _RegisterPageState extends State<RegisterPage> {
         'password': FormControl<String>(
           validators: [
             Validators.required,
-            Validators.minLength(6),
-            Validators.pattern(
-              RegExp(r'[!@#$%^&*(),.?":{}|<>]'),
-            ),
+            Validators.minLength(8),
           ],
         ),
         'confirmPassword': FormControl<String>(
@@ -153,7 +149,6 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                             validationMessages: {
                               'required': (error) => l10n.nameIsRequired,
-                              'minLength': (error) => l10n.minNameLength,
                             },
                           ),
                           const SizedBox(height: AppSpacing.lg),
@@ -192,12 +187,6 @@ class _RegisterPageState extends State<RegisterPage> {
                             validationMessages: {
                               'required': (error) => l10n.passwordRequired,
                               'minLength': (error) => l10n.passwordTooShort,
-                              'pattern': (error) =>
-                                  context.l10n.mustContainSpecialChar,
-                              'specialChar': (error) =>
-                                  l10n.mustContainSpecialChar,
-                              'validationMessage': (error) =>
-                                  l10n.mustContainSpecialChar,
                             },
                           ),
                           const SizedBox(height: AppSpacing.lg),
@@ -215,8 +204,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   .withValues(alpha: 0.6),
                             ),
                             validationMessages: {
-                              'required': (error) =>
-                                  '${l10n.confirmPassword} is required',
+                              'required': (error) => '${l10n.confirmPassword} is required',
                               'passwordMismatch': (error) =>
                                   context.l10n.passwordsDoNotMatch,
                               'mustMatch': (error) =>
@@ -250,7 +238,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     color: colorScheme.onSurfaceVariant,
                                   ),
                                 ),
-                                const SizedBox(width: 4),
+                                const SizedBox(width: AppSpacing.xs),
                                 AppButton.textButton(
                                   onPressed: () => context.pop(),
                                   text: l10n.login,

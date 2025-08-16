@@ -42,13 +42,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   }
 
   Future<void> _submitForm() async {
-    _form.markAllAsTouched();
-
-    if (!_form.valid) return;
-
-    await context.read<AuthCubit>().forgotPassword(
-          email: (_form.control('email').value as String?)?.trim() ?? '',
-        );
+    if (_form.valid) {
+      await context.read<AuthCubit>().forgotPassword(
+            email: (_form.control('email').value as String?)?.trim() ?? '',
+          );
+    }
   }
 
   @override

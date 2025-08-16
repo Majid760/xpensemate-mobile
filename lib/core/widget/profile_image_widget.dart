@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
@@ -7,12 +9,14 @@ class ProfileImageWidget extends StatelessWidget {
   const ProfileImageWidget({
     super.key,
     required this.imageUrl,
+    this.file,
     this.size = 120,
     this.onImageTap,
     this.showEditButton = true,
     this.editButtonSize = 18,
     this.borderWidth = 3,
     this.gradientColors,
+
     this.backgroundColor = Colors.white,
     this.shadowColor,
     this.borderColor = Colors.white,
@@ -28,14 +32,16 @@ class ProfileImageWidget extends StatelessWidget {
   final Color backgroundColor;
   final Color? shadowColor;
   final Color borderColor;
+  final File? file;
 
   @override
   Widget build(BuildContext context) {
-    final defaultGradientColors = gradientColors ?? [
-      AppColors.primary,
-      AppColors.secondary,
-      AppColors.tertiary,
-    ];
+    final defaultGradientColors = gradientColors ??
+        [
+          AppColors.primary,
+          AppColors.secondary,
+          AppColors.tertiary,
+        ];
 
     return Center(
       child: Stack(
@@ -53,7 +59,8 @@ class ProfileImageWidget extends StatelessWidget {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: (shadowColor ?? AppColors.primary).withValues(alpha: 0.3),
+                  color:
+                      (shadowColor ?? AppColors.primary).withValues(alpha: 0.3),
                   blurRadius: 20,
                   spreadRadius: 2,
                   offset: const Offset(0, 8),
@@ -68,17 +75,17 @@ class ProfileImageWidget extends StatelessWidget {
                   color: backgroundColor,
                 ),
                 child: ClipOval(
-                  child: _buildImageContent(),
+                  child: file !=null ? AppImage.file(file!.path): AppImage.network(imageUrl!),
                 ),
               ),
             ),
           ),
-          
+
           // Edit button overlay
           if (showEditButton && onImageTap != null)
             Positioned(
-              bottom: size * 0.067, // 8px for 120px size
-              right: size * 0.067,
+              bottom: size * 0.010, // 8px for 120px size
+              right: size * 0.010,
               child: GestureDetector(
                 onTap: onImageTap,
                 child: Container(
@@ -97,7 +104,7 @@ class ProfileImageWidget extends StatelessWidget {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.15),
+                        color: Colors.white.withValues(alpha: 0.15),
                         blurRadius: 10,
                         offset: const Offset(0, 3),
                       ),
@@ -115,33 +122,4 @@ class ProfileImageWidget extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildImageContent() {
-    if (imageUrl != null && imageUrl!.isNotEmpty) {
-      return AppImage.network(
-        imageUrl!,
-        customErrorWidget: _FallbackAvatar(size: size * 0.5),
-      );
-    }
-    return _FallbackAvatar(size: size * 0.5);
-  }
-}
-
-class _FallbackAvatar extends StatelessWidget {
-  const _FallbackAvatar({required this.size});
-
-  final double size;
-
-  @override
-  Widget build(BuildContext context) => AppImage.asset(
-    'assets/images/user_placeholder.png',
-    width: size,
-    height: size,
-    shape: ImageShape.circle,
-    backgroundColor: Theme.of(context).colorScheme.surface,
-    border: Border.all(
-      color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
-      width: 0.5,
-    ),
-  );
 }

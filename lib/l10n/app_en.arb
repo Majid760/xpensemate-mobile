@@ -52,7 +52,6 @@
   "hintConfirmPassword": "Re-enter password",
   "name": "Full Name",
   "hintName": "full name",
-  "minNameLength": "name must be at least 4 characters",
   "alreadyHaveAccount": "Already have an account?",
   "registerNow": "Create Account",
   "hintPassword": "password",
@@ -88,10 +87,10 @@
   },
   "fieldRequired": "This field is required",
   "invalidEmail": "Please enter a valid email",
-  "passwordTooShort": "Password must be at least 6 characters",
+  "passwordTooShort": "Password must be at least 8 characters",
   "passwordsDoNotMatch": "Passwords do not match",
-  "mustContainSpecialChar" : "Must contain at least one special character",
   "passwordMismatch": "Passwords do not match",
+  "confirmPasswordRequired": "Confirm Password is required",
   "registerSuccess": "Account created successfully!",
   "verifyEmail": "We have sent a verification email to your email address. Please check your inbox.",
   "verifyEmailSuccess": "Email verification sent successfully!",
@@ -218,7 +217,7 @@
   "enterYourBio": "Enter your bio",
   "selectDateOfBirth": "Select date of birth",
   "nameIsRequired": "Name is required",
-  "nameMustBeAtLeast2Characters": "Name must be at least 2 characters",
+  "nameMustBeAtLeast4Characters": "Name must be at least 4 characters",
   "phoneNumberMustBeAtLeast10Digits": "Phone number must be at least 10 digits",
 
   
@@ -268,7 +267,8 @@
       }
     }
   },
-
+  "searchCountry":"Search country",
+  "noCountryFound":"No country found",
   "tellUsAboutYourself": "Tell us about yourself...",
   "changePhoto": "Change Photo",
   "saving": "Saving...",

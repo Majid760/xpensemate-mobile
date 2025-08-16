@@ -267,12 +267,6 @@ abstract class AppLocalizations {
   /// **'full name'**
   String get hintName;
 
-  /// No description provided for @minNameLength.
-  ///
-  /// In en, this message translates to:
-  /// **'name must be at least 4 characters'**
-  String get minNameLength;
-
   /// No description provided for @alreadyHaveAccount.
   ///
   /// In en, this message translates to:
@@ -411,17 +405,17 @@ abstract class AppLocalizations {
   /// **'Passwords do not match'**
   String get passwordsDoNotMatch;
 
-  /// No description provided for @mustContainSpecialChar.
-  ///
-  /// In en, this message translates to:
-  /// **'Must contain at least one special character'**
-  String get mustContainSpecialChar;
-
   /// No description provided for @passwordMismatch.
   ///
   /// In en, this message translates to:
   /// **'Passwords do not match'**
   String get passwordMismatch;
+
+  /// No description provided for @confirmPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password is required'**
+  String get confirmPasswordRequired;
 
   /// No description provided for @registerSuccess.
   ///
@@ -843,11 +837,11 @@ abstract class AppLocalizations {
   /// **'Name is required'**
   String get nameIsRequired;
 
-  /// No description provided for @nameMustBeAtLeast2Characters.
+  /// No description provided for @nameMustBeAtLeast4Characters.
   ///
   /// In en, this message translates to:
-  /// **'Name must be at least 2 characters'**
-  String get nameMustBeAtLeast2Characters;
+  /// **'Name must be at least 4 characters'**
+  String get nameMustBeAtLeast4Characters;
 
   /// No description provided for @phoneNumberMustBeAtLeast10Digits.
   ///
@@ -980,6 +974,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Name must be at least {min} characters'**
   String nameMinLength(int min);
+
+  /// No description provided for @searchCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'Search country'**
+  String get searchCountry;
+
+  /// No description provided for @noCountryFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No country found'**
+  String get noCountryFound;
 
   /// No description provided for @tellUsAboutYourself.
   ///

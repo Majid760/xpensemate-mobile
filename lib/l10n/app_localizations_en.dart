@@ -96,9 +96,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hintName => 'full name';
 
   @override
-  String get minNameLength => 'name must be at least 4 characters';
-
-  @override
   String get alreadyHaveAccount => 'Already have an account?';
 
   @override
@@ -168,10 +165,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passwordsDoNotMatch => 'Passwords do not match';
 
   @override
-  String get mustContainSpecialChar => 'Must contain at least one special character';
+  String get passwordMismatch => 'Passwords do not match';
 
   @override
-  String get passwordMismatch => 'Passwords do not match';
+  String get confirmPasswordRequired => 'Confirm Password is required';
 
   @override
   String get registerSuccess => 'Account created successfully!';
@@ -400,7 +397,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nameIsRequired => 'Name is required';
 
   @override
-  String get nameMustBeAtLeast2Characters => 'Name must be at least 2 characters';
+  String get nameMustBeAtLeast4Characters => 'Name must be at least 4 characters';
 
   @override
   String get phoneNumberMustBeAtLeast10Digits => 'Phone number must be at least 10 digits';
@@ -471,6 +468,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String nameMinLength(int min) {
     return 'Name must be at least $min characters';
   }
+
+  @override
+  String get searchCountry => 'Search country';
+
+  @override
+  String get noCountryFound => 'No country found';
 
   @override
   String get tellUsAboutYourself => 'Tell us about yourself...';

@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart' as top_snack_bar;
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/service/permission_service.dart';
+import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
 import 'package:xpensemate/core/widget/image_picker_bottom_sheet.dart';
@@ -115,21 +116,24 @@ class AppDialogs {
     }
   }
 
-  static void showImagePicker({
+  static Future<void> showImagePicker({
     required BuildContext context,
     required dynamic Function(File?) onImageSelected,
-  }) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => ImagePickerBottomSheet(
-        onImageSelected: onImageSelected,
-      ),
+  }) async {
+    final result = await sl.permissions.requestMultiplePermissions(
+      [AppPermission.camera, AppPermission.gallery],
     );
+    if (context.mounted && (result[AppPermission.camera]?.isGranted ?? false)) {
+      await showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) => ImagePickerBottomSheet(
+          onImageSelected: onImageSelected,
+        ),
+      );
+    }
   }
-
-
 }
 
 class PermissionDialog extends StatefulWidget {

@@ -159,13 +159,9 @@ class _ProfilePageState extends State<ProfilePage>
                       child: _AppBarActions(
                         progress: _titleProgress,
                         profileState: profileState,
-                        onEditTap: () => {},
-                        
-                        // showEditProfile(
-                        //   context,
-                        //   () {},
-                        //   (user) => {},
-                        // ),
+                        onEditTap: () => showEditProfile(
+                          context,
+                        ),
                       ),
                     ),
                   ],
@@ -201,12 +197,9 @@ class _ProfilePageState extends State<ProfilePage>
                         child: ModernContent(
                           profileState: profileState,
                           onLogoutTap: () {},
-                          onComingSoon: (str) => {},
-                          // showEditProfile(
-                          //   context,
-                          //   () {},
-                          //   (user) => {},
-                          // ),
+                          onComingSoon: (str) => showEditProfile(
+                            context,
+                          ),
                           isDarkMode: isDarkMode,
                           onThemeChanged: (bool value) {
                             setState(() => isDarkMode = value);

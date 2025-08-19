@@ -4,8 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:reactive_phone_form_field/reactive_phone_form_field.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
-import 'package:xpensemate/core/service/permission_service.dart';
-import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
 import 'package:xpensemate/core/widget/app_dialogs.dart';
@@ -28,7 +26,6 @@ class ProfileEditWidget extends StatefulWidget {
 class _ProfileEditWidgetState extends State<ProfileEditWidget>
     with TickerProviderStateMixin {
   late final FormGroup _form;
-  final _emailController = TextEditingController();
 
   DateTime? _selectedDateOfBirth;
   bool _isLoading = false;
@@ -51,6 +48,35 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
         parsedDate = DateTime.parse(user.dob!);
       } on Exception catch (_) {
         // Keep null if parsing fails
+      }
+    }
+    // Parse and set initial phone number from stored user data
+    final storedPhone = user?.phoneNumber;
+    PhoneNumber? parsedPhone;
+
+    // Parse and set initial phone number from stored user data
+    if (storedPhone != null && storedPhone.isNotEmpty) {
+      try {
+        // Try parsing assuming international format (e.g., "+1 ...")
+        parsedPhone = PhoneNumber.parse(storedPhone);
+      } on Exception catch (_) {
+        // Fallback: try parsing with locale-based ISO country
+        final localeCountry = Localizations.maybeLocaleOf(context)?.countryCode;
+        var fallbackIso = IsoCode.US;
+        if (localeCountry != null && localeCountry.isNotEmpty) {
+          try {
+            fallbackIso = IsoCode.values.firstWhere(
+              (c) => c.name.toUpperCase() == localeCountry.toUpperCase(),
+              orElse: () => IsoCode.US,
+            );
+          } on Exception catch (_) {}
+        }
+        try {
+          parsedPhone = PhoneNumber.parse(
+            storedPhone,
+            destinationCountry: fallbackIso,
+          );
+        } on Exception catch (_) {}
       }
     }
 
@@ -84,40 +110,29 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
       'gender': FormControl<String>(
         value: parsedGender ?? '',
       ),
-      'dateOfBirth': FormControl<String>(
+      'dob': FormControl<String>(
         value: parsedDate != null
             ? '${parsedDate.day}/${parsedDate.month}/${parsedDate.year}'
             : '',
       ),
-      'bio': FormControl<String>(
+      'about': FormControl<String>(
         value: user?.about ?? '',
       ),
-      'phone': FormControl<PhoneNumber>(
-        value: null,
+      'contactNumber': FormControl<PhoneNumber>(
+        value: parsedPhone,
       ),
-    });
-    _form.updateValue({
-
     });
 
     _selectedDateOfBirth = parsedDate;
-    _initializeFields();
     _initializeAnimations();
   }
 
   @override
   void dispose() {
     _form.dispose();
-    _emailController.dispose();
     _fadeController.dispose();
     _slideController.dispose();
     super.dispose();
-  }
-
-  void _initializeFields() {
-    final profileCubit = context.profileCubit;
-    final user = profileCubit.state.user;
-    _emailController.text = user?.email ?? '';
   }
 
   void _initializeAnimations() {
@@ -136,8 +151,8 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
       end: 1,
     ).animate(
       CurvedAnimation(
-        parent: _fadeController,
-        curve: Curves.easeOutCubic,
+      parent: _fadeController,
+      curve: Curves.easeOutCubic,
       ),
     );
 
@@ -146,8 +161,8 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
       end: Offset.zero,
     ).animate(
       CurvedAnimation(
-        parent: _slideController,
-        curve: Curves.easeOutCubic,
+      parent: _slideController,
+      curve: Curves.easeOutCubic,
       ),
     );
 
@@ -219,18 +234,34 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
         _selectedDateOfBirth = selectedDate;
       });
       // Update the form control
-      _form.control('dateOfBirth').value =
+      _form.control('dob').value =
           '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}';
       await HapticFeedback.selectionClick();
     }
   }
 
-  Future<void> _handleSave() async {
+  Future<void> _handleSave(ProfileCubit profileCubit) async {
     _form.markAllAsTouched();
+
     if (!_form.valid) return;
     // Parse gender from form
-    final formdata = _form.value;
-    print('form data is $formdata');
+    
+    final formdata = Map<String, Object?>.from(_form.value);
+    formdata['dob'] = DateTime.tryParse(formdata['dob']! as String)?.toIso8601String();
+    formdata['gender'] = formdata['gender'].toString().toLowerCase();
+    formdata['firstName'] = formdata['name'].toString().split(' ').first;
+    formdata['lastName'] = formdata['name'].toString().split(' ').last;
+
+
+    // Serialize contactNumber as required by API: { "isoCode": "US", "nsn": "74745" }
+    final contact = formdata['contactNumber'];
+    if (contact is PhoneNumber) {
+      formdata['contactNumber'] = {
+        'isoCode': contact.isoCode.name,
+        'nsn': contact.nsn,
+      };
+    }
+    await profileCubit.updateProfile(formdata);
   }
 
   @override
@@ -238,7 +269,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
       BlocConsumer<ProfileCubit, ProfileState>(
         listener: (context, state) {
           if (state.status == ProfileStatus.error &&
-              state.errorMessage != null) {
+              state.errorMessage != null && state.errorMessage!.isNotEmpty) {
             AppSnackBar.show(
               context: context,
               message: state.errorMessage!,
@@ -247,18 +278,18 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
           }
         },
         builder: (context, state) => FadeTransition(
-          opacity: _fadeAnimation,
-          child: SlideTransition(
-            position: _slideAnimation,
+        opacity: _fadeAnimation,
+        child: SlideTransition(
+          position: _slideAnimation,
             child: ReactiveForm(
               formGroup: _form,
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  children: [
-                    Center(
-                      child: ProfileImageWidget(
-                        file: state.imageFile,
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                children: [
+                  Center(
+                    child: ProfileImageWidget(
+                        imageFile: state.imageFile,
                         imageUrl:
                             context.profileCubit.state.user?.profilePhotoUrl,
                         onImageTap: () => {
@@ -271,33 +302,33 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
                             },
                           ),
                         },
-                        size: 100,
-                      ),
+                      size: 100,
                     ),
-                    SizedBox(height: context.xl),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: context.md),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                  ),
+                  SizedBox(height: context.xl),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: context.md),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                           ReactiveAppField(
                             formControlName: 'name',
                             labelText: context.l10n.fullName,
                             hintText: context.l10n.hintName,
-                            prefixIcon: const Icon(
-                              Icons.person_outline_rounded,
-                              size: 20,
-                            ),
+                          prefixIcon: const Icon(
+                            Icons.person_outline_rounded,
+                            size: 20,
+                          ),
                             validationMessages: {
                               'required': (error) =>
                                   context.l10n.nameIsRequired,
                               'minLength': (error) =>
                                   context.l10n.nameMustBeAtLeast4Characters,
                             },
-                          ),
-                          SizedBox(height: context.lg),
+                        ),
+                        SizedBox(height: context.lg),
                           ReactiveAppField(
-                            formControlName: 'phone',
+                            formControlName: 'contactNumber',
                             labelText: context.l10n.phoneNumber,
                             fieldType: FieldType.phone,
                             hintText: context.l10n.enterPhoneNumber,
@@ -308,9 +339,9 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
                                   context.l10n.phoneNumberMustBeAtLeast10Digits,
                             },
                           ),
-                          SizedBox(height: context.lg),
+                        SizedBox(height: context.lg),
                           ReactiveAppField(
-                            formControlName: 'dateOfBirth',
+                            formControlName: 'dob',
                             labelText: context.l10n.dateOfBirth,
                             hintText: context.l10n.selectDateOfBirth,
                             readOnly: true,
@@ -324,7 +355,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
                                   'Date of birth is required',
                             },
                           ),
-                          SizedBox(height: context.lg),
+                        SizedBox(height: context.lg),
                           ReactiveAppField(
                             formControlName: 'gender',
                             labelText: context.l10n.gender,
@@ -336,9 +367,9 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
                               HapticFeedback.selectionClick();
                             },
                           ),
-                          SizedBox(height: context.lg),
+                        SizedBox(height: context.lg),
                           ReactiveAppField(
-                            formControlName: 'bio',
+                            formControlName: 'about',
                             labelText: context.l10n.about,
                             fieldType: FieldType.textarea,
                             hintText: context.l10n.enterYourBio,
@@ -348,28 +379,19 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
                                 .colorScheme.surfaceContainerHighest
                                 .withValues(alpha: 0.7),
                           ),
-                          SizedBox(height: context.xl),
-                          _buildSaveButton(),
-                          SizedBox(height: context.md),
-                        ],
-                      ),
+                        SizedBox(height: context.xl),
+                        _buildSaveButton(),
+                        SizedBox(height: context.md),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
         ),
+        ),
       );
-
-  String _getPhoneNumberString() {
-    final phoneControl = _form.control('phone');
-    if (phoneControl.value is PhoneNumber) {
-      final phoneNumber = phoneControl.value as PhoneNumber;
-      return phoneNumber.international;
-    }
-    return context.profileCubit.state.user?.phoneNumber ?? '';
-  }
 
   Widget _buildSaveButton() => Container(
         width: double.infinity,
@@ -396,7 +418,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: _isLoading ? null : _handleSave,
+            onTap: _isLoading ? null : () async => _handleSave(context.profileCubit),
             borderRadius: BorderRadius.circular(16),
             child: Center(
               child: _isLoading

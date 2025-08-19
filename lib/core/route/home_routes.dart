@@ -5,7 +5,6 @@ import 'package:xpensemate/core/route/utils/route_constants.dart';
 import 'package:xpensemate/core/route/utils/router_middleware_guard.dart';
 import 'package:xpensemate/features/auth/presentation/pages/email_verify_page.dart';
 import 'package:xpensemate/features/home/presentation/pages/home_page.dart';
-import 'package:xpensemate/features/notification/presentation/pages/notification_page.dart';
 import 'package:xpensemate/features/profile/presentation/pages/profile_page.dart';
 
 abstract class HomeRoutes {
@@ -29,7 +28,7 @@ abstract class HomeRoutes {
         GoRoute(
           path: 'notifications',
           name: RouteNames.notifications,
-          builder: (context, state) => const NotificationPage(),
+          builder: (context, state) => const HomePage(),
         ),
       ],
     ),

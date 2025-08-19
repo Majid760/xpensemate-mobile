@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/core/network/network_configs.dart';
 import 'package:xpensemate/core/network/network_contracts.dart';
+import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/features/auth/data/datasources/auth_local_storage.dart';
 
 import 'package:xpensemate/features/auth/data/models/auth_token_model.dart';
@@ -52,14 +53,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final response = await _client.post<Map<String, dynamic>>(
         NetworkConfigs.login,
-        body: {'email': email, 'password': password},
+        data: {'email': email, 'password': password},
         fromJson: (Map<String, dynamic> json) => json, // Return raw JSON
       );
-      return response.fold(
-        Left.new,
+      return await response.fold(
+        (failure) async {
+          logE('error is comingg while logigng ${failure.error}');
+          return Left(failure);
+        },
         (json) async {
           // Parse user data using compute for better performance
           final (user, token) = await compute(_parseUserFromJson, json);
+          print('thi siss usser ${user.props}');
+          print('thi token usser ${token.props}');
           unawaited(_localDataSource.storeTokens(token));
           unawaited(_localDataSource.storeUser(user));
           return Right(user);
@@ -90,7 +96,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }) =>
       _client.post(
         NetworkConfigs.register,
-        body: {
+        data: {
           'email': email,
           'password': password,
           'firstName': firstName,
@@ -101,7 +107,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   /// Forgot password
   @override
   Future<Either<Failure, void>> forgotPassword(String email) =>
-      _client.post(NetworkConfigs.forgotPassword, body: {'email': email});
+      _client.post(NetworkConfigs.forgotPassword, data: {'email': email});
 
   /// Reset password
   @override
@@ -111,7 +117,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }) =>
       _client.post(
         '${NetworkConfigs.resetPassword}/$token',
-        body: {'password': newPassword},
+        data: {'password': newPassword},
       );
 
   /// Verify email
@@ -124,7 +130,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<Either<Failure, AuthTokenModel>> refreshToken(String refreshToken) =>
       _client.post(
         NetworkConfigs.refreshToken,
-        body: {'refresh': refreshToken},
+        data: {'refresh': refreshToken},
         fromJson: AuthTokenModel.fromJson,
       );
 
@@ -137,7 +143,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<Either<Failure, dynamic>> sendVerificationEmail(String email) =>
       _client
-          .post(NetworkConfigs.sendVerificationEmail, body: {'email': email});
+          .post(NetworkConfigs.sendVerificationEmail, data: {'email': email});
 
   /// Logout
   @override

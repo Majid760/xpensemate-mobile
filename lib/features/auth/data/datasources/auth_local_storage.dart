@@ -32,20 +32,28 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<Either<Failure, void>> storeTokens(AuthTokenModel tokens) async {
     try {
-      // Store individual tokens
+      print('storing accesss token => ${tokens.accessToken}');
+      print('storing refresh token => ${tokens.refreshToken}');
+
       await _storageService.save(
-          StorageKeys.accessTokenKey, tokens.accessToken,);
+        StorageKeys.accessTokenKey,
+        tokens.accessToken,
+      );
 
       if (tokens.refreshToken != null) {
         await _storageService.save(
-            StorageKeys.refreshTokenKey, tokens.refreshToken!,);
+          StorageKeys.refreshTokenKey,
+          tokens.refreshToken!,
+        );
       }
 
       // Store token expiration info
       final expirationTime =
           DateTime.now().add(Duration(seconds: tokens.expiresIn));
       await _storageService.save(
-          'token_expiration', expirationTime.toIso8601String(),);
+        'token_expiration',
+        expirationTime.toIso8601String(),
+      );
 
       // Store complete token object as JSON for backup
       final tokenJson = json.encode(tokens.toJson());
@@ -54,6 +62,29 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       return const Right(null);
     } on Exception catch (e) {
       return Left(LocalDataFailure(message: 'Failed to store tokens: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String?>> getAccessToken() async {
+    try {
+      final token = await _storageService.get(StorageKeys.accessTokenKey);
+      logI('storing accesss token => $token');
+      return Right(token);
+    } on Exception catch (e) {
+      return Left(LocalDataFailure(message: 'Failed to get access token: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String?>> getRefreshToken() async {
+    try {
+      final token = await _storageService.get(StorageKeys.refreshTokenKey);
+      logI('storing accesss token => $token');
+
+      return Right(token);
+    } on Exception catch (e) {
+      return Left(LocalDataFailure(message: 'Failed to get refresh token: $e'));
     }
   }
 
@@ -75,26 +106,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   }
 
   @override
-  Future<Either<Failure, String?>> getAccessToken() async {
-    try {
-      final token = await _storageService.get(StorageKeys.accessTokenKey);
-      return Right(token);
-    } on Exception catch (e) {
-      return Left(LocalDataFailure(message: 'Failed to get access token: $e'));
-    }
-  }
-
-  @override
-  Future<Either<Failure, String?>> getRefreshToken() async {
-    try {
-      final token = await _storageService.get(StorageKeys.refreshTokenKey);
-      return Right(token);
-    } on Exception catch (e) {
-      return Left(LocalDataFailure(message: 'Failed to get refresh token: $e'));
-    }
-  }
-
-  @override
   Future<Either<Failure, void>> updateAccessToken(String newToken) async {
     try {
       await _storageService.save(StorageKeys.accessTokenKey, newToken);
@@ -102,12 +113,15 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       // Update token expiration (assuming 1 hour default)
       final expirationTime = DateTime.now().add(const Duration(hours: 1));
       await _storageService.save(
-          'token_expiration', expirationTime.toIso8601String(),);
+        'token_expiration',
+        expirationTime.toIso8601String(),
+      );
 
       return const Right(null);
     } on Exception catch (e) {
       return Left(
-          LocalDataFailure(message: 'Failed to update access token: $e'),);
+        LocalDataFailure(message: 'Failed to update access token: $e'),
+      );
     }
   }
 
@@ -147,7 +161,8 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       return const Right(true);
     } on Exception catch (e) {
       return Left(
-          LocalDataFailure(message: 'Failed to check token validity: $e'),);
+        LocalDataFailure(message: 'Failed to check token validity: $e'),
+      );
     }
   }
 

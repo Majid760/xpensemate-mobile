@@ -480,7 +480,7 @@ class AppImage extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: backgroundColor ?? Colors.grey[300],
+        color: backgroundColor ?? Colors.white30,
         borderRadius: shape == ImageShape.circle 
           ? null 
           : BorderRadius.circular(

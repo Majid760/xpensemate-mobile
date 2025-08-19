@@ -16,6 +16,11 @@ import 'package:xpensemate/features/auth/domain/repositories/auth_repository.dar
 import 'package:xpensemate/features/auth/domain/usecases/cases_export.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
+import 'package:xpensemate/features/profile/data/datasources/profile_remote_data_source.dart';
+import 'package:xpensemate/features/profile/data/repositories/profile_repository_impl.dart';
+import 'package:xpensemate/features/profile/domain/repositories/profile_repository.dart';
+import 'package:xpensemate/features/profile/domain/usecases/update_profile_image_usecase.dart';
+import 'package:xpensemate/features/profile/domain/usecases/update_profile_usecase.dart';
 
 /// Global, lazy singleton
 final sl = GetIt.instance;
@@ -73,6 +78,9 @@ Future<void> initLocator() async {
     sl.registerLazySingleton<AuthRemoteDataSource>(
       () => AuthRemoteDataSourceImpl(sl(), sl()),
     );
+    sl.registerLazySingleton<ProfileRemoteDataSource>(
+      () => ProfileRemoteDataSourceImpl(sl()),
+    );
 
     // ---------- Repositories ----------
     sl.registerLazySingleton<AuthRepository>(
@@ -80,6 +88,9 @@ Future<void> initLocator() async {
         remoteDataSource: sl(),
         networkInfo: sl(), // AuthLocalDataSource if you need caching
       ),
+    );
+    sl.registerLazySingleton<ProfileRepository>(
+      () => ProfileRepositoryImpl(sl()),
     );
 
     // ---------- Use-cases ----------
@@ -89,6 +100,8 @@ Future<void> initLocator() async {
     sl.registerLazySingleton(() => SignOutUseCase(sl()));
     sl.registerLazySingleton(() => SignUpUseCase(sl()));
     sl.registerLazySingleton(() => SendVerificationEmailUseCase(sl()));
+    sl.registerLazySingleton(() => UpdateProfileUseCase(sl()));
+    sl.registerLazySingleton(() => UpdateProfileImageUseCase(sl()));
 
     // ---------- Presentation Layer ----------
     sl.registerFactory(() => AuthCubit(sl()));
@@ -130,4 +143,7 @@ extension ServiceLocatorExtension on GetIt {
   /// Quick access to Presentation Cubits
   AuthCubit get authCubit => this<AuthCubit>();
   ProfileCubit get profileCubit => this<ProfileCubit>();
+
+
+
 }

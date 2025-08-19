@@ -9,7 +9,7 @@ class ProfileImageWidget extends StatelessWidget {
   const ProfileImageWidget({
     super.key,
     required this.imageUrl,
-    this.file,
+    this.imageFile,
     this.size = 120,
     this.onImageTap,
     this.showEditButton = true,
@@ -32,7 +32,7 @@ class ProfileImageWidget extends StatelessWidget {
   final Color backgroundColor;
   final Color? shadowColor;
   final Color borderColor;
-  final File? file;
+  final File? imageFile;
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +75,7 @@ class ProfileImageWidget extends StatelessWidget {
                   color: backgroundColor,
                 ),
                 child: ClipOval(
-                  child: file !=null ? AppImage.file(file!.path): AppImage.network(imageUrl!),
+                  child: imageFile !=null ? AppImage.file(imageFile!.path): imageUrl!=null? AppImage.network(imageUrl!):AppImage('no image'),
                 ),
               ),
             ),

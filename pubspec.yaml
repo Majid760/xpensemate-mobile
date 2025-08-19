@@ -81,6 +81,7 @@ dependencies:
   top_snackbar_flutter: ^3.3.0
   cached_network_image: ^3.4.1
   flutter_svg: ^2.2.0
+  path: ^1.9.1
 
 
 

@@ -33,6 +33,10 @@ class NetworkConfigs {
 
   static const String verifyEmail       = '/verify-email';   // ✅ 
   static const String currentUser       = '/me';             // ✅ 
+  static const String profile           = '/profile';        // base profile path if needed
+  // updating/setting routes
+  static const String updateProfile     = '/settings/update-user';
+  static const String updateProfilePhoto     = '/settings/upload-profile';
 
   // ------------------------------------------------------------------
   //  Timeouts & Retry

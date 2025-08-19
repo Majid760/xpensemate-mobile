@@ -6,6 +6,12 @@ final class LoggingInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     debugPrint('🌐 ${options.method} ${options.uri}');
+    final authHeader = options.headers['Authorization'];
+    if (authHeader != null) {
+      debugPrint('🔑 Authorization header present');
+    } else {
+      debugPrint('🔒 No Authorization header on request');
+    }
     super.onRequest(options, handler);
   }
 

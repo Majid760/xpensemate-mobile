@@ -5,6 +5,7 @@ import 'package:xpensemate/core/service/secure_storage_service.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/features/auth/data/models/auth_token_model.dart';
 import 'package:xpensemate/features/auth/data/models/user_model.dart';
+import 'package:xpensemate/features/auth/domain/entities/user.dart';
 
 abstract class AuthLocalDataSource {
   // Token Management
@@ -17,9 +18,8 @@ abstract class AuthLocalDataSource {
   Future<Either<Failure, bool>> hasValidTokens();
 
   // User Data Management
-  Future<Either<Failure, void>> storeUser(UserModel user);
-  Future<Either<Failure, UserModel?>> getStoredUser();
-  Future<Either<Failure, void>> updateUser(UserModel user);
+  Future<Either<Failure, void>> storeUser(UserEntity user);
+  Future<Either<Failure, UserEntity?>> getStoredUser();
   Future<Either<Failure, void>> clearUser();
 }
 
@@ -32,8 +32,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<Either<Failure, void>> storeTokens(AuthTokenModel tokens) async {
     try {
-      print('storing accesss token => ${tokens.accessToken}');
-      print('storing refresh token => ${tokens.refreshToken}');
 
       await _storageService.save(
         StorageKeys.accessTokenKey,
@@ -59,6 +57,10 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       final tokenJson = json.encode(tokens.toJson());
       await _storageService.save('auth_tokens', tokenJson);
       logI('yes user tokens saved locally successfully!');
+      
+      // Debug: List all stored keys
+      await _storageService.debugListAllKeys();
+      
       return const Right(null);
     } on Exception catch (e) {
       return Left(LocalDataFailure(message: 'Failed to store tokens: $e'));
@@ -79,11 +81,19 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<Either<Failure, String?>> getRefreshToken() async {
     try {
+      logI('Getting refresh token from storage with key: ${StorageKeys.refreshTokenKey}');
       final token = await _storageService.get(StorageKeys.refreshTokenKey);
-      logI('storing accesss token => $token');
+      logI('Retrieved refresh token from storage: ${token != null ? '${token.substring(0, 10)}...' : 'null'}');
+      logI('Refresh token length: ${token?.length ?? 0}');
+      logI('Refresh token is null: ${token == null}');
+      logI('Refresh token is empty: ${token?.isEmpty ?? true}');
+
+      // Debug: List all stored keys to see what's actually there
+      await _storageService.debugListAllKeys();
 
       return Right(token);
     } on Exception catch (e) {
+      logE('Exception getting refresh token: $e');
       return Left(LocalDataFailure(message: 'Failed to get refresh token: $e'));
     }
   }
@@ -169,16 +179,11 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   // ========== USER DATA MANAGEMENT ==========
 
   @override
-  Future<Either<Failure, void>> storeUser(UserModel user) async {
+  Future<Either<Failure, void>> storeUser(UserEntity user) async {
     try {
       // Store complete user object as JSON
-      final userJson = json.encode(user.toJson());
+      final userJson = json.encode(user is UserModel ? user.toJson() : user.toModel.toJson());
       await _storageService.save(StorageKeys.userData, userJson);
-
-      // Store individual user properties for quick access
-      await _storageService.save(StorageKeys.userId, user.id);
-      await _storageService.save(StorageKeys.userEmail, user.email);
-      logI('yes user stored locally successfully!');
       return const Right(null);
     } on Exception catch (e) {
       return Left(LocalDataFailure(message: 'Failed to store user: $e'));
@@ -186,7 +191,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   }
 
   @override
-  Future<Either<Failure, UserModel?>> getStoredUser() async {
+  Future<Either<Failure, UserEntity?>> getStoredUser() async {
     try {
       final userJson = await _storageService.get(StorageKeys.userData);
       if (userJson == null || userJson.isEmpty) {
@@ -194,24 +199,13 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       }
 
       final userMap = json.decode(userJson) as Map<String, dynamic>;
-      final user = UserModel.fromJson(userMap);
-
+      final user = UserModel.fromJson(userMap).toEntity();
       return Right(user);
     } on Exception catch (e) {
       return Left(LocalDataFailure(message: 'Failed to get stored user: $e'));
     }
   }
 
-  @override
-  Future<Either<Failure, void>> updateUser(UserModel user) async {
-    try {
-      // Update complete user object
-      await storeUser(user);
-      return const Right(null);
-    } on Exception catch (e) {
-      return Left(LocalDataFailure(message: 'Failed to update user: $e'));
-    }
-  }
 
   @override
   Future<Either<Failure, void>> clearUser() async {

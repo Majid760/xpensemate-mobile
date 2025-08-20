@@ -62,10 +62,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           return Left(failure);
         },
         (json) async {
-          // Parse user data using compute for better performance
           final (user, token) = await compute(_parseUserFromJson, json);
-          print('thi siss usser ${user.props}');
-          print('thi token usser ${token.props}');
           unawaited(_localDataSource.storeTokens(token));
           unawaited(_localDataSource.storeUser(user));
           return Right(user);

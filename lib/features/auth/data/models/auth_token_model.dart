@@ -20,9 +20,14 @@ class AuthTokenModel extends Equatable {
 
   factory AuthTokenModel.fromJson(Map<String, dynamic> json){
     print("this is token data => $json");
+    print("this is token keys => ${json.keys.toList()}");
+    print("this is refreshToken value => ${json['refreshToken']}");
+    print("this is refresh_token value => ${json['refresh_token']}");
+    print("this is refresh value => ${json['refresh']}");
+    
     return AuthTokenModel(
       accessToken: json['token'] as String? ?? (throw ArgumentError('token is required')),
-      refreshToken: json['refreshToken'] as String?,
+      refreshToken: json['refreshToken'] as String? ?? json['refresh_token'] as String? ?? json['refresh'] as String?,
       expiresIn: int.tryParse(json['expiresIn'] as String) ?? 3600,
     );
   }

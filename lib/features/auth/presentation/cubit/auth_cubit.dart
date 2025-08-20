@@ -18,8 +18,6 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
     final userResult = await _authLocalDataSource.getStoredUser();
     userResult.fold(
       (failure) {
-        // Failed to get user data, clear tokens and set as unauthenticated
-        _authLocalDataSource.clearTokens();
         emit(
           state.copyWith(
             state: AuthStates.error,
@@ -34,11 +32,10 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
             state.copyWith(
               state: AuthStates.loaded,
               isAuthenticated: true,
-              user: userModel.toEntity(),
+              user: userModel,
             ),
           );
         } else {
-          _authLocalDataSource.clearTokens();
           emit(
             state.copyWith(
               state: AuthStates.loaded,
@@ -172,6 +169,11 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
   // getter of user
 
   UserEntity? get user => state.user; 
+  void updateUser(UserEntity user) {
+    emit(state.copyWith(user: user));
+    _authLocalDataSource.storeUser(user);
+  }
+  void setIsAuthenticated({required bool isAuthenticated}) => emit(state.copyWith(isAuthenticated: isAuthenticated));
 }
 
 // add ssome nice extensions to get the controller in ui/widget

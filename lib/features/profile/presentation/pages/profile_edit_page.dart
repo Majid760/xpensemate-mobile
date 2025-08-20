@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:reactive_phone_form_field/reactive_phone_form_field.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
+import 'package:xpensemate/core/widget/app_button.dart';
 import 'package:xpensemate/core/widget/app_dialogs.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/core/widget/profile_image_widget.dart';
@@ -28,7 +30,6 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
   late final FormGroup _form;
 
   DateTime? _selectedDateOfBirth;
-  bool _isLoading = false;
 
   late AnimationController _fadeController;
   late AnimationController _slideController;
@@ -40,6 +41,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
     super.initState();
     final profileCubit = context.profileCubit;
     final user = profileCubit.state.user;
+    print('this is user data => ${user?.toModel.props}');
 
     // Parse date from string if available
     DateTime? parsedDate;
@@ -151,8 +153,8 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
       end: 1,
     ).animate(
       CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeOutCubic,
+        parent: _fadeController,
+        curve: Curves.easeOutCubic,
       ),
     );
 
@@ -161,8 +163,8 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
       end: Offset.zero,
     ).animate(
       CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.easeOutCubic,
+        parent: _slideController,
+        curve: Curves.easeOutCubic,
       ),
     );
 
@@ -245,13 +247,12 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
 
     if (!_form.valid) return;
     // Parse gender from form
-    
+
     final formdata = Map<String, Object?>.from(_form.value);
-    formdata['dob'] = DateTime.tryParse(formdata['dob']! as String)?.toIso8601String();
+    formdata['dob'] =DateFormat("d/M/yyyy").parse(formdata['dob']! as String).toIso8601String();
     formdata['gender'] = formdata['gender'].toString().toLowerCase();
     formdata['firstName'] = formdata['name'].toString().split(' ').first;
     formdata['lastName'] = formdata['name'].toString().split(' ').last;
-
 
     // Serialize contactNumber as required by API: { "isoCode": "US", "nsn": "74745" }
     final contact = formdata['contactNumber'];
@@ -268,8 +269,10 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
   Widget build(BuildContext context) =>
       BlocConsumer<ProfileCubit, ProfileState>(
         listener: (context, state) {
+          print('this is ussserrrr => ${state.user?.props}');
           if (state.status == ProfileStatus.error &&
-              state.errorMessage != null && state.errorMessage!.isNotEmpty) {
+              state.errorMessage != null &&
+              state.errorMessage!.isNotEmpty) {
             AppSnackBar.show(
               context: context,
               message: state.errorMessage!,
@@ -278,17 +281,17 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
           }
         },
         builder: (context, state) => FadeTransition(
-        opacity: _fadeAnimation,
-        child: SlideTransition(
-          position: _slideAnimation,
+          opacity: _fadeAnimation,
+          child: SlideTransition(
+            position: _slideAnimation,
             child: ReactiveForm(
               formGroup: _form,
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                children: [
-                  Center(
-                    child: ProfileImageWidget(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    Center(
+                      child: ProfileImageWidget(
                         imageFile: state.imageFile,
                         imageUrl:
                             context.profileCubit.state.user?.profilePhotoUrl,
@@ -302,31 +305,31 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
                             },
                           ),
                         },
-                      size: 100,
+                        size: 100,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: context.xl),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: context.md),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                    SizedBox(height: context.xl),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: context.md),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           ReactiveAppField(
                             formControlName: 'name',
                             labelText: context.l10n.fullName,
                             hintText: context.l10n.hintName,
-                          prefixIcon: const Icon(
-                            Icons.person_outline_rounded,
-                            size: 20,
-                          ),
+                            prefixIcon: const Icon(
+                              Icons.person_outline_rounded,
+                              size: 20,
+                            ),
                             validationMessages: {
                               'required': (error) =>
                                   context.l10n.nameIsRequired,
                               'minLength': (error) =>
                                   context.l10n.nameMustBeAtLeast4Characters,
                             },
-                        ),
-                        SizedBox(height: context.lg),
+                          ),
+                          SizedBox(height: context.lg),
                           ReactiveAppField(
                             formControlName: 'contactNumber',
                             labelText: context.l10n.phoneNumber,
@@ -339,7 +342,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
                                   context.l10n.phoneNumberMustBeAtLeast10Digits,
                             },
                           ),
-                        SizedBox(height: context.lg),
+                          SizedBox(height: context.lg),
                           ReactiveAppField(
                             formControlName: 'dob',
                             labelText: context.l10n.dateOfBirth,
@@ -355,7 +358,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
                                   'Date of birth is required',
                             },
                           ),
-                        SizedBox(height: context.lg),
+                          SizedBox(height: context.lg),
                           ReactiveAppField(
                             formControlName: 'gender',
                             labelText: context.l10n.gender,
@@ -367,7 +370,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
                               HapticFeedback.selectionClick();
                             },
                           ),
-                        SizedBox(height: context.lg),
+                          SizedBox(height: context.lg),
                           ReactiveAppField(
                             formControlName: 'about',
                             labelText: context.l10n.about,
@@ -379,68 +382,28 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
                                 .colorScheme.surfaceContainerHighest
                                 .withValues(alpha: 0.7),
                           ),
-                        SizedBox(height: context.xl),
-                        _buildSaveButton(),
-                        SizedBox(height: context.md),
-                      ],
+                          SizedBox(height: context.xl),
+                          AppButton.primary(
+                            text: context.l10n.save,
+                            isLoading: state.isUpdating,
+                            textStyle: context.textTheme.titleMedium?.copyWith(
+                              color: context.colorScheme.onPrimary,
+                            ),
+                            onPressed: () => _handleSave(context.profileCubit),
+                          ),
+                          SizedBox(height: context.md),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
         ),
-        ),
       );
 
-  Widget _buildSaveButton() => Container(
-        width: double.infinity,
-        height: 56,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Theme.of(context).colorScheme.primary,
-              Theme.of(context).colorScheme.secondary,
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color:
-                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: _isLoading ? null : () async => _handleSave(context.profileCubit),
-            borderRadius: BorderRadius.circular(16),
-            child: Center(
-              child: _isLoading
-                  ? const SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                        strokeWidth: 2,
-                      ),
-                    )
-                  : Text(
-                      context.l10n.saveChanges,
-                      style: context.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                    ),
-            ),
-          ),
-        ),
-      );
+
 }
 
 void showEditProfile(BuildContext context) {

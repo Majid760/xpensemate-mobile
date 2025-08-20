@@ -8,7 +8,8 @@ import 'package:xpensemate/features/profile/presentation/pages/profile_page.dart
 import 'package:xpensemate/features/profile/presentation/widgets/footer_widget.dart';
 
 class ModernContent extends StatelessWidget {
-  const ModernContent({super.key, 
+  const ModernContent({
+    super.key,
     required this.profileState,
     required this.onLogoutTap,
     required this.onComingSoon,
@@ -33,18 +34,25 @@ class ModernContent extends StatelessWidget {
       );
     }
 
-    if (profileState.status == ProfileStatus.error || profileState.user == null) {
+    if (profileState.user == null) {
       return Center(
         child: Padding(
           padding: EdgeInsets.all(context.xl),
           child: Column(
             children: [
-              Icon(Icons.error_outline, size: 64, color: context.colorScheme.error),
+              Icon(
+                Icons.error_outline,
+                size: 64,
+                color: context.colorScheme.error,
+              ),
               SizedBox(height: context.md),
-              Text('Failed to load profile', style: context.textTheme.titleMedium),
+              Text(
+                'Failed to load profile',
+                style: context.textTheme.titleMedium,
+              ),
               SizedBox(height: context.md),
               ElevatedButton(
-                onPressed: (){},
+                onPressed: () {},
                 // onPressed: () => context.profileCubit.refreshProfile(),
                 child: const Text('Retry'),
               ),
@@ -56,7 +64,7 @@ class ModernContent extends StatelessWidget {
 
     return Column(
       children: [
-        SizedBox(height: context.lg),
+        SizedBox(height: context.md),
         _UserInfoCard(profileState: profileState),
         SizedBox(height: context.lg),
         ..._buildMenuSections(context),
@@ -148,8 +156,6 @@ class ModernContent extends StatelessWidget {
       ];
 }
 
-
-
 class _UserInfoCard extends StatelessWidget {
   const _UserInfoCard({required this.profileState});
 
@@ -160,7 +166,6 @@ class _UserInfoCard extends StatelessWidget {
     final user = profileState.user!;
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: context.lg),
       padding: EdgeInsets.symmetric(vertical: context.lg),
       child: Column(
         children: [
@@ -185,60 +190,11 @@ class _UserInfoCard extends StatelessWidget {
               ),
             ),
           ),
-          // Bio under email if available
-          if ((user.about ?? '').isNotEmpty) ...[
-            SizedBox(height: context.sm),
-            Text(
-              user.about!,
-              textAlign: TextAlign.center,
-              style: context.textTheme.bodyMedium?.copyWith(
-                color: context.colorScheme.onSurfaceVariant,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-          if (!profileState.isProfileComplete) ...[
-            SizedBox(height: context.md),
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: context.sm,
-                vertical: context.xs,
-              ),
-              decoration: BoxDecoration(
-                color: context.colorScheme.secondary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: context.colorScheme.secondary.withValues(alpha: 0.2),
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.info_outline_rounded,
-                    size: 16,
-                    color: context.colorScheme.secondary,
-                  ),
-                  SizedBox(width: context.xs),
-                  Text(
-                    context.l10n.completeYourProfile,
-                    style: context.textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: context.colorScheme.secondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
         ],
       ),
     );
   }
 }
-
-
-
 
 class UserInfoCard extends StatelessWidget {
   const UserInfoCard({super.key, required this.profileState});
@@ -324,9 +280,6 @@ class UserInfoCard extends StatelessWidget {
   }
 }
 
-
-
-
 class _ModernMenuSection extends StatelessWidget {
   const _ModernMenuSection({required this.title, required this.items});
 
@@ -335,80 +288,78 @@ class _ModernMenuSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-      margin: EdgeInsets.symmetric(horizontal: context.md),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(left: context.sm, bottom: context.md),
-            child: Text(
-              title,
-              style: context.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w800,
-                color: context.colorScheme.onSurface,
-                letterSpacing: 0.2,
-              ),
-            ),
-          ),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color: context.colorScheme.surface,
-              borderRadius: BorderRadius.circular(18),
-              boxShadow: [
-                BoxShadow(
-                  color: context.colorScheme.shadow.withValues(alpha: 0.04),
-                  blurRadius: 15,
-                  offset: const Offset(0, 4),
+        margin: EdgeInsets.symmetric(horizontal: context.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(left: context.sm, bottom: context.md),
+              child: Text(
+                title,
+                style: context.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: context.colorScheme.onSurface,
+                  letterSpacing: 0.2,
                 ),
-              ],
-              border: Border.all(
-                color: context.colorScheme.primary.withValues(alpha: 0.08),
               ),
             ),
-            child: Column(
-              children: items.asMap().entries.map<Widget>((entry) {
-                final index = entry.key;
-                final item = entry.value;
-                final isLast = index == items.length - 1;
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: context.colorScheme.surface,
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: context.colorScheme.shadow.withValues(alpha: 0.04),
+                    blurRadius: 15,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+                border: Border.all(
+                  color: context.colorScheme.primary.withValues(alpha: 0.08),
+                ),
+              ),
+              child: Column(
+                children: items.asMap().entries.map<Widget>((entry) {
+                  final index = entry.key;
+                  final item = entry.value;
+                  final isLast = index == items.length - 1;
 
-                Widget child;
-                if (item is MenuItemData) {
-                  child = _ModernMenuItem(data: item);
-                } else if (item is Widget) {
-                  child = item;
-                } else {
-                  child = const SizedBox.shrink();
-                }
+                  Widget child;
+                  if (item is MenuItemData) {
+                    child = _ModernMenuItem(data: item);
+                  } else if (item is Widget) {
+                    child = item;
+                  } else {
+                    child = const SizedBox.shrink();
+                  }
 
-                return Column(
-                  children: [
-                    child,
-                    if (!isLast)
-                      Container(
-                        margin: EdgeInsets.symmetric(horizontal: context.lg),
-                        height: 1,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.transparent,
-                              context.colorScheme.outline.withValues(alpha: 0.3),
-                              Colors.transparent,
-                            ],
+                  return Column(
+                    children: [
+                      child,
+                      if (!isLast)
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: context.lg),
+                          height: 1,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.transparent,
+                                context.colorScheme.outline
+                                    .withValues(alpha: 0.3),
+                                Colors.transparent,
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                  ],
-                );
-              }).toList(),
+                    ],
+                  );
+                }).toList(),
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
 }
-
-
-
 
 class _ModernMenuItem extends StatelessWidget {
   const _ModernMenuItem({required this.data});
@@ -417,74 +368,74 @@ class _ModernMenuItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          HapticFeedback.lightImpact();
-          data.onTap();
-        },
-        borderRadius: BorderRadius.circular(18),
-        child: Container(
-          padding: EdgeInsets.all(context.md),
-          child: Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(context.sm),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      data.color.withValues(alpha: 0.15),
-                      data.color.withValues(alpha: 0.05),
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            HapticFeedback.lightImpact();
+            data.onTap();
+          },
+          borderRadius: BorderRadius.circular(18),
+          child: Container(
+            padding: EdgeInsets.all(context.md),
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(context.sm),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        data.color.withValues(alpha: 0.15),
+                        data.color.withValues(alpha: 0.05),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: data.color.withValues(alpha: 0.2),
+                    ),
+                  ),
+                  child: Icon(data.icon, color: data.color, size: 20),
+                ),
+                SizedBox(width: context.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        data.title,
+                        style: context.textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: data.isDestructive
+                              ? context.colorScheme.error
+                              : context.colorScheme.onSurface,
+                        ),
+                      ),
+                      SizedBox(height: context.xs),
+                      Text(
+                        data.subtitle,
+                        style: context.textTheme.bodySmall?.copyWith(
+                          color: context.colorScheme.onSurfaceVariant,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ],
                   ),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: data.color.withValues(alpha: 0.2),
+                ),
+                Container(
+                  padding: EdgeInsets.all(context.xs),
+                  decoration: BoxDecoration(
+                    color: context.colorScheme.onSurfaceVariant
+                        .withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    color: context.colorScheme.onSurfaceVariant,
+                    size: 14,
                   ),
                 ),
-                child: Icon(data.icon, color: data.color, size: 20),
-              ),
-              SizedBox(width: context.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      data.title,
-                      style: context.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: data.isDestructive
-                            ? context.colorScheme.error
-                            : context.colorScheme.onSurface,
-                      ),
-                    ),
-                    SizedBox(height: context.xs),
-                    Text(
-                      data.subtitle,
-                      style: context.textTheme.bodySmall?.copyWith(
-                        color: context.colorScheme.onSurfaceVariant,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.all(context.xs),
-                decoration: BoxDecoration(
-                  color: context.colorScheme.onSurfaceVariant
-                      .withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  color: context.colorScheme.onSurfaceVariant,
-                  size: 14,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
 }

@@ -9,6 +9,7 @@ import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_dialogs.dart' hide AppPermission;
+import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/core/widget/morphic_button.dart';
 import 'package:xpensemate/core/widget/profile_image_widget.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
@@ -110,11 +111,10 @@ class _ProfilePageState extends State<ProfilePage>
         listener: (context, state) {
           if (state.status == ProfileStatus.error &&
               state.errorMessage != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.errorMessage!),
-                backgroundColor: Theme.of(context).colorScheme.error,
-              ),
+            AppSnackBar.show(
+              context: context,
+              message: state.errorMessage!,
+              type: SnackBarType.error,
             );
           }
         },
@@ -222,7 +222,7 @@ class _ProfilePageState extends State<ProfilePage>
     );
     if (mounted && (result[AppPermission.camera]?.isGranted ?? false)) {
       final currentContext = context;
-      AppDialogs.showImagePicker(
+      await AppDialogs.showImagePicker(
         context: currentContext,
         onImageSelected: (file) {
           currentContext.profileCubit.updateProfileImage(file!);
@@ -673,9 +673,6 @@ class ThemeToggle extends StatelessWidget {
       );
 }
 
-/* ----------------------------------------------------------
-   Model class (unchanged)
-   ---------------------------------------------------------- */
 
 class MenuItemData {
   const MenuItemData({

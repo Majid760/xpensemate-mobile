@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/utils/app_utils.dart';
 
 class AppButton extends StatefulWidget {
   const AppButton._({
@@ -50,15 +51,25 @@ class AppButton extends StatefulWidget {
     Duration? animationDuration,
     bool scaleOnTap = true,
     bool hoverEffect = true,
-  }) =>
-      AppButton._(
-        key: key,
-        text: text,
-        onPressed: onPressed,
-        buttonBuilder: (context, child) => _buildPrimaryButton(
-          context,
-          child,
-          onPressed,
+  }) {
+    final instanceId = DateTime.now().microsecondsSinceEpoch;
+    final throttleKey = 'AppButton_primary_${instanceId}_${text.hashCode}';
+    final wrappedOnPressed = onPressed == null
+        ? null
+        : () => AppUtils.throttle(
+              onPressed,
+              delay: const Duration(milliseconds: 700),
+              key: throttleKey,
+            );
+
+    return AppButton._(
+      key: key,
+      text: text,
+      onPressed: wrappedOnPressed,
+      buttonBuilder: (context, child) => _buildPrimaryButton(
+        context,
+        child,
+        wrappedOnPressed,
           backgroundColor,
           textColor,
           hasShadow,
@@ -74,25 +85,26 @@ class AppButton extends StatefulWidget {
           scaleOnTap,
           hoverEffect,
         ),
-        isLoading: isLoading,
-        isFullWidth: isFullWidth,
-        padding: padding,
-        height: height,
-        minWidth: minWidth,
-        backgroundColor: backgroundColor,
-        textColor: textColor,
-        borderRadius: borderRadius,
-        leadingIcon: leadingIcon,
-        trailingIcon: trailingIcon,
-        hasShadow: hasShadow,
-        borderColor: borderColor,
-        elevation: elevation,
-        textStyle: textStyle,
-        enabled: enabled,
-        animationDuration: animationDuration ?? const Duration(milliseconds: 200),
-        scaleOnTap: scaleOnTap,
-        hoverEffect: hoverEffect,
-      );
+      isLoading: isLoading,
+      isFullWidth: isFullWidth,
+      padding: padding,
+      height: height,
+      minWidth: minWidth,
+      backgroundColor: backgroundColor,
+      textColor: textColor,
+      borderRadius: borderRadius,
+      leadingIcon: leadingIcon,
+      trailingIcon: trailingIcon,
+      hasShadow: hasShadow,
+      borderColor: borderColor,
+      elevation: elevation,
+      textStyle: textStyle,
+      enabled: enabled,
+      animationDuration: animationDuration ?? const Duration(milliseconds: 200),
+      scaleOnTap: scaleOnTap,
+      hoverEffect: hoverEffect,
+    );
+  }
 
   // Static method for secondary button
   static AppButton secondary({
@@ -117,15 +129,25 @@ class AppButton extends StatefulWidget {
     Duration? animationDuration,
     bool scaleOnTap = true,
     bool hoverEffect = true,
-  }) =>
-      AppButton._(
-        key: key,
-        text: text,
-        onPressed: onPressed,
-        buttonBuilder: (context, child) => _buildSecondaryButton(
-          context,
-          child,
-          onPressed,
+  }) {
+    final instanceId = DateTime.now().microsecondsSinceEpoch;
+    final throttleKey = 'AppButton_secondary_${instanceId}_${text.hashCode}';
+    final wrappedOnPressed = onPressed == null
+        ? null
+        : () => AppUtils.throttle(
+              onPressed,
+              delay: const Duration(milliseconds: 700),
+              key: throttleKey,
+            );
+
+    return AppButton._(
+      key: key,
+      text: text,
+      onPressed: wrappedOnPressed,
+      buttonBuilder: (context, child) => _buildSecondaryButton(
+        context,
+        child,
+        wrappedOnPressed,
           backgroundColor,
           textColor,
           hasShadow,
@@ -141,25 +163,26 @@ class AppButton extends StatefulWidget {
           scaleOnTap,
           hoverEffect,
         ),
-        isLoading: isLoading,
-        isFullWidth: isFullWidth,
-        padding: padding,
-        height: height,
-        minWidth: minWidth,
-        backgroundColor: backgroundColor,
-        textColor: textColor,
-        borderRadius: borderRadius,
-        leadingIcon: leadingIcon,
-        trailingIcon: trailingIcon,
-        hasShadow: hasShadow,
-        borderColor: borderColor,
-        elevation: elevation,
-        textStyle: textStyle,
-        enabled: enabled,
-        animationDuration: animationDuration ?? const Duration(milliseconds: 200),
-        scaleOnTap: scaleOnTap,
-        hoverEffect: hoverEffect,
-      );
+      isLoading: isLoading,
+      isFullWidth: isFullWidth,
+      padding: padding,
+      height: height,
+      minWidth: minWidth,
+      backgroundColor: backgroundColor,
+      textColor: textColor,
+      borderRadius: borderRadius,
+      leadingIcon: leadingIcon,
+      trailingIcon: trailingIcon,
+      hasShadow: hasShadow,
+      borderColor: borderColor,
+      elevation: elevation,
+      textStyle: textStyle,
+      enabled: enabled,
+      animationDuration: animationDuration ?? const Duration(milliseconds: 200),
+      scaleOnTap: scaleOnTap,
+      hoverEffect: hoverEffect,
+    );
+  }
 
   // Static method for outline button
   static AppButton outline({
@@ -183,15 +206,25 @@ class AppButton extends StatefulWidget {
     Duration? animationDuration,
     bool scaleOnTap = true,
     bool hoverEffect = true,
-  }) =>
-      AppButton._(
-        key: key,
-        text: text,
-        onPressed: onPressed,
-        buttonBuilder: (context, child) => _buildOutlineButton(
-          context,
-          child,
-          onPressed,
+  }) {
+    final instanceId = DateTime.now().microsecondsSinceEpoch;
+    final throttleKey = 'AppButton_outline_${instanceId}_${text.hashCode}';
+    final wrappedOnPressed = onPressed == null
+        ? null
+        : () => AppUtils.throttle(
+              onPressed,
+              delay: const Duration(milliseconds: 700),
+              key: throttleKey,
+            );
+
+    return AppButton._(
+      key: key,
+      text: text,
+      onPressed: wrappedOnPressed,
+      buttonBuilder: (context, child) => _buildOutlineButton(
+        context,
+        child,
+        wrappedOnPressed,
           backgroundColor,
           textColor,
           borderRadius,
@@ -206,25 +239,26 @@ class AppButton extends StatefulWidget {
           scaleOnTap,
           hoverEffect,
         ),
-        isLoading: isLoading,
-        isFullWidth: isFullWidth,
-        padding: padding,
-        height: height,
-        minWidth: minWidth,
-        backgroundColor: backgroundColor,
-        textColor: textColor,
-        borderRadius: borderRadius,
-        leadingIcon: leadingIcon,
-        trailingIcon: trailingIcon,
-        hasShadow: false,
-        borderColor: borderColor,
-        elevation: elevation,
-        textStyle: textStyle,
-        enabled: enabled,
-        animationDuration: animationDuration ?? const Duration(milliseconds: 200),
-        scaleOnTap: scaleOnTap,
-        hoverEffect: hoverEffect,
-      );
+      isLoading: isLoading,
+      isFullWidth: isFullWidth,
+      padding: padding,
+      height: height,
+      minWidth: minWidth,
+      backgroundColor: backgroundColor,
+      textColor: textColor,
+      borderRadius: borderRadius,
+      leadingIcon: leadingIcon,
+      trailingIcon: trailingIcon,
+      hasShadow: false,
+      borderColor: borderColor,
+      elevation: elevation,
+      textStyle: textStyle,
+      enabled: enabled,
+      animationDuration: animationDuration ?? const Duration(milliseconds: 200),
+      scaleOnTap: scaleOnTap,
+      hoverEffect: hoverEffect,
+    );
+  }
 
   // Static method for text button
   static AppButton textButton({
@@ -248,15 +282,25 @@ class AppButton extends StatefulWidget {
     Duration? animationDuration,
     bool scaleOnTap = true,
     bool hoverEffect = true,
-  }) =>
-      AppButton._(
-        key: key,
-        text: text,
-        onPressed: onPressed,
-        buttonBuilder: (context, child) => _buildTextButton(
-          context,
-          child,
-          onPressed,
+  }) {
+    final instanceId = DateTime.now().microsecondsSinceEpoch;
+    final throttleKey = 'AppButton_text_${instanceId}_${text.hashCode}';
+    final wrappedOnPressed = onPressed == null
+        ? null
+        : () => AppUtils.throttle(
+              onPressed,
+              delay: const Duration(milliseconds: 700),
+              key: throttleKey,
+            );
+
+    return AppButton._(
+      key: key,
+      text: text,
+      onPressed: wrappedOnPressed,
+      buttonBuilder: (context, child) => _buildTextButton(
+        context,
+        child,
+        wrappedOnPressed,
           backgroundColor,
           textColor,
           borderRadius,
@@ -270,25 +314,26 @@ class AppButton extends StatefulWidget {
           scaleOnTap,
           hoverEffect,
         ),
-        isLoading: isLoading,
-        isFullWidth: isFullWidth,
-        padding: padding,
-        height: height,
-        minWidth: minWidth,
-        backgroundColor: backgroundColor,
-        textColor: textColor,
-        borderRadius: borderRadius,
-        leadingIcon: leadingIcon,
-        trailingIcon: trailingIcon,
-        hasShadow: false,
-        borderColor: borderColor,
-        elevation: elevation,
-        textStyle: textStyle,
-        enabled: enabled,
-        animationDuration: animationDuration ?? const Duration(milliseconds: 200),
-        scaleOnTap: scaleOnTap,
-        hoverEffect: hoverEffect,
-      );
+      isLoading: isLoading,
+      isFullWidth: isFullWidth,
+      padding: padding,
+      height: height,
+      minWidth: minWidth,
+      backgroundColor: backgroundColor,
+      textColor: textColor,
+      borderRadius: borderRadius,
+      leadingIcon: leadingIcon,
+      trailingIcon: trailingIcon,
+      hasShadow: false,
+      borderColor: borderColor,
+      elevation: elevation,
+      textStyle: textStyle,
+      enabled: enabled,
+      animationDuration: animationDuration ?? const Duration(milliseconds: 200),
+      scaleOnTap: scaleOnTap,
+      hoverEffect: hoverEffect,
+    );
+  }
 
   // Static method for icon button
   static AppButton icon({
@@ -313,16 +358,26 @@ class AppButton extends StatefulWidget {
     Duration? animationDuration,
     bool scaleOnTap = true,
     bool hoverEffect = true,
-  }) =>
-      AppButton._(
-        key: key,
-        text: text,
-        onPressed: onPressed,
-        buttonBuilder: (context, child) => _buildIconButton(
-          context,
-          text,
-          leadingIcon,
-          onPressed,
+  }) {
+    final instanceId = DateTime.now().microsecondsSinceEpoch;
+    final throttleKey = 'AppButton_icon_${instanceId}_${text.hashCode}';
+    final wrappedOnPressed = onPressed == null
+        ? null
+        : () => AppUtils.throttle(
+              onPressed,
+              delay: const Duration(milliseconds: 700),
+              key: throttleKey,
+            );
+
+    return AppButton._(
+      key: key,
+      text: text,
+      onPressed: wrappedOnPressed,
+      buttonBuilder: (context, child) => _buildIconButton(
+        context,
+        text,
+        leadingIcon,
+        wrappedOnPressed,
           backgroundColor,
           textColor,
           hasShadow,
@@ -339,25 +394,26 @@ class AppButton extends StatefulWidget {
           scaleOnTap,
           hoverEffect,
         ),
-        isLoading: isLoading,
-        isFullWidth: isFullWidth,
-        padding: padding,
-        height: height,
-        minWidth: minWidth,
-        backgroundColor: backgroundColor,
-        textColor: textColor,
-        borderRadius: borderRadius,
-        leadingIcon: leadingIcon,
-        trailingIcon: trailingIcon,
-        hasShadow: hasShadow,
-        borderColor: borderColor,
-        elevation: elevation,
-        textStyle: textStyle,
-        enabled: enabled,
-        animationDuration: animationDuration ?? const Duration(milliseconds: 200),
-        scaleOnTap: scaleOnTap,
-        hoverEffect: hoverEffect,
-      );
+      isLoading: isLoading,
+      isFullWidth: isFullWidth,
+      padding: padding,
+      height: height,
+      minWidth: minWidth,
+      backgroundColor: backgroundColor,
+      textColor: textColor,
+      borderRadius: borderRadius,
+      leadingIcon: leadingIcon,
+      trailingIcon: trailingIcon,
+      hasShadow: hasShadow,
+      borderColor: borderColor,
+      elevation: elevation,
+      textStyle: textStyle,
+      enabled: enabled,
+      animationDuration: animationDuration ?? const Duration(milliseconds: 200),
+      scaleOnTap: scaleOnTap,
+      hoverEffect: hoverEffect,
+    );
+  }
 
   // Static method for icon outline button
   static AppButton iconOutline({
@@ -381,16 +437,26 @@ class AppButton extends StatefulWidget {
     Duration? animationDuration,
     bool scaleOnTap = true,
     bool hoverEffect = true,
-  }) =>
-      AppButton._(
-        key: key,
-        text: text,
-        onPressed: onPressed,
-        buttonBuilder: (context, child) => _buildIconOutlineButton(
-          context,
-          text,
-          leadingIcon,
-          onPressed,
+  }) {
+    final instanceId = DateTime.now().microsecondsSinceEpoch;
+    final throttleKey = 'AppButton_iconOutline_${instanceId}_${text.hashCode}';
+    final wrappedOnPressed = onPressed == null
+        ? null
+        : () => AppUtils.throttle(
+              onPressed,
+              delay: const Duration(milliseconds: 700),
+              key: throttleKey,
+            );
+
+    return AppButton._(
+      key: key,
+      text: text,
+      onPressed: wrappedOnPressed,
+      buttonBuilder: (context, child) => _buildIconOutlineButton(
+        context,
+        text,
+        leadingIcon,
+        wrappedOnPressed,
           backgroundColor,
           textColor,
           borderRadius,
@@ -406,25 +472,26 @@ class AppButton extends StatefulWidget {
           scaleOnTap,
           hoverEffect,
         ),
-        isLoading: isLoading,
-        isFullWidth: isFullWidth,
-        padding: padding,
-        height: height,
-        minWidth: minWidth,
-        backgroundColor: backgroundColor,
-        textColor: textColor,
-        borderRadius: borderRadius,
-        leadingIcon: leadingIcon,
-        trailingIcon: trailingIcon,
-        hasShadow: false,
-        borderColor: borderColor,
-        elevation: elevation,
-        textStyle: textStyle,
-        enabled: enabled,
-        animationDuration: animationDuration ?? const Duration(milliseconds: 200),
-        scaleOnTap: scaleOnTap,
-        hoverEffect: hoverEffect,
-      );
+      isLoading: isLoading,
+      isFullWidth: isFullWidth,
+      padding: padding,
+      height: height,
+      minWidth: minWidth,
+      backgroundColor: backgroundColor,
+      textColor: textColor,
+      borderRadius: borderRadius,
+      leadingIcon: leadingIcon,
+      trailingIcon: trailingIcon,
+      hasShadow: false,
+      borderColor: borderColor,
+      elevation: elevation,
+      textStyle: textStyle,
+      enabled: enabled,
+      animationDuration: animationDuration ?? const Duration(milliseconds: 200),
+      scaleOnTap: scaleOnTap,
+      hoverEffect: hoverEffect,
+    );
+  }
 
   final String text;
   final VoidCallback? onPressed;
@@ -492,8 +559,10 @@ class AppButton extends StatefulWidget {
       color: Colors.transparent,
       child: Container(
         width: isFullWidth ? double.infinity : null,
-        constraints: minWidth != null ? BoxConstraints(minWidth: minWidth) : null,
-        height: height,
+        constraints: BoxConstraints(
+          minWidth: minWidth ?? 0,
+          minHeight: height,
+        ),
         decoration: enabled && !isLoading
             ? BoxDecoration(
                 gradient: gradient,
@@ -520,7 +589,6 @@ class AppButton extends StatefulWidget {
             borderRadius: BorderRadius.circular(borderRadius),
             child: Container(
               width: double.infinity,
-              height: double.infinity,
               padding: EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
               child: Center(child: child),
             ),
@@ -804,9 +872,7 @@ class _AppButtonState extends State<AppButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
-  late Animation<double> _elevationAnimation;
-  bool _isHovered = false;
-  bool _isPressed = false;
+  // Removed unused state fields to satisfy lints and keep code clean
 
   @override
   void initState() {
@@ -823,14 +889,6 @@ class _AppButtonState extends State<AppButton>
       parent: _animationController,
       curve: Curves.easeInOut,
     ),);
-
-    _elevationAnimation = Tween<double>(
-      begin: 1,
-      end: 0.8,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ),);
   }
 
   @override
@@ -841,29 +899,24 @@ class _AppButtonState extends State<AppButton>
 
   void _onTapDown(TapDownDetails details) {
     if (widget.enabled && !widget.isLoading && widget.scaleOnTap) {
-      setState(() => _isPressed = true);
       _animationController.forward();
     }
   }
 
   void _onTapUp(TapUpDetails details) {
     if (widget.enabled && !widget.isLoading && widget.scaleOnTap) {
-      setState(() => _isPressed = false);
       _animationController.reverse();
     }
   }
 
   void _onTapCancel() {
     if (widget.enabled && !widget.isLoading && widget.scaleOnTap) {
-      setState(() => _isPressed = false);
       _animationController.reverse();
     }
   }
 
   void _onHover(bool isHovered) {
-    if (widget.enabled && !widget.isLoading && widget.hoverEffect) {
-      setState(() => _isHovered = isHovered);
-    }
+    // Hover flag was unused; keep handler for future extensibility
   }
 
   @override
@@ -894,34 +947,13 @@ class _AppButtonState extends State<AppButton>
     final textTheme = context.textTheme;
 
     if (widget.isLoading) {
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: 20,
-            height: 20,
-            child: CircularProgressIndicator.adaptive(
-              strokeWidth: 2.5,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                colorScheme.onPrimary,
-              ),
-            ),
-          ),
-          SizedBox(width: context.sm),
-          Opacity(
-            opacity: 0.7,
-            child: Text(
-              widget.text,
-              style: widget.textStyle ??
-                  textTheme.labelLarge?.copyWith(
-                    color: widget.textColor ?? colorScheme.onSurface,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.5,
-                  ), 
-            ),
-          ),
-        ],
+      return SizedBox(
+        width: 22,
+        height: 22,
+        child: CircularProgressIndicator.adaptive(
+          strokeWidth: 2.4,
+          valueColor: AlwaysStoppedAnimation<Color>(colorScheme.onPrimary),
+        ),
       );
     }
 

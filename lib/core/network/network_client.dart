@@ -141,56 +141,34 @@ final class NetworkClientImp implements NetworkClient {
   ) async {
     try {
       final res = await call();
-      // Debug: verify Authorization header presence on the actual request
-      final authHeader = res.requestOptions.headers['Authorization'];
-      if (authHeader != null) {
-        logI('Authorization header present on ${res.requestOptions.method} ${res.requestOptions.path}');
-      } else {
-        logI('No Authorization header on ${res.requestOptions.method} ${res.requestOptions.path}');
-      }
-      logI("res: ${res.data}");
       final responseData = res.data as Map<String, dynamic>;
-
-      logI("responseData: $responseData");
       // Handle standardized API response
       final apiResponse = ApiResponse.fromJson(responseData, fromJson);
-
       if (apiResponse.isSuccess) {
-        // If fromJson is provided, return the parsed data
         if (fromJson != null && apiResponse.data != null) {
           return Right(apiResponse.data as T);
         }
-        // If no fromJson but we have data, return the raw data
         if (apiResponse.data != null) {
           return Right(apiResponse.data as T);
         }
-        // For void operations, return the response itself
         return Right(apiResponse as T);
       } else {
-        // Handle error responses
         return Left(_handleApiError(apiResponse));
       }
     } on DioException catch (e) {
-      logI("dio error: ${e.response?.data}");
-
       // Try to parse structured error response first
       if (e.response?.data != null &&
           e.response?.data is Map<String, dynamic>) {
         try {
           final responseData = e.response!.data as Map<String, dynamic>;
           final apiResponse = ApiResponse<dynamic>.fromJson(responseData, null);
-
-          // If we successfully parsed an API response, use it
           if (apiResponse.message.isNotEmpty) {
             return Left(_handleApiError(apiResponse));
           }
         } on Exception catch (parseError) {
-          // If parsing fails, fall back to status code mapping
           logI("Failed to parse error response: $parseError");
         }
       }
-
-      // Fall back to status code mapping
       return Left(_mapDioError(e));
     } on Exception catch (e) {
       return Left(ServerFailure(message: e.toString()));
@@ -222,7 +200,8 @@ final class NetworkClientImp implements NetworkClient {
             401 => const ServerFailure(message: 'Unauthorized'),
             402 => const ServerFailure(message: 'Subscription required'),
             404 => const ServerFailure(
-                message: 'Not found! Please check your request'),
+                message: 'Not found! Please check your request',
+              ),
             403 => const ServerFailure(message: 'Forbidden'),
             400 => const ServerFailure(message: 'Bad request'),
             409 => const ServerFailure(message: 'Conflict'),
@@ -250,9 +229,13 @@ class ApiResponse<T> {
     this.data,
   });
 
-  factory ApiResponse.fromJson(Map<String, dynamic> json,
-          T Function(Map<String, dynamic>)? fromJson) =>
-      ApiResponse<T>(
+  factory ApiResponse.fromJson(
+    Map<String, dynamic> json,
+    T Function(Map<String, dynamic>)? fromJson,
+  ) {
+    try {
+      print("this is api responses ==> $json ");
+      return ApiResponse<T>(
         type: json['type'] as String? ?? 'unknown',
         title: json['title'] as String? ?? '',
         message: json['message'] as String? ?? '',
@@ -260,7 +243,10 @@ class ApiResponse<T> {
             ? fromJson(json['data'] as Map<String, dynamic>)
             : null,
       );
-
+    } catch (e) {
+      rethrow;
+    }
+  }
   final String type;
   final String title;
   final String message;

@@ -9,7 +9,7 @@ class NetworkConfigs {
   static String get baseUrl => switch (_env) {
         'prod' => 'http://192.168.15.148:5001/api/v1',
         'stg'  => 'http://192.168.15.148:5001/api/v1',
-        _      => 'http://192.168.0.100:5001/api/v1', // dev
+         _      => 'http://192.168.0.103:5001/api/v1', // dev
       };
 
   // ------------------------------------------------------------------
@@ -35,13 +35,13 @@ class NetworkConfigs {
   static const String currentUser       = '/me';             // ✅ 
   static const String profile           = '/profile';        // base profile path if needed
   // updating/setting routes
-  static const String updateProfile     = '/settings/update-user';
+  static const String updateProfile     = '/settings/update-user'; 
   static const String updateProfilePhoto     = '/settings/upload-profile';
 
   // ------------------------------------------------------------------
   //  Timeouts & Retry
   // ------------------------------------------------------------------
-  static const Duration connectTimeout = Duration(seconds: 10);
-  static const Duration receiveTimeout = Duration(seconds: 10);
+  static const Duration connectTimeout = Duration(seconds: 15);
+  static const Duration receiveTimeout = Duration(seconds: 15);
   static const int maxRetries = 2;
 }

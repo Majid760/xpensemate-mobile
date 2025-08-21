@@ -21,12 +21,15 @@ final class AuthInterceptor extends QueuedInterceptor {
         (failure) {
           // proceed without token
           logE('getAccessToken failed: ${failure.message}');
+          logE('Access token failure details: ${failure.error}');
         },
         (token) {
-      if (token != null && token.isNotEmpty) {
-        options.headers['Authorization'] = 'Bearer $token';
-            logI('AuthInterceptor attached token');
-      }
+          if (token != null && token.isNotEmpty) {
+            options.headers['Authorization'] = 'Bearer $token';
+            logI('AuthInterceptor attached token: ${token.substring(0, 10)}...');
+          } else {
+            logE('Access token is null or empty');
+          }
         },
       );
       handler.next(options);
@@ -44,11 +47,23 @@ final class AuthInterceptor extends QueuedInterceptor {
     try {
       logI('Token expired, attempting to refresh...');
 
+      logI('Attempting to get refresh token...');
       final refreshEither = await _authLocal.getRefreshToken();
       String? refreshToken;
       refreshEither.fold(
-        (failure) => logE('getRefreshToken failed: ${failure.message}'),
-        (token) => refreshToken = token,
+        (failure) {
+          logE('getRefreshToken failed: ${failure.message}');
+          logE('Refresh token failure details: ${failure.error}');
+          logE('Refresh token failure stack trace: ${failure.stackTrace}');
+        },
+        (token) {
+          refreshToken = token;
+          if (token != null && token.isNotEmpty) {
+            logI('Retrieved refresh token: ${token.substring(0, 10)}...');
+          } else {
+            logE('Refresh token is null or empty');
+          }
+        },
       );
       if (refreshToken == null || refreshToken!.isEmpty) {
         logE('No refresh token available');
@@ -59,7 +74,7 @@ final class AuthInterceptor extends QueuedInterceptor {
       try {
         final refreshResponse = await refreshDio.post<dynamic>(
           '${NetworkConfigs.baseUrl}${NetworkConfigs.refreshToken}',
-          data: {'refresh': refreshToken},
+          data: {'token': refreshToken},
           options:  Options(
             headers: {
               'Content-Type': 'application/json',
@@ -70,13 +85,18 @@ final class AuthInterceptor extends QueuedInterceptor {
         
         final responseData =
             refreshResponse.data as Map<String, dynamic>;
+            print('refreshResponse of refreshtok api call ${refreshResponse.data}');
         final authToken = AuthTokenModel.fromJson(responseData);
         
         // Store the new tokens
+        logI('Storing refreshed tokens - Access: ${authToken.accessToken.substring(0, 10)}..., Refresh: ${authToken.refreshToken?.substring(0, 10) ?? 'null'}...');
         final storeEither = await _authLocal.storeTokens(authToken);
         storeEither.fold(
-          (failure) => logE('storeTokens failed: ${failure.message}'),
-          (_) => logI('Tokens refreshed and stored'),
+          (failure) {
+            logE('storeTokens failed: ${failure.message}');
+            logE('Store tokens error details: ${failure.error}');
+          },
+          (_) => logI('Tokens refreshed and stored successfully'),
         );
         
         // Retry the original request with the new token
@@ -86,10 +106,15 @@ final class AuthInterceptor extends QueuedInterceptor {
         handler.resolve(await Dio().fetch(opts));
       } on DioException catch (refreshError) {
         logE('Refresh token request failed: ${refreshError.message}');
+        logE('Refresh error status code: ${refreshError.response?.statusCode}');
         
+        // Only clear tokens if refresh token is actually invalid (401)
+        // Don't clear tokens for network errors, timeouts, etc.
         if (refreshError.response?.statusCode == 401) {
-          logE('Refresh token expired, clearing tokens');
+          logE('Refresh token expired, clearing all tokens');
           await _authLocal.clearTokens();
+        } else {
+          logE('Refresh failed due to network/other error, keeping existing tokens');
         }
         
         return handler.reject(err);

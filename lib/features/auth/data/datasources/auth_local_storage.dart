@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
 import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/core/service/secure_storage_service.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
@@ -32,7 +33,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<Either<Failure, void>> storeTokens(AuthTokenModel tokens) async {
     try {
-
       await _storageService.save(
         StorageKeys.accessTokenKey,
         tokens.accessToken,
@@ -57,10 +57,10 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       final tokenJson = json.encode(tokens.toJson());
       await _storageService.save('auth_tokens', tokenJson);
       logI('yes user tokens saved locally successfully!');
-      
+
       // Debug: List all stored keys
       await _storageService.debugListAllKeys();
-      
+
       return const Right(null);
     } on Exception catch (e) {
       return Left(LocalDataFailure(message: 'Failed to store tokens: $e'));
@@ -81,16 +81,8 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<Either<Failure, String?>> getRefreshToken() async {
     try {
-      logI('Getting refresh token from storage with key: ${StorageKeys.refreshTokenKey}');
       final token = await _storageService.get(StorageKeys.refreshTokenKey);
-      logI('Retrieved refresh token from storage: ${token != null ? '${token.substring(0, 10)}...' : 'null'}');
-      logI('Refresh token length: ${token?.length ?? 0}');
-      logI('Refresh token is null: ${token == null}');
-      logI('Refresh token is empty: ${token?.isEmpty ?? true}');
-
-      // Debug: List all stored keys to see what's actually there
       await _storageService.debugListAllKeys();
-
       return Right(token);
     } on Exception catch (e) {
       logE('Exception getting refresh token: $e');
@@ -105,10 +97,8 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       if (tokenJson == null || tokenJson.isEmpty) {
         return const Right(null);
       }
-
       final tokenMap = json.decode(tokenJson) as Map<String, dynamic>;
       final tokens = AuthTokenModel.fromJson(tokenMap);
-
       return Right(tokens);
     } on Exception catch (e) {
       return Left(LocalDataFailure(message: 'Failed to get stored tokens: $e'));
@@ -144,7 +134,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
         _storageService.remove('auth_tokens'),
         _storageService.remove('token_expiration'),
       ]);
-
       return const Right(null);
     } on Exception catch (e) {
       return Left(LocalDataFailure(message: 'Failed to clear tokens: $e'));
@@ -182,7 +171,8 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   Future<Either<Failure, void>> storeUser(UserEntity user) async {
     try {
       // Store complete user object as JSON
-      final userJson = json.encode(user is UserModel ? user.toJson() : user.toModel.toJson());
+      final userJson = json
+          .encode(user is UserModel ? user.toJson() : user.toModel.toJson());
       await _storageService.save(StorageKeys.userData, userJson);
       return const Right(null);
     } on Exception catch (e) {
@@ -206,18 +196,16 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     }
   }
 
-
   @override
   Future<Either<Failure, void>> clearUser() async {
     try {
-      await Future.wait([
-        _storageService.remove(StorageKeys.userData),
-        // clear tokens
-        clearTokens(),
-      ]);
+      debugPrint(' clear user ===>>> ');
+      print('yes enter 1');
 
+      await _storageService.remove(StorageKeys.userData);
       return const Right(null);
     } on Exception catch (e) {
+      debugPrint('❌ error deleting user , error => $e');
       return Left(LocalDataFailure(message: 'Failed to clear user: $e'));
     }
   }

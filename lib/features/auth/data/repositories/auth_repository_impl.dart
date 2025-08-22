@@ -3,6 +3,7 @@ import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/core/network/network_info.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/core/utils/network_mixin.dart';
+import 'package:xpensemate/features/auth/data/datasources/auth_local_storage.dart';
 import 'package:xpensemate/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:xpensemate/features/auth/domain/entities/auth_token.dart';
 import 'package:xpensemate/features/auth/domain/entities/user.dart';
@@ -19,33 +20,19 @@ class AuthRepositoryImpl
   @override
   final NetworkInfoService networkInfo;
 
-  // Cache for the current user
-  UserEntity? _cachedUser;
-  AuthToken? _cachedToken;
-
-  @override
-  Future<Either<Failure, bool>> isAuthenticated() async {
-    if (_cachedToken != null) {
-      return right(!_cachedToken!.isExpired);
-    }
-    return right(false);
-  }
-
   /// Get current user
   @override
-  Future<Either<Failure, UserEntity>> getCurrentUser() async {
-    if (_cachedUser != null) return right(_cachedUser!);
-    return withNetworkCheck(() async {
-      final result = await remoteDataSource.getCurrentUser();
-      return result.fold(
-        left,
-        (user) {
-          _cachedUser = user.toEntity();
-          return right(_cachedUser!);
-        },
-      );
-    });
-  }
+  Future<Either<Failure, UserEntity>> getCurrentUser() async =>
+      withNetworkCheck(() async {
+        final result = await remoteDataSource.getCurrentUser();
+        return result.fold(
+          left,
+          (user) {
+            user.toEntity();
+            return right(user.toEntity());
+          },
+        );
+      });
 
   /// Sign in with email and password
   @override
@@ -61,10 +48,7 @@ class AuthRepositoryImpl
         );
         return result.fold(
           left,
-          (userModel) {
-            _cachedUser = userModel.toEntity();
-            return right(_cachedUser!);
-          },
+          (userModel) => right(userModel.toEntity()),
         );
       });
     } on Exception catch (e) {
@@ -104,10 +88,7 @@ class AuthRepositoryImpl
         final result = await remoteDataSource.signInWithGoogle();
         return result.fold(
           left,
-          (user) {
-            _cachedUser = user.toEntity();
-            return right(_cachedUser!);
-          },
+          (user) => right(user.toEntity()),
         );
       });
     } on Exception catch (e) {
@@ -124,10 +105,7 @@ class AuthRepositoryImpl
         final result = await remoteDataSource.signInWithApple();
         return result.fold(
           left,
-          (user) {
-            _cachedUser = user.toEntity();
-            return right(_cachedUser!);
-          },
+          (user) => right(user.toEntity()),
         );
       });
     } on Exception catch (e) {
@@ -140,17 +118,11 @@ class AuthRepositoryImpl
   @override
   Future<Either<Failure, void>> signOut() async {
     try {
-      return withNetworkCheck(() async {
-        final result = await remoteDataSource.logout();
-        return result.fold(
-          left,
-          (_) {
-            _cachedToken = null;
-            _cachedUser = null;
-            return right(null);
-          },
-        );
-      });
+      final result = await remoteDataSource.logout();
+      return result.fold(
+        left,
+        (_) => right(null),
+      );
     } on Exception catch (e) {
       logE("thissi excepiton occurs $e");
       return left(e.toFailure() as AuthenticationFailure);
@@ -165,10 +137,7 @@ class AuthRepositoryImpl
         final result = await remoteDataSource.refreshToken(refreshToken);
         return result.fold(
           left,
-          (token) {
-            _cachedToken = token.toEntity();
-            return right(_cachedToken!);
-          },
+          (token) => right(token.toEntity()),
         );
       });
     } on Exception catch (e) {
@@ -194,30 +163,6 @@ class AuthRepositoryImpl
     }
   }
 
-
-
-  @override
-  Future<AuthToken?> getAuthToken() async {
-    try {
-      if (_cachedToken != null && !_cachedToken!.isExpired) {
-        return _cachedToken;
-      }
-
-      if (_cachedToken?.refreshToken != null) {
-        final result = await refreshToken(_cachedToken!.refreshToken!);
-        return result.fold(
-          (failure) => null,
-          (token) => token,
-        );
-      }
-
-      return null;
-    } on Exception catch (e) {
-      logE("thissi excepiton occurs $e");
-      return null;
-    }
-  }
-  
   @override
   Future<Either<Failure, dynamic>> sendVerificationEmail(String email) async {
     try {

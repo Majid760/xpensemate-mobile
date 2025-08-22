@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
-import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 
 class AppCustomDialog extends StatefulWidget {
@@ -218,12 +217,12 @@ class _DialogContent extends StatelessWidget {
                 end: Alignment.bottomRight,
                 colors: isDestructive
                     ? [
-                        Colors.red.shade50,
-                        Colors.red.shade100.withValues(alpha: 0.8),
+                        context.colorScheme.errorContainer.withValues(alpha: 0.3),
+                        context.colorScheme.errorContainer.withValues(alpha: 0.5),
                       ]
                     : [
-                        AppColors.primary.withValues(alpha: 0.1),
-                        AppColors.secondary.withValues(alpha: 0.1),
+                        context.colorScheme.primaryContainer.withValues(alpha: 0.3),
+                        context.colorScheme.secondaryContainer.withValues(alpha: 0.3),
                       ],
               ),
               borderRadius: const BorderRadius.only(
@@ -238,13 +237,13 @@ class _DialogContent extends StatelessWidget {
                   height: 56,
                   decoration: BoxDecoration(
                     color: isDestructive
-                        ? Colors.red.shade100
-                        : AppColors.primary.withValues(alpha: 0.15),
+                        ? context.colorScheme.errorContainer.withValues(alpha: 0.3)
+                        : context.colorScheme.primaryContainer.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color: isDestructive
-                          ? Colors.red.shade200
-                          : AppColors.primary.withValues(alpha: 0.25),
+                          ? context.colorScheme.error.withValues(alpha: 0.4)
+                          : context.colorScheme.primary.withValues(alpha: 0.4),
                       width: 1.5,
                     ),
                   ),
@@ -252,8 +251,8 @@ class _DialogContent extends StatelessWidget {
                     icon,
                     size: 28,
                     color: isDestructive
-                        ? Colors.red.shade600
-                        : AppColors.primary,
+                        ? context.colorScheme.error
+                        : context.colorScheme.primary,
                   ),
                 ),
                 SizedBox(height: context.md),
@@ -375,15 +374,21 @@ class _DialogButtonState extends State<_DialogButton>
 
     if (widget.isPrimary) {
       if (widget.isDestructive) {
-        backgroundColor = Colors.red.shade600;
-        textColor = Colors.white;
-        borderColor = Colors.red.shade700;
-        gradientColors = [Colors.red.shade500, Colors.red.shade700];
+        backgroundColor = context.colorScheme.error;
+        textColor = context.colorScheme.onError;
+        borderColor = context.colorScheme.error;
+        gradientColors = [
+          context.colorScheme.error,
+          context.colorScheme.error.withValues(alpha: 0.8),
+        ];
       } else {
-        backgroundColor = AppColors.primary;
-        textColor = Colors.white;
-        borderColor = AppColors.secondary;
-        gradientColors = [AppColors.primary, AppColors.secondary];
+        backgroundColor = context.colorScheme.primary;
+        textColor = context.colorScheme.onPrimary;
+        borderColor = context.colorScheme.primary;
+        gradientColors = [
+          context.colorScheme.primary,
+          context.colorScheme.secondary,
+        ];
       }
     } else {
       backgroundColor = context.colorScheme.surface;
@@ -419,8 +424,8 @@ class _DialogButtonState extends State<_DialogButton>
                 ? [
                     BoxShadow(
                       color: (widget.isDestructive
-                              ? Colors.red.shade600
-                              : AppColors.primary)
+                              ? context.colorScheme.error
+                              : context.colorScheme.primary)
                           .withValues(alpha: 0.25),
                       blurRadius: 8,
                       offset: const Offset(0, 3),
@@ -451,7 +456,7 @@ class _DialogButtonState extends State<_DialogButton>
 }
 
 // Helper class for easy usage
-class AppLogoutDialog {
+class AppCustomDialogs {
   static Future<bool?> show({
     required BuildContext context,
     String? title,
@@ -465,7 +470,7 @@ class AppLogoutDialog {
     bool showAnimation = true,
   }) => showDialog<bool>(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.5),
+      barrierColor: context.colorScheme.scrim.withValues(alpha: 0.5),
       builder: (context) => AppCustomDialog(
         title: title,
         message: message,

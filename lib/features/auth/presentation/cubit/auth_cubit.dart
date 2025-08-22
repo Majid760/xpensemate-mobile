@@ -15,6 +15,7 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
   final AuthLocalDataSource _authLocalDataSource;
 
   Future<void> _initializeAuth() async {
+    emit(state.copyWith(state: AuthStates.loading));
     final userResult = await _authLocalDataSource.getStoredUser();
     userResult.fold(
       (failure) {
@@ -150,11 +151,14 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
         state.copyWith(
           state: AuthStates.error,
           errorMessage: failure.message,
+          isAuthenticated: false,
         ),
       ),
-      (user) => emit(
+      (user) {
+        emit(
         state.copyWith(state: AuthStates.loaded, isAuthenticated: false),
-      ),
+      );
+      }
     );
   }
 

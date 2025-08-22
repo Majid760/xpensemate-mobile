@@ -16,14 +16,14 @@ class ProfileState extends Equatable {
   const ProfileState({
     this.status = ProfileStatus.initial,
     this.user,
-    this.errorMessage,
+    this.message,
     this.isProfileComplete = false,
     this.isUpdating = false,
     this.imageFile,
   });
   final ProfileStatus status;
   final UserEntity? user;
-  final String? errorMessage;
+  final String? message;
   final bool isProfileComplete;
   final bool isUpdating;
   final File? imageFile;
@@ -31,7 +31,7 @@ class ProfileState extends Equatable {
   ProfileState copyWith({
     ProfileStatus? status,
     UserEntity? user,
-    String? errorMessage,
+    String? message,
     bool? isProfileComplete,
     bool? isUpdating,
     File? imageFile,
@@ -40,7 +40,7 @@ class ProfileState extends Equatable {
       status: status ?? this.status,
       user: user ?? this.user,
       imageFile: imageFile ?? this.imageFile,
-      errorMessage: errorMessage ?? this.errorMessage,
+      message: message ?? this.message,
       isProfileComplete: isProfileComplete ?? this.isProfileComplete,
       isUpdating: isUpdating ?? this.isUpdating,
     );
@@ -50,7 +50,7 @@ class ProfileState extends Equatable {
         status,
         user,
         imageFile,
-        errorMessage,
+        message,
         isProfileComplete,
         isUpdating,
       ];

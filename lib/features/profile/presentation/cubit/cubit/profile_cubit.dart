@@ -31,7 +31,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       emit(
         state.copyWith(
           status: ProfileStatus.error,
-          errorMessage: 'No user data available',
+          message: 'No user data available',
         ),
       );
     }
@@ -65,6 +65,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   /// Update user profile information
   Future<void> updateProfile(Map<String, dynamic> data) async {
     if (state.user == null) return;
+    emit(state.copyWith(isUpdating: true));
     try {
       String? photoUrl;
       if (state.imageFile != null) {
@@ -74,21 +75,23 @@ class ProfileCubit extends Cubit<ProfileState> {
       if (photoUrl != null) data["profilePhotoUrl"] = photoUrl;
       final rslt =
           await sl<UpdateProfileUseCase>().call(UpdateProfileParams(data));
-      rslt.fold(
-          (failure) => emit(
-                state.copyWith(
-                  errorMessage: failure.message,
-                  status: ProfileStatus.error,
-                ),
-              ), (user) {
-                print('this iss updated usesr $user');
-        emit(state.copyWith(user: user));
+      rslt.fold((failure) {
+        emit(
+          state.copyWith(
+            message: failure.message,
+            status: ProfileStatus.error,
+            isUpdating: false,
+          ),
+        );
+      }, (user) {
+        emit(state.copyWith(user: user, isUpdating: false, message:'updated'));
+        _authCubit.updateUser(user);
       });
     } on Exception catch (e) {
       emit(
         state.copyWith(
           status: ProfileStatus.error,
-          errorMessage: 'Failed to update profile: $e',
+          message: 'Failed to update profile: $e',
           isUpdating: false,
         ),
       );
@@ -102,27 +105,15 @@ class ProfileCubit extends Cubit<ProfileState> {
     final result = await sl<UpdateProfileImageUseCase>()
         .call(UpdateProfileImageParams(imageFile: state.imageFile!));
     result.fold(
-      (failure) => emit(
-        state.copyWith(
-          status: ProfileStatus.error,
-          errorMessage: failure.message,
-        ),
-      ),
+      (failure) => uploadedUrl,
       (url) {
-        uploadedUrl = url;
-        if (url != null && url.isNotEmpty && state.user != null) {
-          emit(
-            state.copyWith(
-              user: state.user!.copyWith(profilePhotoUrl: url),
-            ),
-          );
-        }
+        if (url != null && url.isNotEmpty)uploadedUrl=url;
       },
     );
-    return uploadedUrl;
+    return uploadedUrl; 
   }
 
-  void setImageFile(File? file) => emit(state.copyWith(imageFile: file));
+  void setImageFile(File? file) => emit(state.copyWith(imageFile: file,message: ''));
 
   /// Get user display name (fallback to email if no full name)
   String get displayName {

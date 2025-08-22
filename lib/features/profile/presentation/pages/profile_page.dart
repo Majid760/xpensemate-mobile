@@ -4,14 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/route/utils/router_extension.dart';
 import 'package:xpensemate/core/service/permission_service.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/widget/app_custom_dialog.dart';
 import 'package:xpensemate/core/widget/app_dialogs.dart' hide AppPermission;
+import 'package:xpensemate/core/widget/app_image.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/core/widget/morphic_button.dart';
 import 'package:xpensemate/core/widget/profile_image_widget.dart';
+import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_state.dart';
 import 'package:xpensemate/features/profile/presentation/pages/profile_edit_page.dart';
@@ -109,11 +113,10 @@ class _ProfilePageState extends State<ProfilePage>
   Widget build(BuildContext context) =>
       BlocConsumer<ProfileCubit, ProfileState>(
         listener: (context, state) {
-          if (state.status == ProfileStatus.error &&
-              state.errorMessage != null) {
+          if (state.status == ProfileStatus.error && state.message != null) {
             AppSnackBar.show(
               context: context,
-              message: state.errorMessage!,
+              message: state.message!,
               type: SnackBarType.error,
             );
           }
@@ -196,7 +199,13 @@ class _ProfilePageState extends State<ProfilePage>
                         position: _slideAnimation,
                         child: ModernContent(
                           profileState: profileState,
-                          onLogoutTap: () {},
+                          onLogoutTap: () => AppCustomDialogs.showLogout(
+                            context: context,
+                            onConfirm: () async {
+                              await context.authCubit.signOut();
+                              if (context.mounted) context.goToLogin();
+                            },
+                          ),
                           onComingSoon: (str) => showEditProfile(
                             context,
                           ),
@@ -290,16 +299,19 @@ class _AppBarActions extends StatelessWidget {
           Opacity(
             opacity: (1.0 - progress).clamp(0.0, 1.0),
             child: IgnorePointer(
-              ignoring: progress > 0.05,
+              ignoring: progress > 0.5,
               child: GlassmorphicButton(
                 icon: Icons.edit_rounded,
                 onTap: onEditTap,
               ),
             ),
           ),
-          Opacity(
-            opacity: progress,
-            child: _CompactProfileImage(profileState: profileState),
+          IgnorePointer(
+            ignoring: progress < 0.5,
+            child: Opacity(
+              opacity: progress,
+              child: _CompactProfileImage(profileState: profileState),
+            ),
           ),
         ],
       );
@@ -411,7 +423,6 @@ class _FloatingProfileImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isUpdating = profileState.status == ProfileStatus.updating;
     final displayName = context.profileCubit.displayName;
 
     return Column(
@@ -419,86 +430,18 @@ class _FloatingProfileImage extends StatelessWidget {
       children: [
         Stack(
           children: [
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppColors.primary,
-                    AppColors.secondary,
-                    AppColors.tertiary,
-                  ],
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.3),
-                    blurRadius: 20,
-                    spreadRadius: 2,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(context.xs),
-                child: DecoratedBox(
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
-                  ),
-                  child: ClipOval(
-                    child: ProfileImageWidget(
-                      imageUrl:
-                          context.profileCubit.state.user?.profilePhotoUrl,
-                      size: 50,
-                      showEditButton: false,
-                    ),
-                  ),
-                ),
-              ),
+            ProfileImageWidget(
+              imageUrl: context.profileCubit.state.user?.profilePhotoUrl,
+              showEditButton: false,
             ),
-            if (!isUpdating)
-              Positioned(
-                bottom: 2,
-                right: 2,
-                child: GestureDetector(
-                  onTap: onCameraTap,
-                  child: Container(
-                    padding: EdgeInsets.all(context.xs),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [AppColors.primary, AppColors.secondary],
-                      ),
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.white,
-                        width: 2,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.15),
-                          blurRadius: 10,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.camera_alt_rounded,
-                      color: Colors.white,
-                      size: 16,
-                    ),
-                  ),
-                ),
-              ),
           ],
         ),
         SizedBox(height: context.sm),
         Text(
           displayName,
           textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: context.textTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.w900,
             color: context.colorScheme.onPrimary,
@@ -557,10 +500,8 @@ class _CompactProfileImage extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8.5),
-                child: ProfileImageWidget(
-                  imageUrl: context.profileCubit.state.user?.profilePhotoUrl,
-                  size: 16,
-                  showEditButton: false,
+                child: AppImage.network(
+                  profileState.user?.profilePhotoUrl ?? '',
                 ),
               ),
             ),
@@ -671,23 +612,4 @@ class ThemeToggle extends StatelessWidget {
           ],
         ),
       );
-}
-
-
-class MenuItemData {
-  const MenuItemData({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.color,
-    required this.onTap,
-    this.isDestructive = false,
-  });
-
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final Color color;
-  final VoidCallback onTap;
-  final bool isDestructive;
 }

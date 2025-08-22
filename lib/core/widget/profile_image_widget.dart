@@ -10,7 +10,7 @@ class ProfileImageWidget extends StatelessWidget {
     super.key,
     required this.imageUrl,
     this.imageFile,
-    this.size = 120,
+    this.size = 100,
     this.onImageTap,
     this.showEditButton = true,
     this.editButtonSize = 18,

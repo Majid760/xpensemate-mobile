@@ -20,7 +20,6 @@ enum ImageShape {
 }
 
 class AppImage extends StatelessWidget {
-
   // Auto-detect factory constructor (original behavior)
   factory AppImage(
     String imagePath, {
@@ -44,7 +43,7 @@ class AppImage extends StatelessWidget {
     List<BoxShadow>? shadows,
   }) {
     final imageType = _determineImageTypeStatic(imagePath);
-    
+
     return AppImage._(
       key: key,
       imagePath: imagePath,
@@ -112,28 +111,29 @@ class AppImage extends StatelessWidget {
     String? heroTag,
     Border? border,
     List<BoxShadow>? shadows,
-  }) => AppImage._(
-      key: key,
-      imagePath: url,
-      imageType: ImageType.network,
-      width: width,
-      height: height,
-      fit: fit,
-      shape: shape,
-      borderRadius: borderRadius,
-      color: color,
-      placeholder: placeholder,
-      errorImage: errorImage,
-      customPlaceholder: customPlaceholder,
-      customErrorWidget: customErrorWidget,
-      backgroundColor: backgroundColor,
-      fadeDuration: fadeDuration,
-      enableMemoryCache: enableMemoryCache,
-      onTap: onTap,
-      heroTag: heroTag,
-      border: border,
-      shadows: shadows,
-    );
+  }) =>
+      AppImage._(
+        key: key,
+        imagePath: url,
+        imageType: ImageType.network,
+        width: width,
+        height: height,
+        fit: fit,
+        shape: shape,
+        borderRadius: borderRadius,
+        color: color,
+        placeholder: placeholder,
+        errorImage: errorImage,
+        customPlaceholder: customPlaceholder,
+        customErrorWidget: customErrorWidget,
+        backgroundColor: backgroundColor,
+        fadeDuration: fadeDuration,
+        enableMemoryCache: enableMemoryCache,
+        onTap: onTap,
+        heroTag: heroTag,
+        border: border,
+        shadows: shadows,
+      );
 
   // Factory constructor for asset images
   factory AppImage.asset(
@@ -156,28 +156,29 @@ class AppImage extends StatelessWidget {
     String? heroTag,
     Border? border,
     List<BoxShadow>? shadows,
-  }) => AppImage._(
-      key: key,
-      imagePath: assetPath,
-      imageType: ImageType.asset,
-      width: width,
-      height: height,
-      fit: fit,
-      shape: shape,
-      borderRadius: borderRadius,
-      color: color,
-      placeholder: placeholder,
-      errorImage: errorImage,
-      customPlaceholder: customPlaceholder,
-      customErrorWidget: customErrorWidget,
-      backgroundColor: backgroundColor,
-      fadeDuration: fadeDuration,
-      enableMemoryCache: enableMemoryCache,
-      onTap: onTap,
-      heroTag: heroTag,
-      border: border,
-      shadows: shadows,
-    );
+  }) =>
+      AppImage._(
+        key: key,
+        imagePath: assetPath,
+        imageType: ImageType.asset,
+        width: width,
+        height: height,
+        fit: fit,
+        shape: shape,
+        borderRadius: borderRadius,
+        color: color,
+        placeholder: placeholder,
+        errorImage: errorImage,
+        customPlaceholder: customPlaceholder,
+        customErrorWidget: customErrorWidget,
+        backgroundColor: backgroundColor,
+        fadeDuration: fadeDuration,
+        enableMemoryCache: enableMemoryCache,
+        onTap: onTap,
+        heroTag: heroTag,
+        border: border,
+        shadows: shadows,
+      );
 
   // Factory constructor for file images
   factory AppImage.file(
@@ -200,28 +201,29 @@ class AppImage extends StatelessWidget {
     String? heroTag,
     Border? border,
     List<BoxShadow>? shadows,
-  }) => AppImage._(
-      key: key,
-      imagePath: filePath,
-      imageType: ImageType.file,
-      width: width,
-      height: height,
-      fit: fit,
-      shape: shape,
-      borderRadius: borderRadius,
-      color: color,
-      placeholder: placeholder,
-      errorImage: errorImage,
-      customPlaceholder: customPlaceholder,
-      customErrorWidget: customErrorWidget,
-      backgroundColor: backgroundColor,
-      fadeDuration: fadeDuration,
-      enableMemoryCache: enableMemoryCache,
-      onTap: onTap,
-      heroTag: heroTag,
-      border: border,
-      shadows: shadows,
-    );
+  }) =>
+      AppImage._(
+        key: key,
+        imagePath: filePath,
+        imageType: ImageType.file,
+        width: width,
+        height: height,
+        fit: fit,
+        shape: shape,
+        borderRadius: borderRadius,
+        color: color,
+        placeholder: placeholder,
+        errorImage: errorImage,
+        customPlaceholder: customPlaceholder,
+        customErrorWidget: customErrorWidget,
+        backgroundColor: backgroundColor,
+        fadeDuration: fadeDuration,
+        enableMemoryCache: enableMemoryCache,
+        onTap: onTap,
+        heroTag: heroTag,
+        border: border,
+        shadows: shadows,
+      );
 
   // Factory constructor for SVG images
   factory AppImage.svg(
@@ -244,28 +246,29 @@ class AppImage extends StatelessWidget {
     String? heroTag,
     Border? border,
     List<BoxShadow>? shadows,
-  }) => AppImage._(
-      key: key,
-      imagePath: svgPath,
-      imageType: ImageType.svg,
-      width: width,
-      height: height,
-      fit: fit,
-      shape: shape,
-      borderRadius: borderRadius,
-      color: color,
-      placeholder: placeholder,
-      errorImage: errorImage,
-      customPlaceholder: customPlaceholder,
-      customErrorWidget: customErrorWidget,
-      backgroundColor: backgroundColor,
-      fadeDuration: fadeDuration,
-      enableMemoryCache: enableMemoryCache,
-      onTap: onTap,
-      heroTag: heroTag,
-      border: border,
-      shadows: shadows,
-    );
+  }) =>
+      AppImage._(
+        key: key,
+        imagePath: svgPath,
+        imageType: ImageType.svg,
+        width: width,
+        height: height,
+        fit: fit,
+        shape: shape,
+        borderRadius: borderRadius,
+        color: color,
+        placeholder: placeholder,
+        errorImage: errorImage,
+        customPlaceholder: customPlaceholder,
+        customErrorWidget: customErrorWidget,
+        backgroundColor: backgroundColor,
+        fadeDuration: fadeDuration,
+        enableMemoryCache: enableMemoryCache,
+        onTap: onTap,
+        heroTag: heroTag,
+        border: border,
+        shadows: shadows,
+      );
 
   final String imagePath;
   final ImageType imageType;
@@ -345,25 +348,30 @@ class AppImage extends StatelessWidget {
   }
 
   Widget _buildNetworkImage() => CachedNetworkImage(
-      imageUrl: imagePath,
-      width: width,
-      height: height,
-      fit: fit,
-      color: color,
-      fadeInDuration: fadeDuration,
-      memCacheWidth: enableMemoryCache ? width?.round() : null,
-      memCacheHeight: enableMemoryCache ? height?.round() : null,
-      maxWidthDiskCache: width?.round(),
-      maxHeightDiskCache: height?.round(),
-      placeholder: (context, url) => _buildPlaceholderWidget(),
-      errorWidget: (context, url, error) => _buildErrorWidget(),
-    );
+        imageUrl: imagePath,
+        width: width,
+        height: height,
+        fit: fit,
+        color: color,
+        fadeInDuration: fadeDuration,
+        memCacheWidth: enableMemoryCache ? width?.round() : null,
+        memCacheHeight: enableMemoryCache ? height?.round() : null,
+        maxWidthDiskCache: width?.round(),
+        maxHeightDiskCache: height?.round(),
+        httpHeaders: {'User-Agent': 'xpensemate App', 'Accept': 'image/*'},
+        placeholder: (context, url) => _buildPlaceholderWidget(),
+        errorWidget: (context, url, error) {
+          print('this is error while showing image ${error.toString()}');
+          print('this image url ${url}');
+          return _buildErrorWidget();
+        },
+      );
 
   Widget _buildAssetImage() {
     if (imagePath.toLowerCase().endsWith('.svg')) {
       return _buildSvgImage();
     }
-    
+
     return Image.asset(
       imagePath,
       width: width,
@@ -378,7 +386,7 @@ class AppImage extends StatelessWidget {
     if (imagePath.toLowerCase().endsWith('.svg')) {
       return _buildSvgImage();
     }
-    
+
     return Image.file(
       File(imagePath),
       width: width,
@@ -396,9 +404,8 @@ class AppImage extends StatelessWidget {
         width: width,
         height: height,
         fit: fit,
-        colorFilter: color != null 
-          ? ColorFilter.mode(color!, BlendMode.srcIn) 
-          : null,
+        colorFilter:
+            color != null ? ColorFilter.mode(color!, BlendMode.srcIn) : null,
         placeholderBuilder: (context) => _buildPlaceholderWidget(),
       );
     } else if (imageType == ImageType.asset) {
@@ -407,9 +414,8 @@ class AppImage extends StatelessWidget {
         width: width,
         height: height,
         fit: fit,
-        colorFilter: color != null 
-          ? ColorFilter.mode(color!, BlendMode.srcIn) 
-          : null,
+        colorFilter:
+            color != null ? ColorFilter.mode(color!, BlendMode.srcIn) : null,
       );
     } else {
       return SvgPicture.file(
@@ -417,9 +423,8 @@ class AppImage extends StatelessWidget {
         width: width,
         height: height,
         fit: fit,
-        colorFilter: color != null 
-          ? ColorFilter.mode(color!, BlendMode.srcIn) 
-          : null,
+        colorFilter:
+            color != null ? ColorFilter.mode(color!, BlendMode.srcIn) : null,
       );
     }
   }
@@ -445,12 +450,13 @@ class AppImage extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         color: backgroundColor ?? Colors.grey[200],
-        borderRadius: shape == ImageShape.circle 
-          ? null 
-          : BorderRadius.circular(
-              shape == ImageShape.roundedRectangle ? borderRadius : 0,
-            ),
-        shape: shape == ImageShape.circle ? BoxShape.circle : BoxShape.rectangle,
+        borderRadius: shape == ImageShape.circle
+            ? null
+            : BorderRadius.circular(
+                shape == ImageShape.roundedRectangle ? borderRadius : 0,
+              ),
+        shape:
+            shape == ImageShape.circle ? BoxShape.circle : BoxShape.rectangle,
       ),
       child: const Center(
         child: CircularProgressIndicator(
@@ -481,18 +487,19 @@ class AppImage extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         color: backgroundColor ?? Colors.white30,
-        borderRadius: shape == ImageShape.circle 
-          ? null 
-          : BorderRadius.circular(
-              shape == ImageShape.roundedRectangle ? borderRadius : 0,
-            ),
-        shape: shape == ImageShape.circle ? BoxShape.circle : BoxShape.rectangle,
+        borderRadius: shape == ImageShape.circle
+            ? null
+            : BorderRadius.circular(
+                shape == ImageShape.roundedRectangle ? borderRadius : 0,
+              ),
+        shape:
+            shape == ImageShape.circle ? BoxShape.circle : BoxShape.rectangle,
       ),
       child: Icon(
         Icons.broken_image_outlined,
-        size: (width != null && height != null) 
-          ? (width! < height! ? width! * 0.4 : height! * 0.4)
-          : 24,
+        size: (width != null && height != null)
+            ? (width! < height! ? width! * 0.4 : height! * 0.4)
+            : 24,
         color: Colors.grey[600],
       ),
     );
@@ -526,12 +533,13 @@ class AppImage extends StatelessWidget {
           color: backgroundColor,
           border: border,
           boxShadow: shadows,
-          borderRadius: shape == ImageShape.circle 
-            ? null 
-            : BorderRadius.circular(
-                shape == ImageShape.roundedRectangle ? borderRadius : 0,
-              ),
-          shape: shape == ImageShape.circle ? BoxShape.circle : BoxShape.rectangle,
+          borderRadius: shape == ImageShape.circle
+              ? null
+              : BorderRadius.circular(
+                  shape == ImageShape.roundedRectangle ? borderRadius : 0,
+                ),
+          shape:
+              shape == ImageShape.circle ? BoxShape.circle : BoxShape.rectangle,
         ),
         child: styledWidget,
       );
@@ -553,18 +561,19 @@ extension AppImageExtension on String {
     String? placeholder,
     String? errorImage,
     VoidCallback? onTap,
-  }) => AppImage(
-      this,
-      width: width,
-      height: height,
-      fit: fit,
-      shape: shape,
-      borderRadius: borderRadius,
-      color: color,
-      placeholder: placeholder,
-      errorImage: errorImage,
-      onTap: onTap,
-    );
+  }) =>
+      AppImage(
+        this,
+        width: width,
+        height: height,
+        fit: fit,
+        shape: shape,
+        borderRadius: borderRadius,
+        color: color,
+        placeholder: placeholder,
+        errorImage: errorImage,
+        onTap: onTap,
+      );
 }
 
 // Predefined image widgets for common use cases
@@ -575,22 +584,22 @@ class ProfileImage extends StatelessWidget {
     this.size = 50,
     this.onTap,
   });
-  
+
   final String imagePath;
   final double size;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) => AppImage(
-      imagePath,
-      width: size,
-      height: size,
-      shape: ImageShape.circle,
-      onTap: onTap,
-      border: Border.all(
-        color: Colors.grey[300]!,
-      ),
-    );
+        imagePath,
+        width: size,
+        height: size,
+        shape: ImageShape.circle,
+        onTap: onTap,
+        border: Border.all(
+          color: Colors.grey[300]!,
+        ),
+      );
 }
 
 class IconImage extends StatelessWidget {
@@ -601,7 +610,7 @@ class IconImage extends StatelessWidget {
     this.color,
     this.onTap,
   });
-  
+
   final String imagePath;
   final double size;
   final Color? color;
@@ -609,11 +618,11 @@ class IconImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AppImage(
-      imagePath,
-      width: size,
-      height: size,
-      color: color ?? Theme.of(context).iconTheme.color,
-      fit: BoxFit.contain,
-      onTap: onTap,
-    );
+        imagePath,
+        width: size,
+        height: size,
+        color: color ?? Theme.of(context).iconTheme.color,
+        fit: BoxFit.contain,
+        onTap: onTap,
+      );
 }

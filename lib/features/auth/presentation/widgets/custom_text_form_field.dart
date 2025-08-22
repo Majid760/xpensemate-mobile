@@ -351,7 +351,13 @@ class _ReactiveAppFieldState extends State<ReactiveAppField> {
   Widget _buildPhoneField(ThemeData theme, ColorScheme colorScheme) =>
       ReactivePhoneFormField<PhoneNumber>(
         formControlName: widget.formControlName,
-        decoration: _getInputDecoration(theme, colorScheme),
+        decoration: _getInputDecoration(theme, colorScheme).copyWith(
+          // Slightly reduce left padding for better alignment with selector
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 10,
+            vertical: 14,
+          ),
+        ),
         onChanged: widget.onCountryChanged != null
             ? (phoneNumber) {
                 if (phoneNumber.value != null) {
@@ -406,6 +412,7 @@ class _ReactiveAppFieldState extends State<ReactiveAppField> {
         style: theme.textTheme.bodyLarge?.copyWith(
           color: colorScheme.onSurface,
         ),
+        
       );
 
   Widget _buildDropdownField(ThemeData theme, ColorScheme colorScheme) {
@@ -418,7 +425,7 @@ class _ReactiveAppFieldState extends State<ReactiveAppField> {
                 child: Text(
                   genderOptionsWithIcons[value]?['displayName'] as String? ??
                       value,
-                  style: theme.textTheme.bodyMedium?.copyWith(
+                  style: theme.textTheme.bodyLarge?.copyWith(
                     color: colorScheme.onSurface,
                   ),
                 ),
@@ -430,7 +437,6 @@ class _ReactiveAppFieldState extends State<ReactiveAppField> {
       formControlName: widget.formControlName,
       decoration: _getInputDecoration(theme, colorScheme),
       items: items,
-      padding: EdgeInsets.zero,
       onChanged: widget.onDropdownChanged,
       showErrors: widget.showErrors,
       validationMessages: widget.validationMessages ?? {},
@@ -440,9 +446,11 @@ class _ReactiveAppFieldState extends State<ReactiveAppField> {
       dropdownColor:
           colorScheme.surfaceContainerHighest.withValues(alpha: 0.95),
       icon: Icon(
-        Icons.arrow_drop_down,
+        Icons.keyboard_arrow_down_rounded,
+        size: 20,
         color: colorScheme.onSurfaceVariant,
       ),
+      isExpanded: true,
       menuMaxHeight: 200,
       borderRadius: BorderRadius.circular(12),
     );
@@ -531,6 +539,10 @@ class _ReactiveAppFieldState extends State<ReactiveAppField> {
         filled: widget.filled,
         fillColor: widget.fillColor ??
             colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+        prefixIconConstraints: const BoxConstraints(
+          minWidth: 44,
+          minHeight: 48,
+        ),
         border: widget.border ??
             OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -568,7 +580,7 @@ class _ReactiveAppFieldState extends State<ReactiveAppField> {
           ),
         ),
         contentPadding: widget.contentPadding ??
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         isDense: widget.isDense,
         helperText: widget.helperText,
         counterText: widget.showCounter ? null : '',

@@ -403,6 +403,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get phoneNumberMustBeAtLeast10Digits => 'Phone number must be at least 10 digits';
 
   @override
+  String get logoutConfirmationMessage => 'Are you sure to want to logout?';
+
+  @override
   String get selectImage => 'Select Image';
 
   @override
@@ -410,6 +413,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get camera => 'Camera';
+
+  @override
+  String get openingCamera => 'Opening camera...';
+
+  @override
+  String get openingGallery => 'Opening gallery...';
+
+  @override
+  String get processingImage => 'Processing image...';
+
+  @override
+  String get imageSelectedSuccessfully => 'Image selected successfully!';
+
+  @override
+  String get imageSelectionCancelled => 'Image selection cancelled';
+
+  @override
+  String get imageSelectionFailed => 'Failed to select image. Please try again.';
+
+  @override
+  String fileSizeExceeded(String size) {
+    return 'File size ($size MB) exceeds the limit of 10 MB. Please choose a smaller image.';
+  }
 
   @override
   String get permissionRequired => 'Permission Required';
@@ -486,4 +512,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorSavingProfile => 'Error saving profile';
+
+  @override
+  String get errorWhileOpeningUrl => 'Link is not valid';
 }

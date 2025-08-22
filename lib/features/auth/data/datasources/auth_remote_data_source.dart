@@ -131,10 +131,63 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         fromJson: AuthTokenModel.fromJson,
       );
 
-  /// Get current user
   @override
-  Future<Either<Failure, UserModel>> getCurrentUser() =>
-      _client.get(NetworkConfigs.currentUser, fromJson: UserModel.fromJson);
+  Future<Either<Failure, UserModel>> getCurrentUser() async {
+    try {
+      // Start both operations concurrently
+      final remoteUserFuture = _client.get(
+        NetworkConfigs.currentUser,
+        fromJson: UserModel.fromJson,
+      ); // Returns Either<Failure, UserModel?>
+
+      final localUserFuture = _localDataSource.getStoredUser();
+
+      // Convert both to the same type for Future.any
+      final remoteConverted = remoteUserFuture.then(
+        (either) => either.fold<Either<Failure, UserModel>>(
+          Left.new,
+          Right.new,
+        ),
+      );
+
+      final localConverted = localUserFuture.then(
+        (either) => either.fold<Either<Failure, UserModel>>(
+          Left.new,
+          (userEntity) => userEntity != null
+              ? Right(userEntity.toModel) // Convert UserEntity to UserModel
+              : const Left(LocalDataFailure(message: 'Local user is null')),
+        ),
+      );
+
+      final firstResult = await Future.any([remoteConverted, localConverted]);
+      // If first result is successful, return it
+      if (firstResult.isRight()) {
+        return firstResult;
+      }
+
+      // If first result failed, wait for both and return the successful one
+      final results = await Future.wait([
+        remoteConverted.catchError((_) =>
+            const Left(ServerFailure(message: 'Remote fetching failed'))),
+        localConverted.catchError((_) => const Left(
+            LocalDataFailure(message: 'Local data fetching failed'))),
+      ]);
+
+      // Find the first successful result
+      for (final result in results) {
+        if (result.isRight()) {
+          return result;
+        }
+      }
+      return const Left(
+        ServerFailure(message: 'Failed to get user from both sources'),
+      );
+    } on Exception catch (e) {
+      return Left(
+        ServerFailure(message: 'Error getting current user: $e}'),
+      );
+    }
+  }
 
   /// Send verification email
   @override
@@ -144,10 +197,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   /// Logout
   @override
-  Future<Either<Failure, void>> logout() {
-    _localDataSource.clearUser();
-    return _client.post(NetworkConfigs.logout);
+  Future<Either<Failure, void>> logout() async {
+    final result = await Future.wait([
+      _localDataSource.clearUser(),
+      _localDataSource.clearTokens(),
+    ]);
+    return result.first;
   }
+  // return _client.post(NetworkConfigs.logout);
 }
 
 // Compute functions for better performance

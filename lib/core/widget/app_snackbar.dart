@@ -6,7 +6,7 @@ class AppSnackBar {
     required String message,
     String? actionLabel,
     VoidCallback? onActionPressed,
-    Duration duration = const Duration(seconds: 2),
+    Duration duration = const Duration(seconds: 4),
     SnackBarType type = SnackBarType.info,
   }) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();

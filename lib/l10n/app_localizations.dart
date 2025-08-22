@@ -849,6 +849,12 @@ abstract class AppLocalizations {
   /// **'Phone number must be at least 10 digits'**
   String get phoneNumberMustBeAtLeast10Digits;
 
+  /// No description provided for @logoutConfirmationMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure to want to logout?'**
+  String get logoutConfirmationMessage;
+
   /// No description provided for @selectImage.
   ///
   /// In en, this message translates to:
@@ -866,6 +872,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Camera'**
   String get camera;
+
+  /// Message shown when opening camera for image capture
+  ///
+  /// In en, this message translates to:
+  /// **'Opening camera...'**
+  String get openingCamera;
+
+  /// Message shown when opening gallery for image selection
+  ///
+  /// In en, this message translates to:
+  /// **'Opening gallery...'**
+  String get openingGallery;
+
+  /// Message shown when processing selected image
+  ///
+  /// In en, this message translates to:
+  /// **'Processing image...'**
+  String get processingImage;
+
+  /// Success message when image is selected and validated
+  ///
+  /// In en, this message translates to:
+  /// **'Image selected successfully!'**
+  String get imageSelectedSuccessfully;
+
+  /// Info message when user cancels image selection
+  ///
+  /// In en, this message translates to:
+  /// **'Image selection cancelled'**
+  String get imageSelectionCancelled;
+
+  /// Error message when image selection fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to select image. Please try again.'**
+  String get imageSelectionFailed;
+
+  /// Error message when selected image file size exceeds the maximum limit
+  ///
+  /// In en, this message translates to:
+  /// **'File size ({size} MB) exceeds the limit of 10 MB. Please choose a smaller image.'**
+  String fileSizeExceeded(String size);
 
   /// No description provided for @permissionRequired.
   ///
@@ -1010,6 +1058,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error saving profile'**
   String get errorSavingProfile;
+
+  /// No description provided for @errorWhileOpeningUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Link is not valid'**
+  String get errorWhileOpeningUrl;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

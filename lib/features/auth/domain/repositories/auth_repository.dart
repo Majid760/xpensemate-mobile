@@ -4,8 +4,6 @@ import 'package:xpensemate/features/auth/domain/entities/auth_token.dart';
 import 'package:xpensemate/features/auth/domain/entities/user.dart';
 
 abstract class AuthRepository {
-  // Check if user is authenticated
-Future<Either<Failure, bool>> isAuthenticated();
   
   // Get current user
  Future<Either<Failure, UserEntity>> getCurrentUser();
@@ -42,9 +40,6 @@ Future<Either<Failure, bool>> isAuthenticated();
   // Send verification email
   Future<Either<Failure, dynamic>> sendVerificationEmail(String email);
   
-  
-  // Get auth tokens
-  Future<AuthToken?> getAuthToken();
 }
 
 

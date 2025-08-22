@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/network/network_configs.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_state.dart';
 import 'package:xpensemate/features/profile/presentation/pages/profile_page.dart';
 import 'package:xpensemate/features/profile/presentation/widgets/footer_widget.dart';
+import 'package:xpensemate/features/profile/presentation/widgets/menu_item_widget.dart';
 
 class ModernContent extends StatelessWidget {
   const ModernContent({
@@ -119,7 +122,7 @@ class ModernContent extends StatelessWidget {
           title: context.l10n.privacySecurity,
           subtitle: context.l10n.managePrivacySettings,
           color: const Color(0xFF10B981),
-          onTap: () => onComingSoon(context.l10n.privacySecurity),
+          onTap: () => _launchPrivacyPolicy(context),
         ),
         MenuItemData(
           icon: Icons.notifications_outlined,
@@ -133,17 +136,17 @@ class ModernContent extends StatelessWidget {
   List<MenuItemData> _supportMenuItems(BuildContext context) => [
         MenuItemData(
           icon: Icons.help_outline_rounded,
-          title: context.l10n.helpSupport,
-          subtitle: context.l10n.getHelpWhenNeeded,
+          title: 'Terms & Conditions',
+          subtitle: 'Read our terms and conditions',
           color: const Color(0xFF06B6D4),
-          onTap: () => onComingSoon(context.l10n.helpSupport),
+          onTap: () => _launchTermsAndConditions(context),
         ),
         MenuItemData(
           icon: Icons.info_outline_rounded,
           title: context.l10n.about,
           subtitle: context.l10n.learnMoreAboutExpenseTracker,
           color: const Color(0xFF84CC16),
-          onTap: () => onComingSoon(context.l10n.about),
+          onTap: () => _launchAboutPage(context),
         ),
         MenuItemData(
           icon: Icons.logout_rounded,
@@ -154,6 +157,52 @@ class ModernContent extends StatelessWidget {
           isDestructive: true,
         ),
       ];
+
+  // URL Launcher Methods
+  Future<void> _launchAboutPage(BuildContext context) async {
+    final success = await AppUtils.launchURL(
+      NetworkConfigs.aboutUrl,
+      context: context,
+      showErrorDialog: true,
+    );
+    
+    if (!success) {
+      AppUtils.log(
+        'Failed to launch About page: ${NetworkConfigs.aboutUrl}',
+        level: LogLevel.error,
+      );
+    }
+  }
+
+  Future<void> _launchPrivacyPolicy(BuildContext context) async {
+    final success = await AppUtils.launchURL(
+      NetworkConfigs.privacyPolicyUrl,
+      context: context,
+      showErrorDialog: true,
+    );
+    
+    if (!success) {
+      AppUtils.log(
+        'Failed to launch Privacy Policy page: ${NetworkConfigs.privacyPolicyUrl}',
+        level: LogLevel.error,
+      );
+    }
+  }
+
+  Future<void> _launchTermsAndConditions(BuildContext context) async {
+    final success = await AppUtils.launchURL(
+      NetworkConfigs.termsAndConditionsUrl,
+      context: context,
+      showErrorDialog: true,
+    );
+    
+    if (!success) {
+      AppUtils.log(
+        'Failed to launch Terms & Conditions page: ${NetworkConfigs.termsAndConditionsUrl}',
+        level: LogLevel.error,
+      );
+    }
+  }
 }
 
 class _UserInfoCard extends StatelessWidget {

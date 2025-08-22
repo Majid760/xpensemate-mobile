@@ -15,6 +15,7 @@ import 'package:xpensemate/features/auth/domain/entities/user.dart';
 import 'package:xpensemate/features/auth/presentation/widgets/custom_text_form_field.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_state.dart';
+import 'package:xpensemate/core/utils/app_utils.dart';
 
 class ProfileEditWidget extends StatefulWidget {
   const ProfileEditWidget({
@@ -41,7 +42,6 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
     super.initState();
     final profileCubit = context.profileCubit;
     final user = profileCubit.state.user;
-    print('this is user data => ${user?.toModel.props}');
 
     // Parse date from string if available
     DateTime? parsedDate;
@@ -269,15 +269,22 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
   Widget build(BuildContext context) =>
       BlocConsumer<ProfileCubit, ProfileState>(
         listener: (context, state) {
-          print('this is ussserrrr => ${state.user?.props}');
           if (state.status == ProfileStatus.error &&
-              state.errorMessage != null &&
-              state.errorMessage!.isNotEmpty) {
+              state.message != null &&
+              state.message!.isNotEmpty) {
             AppSnackBar.show(
               context: context,
-              message: state.errorMessage!,
+              message: state.message!,
               type: SnackBarType.error,
             );
+          }
+          if(state.status == ProfileStatus.loaded && (state.message?.isNotEmpty ?? false)){
+            AppSnackBar.show(
+              context: context,
+              message: context.l10n.profileUpdatedSuccessfully,
+              type: SnackBarType.success,
+            );
+            Navigator.pop(context);
           }
         },
         builder: (context, state) => FadeTransition(
@@ -295,17 +302,19 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
                         imageFile: state.imageFile,
                         imageUrl:
                             context.profileCubit.state.user?.profilePhotoUrl,
-                        onImageTap: () => {
-                          AppDialogs.showImagePicker(
-                            context: context,
-                            onImageSelected: (file) {
-                              if (file != null) {
-                                context.profileCubit.setImageFile(file);
-                              }
-                            },
-                          ),
+                        onImageTap: ()  {
+                         
+                             AppDialogs.showImagePicker(
+                              context: context,
+                              onImageSelected: (file) {
+                                if (file != null) {
+                                  context.profileCubit.setImageFile(file);
+                                }
+                              },
+                            );
+                        
+                        
                         },
-                        size: 100,
                       ),
                     ),
                     SizedBox(height: context.xl),

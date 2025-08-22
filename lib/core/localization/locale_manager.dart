@@ -8,72 +8,95 @@ class LocaleManager extends ChangeNotifier {
   LocaleManager._internal();
   static final LocaleManager _instance = LocaleManager._internal();
 
-  Locale? _currentLocale;
-  
-  Locale? get currentLocale => _currentLocale;
-  
-  bool get isRTL => _currentLocale != null && 
-      SupportedLocales.isRTL(_currentLocale!);
+  static const Locale _defaultLocale = Locale('en', 'US'); // Default English
+  Locale _currentLocale = _defaultLocale;
 
-  /// Initialize the locale manager
+  Locale get currentLocale => _currentLocale;
+  bool get isRTL => SupportedLocales.isRTL(_currentLocale);
+
+  /// Initialize locale - load from storage or use default
   Future<void> initialize() async {
     try {
-      final savedLocale = await SecureStorageService.instance.get(StorageKeys.localeKey);
+      final savedLocale =
+          await SecureStorageService.instance.get(StorageKeys.localeKey);
+
       if (savedLocale != null) {
-        final parts = savedLocale.split('_');
-        _currentLocale = Locale(
-          parts[0],
-          parts.length > 1 ? parts[1] : null,
-        );
+        _currentLocale = _parseLocale(savedLocale) ?? _defaultLocale;
+      } else {
+        // No saved locale - use default and save it
+        _currentLocale = _defaultLocale;
+        await _saveCurrentLocale();
       }
-    } on Exception catch (e) {
+    } catch (e) {
       logE('Error initializing locale: $e');
+      _currentLocale = _defaultLocale;
     }
     notifyListeners();
   }
 
-  /// Change the app locale
+  /// Set new locale
   Future<void> setLocale(Locale locale) async {
-    if (!SupportedLocales.supportedLocales.contains(locale)) {
+    if (!_isSupported(locale)) {
       throw ArgumentError('Unsupported locale: $locale');
     }
 
     _currentLocale = locale;
-
-    try {
-      await SecureStorageService.instance.save(StorageKeys.localeKey, locale.languageCode);
-    } on Exception catch (e) {
-      logE('Error saving locale: $e');
-    }
+    await _saveCurrentLocale();
     notifyListeners();
   }
 
-  /// Reset to system locale
-  Future<void> resetToSystemLocale() async {
-    _currentLocale = null;
-    try {
-      await SecureStorageService.instance.remove(StorageKeys.localeKey);
-    } on Exception catch (e) {
-      logE('Error removing locale: $e');
-    }
+  /// Reset to default locale
+  Future<void> resetToDefault() async {
+    _currentLocale = _defaultLocale;
+    await _saveCurrentLocale();
     notifyListeners();
   }
 
-  /// Get locale from language code
-  Locale? getLocaleFromLanguageCode(String languageCode) {
+  /// Parse locale string to Locale object
+  Locale? _parseLocale(String localeString) {
     try {
-      return SupportedLocales.supportedLocales.firstWhere(
-        (locale) => locale.languageCode == languageCode,
-      );
-    } on ArgumentError {
+      // Handle both formats: "en" or "en_US"
+      if (localeString.contains('_')) {
+        final parts = localeString.split('_');
+        final locale = Locale(parts[0], parts[1]);
+        return _isSupported(locale) ? locale : null;
+      } else {
+        // Just language code - find matching supported locale
+        final locale = SupportedLocales.supportedLocales
+            .where((l) => l.languageCode == localeString)
+            .firstOrNull;
+        return locale;
+      }
+    } on Exception catch (e) {
+      logE('Error parsing locale string: $localeString, error: $e');
       return null;
     }
   }
 
-  /// Check if a locale is supported
-  bool isLocaleSupported(Locale locale) => SupportedLocales.supportedLocales.any(
-      (supportedLocale) =>
-          supportedLocale.languageCode == locale.languageCode &&
-          supportedLocale.countryCode == locale.countryCode,
-    );
+  /// Save current locale to storage
+  Future<void> _saveCurrentLocale() async {
+    try {
+      // Use only language code to avoid storage issues
+      final localeString = _currentLocale.languageCode;
+      await SecureStorageService.instance
+          .save(StorageKeys.localeKey, localeString);
+      logD('Locale saved: $localeString');
+    } catch (e) {
+      logE('Error saving locale: $e');
+      // Don't throw - continue with in-memory locale
+    }
+  }
+
+  /// Check if locale is supported
+  bool _isSupported(Locale locale) => SupportedLocales.supportedLocales.any(
+        (supported) =>
+            supported.languageCode == locale.languageCode &&
+            supported.countryCode == locale.countryCode,
+      );
+
+  /// Get locale from language code (helper method)
+  Locale? getLocaleFromLanguageCode(String languageCode) =>
+      SupportedLocales.supportedLocales
+          .where((locale) => locale.languageCode == languageCode)
+          .firstOrNull;
 }

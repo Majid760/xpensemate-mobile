@@ -46,38 +46,60 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
     
-	    <!-- expensemate  keys -->
+	    <!-- expensemate permissions -->
 
-	<!-- Photo Library -->
+	<!-- Camera Permission -->
+    <key>NSCameraUsageDescription</key>
+    <string>Xpensemate needs access to your camera to take photos for expense receipts and profile pictures.</string>
+    
+    <!-- Photo Library Permission -->
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>Xpensemate need access to your photo library to upload images</string>
+    <string>Xpensemate needs access to your photo library to select images for expense receipts and profile pictures.</string>
+    
+    <!-- Photo Library Add Permission (iOS 11+) -->
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>Xpensemate needs permission to save photos to your photo library.</string>
 
-    <!-- Notification -->
+    <!-- Location Permissions -->
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Xpensemate needs access to your location to automatically detect nearby merchants and add location data to your expenses.</string>
+    
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>Xpensemate needs access to your location to automatically detect nearby merchants and add location data to your expenses.</string>
+
+    <!-- Notification Permissions -->
     <key>NSUserNotificationUsageDescription</key>
-    <string>Xpensemate needs permission to show local notifications.</string>
+    <string>Xpensemate needs permission to send you notifications about expense reminders and budget alerts.</string>
+    
+    <!-- Microphone Permission (if needed for video recording) -->
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Xpensemate needs access to your microphone for video recording of expense receipts.</string>
+    
+    <!-- Face ID / Touch ID Permission -->
+    <key>NSFaceIDUsageDescription</key>
+    <string>Xpensemate uses Face ID or Touch ID for secure authentication to protect your financial data.</string>
+    
+    <!-- Contacts Permission (if needed for sharing) -->
+    <key>NSContactsUsageDescription</key>
+    <string>Xpensemate needs access to your contacts to share expense reports or split bills with friends.</string>
+    
+    <!-- Calendar Permission (if needed for expense scheduling) -->
+    <key>NSCalendarsUsageDescription</key>
+    <string>Xpensemate needs access to your calendar to schedule expense reminders and budget reviews.</string>
+
 	<!-- Background modes for notifications -->
     <key>UIBackgroundModes</key>
     <array>
         <string>fetch</string>
         <string>remote-notification</string>
+        <string>background-processing</string>
     </array>
     
     <!-- Notification permissions -->
     <key>NSUserNotificationAlertStyle</key>
     <string>alert</string>
-    
-    <!-- Camera -->
-    <key>NSCameraUsageDescription</key>
-    <string>Xpensemate need access to your camera to take photos</string>
-    
-    <!-- Location -->
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Xpensemate need access to your location to show nearby places</string>
-    
-    <!-- Microphone (if needed for video recording) -->
-    <key>NSMicrophoneUsageDescription</key>
-    <string>Xpensemate need access to your microphone for video recording</string>
 
+	<!-- Development and debugging permissions -->
 	<key>NSLocalNetworkUsageDescription</key>
     <string>This app needs local network access for development and debugging purposes.</string>
 

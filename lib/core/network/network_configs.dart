@@ -39,6 +39,13 @@ class NetworkConfigs {
   static const String updateProfile = '/settings/update-user';
   static const String updateProfilePhoto = '/settings/upload-profile';
 
+  // dashboard endpoints
+  static const String weeklyStats = '/expenses/weekly-stats';
+  static const String budgetGoals = '/dashboard/budget-goals';
+  static const String budgetGoalsStats = 'dashboard/budget-goals/stats';
+  static const String expenseStats = '/dashboard/expense/stats';
+  static const String activity = '/dashboard/activity';
+
   // ------------------------------------------------------------------
   //  Static Pages URLs
   // ------------------------------------------------------------------

@@ -652,28 +652,16 @@ class AppUtils {
   }
 
   static void _showURLErrorDialog(BuildContext context, String message) {
-    AppCustomDialogs.showConfirmation(
+
+      AppCustomDialogs.showSingleAction(
       context: context,
       title: context.l10n.errorWhileOpeningUrl,
       message: message,
-      onConfirm: () {
-        Navigator.of(context).pop();
+      actionText: context.l10n.proceed,
+      onAction: () {
       },
     );
-
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Error'),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
+  
   }
 }
 

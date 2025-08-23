@@ -130,8 +130,8 @@ class _AppCustomDialogState extends State<AppCustomDialog>
       message: widget.message ?? context.l10n.logoutConfirmationMessage,
       confirmText: widget.confirmText ?? context.l10n.logout,
       cancelText: widget.cancelText ?? context.l10n.cancel,
-      onConfirm: _handleConfirm,
-      onCancel: _handleCancel,
+      onConfirm: widget.onConfirm != null ? _handleConfirm : null,
+      onCancel: widget.onCancel != null ? _handleCancel : null,
       isDestructive: widget.isDestructive,
       icon: widget.icon ?? Icons.logout_rounded,
     );
@@ -177,8 +177,8 @@ class _DialogContent extends StatelessWidget {
   final String message;
   final String confirmText;
   final String cancelText;
-  final VoidCallback onConfirm;
-  final VoidCallback onCancel;
+  final VoidCallback? onConfirm;
+  final VoidCallback? onCancel;
   final bool isDestructive;
   final IconData icon;
 
@@ -285,27 +285,14 @@ class _DialogContent extends StatelessWidget {
                 ),
                 SizedBox(height: context.lg),
 
-                // Action buttons
-                Row(
-                  children: [
-                    Expanded(
-                      child: _DialogButton(
-                        text: cancelText,
-                        onPressed: onCancel,
-                        isPrimary: false,
-                        isDestructive: false,
-                      ),
-                    ),
-                    SizedBox(width: context.sm),
-                    Expanded(
-                      child: _DialogButton(
-                        text: confirmText,
-                        onPressed: onConfirm,
-                        isPrimary: true,
-                        isDestructive: isDestructive,
-                      ),
-                    ),
-                  ],
+                // Action buttons - conditional display
+                _buildActionButtons(
+                  context: context,
+                  confirmText: confirmText,
+                  cancelText: cancelText,
+                  onConfirm: onConfirm,
+                  onCancel: onCancel,
+                  isDestructive: isDestructive,
                 ),
               ],
             ),
@@ -313,6 +300,69 @@ class _DialogContent extends StatelessWidget {
         ],
       ),
     );
+
+  /// Builds action buttons based on provided callbacks
+  Widget _buildActionButtons({
+    required BuildContext context,
+    required String confirmText,
+    required String cancelText,
+    required VoidCallback? onConfirm,
+    required VoidCallback? onCancel,
+    required bool isDestructive,
+  }) {
+    // If no callbacks provided, show no buttons
+    if (onConfirm == null && onCancel == null) {
+      return const SizedBox.shrink();
+    }
+
+    // If only one callback is provided, show single full-width button
+    if (onConfirm != null && onCancel == null) {
+      return SizedBox(
+        width: double.infinity,
+        child: _DialogButton(
+          text: confirmText,
+          onPressed: onConfirm,
+          isPrimary: true,
+          isDestructive: isDestructive,
+        ),
+      );
+    }
+
+    if (onCancel != null && onConfirm == null) {
+      return SizedBox(
+        width: double.infinity,
+        child: _DialogButton(
+          text: cancelText,
+          onPressed: onCancel,
+          isPrimary: true,
+          isDestructive: false,
+        ),
+      );
+    }
+
+    // If both callbacks are provided, show both buttons in a row
+    return Row(
+      children: [
+        Expanded(
+          child: _DialogButton(
+            text: cancelText,
+            onPressed: onCancel!,
+            isPrimary: false,
+            isDestructive: false,
+          ),
+        ),
+        SizedBox(width: context.sm),
+        Expanded(
+          child: _DialogButton(
+            text: confirmText,
+            onPressed: onConfirm!,
+            isPrimary: true,
+            isDestructive: isDestructive,
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 class _DialogButton extends StatefulWidget {
@@ -539,5 +589,66 @@ class AppCustomDialogs {
       onConfirm: onConfirm,
       onCancel: onCancel,
       icon: Icons.delete_outline_rounded,
+    );
+
+  // Information dialog without action buttons
+  static Future<bool?> showInfo({
+    required BuildContext context,
+    required String title,
+    required String message,
+    IconData? icon,
+    bool showAnimation = true,
+  }) => show(
+      context: context,
+      title: title,
+      message: message,
+      onConfirm: null,
+      onCancel: null,
+      isDestructive: false,
+      icon: icon ?? Icons.info_outline_rounded,
+      showAnimation: showAnimation,
+    );
+
+  // Single action dialog (confirm only)
+  static Future<bool?> showSingleAction({
+    required BuildContext context,
+    required String title,
+    required String message,
+    required String actionText,
+    required VoidCallback onAction,
+    bool isDestructive = false,
+    IconData? icon,
+    bool showAnimation = true,
+  }) => show(
+      context: context,
+      title: title,
+      message: message,
+      confirmText: actionText,
+      onConfirm: onAction,
+      onCancel: null,
+      isDestructive: isDestructive,
+      icon: icon ?? (isDestructive ? Icons.warning_rounded : Icons.help_outline_rounded),
+      showAnimation: showAnimation,
+    );
+
+  // Dismissible dialog (cancel/close only)
+  static Future<bool?> showDismissible({
+    required BuildContext context,
+    required String title,
+    required String message,
+    String? dismissText,
+    VoidCallback? onDismiss,
+    IconData? icon,
+    bool showAnimation = true,
+  }) => show(
+      context: context,
+      title: title,
+      message: message,
+      cancelText: dismissText ?? context.l10n.close,
+      onConfirm: null,
+      onCancel: onDismiss,
+      isDestructive: false,
+      icon: icon ?? Icons.info_outline_rounded,
+      showAnimation: showAnimation,
     );
 }

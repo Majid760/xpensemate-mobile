@@ -89,11 +89,11 @@ final class AuthInterceptor extends QueuedInterceptor {
             },
           ),
         );
-
-        final responseData = refreshResponse.data as Map<String, dynamic>;
-        AppLogger.i(
-          'refreshResponse of refreshtok api call ${refreshResponse.data}',
+         AppLogger.i(
+          'refreshResponse of refreshtok api call ${refreshResponse}',
         );
+        final responseData = refreshResponse.data as Map<String, dynamic>;
+       
         final authToken = AuthTokenModel.fromJson(responseData);
 
         // Store the new tokens

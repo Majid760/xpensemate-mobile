@@ -1,6 +1,7 @@
 
 // lib/core/router/route_guards.dart
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:xpensemate/core/route/utils/route_constants.dart';

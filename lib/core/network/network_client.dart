@@ -234,7 +234,6 @@ class ApiResponse<T> {
     T Function(Map<String, dynamic>)? fromJson,
   ) {
     try {
-      print("this is api responses ==> $json ");
       return ApiResponse<T>(
         type: json['type'] as String? ?? 'unknown',
         title: json['title'] as String? ?? '',

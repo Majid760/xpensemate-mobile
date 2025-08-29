@@ -10,6 +10,9 @@ abstract class RouteConstants {
   // Home Routes
   static const String home = '/home';
   static const String dashboard = '/home/dashboard';
+  static const String budget = '/home/budget';
+  static const String expense = '/home/expense';
+  static const String payment = '/home/payment';
   static const String notifications = '/home/notifications';
   
   // Profile Routes
@@ -32,6 +35,9 @@ abstract class RouteNames {
   // Home Routes
   static const String home = 'home';
   static const String dashboard = 'dashboard';
+  static const String budget = 'budget';
+  static const String expense = 'expense';
+  static const String payment = 'payment';
   static const String notifications = 'notifications';
   
   // Profile Routes

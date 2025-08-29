@@ -3,9 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:xpensemate/core/route/utils/main_shell.dart';
 import 'package:xpensemate/core/route/utils/route_constants.dart';
 import 'package:xpensemate/core/route/utils/router_middleware_guard.dart';
-import 'package:xpensemate/features/auth/presentation/pages/email_verify_page.dart';
+import 'package:xpensemate/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:xpensemate/features/home/presentation/pages/home_page.dart';
-import 'package:xpensemate/features/profile/presentation/pages/profile_page.dart';
 
 abstract class HomeRoutes {
   static List<RouteBase> get routes => [
@@ -13,18 +12,28 @@ abstract class HomeRoutes {
       path: RouteConstants.home,
       name: RouteNames.home,
       redirect: RouteGuards.requireAuth,
-      builder: (context, state) =>  const ProfilePage(),
+      builder: (context, state) => const DashboardPage(),
       routes: [
-        // GoRoute(
-        //   path: 'dashboard',
-        //   name: RouteNames.dashboard,
-        //   builder: (context, state) => const DashboardPage(),
-        // ),R
-        // GoRoute(
-        //   path: 'dashboard',
-        //   name: RouteNames.profile,
-        //   builder: (context, state) => const ProfilePage(),
-        // ),
+        GoRoute(
+          path: 'dashboard',
+          name: RouteNames.dashboard,
+          builder: (context, state) => const DashboardPage(),
+        ),
+        GoRoute(
+          path: 'budget',
+          name: 'budget',
+          builder: (context, state) => const HomePage(), // Placeholder
+        ),
+        GoRoute(
+          path: 'expense',
+          name: 'expense',
+          builder: (context, state) => const HomePage(), // Placeholder
+        ),
+        GoRoute(
+          path: 'payment',
+          name: 'payment',
+          builder: (context, state) => const HomePage(), // Placeholder
+        ),
         GoRoute(
           path: 'notifications',
           name: RouteNames.notifications,

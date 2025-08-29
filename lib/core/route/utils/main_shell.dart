@@ -36,7 +36,7 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
 
   /* ---------- data ---------- */
   final _navItems = const [
-    NavItem(icon: Icons.home_rounded, label: 'Home', route: '/home'),
+    NavItem(icon: Icons.dashboard_rounded, label: 'Dashboard', route: '/home'),
     NavItem(
       icon: Icons.account_balance_wallet_rounded,
       label: 'Budget',
@@ -76,6 +76,8 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
     if (loc.startsWith('/home/expense')) return 2;
     if (loc.startsWith('/home/payment')) return 3;
     if (loc.startsWith('/profile')) return 4;
+    // Default to dashboard for /home and /home/dashboard
+    if (loc == '/home' || loc.startsWith('/home/dashboard')) return 0;
     return 0;
   }
 
@@ -93,7 +95,6 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
   bool _shouldProcessTap() => _isFabExpanded && !_shouldPreventFabHiding();
 
   void _onItemTapped(int index, BuildContext context) {
-    print('Hiding FAB due to navigation item tap');
     logI(
         'Navigation item tapped - Index: $index, Label: ${_navItems[index].label}',);
     if (index == 2) {
@@ -115,7 +116,7 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
       
       // Navigate to the correct route based on the tab index
       switch (index) {
-        case 0: // Home
+        case 0: // Dashboard
           context.go('/home');
           break;
         case 1: // Budget

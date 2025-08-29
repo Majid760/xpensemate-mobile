@@ -39,8 +39,12 @@ abstract class AppColors {
   static const Color outlineVariant = Color.fromARGB(255, 165, 97, 233);
 
   // Additional semantic colors
-  static const Color success = Color(0xFF146C2E);
-  static const Color successContainer = Color(0xFFA6F2AA);
-  static const Color warning = Color(0xFFB3261E);
-  static const Color warningContainer = Color(0xFFF2B8B5);
+  static const Color success = Color(0xFF10B981);  // Green for positive indicators
+  static const Color successContainer = Color(0xFFD1FAE5);
+  static const Color warning = Color(0xFFF59E0B);  // Orange for warnings
+  static const Color warningContainer = Color(0xFFFEF3C7);
+  static const Color info = Color(0xFF3B82F6);     // Blue for information
+  static const Color infoContainer = Color(0xFFDBEAFE);
+  static const Color danger = Color(0xFFEF4444);   // Red for dangerous actions
+  static const Color dangerContainer = Color(0xFFFECFCF);
 }

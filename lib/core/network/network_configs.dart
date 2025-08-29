@@ -18,6 +18,8 @@ class NetworkConfigs {
   static const String apiToken =
       String.fromEnvironment('API_TOKEN'); // empty in dev
   static const String apiKey = '337de965aa1699e2f780c62520e1d695';
+  static const String googleAuthClientId =
+      '803273612959-eqvf0ftg1hc1m9ba34mpk0ku7i351313.apps.googleusercontent.com';
 
   // ------------------------------------------------------------------
   //  End-points (relative to baseUrl)
@@ -26,6 +28,7 @@ class NetworkConfigs {
 
   static const String register = '$_auth/register';
   static const String login = '$_auth/login';
+  static const String loginWithGoogle = '$_auth/google-oauth';
   static const String forgotPassword = '$_auth/forgot-password';
   static const String resetPassword = '$_auth/reset-password'; // + /:token
   static const String refreshToken = '$_auth/refresh-token';

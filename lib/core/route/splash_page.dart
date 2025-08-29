@@ -23,7 +23,7 @@ class _SplashPageState extends State<SplashPage> {
     // Check authentication status and navigate accordingly
     // This would typically check with your AuthService
     if (mounted) {
-      context.go('/home'); // or '/login' based on auth status
+      context.go('/home'); // Redirect to dashboard for authenticated users or login
     }
   }
 

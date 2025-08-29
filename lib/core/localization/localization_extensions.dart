@@ -3,7 +3,14 @@ import 'package:xpensemate/l10n/app_localizations.dart';
 
 extension LocalizationContext on BuildContext {
   /// Get the current app localizations
-  AppLocalizations get l10n => AppLocalizations.of(this)!;
+AppLocalizations get l10n {
+  final localizations = Localizations.of<AppLocalizations>(this, AppLocalizations);
+  if (localizations == null) {
+    throw FlutterError('AppLocalizations not found in widget tree. '
+        'Make sure that the widget is inside a Localizations widget.');
+  }
+  return localizations;
+}
   
   /// Get the current locale
   Locale get locale => Localizations.localeOf(this);

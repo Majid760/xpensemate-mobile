@@ -7,6 +7,7 @@ extension GoRouterExtension on BuildContext {
   // Navigation methods
   void goToLogin() => go('/login');
   void goToHome() => go('/home');
+  void goToDashboard() => go('/home/dashboard');
   void goToProfile() => go('/profile');
   void goToForgotPasword() =>go('/forgot-password');
   void goToRegister() =>go('/register');
@@ -14,6 +15,7 @@ extension GoRouterExtension on BuildContext {
   
   // Push methods
   void pushLogin() => push('/login');
+  void pushDashboard() => push('/home/dashboard');
   void pushProfile() => push('/profile');
   void pushForgotPasword() => push('/forgot-password');
   void pushRegister() => push('/register');

@@ -16,9 +16,12 @@ class AuthTokenModel extends Equatable {
             : 3600,
       );
 
-  factory AuthTokenModel.fromJson(Map<String, dynamic> json) {
+  factory AuthTokenModel.fromJson(Map<String, dynamic> jsonData) {
     try {
-      print("this is token data => $json");
+      var json = jsonData;
+      if(jsonData.containsKey('data')){
+        json = jsonData['data'] as Map<String, dynamic>;  
+      }
       return AuthTokenModel(
         accessToken: json['token'] as String? ??
             (throw ArgumentError('token is required')),

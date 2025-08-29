@@ -23,7 +23,8 @@ abstract class AuthRemoteDataSource {
     required String lastName,
   });
 
-  Future<Either<Failure, UserModel>> signInWithGoogle();
+  Future<Either<Failure, UserModel>> signInWithGoogle(
+      {required String credential});
 
   Future<Either<Failure, UserModel>> signInWithApple();
 
@@ -75,8 +76,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   /// Sign in with Google
   @override
-  Future<Either<Failure, UserModel>> signInWithGoogle() =>
-      _client.post(NetworkConfigs.apiKey, fromJson: UserModel.fromJson);
+  Future<Either<Failure, UserModel>> signInWithGoogle(
+      {required String credential,}) => _client.post(NetworkConfigs.loginWithGoogle,
+        data: {
+          "credential": credential,
+        },
+        fromJson: UserModel.fromJson,);
 
   /// Sign in with Apple
   @override

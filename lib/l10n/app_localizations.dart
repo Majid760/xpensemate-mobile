@@ -1064,6 +1064,294 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Link is not valid'**
   String get errorWhileOpeningUrl;
+
+  /// Dashboard page title
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard'**
+  String get dashboard;
+
+  /// Title for the weekly financial overview section
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Financial Overview'**
+  String get weeklyFinancialOverview;
+
+  /// Title for weekly insights section
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Insights'**
+  String get weeklyInsights;
+
+  /// Label for the day with highest spending
+  ///
+  /// In en, this message translates to:
+  /// **'Highest Day'**
+  String get highestDay;
+
+  /// Label for the day with lowest spending
+  ///
+  /// In en, this message translates to:
+  /// **'Lowest Day'**
+  String get lowestDay;
+
+  /// Label for daily average spending
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Average'**
+  String get dailyAverage;
+
+  /// Subtitle for daily average calculation
+  ///
+  /// In en, this message translates to:
+  /// **'across 7 days'**
+  String get acrossSevenDays;
+
+  /// Label for remaining budget balance
+  ///
+  /// In en, this message translates to:
+  /// **'Balance Remaining'**
+  String get balanceRemaining;
+
+  /// Label for total expenses
+  ///
+  /// In en, this message translates to:
+  /// **'Total Expenses'**
+  String get totalExpenses;
+
+  /// Time period label for current week
+  ///
+  /// In en, this message translates to:
+  /// **'this week'**
+  String get thisWeek;
+
+  /// Title for daily spending bar chart
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Spending Pattern'**
+  String get dailySpendingPattern;
+
+  /// Title for spending trend line chart
+  ///
+  /// In en, this message translates to:
+  /// **'Spending Trend'**
+  String get spendingTrend;
+
+  /// Loading message for dashboard data
+  ///
+  /// In en, this message translates to:
+  /// **'Loading dashboard data...'**
+  String get loadingDashboardData;
+
+  /// Error message when data loading fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load data'**
+  String get failedToLoadData;
+
+  /// Generic error message
+  ///
+  /// In en, this message translates to:
+  /// **'An unknown error occurred'**
+  String get unknownError;
+
+  /// Button text to retry failed operation
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get tryAgain;
+
+  /// Message shown when no expense data is available
+  ///
+  /// In en, this message translates to:
+  /// **'Start tracking your expenses to see insights'**
+  String get startTrackingExpenses;
+
+  /// Message when no spending data is available for charts
+  ///
+  /// In en, this message translates to:
+  /// **'No spending data'**
+  String get noSpendingData;
+
+  /// Message when no trend data is available
+  ///
+  /// In en, this message translates to:
+  /// **'No trend data'**
+  String get noTrendData;
+
+  /// No description provided for @of12.
+  ///
+  /// In en, this message translates to:
+  /// **'of'**
+  String get of12;
+
+  /// Budget label
+  ///
+  /// In en, this message translates to:
+  /// **'budget'**
+  String get budget;
+
+  /// Label for cumulative values in charts
+  ///
+  /// In en, this message translates to:
+  /// **'cumulative'**
+  String get cumulative;
+
+  /// Title for active budgets section
+  ///
+  /// In en, this message translates to:
+  /// **'Active Budgets'**
+  String get activeBudgets;
+
+  /// Message when no active budgets are available
+  ///
+  /// In en, this message translates to:
+  /// **'No active budgets'**
+  String get noBudgetsActive;
+
+  /// Button text to create a new budget
+  ///
+  /// In en, this message translates to:
+  /// **'Create Budget'**
+  String get createBudget;
+
+  /// Label for budget progress
+  ///
+  /// In en, this message translates to:
+  /// **'Budget Progress'**
+  String get budgetProgress;
+
+  /// Label for remaining budget amount
+  ///
+  /// In en, this message translates to:
+  /// **'remaining'**
+  String get remaining;
+
+  /// Label for spent amount
+  ///
+  /// In en, this message translates to:
+  /// **'spent'**
+  String get spent;
+
+  /// High priority label
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get highPriority;
+
+  /// Medium priority label
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get mediumPriority;
+
+  /// Low priority label
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get lowPriority;
+
+  /// Budget status when on track
+  ///
+  /// In en, this message translates to:
+  /// **'On Track'**
+  String get onTrack;
+
+  /// Budget status when over budget
+  ///
+  /// In en, this message translates to:
+  /// **'Over Budget'**
+  String get overBudget;
+
+  /// Budget status when near the limit
+  ///
+  /// In en, this message translates to:
+  /// **'Near Limit'**
+  String get nearLimit;
+
+  /// No description provided for @monday.
+  ///
+  /// In en, this message translates to:
+  /// **'Monday'**
+  String get monday;
+
+  /// No description provided for @tuesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Tuesday'**
+  String get tuesday;
+
+  /// No description provided for @wednesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Wednesday'**
+  String get wednesday;
+
+  /// No description provided for @thursday.
+  ///
+  /// In en, this message translates to:
+  /// **'Thursday'**
+  String get thursday;
+
+  /// No description provided for @friday.
+  ///
+  /// In en, this message translates to:
+  /// **'Friday'**
+  String get friday;
+
+  /// No description provided for @saturday.
+  ///
+  /// In en, this message translates to:
+  /// **'Saturday'**
+  String get saturday;
+
+  /// No description provided for @sunday.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunday'**
+  String get sunday;
+
+  /// No description provided for @mon.
+  ///
+  /// In en, this message translates to:
+  /// **'Mon'**
+  String get mon;
+
+  /// No description provided for @tue.
+  ///
+  /// In en, this message translates to:
+  /// **'Tue'**
+  String get tue;
+
+  /// No description provided for @wed.
+  ///
+  /// In en, this message translates to:
+  /// **'Wed'**
+  String get wed;
+
+  /// No description provided for @thu.
+  ///
+  /// In en, this message translates to:
+  /// **'Thu'**
+  String get thu;
+
+  /// No description provided for @fri.
+  ///
+  /// In en, this message translates to:
+  /// **'Fri'**
+  String get fri;
+
+  /// No description provided for @sat.
+  ///
+  /// In en, this message translates to:
+  /// **'Sat'**
+  String get sat;
+
+  /// No description provided for @sun.
+  ///
+  /// In en, this message translates to:
+  /// **'Sun'**
+  String get sun;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

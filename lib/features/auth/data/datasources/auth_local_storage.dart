@@ -43,6 +43,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
           StorageKeys.refreshTokenKey,
           tokens.refreshToken!,
         );
+        logI('refresh token saved locally successfully!');
       }
 
       // Store token expiration info
@@ -71,7 +72,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   Future<Either<Failure, String?>> getAccessToken() async {
     try {
       final token = await _storageService.get(StorageKeys.accessTokenKey);
-      logI('storing accesss token => $token');
       return Right(token);
     } on Exception catch (e) {
       return Left(LocalDataFailure(message: 'Failed to get access token: $e'));
@@ -134,6 +134,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
         _storageService.remove('auth_tokens'),
         _storageService.remove('token_expiration'),
       ]);
+      logI('tokens cleared successfully!');
       return const Right(null);
     } on Exception catch (e) {
       return Left(LocalDataFailure(message: 'Failed to clear tokens: $e'));

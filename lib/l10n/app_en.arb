@@ -315,5 +315,161 @@
   "changePhoto": "Change Photo",
   "saving": "Saving...",
   "errorSavingProfile" : "Error saving profile",
-  "errorWhileOpeningUrl" : "Link is not valid"
+  "errorWhileOpeningUrl" : "Link is not valid",
+
+  "@@dashboard_section": "Dashboard related strings",
+  "dashboard": "Dashboard",
+  "@dashboard": {
+    "description": "Dashboard page title"
+  },
+  "weeklyFinancialOverview": "Weekly Financial Overview",
+  "@weeklyFinancialOverview": {
+    "description": "Title for the weekly financial overview section"
+  },
+  "weeklyInsights": "Weekly Insights",
+  "@weeklyInsights": {
+    "description": "Title for weekly insights section"
+  },
+  "highestDay": "Highest Day",
+  "@highestDay": {
+    "description": "Label for the day with highest spending"
+  },
+  "lowestDay": "Lowest Day",
+  "@lowestDay": {
+    "description": "Label for the day with lowest spending"
+  },
+  "dailyAverage": "Daily Average",
+  "@dailyAverage": {
+    "description": "Label for daily average spending"
+  },
+  "acrossSevenDays": "across 7 days",
+  "@acrossSevenDays": {
+    "description": "Subtitle for daily average calculation"
+  },
+  "balanceRemaining": "Balance Remaining",
+  "@balanceRemaining": {
+    "description": "Label for remaining budget balance"
+  },
+  "totalExpenses": "Total Expenses",
+  "@totalExpenses": {
+    "description": "Label for total expenses"
+  },
+  "thisWeek": "this week",
+  "@thisWeek": {
+    "description": "Time period label for current week"
+  },
+  "dailySpendingPattern": "Daily Spending Pattern",
+  "@dailySpendingPattern": {
+    "description": "Title for daily spending bar chart"
+  },
+  "spendingTrend": "Spending Trend",
+  "@spendingTrend": {
+    "description": "Title for spending trend line chart"
+  },
+  "loadingDashboardData": "Loading dashboard data...",
+  "@loadingDashboardData": {
+    "description": "Loading message for dashboard data"
+  },
+  "failedToLoadData": "Failed to load data",
+  "@failedToLoadData": {
+    "description": "Error message when data loading fails"
+  },
+  "unknownError": "An unknown error occurred",
+  "@unknownError": {
+    "description": "Generic error message"
+  },
+  "tryAgain": "Try Again",
+  "@tryAgain": {
+    "description": "Button text to retry failed operation"
+  },
+  "startTrackingExpenses": "Start tracking your expenses to see insights",
+  "@startTrackingExpenses": {
+    "description": "Message shown when no expense data is available"
+  },
+  "noSpendingData": "No spending data",
+  "@noSpendingData": {
+    "description": "Message when no spending data is available for charts"
+  },
+  "noTrendData": "No trend data",
+  "@noTrendData": {
+    "description": "Message when no trend data is available"
+  },
+  "of12": "of",
+  "@of": {
+    "description": "Preposition used in budget context like 'of $2,342 budget'"
+  },
+  "budget": "budget",
+  "@budget": {
+    "description": "Budget label"
+  },
+  "cumulative": "cumulative",
+  "@cumulative": {
+    "description": "Label for cumulative values in charts"
+  },
+  
+  "@@active_budget_section": "Active budget section related strings",
+  "activeBudgets": "Active Budgets",
+  "@activeBudgets": {
+    "description": "Title for active budgets section"
+  },
+  "noBudgetsActive": "No active budgets",
+  "@noBudgetsActive": {
+    "description": "Message when no active budgets are available"
+  },
+  "createBudget": "Create Budget",
+  "@createBudget": {
+    "description": "Button text to create a new budget"
+  },
+  "budgetProgress": "Budget Progress",
+  "@budgetProgress": {
+    "description": "Label for budget progress"
+  },
+  "remaining": "remaining",
+  "@remaining": {
+    "description": "Label for remaining budget amount"
+  },
+  "spent": "spent",
+  "@spent": {
+    "description": "Label for spent amount"
+  },
+  "highPriority": "High",
+  "@highPriority": {
+    "description": "High priority label"
+  },
+  "mediumPriority": "Medium",
+  "@mediumPriority": {
+    "description": "Medium priority label"
+  },
+  "lowPriority": "Low",
+  "@lowPriority": {
+    "description": "Low priority label"
+  },
+  "onTrack": "On Track",
+  "@onTrack": {
+    "description": "Budget status when on track"
+  },
+  "overBudget": "Over Budget",
+  "@overBudget": {
+    "description": "Budget status when over budget"
+  },
+  "nearLimit": "Near Limit",
+  "@nearLimit": {
+    "description": "Budget status when near the limit"
+  },
+  
+  "@@weekdays_section": "Day names and abbreviations",
+  "monday": "Monday",
+  "tuesday": "Tuesday", 
+  "wednesday": "Wednesday",
+  "thursday": "Thursday",
+  "friday": "Friday",
+  "saturday": "Saturday",
+  "sunday": "Sunday",
+  "mon": "Mon",
+  "tue": "Tue",
+  "wed": "Wed",
+  "thu": "Thu",
+  "fri": "Fri",
+  "sat": "Sat",
+  "sun": "Sun"
 }

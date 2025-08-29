@@ -163,9 +163,8 @@ class ModernContent extends StatelessWidget {
     final success = await AppUtils.launchURL(
       NetworkConfigs.aboutUrl,
       context: context,
-      showErrorDialog: true,
     );
-    
+
     if (!success) {
       AppUtils.log(
         'Failed to launch About page: ${NetworkConfigs.aboutUrl}',
@@ -178,9 +177,8 @@ class ModernContent extends StatelessWidget {
     final success = await AppUtils.launchURL(
       NetworkConfigs.privacyPolicyUrl,
       context: context,
-      showErrorDialog: true,
     );
-    
+
     if (!success) {
       AppUtils.log(
         'Failed to launch Privacy Policy page: ${NetworkConfigs.privacyPolicyUrl}',
@@ -193,9 +191,8 @@ class ModernContent extends StatelessWidget {
     final success = await AppUtils.launchURL(
       NetworkConfigs.termsAndConditionsUrl,
       context: context,
-      showErrorDialog: true,
     );
-    
+
     if (!success) {
       AppUtils.log(
         'Failed to launch Terms & Conditions page: ${NetworkConfigs.termsAndConditionsUrl}',

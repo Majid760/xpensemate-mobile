@@ -515,4 +515,148 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorWhileOpeningUrl => 'Link is not valid';
+
+  @override
+  String get dashboard => 'Dashboard';
+
+  @override
+  String get weeklyFinancialOverview => 'Weekly Financial Overview';
+
+  @override
+  String get weeklyInsights => 'Weekly Insights';
+
+  @override
+  String get highestDay => 'Highest Day';
+
+  @override
+  String get lowestDay => 'Lowest Day';
+
+  @override
+  String get dailyAverage => 'Daily Average';
+
+  @override
+  String get acrossSevenDays => 'across 7 days';
+
+  @override
+  String get balanceRemaining => 'Balance Remaining';
+
+  @override
+  String get totalExpenses => 'Total Expenses';
+
+  @override
+  String get thisWeek => 'this week';
+
+  @override
+  String get dailySpendingPattern => 'Daily Spending Pattern';
+
+  @override
+  String get spendingTrend => 'Spending Trend';
+
+  @override
+  String get loadingDashboardData => 'Loading dashboard data...';
+
+  @override
+  String get failedToLoadData => 'Failed to load data';
+
+  @override
+  String get unknownError => 'An unknown error occurred';
+
+  @override
+  String get tryAgain => 'Try Again';
+
+  @override
+  String get startTrackingExpenses => 'Start tracking your expenses to see insights';
+
+  @override
+  String get noSpendingData => 'No spending data';
+
+  @override
+  String get noTrendData => 'No trend data';
+
+  @override
+  String get of12 => 'of';
+
+  @override
+  String get budget => 'budget';
+
+  @override
+  String get cumulative => 'cumulative';
+
+  @override
+  String get activeBudgets => 'Active Budgets';
+
+  @override
+  String get noBudgetsActive => 'No active budgets';
+
+  @override
+  String get createBudget => 'Create Budget';
+
+  @override
+  String get budgetProgress => 'Budget Progress';
+
+  @override
+  String get remaining => 'remaining';
+
+  @override
+  String get spent => 'spent';
+
+  @override
+  String get highPriority => 'High';
+
+  @override
+  String get mediumPriority => 'Medium';
+
+  @override
+  String get lowPriority => 'Low';
+
+  @override
+  String get onTrack => 'On Track';
+
+  @override
+  String get overBudget => 'Over Budget';
+
+  @override
+  String get nearLimit => 'Near Limit';
+
+  @override
+  String get monday => 'Monday';
+
+  @override
+  String get tuesday => 'Tuesday';
+
+  @override
+  String get wednesday => 'Wednesday';
+
+  @override
+  String get thursday => 'Thursday';
+
+  @override
+  String get friday => 'Friday';
+
+  @override
+  String get saturday => 'Saturday';
+
+  @override
+  String get sunday => 'Sunday';
+
+  @override
+  String get mon => 'Mon';
+
+  @override
+  String get tue => 'Tue';
+
+  @override
+  String get wed => 'Wed';
+
+  @override
+  String get thu => 'Thu';
+
+  @override
+  String get fri => 'Fri';
+
+  @override
+  String get sat => 'Sat';
+
+  @override
+  String get sun => 'Sun';
 }

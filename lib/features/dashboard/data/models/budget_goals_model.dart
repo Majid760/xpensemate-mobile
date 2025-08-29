@@ -20,19 +20,47 @@ class BudgetGoalsModel extends BudgetGoalsEntity {
 
   factory BudgetGoalsModel.fromJson(Map<String, dynamic> json) {
     try {
+      AppLogger.d("Parsing BudgetGoalsModel from JSON: ${json.toString()}");
+      
+      // Check if this is a wrapped response (with type, title, message, data)
+      // or a direct response
+      Map<String, dynamic> actualData;
+      if (json.containsKey('data') && json.containsKey('type')) {
+        // This is a wrapped response, extract the actual data
+        actualData = json['data'] as Map<String, dynamic>? ?? {};
+        AppLogger.d("Found wrapped response, extracting data: ${actualData.toString()}");
+      } else {
+        // This is a direct response
+        actualData = json;
+        AppLogger.d("Direct response format detected");
+      }
+      
       return BudgetGoalsModel(
-        goals: (json['goals'] as List)
+        goals: (actualData['goals'] as List? ?? [])
             .map((e) => BudgetGoalModel.fromJson(e as Map<String, dynamic>))
             .toList(),
-        pagination:
-            PaginationModel.fromJson(json['pagination'] as Map<String, dynamic>),
-        stats: BudgetStatsModel.fromJson(json['stats'] as Map<String, dynamic>),
-        duration: json['duration'] as String,
-        dateRange:
-            DateRangeModel.fromJson(json['dateRange'] as Map<String, dynamic>),
+        pagination: actualData['pagination'] != null
+            ? PaginationModel.fromJson(actualData['pagination'] as Map<String, dynamic>)
+            : const PaginationModel(currentPage: 1, totalPages: 1, totalGoals: 0),
+        stats: actualData['stats'] != null
+            ? BudgetStatsModel.fromJson(actualData['stats'] as Map<String, dynamic>)
+            : const BudgetStatsModel(
+                totalGoals: 0,
+                activeGoals: 0,
+                achievedGoals: 0,
+                totalBudgeted: 0,
+                totalAchievedBudget: 0,
+              ),
+        duration: actualData['duration'] as String? ?? '',
+        dateRange: actualData['dateRange'] != null
+            ? DateRangeModel.fromJson(actualData['dateRange'] as Map<String, dynamic>)
+            : DateRangeModel(
+                startDate: DateTime.now(),
+                endDate: DateTime.now(),
+              ),
       );
     } catch (e) {
-      AppLogger.e("Error parsing BudgetGoalsModel from JSON", e);
+      AppLogger.e("Error parsing BudgetGoalsModel from JSON: ${json.toString()}", e);
       rethrow;
     }
   }
@@ -86,15 +114,19 @@ class BudgetGoalModel extends BudgetGoalEntity {
   factory BudgetGoalModel.fromJson(Map<String, dynamic> json) {
     try {
       return BudgetGoalModel(
-        id: json['_id'] as String,
-        name: json['name'] as String,
-        category: json['category'] as String,
-        setBudget: (json['setBudget'] as num).toDouble(),
-        currentSpending: (json['currentSpending'] as num).toDouble(),
-        priority: json['priority'] as String,
-        status: json['status'] as String,
-        date: DateTime.parse(json['date'] as String),
-        createdAt: DateTime.parse(json['created_at'] as String),
+        id: json['_id'] as String? ?? '',
+        name: json['name'] as String? ?? '',
+        category: json['category'] as String? ?? '',
+        setBudget: (json['setBudget'] as num?)?.toDouble() ?? 0.0,
+        currentSpending: (json['currentSpending'] as num?)?.toDouble() ?? 0.0,
+        priority: json['priority'] as String? ?? '',
+        status: json['status'] as String? ?? '',
+        date: json['date'] != null 
+            ? DateTime.tryParse(json['date'] as String) ?? DateTime.now()
+            : DateTime.now(),
+        createdAt: json['created_at'] != null
+            ? DateTime.tryParse(json['created_at'] as String) ?? DateTime.now()
+            : DateTime.now(),
       );
     } catch (e) {
       AppLogger.e("Error parsing BudgetGoalModel from JSON", e);
@@ -149,9 +181,9 @@ class PaginationModel extends PaginationEntity {
   factory PaginationModel.fromJson(Map<String, dynamic> json) {
     try {
       return PaginationModel(
-        currentPage: json['currentPage'] as int,
-        totalPages: json['totalPages'] as int,
-        totalGoals: json['totalGoals'] as int,
+        currentPage: json['currentPage'] as int? ?? 1,
+        totalPages: json['totalPages'] as int? ?? 1,
+        totalGoals: json['totalGoals'] as int? ?? 0,
       );
     } catch (e) {
       AppLogger.e("Error parsing PaginationModel from JSON", e);
@@ -190,11 +222,11 @@ class BudgetStatsModel extends BudgetStatsEntity {
   factory BudgetStatsModel.fromJson(Map<String, dynamic> json) {
     try {
       return BudgetStatsModel(
-        totalGoals: json['totalGoals'] as int,
-        activeGoals: json['activeGoals'] as int,
-        achievedGoals: json['achievedGoals'] as int,
-        totalBudgeted: (json['totalBudgeted'] as num).toDouble(),
-        totalAchievedBudget: (json['totalAchievedBudget'] as num).toDouble(),
+        totalGoals: json['totalGoals'] as int? ?? 0,
+        activeGoals: json['activeGoals'] as int? ?? 0,
+        achievedGoals: json['achievedGoals'] as int? ?? 0,
+        totalBudgeted: (json['totalBudgeted'] as num?)?.toDouble() ?? 0.0,
+        totalAchievedBudget: (json['totalAchievedBudget'] as num?)?.toDouble() ?? 0.0,
       );
     } catch (e) {
       AppLogger.e("Error parsing BudgetStatsModel from JSON", e);
@@ -236,8 +268,12 @@ class DateRangeModel extends DateRangeEntity {
   factory DateRangeModel.fromJson(Map<String, dynamic> json) {
     try {
       return DateRangeModel(
-        startDate: DateTime.parse(json['startDate'] as String),
-        endDate: DateTime.parse(json['endDate'] as String),
+        startDate: json['startDate'] != null
+            ? DateTime.tryParse(json['startDate'] as String) ?? DateTime.now()
+            : DateTime.now(),
+        endDate: json['endDate'] != null
+            ? DateTime.tryParse(json['endDate'] as String) ?? DateTime.now()
+            : DateTime.now(),
       );
     } catch (e) {
       AppLogger.e("Error parsing DateRangeModel from JSON", e);

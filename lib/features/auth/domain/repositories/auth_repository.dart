@@ -22,7 +22,7 @@ abstract class AuthRepository {
   });
   
   // Sign in with Google
-  Future<Either<Failure, UserEntity>> signInWithGoogle();
+  Future<Either<Failure, UserEntity>> signInWithGoogle({required String credential});
   
   // Sign in with Apple
   Future<Either<Failure, UserEntity>> signInWithApple();

@@ -15,8 +15,8 @@ class DailyStatsModel extends DailyStatsEntity {
   factory DailyStatsModel.fromJson(Map<String, dynamic> json) {
     try {
       return DailyStatsModel(
-        date: json['date'] as String,
-        total: (json['total'] as num).toDouble(),
+        date: json['date'] as String? ?? '',
+        total: (json['total'] as num?)?.toDouble() ?? 0.0,
       );
     } catch (e) {
       AppLogger.e("Error parsing DailyStatsModel from JSON", e);
@@ -49,8 +49,8 @@ class DayStatsModel extends DayStatsEntity {
   factory DayStatsModel.fromJson(Map<String, dynamic> json) {
     try {
       return DayStatsModel(
-        date: json['date'] as String,
-        total: (json['total'] as num).toDouble(),
+        date: json['date'] as String? ?? '',
+        total: (json['total'] as num?)?.toDouble() ?? 0.0,
       );
     } catch (e) {
       AppLogger.e("Error parsing DayStatsModel from JSON", e);
@@ -92,24 +92,41 @@ class WeeklyStatsModel extends WeeklyStatsEntity {
 
   factory WeeklyStatsModel.fromJson(Map<String, dynamic> json) {
     try {
+      AppLogger.d("Parsing WeeklyStatsModel from JSON: ${json.toString()}");
+      
+      // Check if this is a wrapped response (with type, title, message, data)
+      // or a direct response
+      Map<String, dynamic> actualData;
+      if (json.containsKey('data') && json.containsKey('type')) {
+        // This is a wrapped response, extract the actual data
+        actualData = json['data'] as Map<String, dynamic>? ?? {};
+        AppLogger.d("Found wrapped response, extracting data: ${actualData.toString()}");
+      } else {
+        // This is a direct response
+        actualData = json;
+        AppLogger.d("Direct response format detected");
+      }
+      
       return WeeklyStatsModel(
-        days: (json['days'] as List)
+        days: (actualData['days'] as List? ?? [])
             .map((e) => DailyStatsModel.fromJson(e as Map<String, dynamic>))
             .toList(),
-        dailyBreakdown: (json['dailyBreakdown'] as List)
+        dailyBreakdown: (actualData['dailyBreakdown'] as List? ?? [])
             .map((e) => DailyStatsModel.fromJson(e as Map<String, dynamic>))
             .toList(),
-        weekTotal: (json['weekTotal'] as num).toDouble(),
-        balanceLeft: (json['balanceLeft'] as num).toDouble(),
-        weeklyBudget: (json['weeklyBudget'] as num).toDouble(),
-        dailyAverage: (json['dailyAverage'] as num).toDouble(),
-        highestDay: DayStatsModel.fromJson(
-            json['highestDay'] as Map<String, dynamic>,),
-        lowestDay: DayStatsModel.fromJson(
-            json['lowestDay'] as Map<String, dynamic>,),
+        weekTotal: (actualData['weekTotal'] as num?)?.toDouble() ?? 0.0,
+        balanceLeft: (actualData['balanceLeft'] as num?)?.toDouble() ?? 0.0,
+        weeklyBudget: (actualData['weeklyBudget'] as num?)?.toDouble() ?? 0.0,
+        dailyAverage: (actualData['dailyAverage'] as num?)?.toDouble() ?? 0.0,
+        highestDay: actualData['highestDay'] != null
+            ? DayStatsModel.fromJson(actualData['highestDay'] as Map<String, dynamic>)
+            : const DayStatsModel(date: '', total: 0.0),
+        lowestDay: actualData['lowestDay'] != null
+            ? DayStatsModel.fromJson(actualData['lowestDay'] as Map<String, dynamic>)
+            : const DayStatsModel(date: '', total: 0.0),
       );
     } catch (e) {
-      AppLogger.e("Error parsing WeeklyStatsModel from JSON", e);
+      AppLogger.e("Error parsing WeeklyStatsModel from JSON: ${json.toString()}", e);
       rethrow;
     }
   }

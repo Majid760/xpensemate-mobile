@@ -15,6 +15,14 @@ import 'package:xpensemate/features/auth/data/repositories/auth_repository_impl.
 import 'package:xpensemate/features/auth/domain/repositories/auth_repository.dart';
 import 'package:xpensemate/features/auth/domain/usecases/cases_export.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:xpensemate/features/dashboard/data/datasources/dashboard_remote_data_source.dart';
+import 'package:xpensemate/features/dashboard/data/repositories/dashboard_repository_impl.dart';
+import 'package:xpensemate/features/dashboard/domain/repositories/dashboard_repository.dart';
+import 'package:xpensemate/features/dashboard/domain/usecases/get_budget_goals_usecase.dart';
+import 'package:xpensemate/features/dashboard/domain/usecases/get_product_weekly_analytics_usecase.dart';
+import 'package:xpensemate/features/dashboard/domain/usecases/get_product_weekly_analytics_for_category_usecase.dart';
+import 'package:xpensemate/features/dashboard/domain/usecases/get_weekly_stats_usecase.dart';
+import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
 import 'package:xpensemate/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:xpensemate/features/profile/data/repositories/profile_repository_impl.dart';
@@ -81,6 +89,9 @@ Future<void> initLocator() async {
     sl.registerLazySingleton<ProfileRemoteDataSource>(
       () => ProfileRemoteDataSourceImpl(sl()),
     );
+    sl.registerLazySingleton<DashboardRemoteDataSource>(
+      () => DashboardRemoteDataSourceImpl(sl()),
+    );
 
     // ---------- Repositories ----------
     sl.registerLazySingleton<AuthRepository>(
@@ -92,6 +103,9 @@ Future<void> initLocator() async {
     sl.registerLazySingleton<ProfileRepository>(
       () => ProfileRepositoryImpl(sl()),
     );
+    sl.registerLazySingleton<DashboardRepository>(
+      () => DashboardRepositoryImpl(sl()),
+    );
 
     // ---------- Use-cases ----------
     sl.registerLazySingleton(() => ForgotPasswordUseCase(sl()));
@@ -102,10 +116,16 @@ Future<void> initLocator() async {
     sl.registerLazySingleton(() => SendVerificationEmailUseCase(sl()));
     sl.registerLazySingleton(() => UpdateProfileUseCase(sl()));
     sl.registerLazySingleton(() => UpdateProfileImageUseCase(sl()));
+    // dashboard use cases
+    sl.registerLazySingleton(() => GetWeeklyStatsUseCase(sl()));
+    sl.registerLazySingleton(() => GetBudgetGoalsUseCase(sl()));
+    sl.registerLazySingleton(() => GetProductWeeklyAnalyticsUseCase(sl()));
+    sl.registerLazySingleton(() => GetProductWeeklyAnalyticsForCategoryUseCase(sl()));
 
     // ---------- Presentation Layer ----------
     sl.registerFactory(() => AuthCubit(sl()));
     sl.registerFactory(() => ProfileCubit(sl()));
+    sl.registerFactory(() => DashboardCubit(sl(), sl(), sl(), sl()));
 
     AppLogger.i('Service locator initialized successfully');
   } on Exception catch (e) {
@@ -143,6 +163,7 @@ extension ServiceLocatorExtension on GetIt {
   /// Quick access to Presentation Cubits
   AuthCubit get authCubit => this<AuthCubit>();
   ProfileCubit get profileCubit => this<ProfileCubit>();
+  DashboardCubit get dashboardCubit => this<DashboardCubit>();
 
 
 

@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/features/dashboard/data/datasources/dashboard_remote_data_source.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/budget_goals_entity.dart';
+import 'package:xpensemate/features/dashboard/domain/entities/product_weekly_analytics_entity.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/weekly_stats_entity.dart';
 import 'package:xpensemate/features/dashboard/domain/repositories/dashboard_repository.dart';
 
@@ -40,6 +41,30 @@ class DashboardRepositoryImpl implements DashboardRepository {
     return remoteBudgetGoals.fold(
       Left.new,
       (remoteBudgetGoals) => right(remoteBudgetGoals.toEntity()),
+    );
+  }
+
+  @override
+  Future<Either<Failure, ProductWeeklyAnalyticsEntity>> getProductWeeklyAnalytics() async {
+    final remoteProductAnalytics = await _remoteDataSource.getProductWeeklyAnalytics();
+    return remoteProductAnalytics.fold(
+      Left.new,
+      (remoteProductAnalytics) {
+        final productAnalytics = remoteProductAnalytics;
+        return right(productAnalytics.toEntity());
+      },
+    );
+  }
+
+  @override
+  Future<Either<Failure, ProductWeeklyAnalyticsEntity>> getProductWeeklyAnalyticsForCategory(String category) async {
+    final remoteProductAnalytics = await _remoteDataSource.getProductWeeklyAnalyticsForCategory(category);
+    return remoteProductAnalytics.fold(
+      Left.new,
+      (remoteProductAnalytics) {
+        final productAnalytics = remoteProductAnalytics;
+        return right(productAnalytics.toEntity());
+      },
     );
   }
 }

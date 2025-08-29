@@ -3,7 +3,6 @@ import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/core/network/network_info.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/core/utils/network_mixin.dart';
-import 'package:xpensemate/features/auth/data/datasources/auth_local_storage.dart';
 import 'package:xpensemate/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:xpensemate/features/auth/domain/entities/auth_token.dart';
 import 'package:xpensemate/features/auth/domain/entities/user.dart';
@@ -82,10 +81,10 @@ class AuthRepositoryImpl
 
   /// Sign in with Google
   @override
-  Future<Either<Failure, UserEntity>> signInWithGoogle() async {
+  Future<Either<Failure, UserEntity>> signInWithGoogle({required String credential}) async {
     try {
       return withNetworkCheck(() async {
-        final result = await remoteDataSource.signInWithGoogle();
+        final result = await remoteDataSource.signInWithGoogle(credential: credential);
         return result.fold(
           left,
           (user) => right(user.toEntity()),

@@ -4,7 +4,9 @@ import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
+import 'package:xpensemate/features/dashboard/presentation/widgets/active_budget_section_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/weekly_financial_overview_widget.dart';
+import 'package:xpensemate/features/dashboard/presentation/widgets/product_analytics_widget.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -96,11 +98,21 @@ class _DashboardPageState extends State<DashboardPage>
                           ),
                           SizedBox(height: context.lg),
                           
-                          // TODO: Add more dashboard sections here
-                          // - Monthly overview
-                          // - Recent transactions
-                          // - Category breakdown
-                          // - Budget progress
+                          // Active Budget Section
+                          if (state.budgetGoals != null)
+                            ActiveBudgetSectionWidget(
+                              budgetGoals: state.budgetGoals!,
+                            ),
+                          if (state.budgetGoals != null)
+                            SizedBox(height: context.lg),
+                          
+                          // Product Analytics Section
+                          const ProductAnalyticsWidget(),
+                          
+                          SizedBox(height: context.lg),
+                          
+                          // Additional padding at bottom for better scrolling
+                          SizedBox(height: context.xl),
                         ],
                       ),
                     ),

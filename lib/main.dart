@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,21 +10,30 @@ import 'package:xpensemate/core/route/app_router.dart';
 import 'package:xpensemate/core/route/utils/router_middleware_guard.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/theme/app_theme.dart';
+import 'package:xpensemate/core/widget/app_custom_dialog.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
 import 'package:xpensemate/firebase_options.dart';
 import 'package:xpensemate/l10n/app_localizations.dart';
 
 void main() async {
-
-   WidgetsFlutterBinding.ensureInitialized();  
-   await Firebase.initializeApp(
-     options: DefaultFirebaseOptions.currentPlatform,
-   );
-  // Initialize services locator
-  await initLocator();
-  runApp(const MyApp());
-} 
+  await runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      // Initialize services locator/dependency injection
+      await initLocator();
+      runApp(const MyApp());
+    },
+    (error, stack) {
+      debugPrint('Caught error: $error'); // log it!
+      //  Send to Crashlytics or show user-friendly dialog
+    },
+  );
+}
 
 /// main app class
 class MyApp extends StatelessWidget {
@@ -31,51 +42,55 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MultiBlocProvider(
-      providers: [
-        BlocProvider<AuthCubit>(
-          create: (context) => sl.authCubit..checkAuthStatus(),
-          lazy: false,
-        ),
-        BlocProvider<ProfileCubit>(
-          create: (context) => sl.profileCubit,
-          lazy: false,
-        ),
-        // Other cubits/blocs
-      ],
-      child: Builder(
-        builder: (context) {
-          final authCubit = context.read<AuthCubit>();
-          return MaterialApp.router(
-            title: 'ExpenseTracker',
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            debugShowCheckedModeBanner: false,
-            // themeMode: ThemeMode.system, // Follows system setting
-            // Localization configuration
-            routerConfig: AppRouter(authCubit, RouteGuards(authCubit)).router,
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: SupportedLocales.supportedLocales,
-            locale: LocaleManager().currentLocale,
-            // Locale resolution
-            localeResolutionCallback: (locale, supportedLocales) {
-              // If the current device locale is supported, use it
-              if (locale != null) {
-                for (final supportedLocale in supportedLocales) {
-                  if (supportedLocale.languageCode == locale.languageCode) {
-                    return supportedLocale;
+        providers: [
+          BlocProvider<AuthCubit>(
+            create: (context) => sl.authCubit..checkAuthStatus(),
+            lazy: false,
+          ),
+          BlocProvider<ProfileCubit>(
+            create: (context) => sl.profileCubit,
+            lazy: false,
+          ),
+          BlocProvider<DashboardCubit>(
+            create: (context) => sl.dashboardCubit,
+            lazy: false,
+          ),
+          // Other cubits/blocs
+        ],
+        child: Builder(
+          builder: (context) {
+            final authCubit = context.read<AuthCubit>();
+            return MaterialApp.router(
+              title: 'ExpenseTracker',
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              debugShowCheckedModeBanner: false,
+              // themeMode: ThemeMode.system, // Follows system setting
+              // Localization configuration
+              routerConfig: AppRouter(authCubit, RouteGuards(authCubit)).router,
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: SupportedLocales.supportedLocales,
+              locale: LocaleManager().currentLocale,
+              // Locale resolution
+              localeResolutionCallback: (locale, supportedLocales) {
+                // If the current device locale is supported, use it
+                if (locale != null) {
+                  for (final supportedLocale in supportedLocales) {
+                    if (supportedLocale.languageCode == locale.languageCode) {
+                      return supportedLocale;
+                    }
                   }
                 }
-              }
-              // Fallback to first supported locale (English)
-              return supportedLocales.first;
-            },
-          );
-        },
-      ),
-    );
+                // Fallback to first supported locale (English)
+                return supportedLocales.first;
+              },
+            );
+          },
+        ),
+      );
 }

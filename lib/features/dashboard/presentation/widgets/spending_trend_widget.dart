@@ -193,8 +193,7 @@ class _EmptyChart extends StatelessWidget {
   final WeeklyStatsEntity weeklyStats;
 
   @override
-  Widget build(BuildContext context) {
-    return Center(
+  Widget build(BuildContext context) => Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -213,7 +212,6 @@ class _EmptyChart extends StatelessWidget {
         ],
       ),
     );
-  }
 }
 
 class _InteractiveOverlay extends StatelessWidget {
@@ -230,8 +228,7 @@ class _InteractiveOverlay extends StatelessWidget {
   final WeeklyStatsEntity weeklyStats;
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
+  Widget build(BuildContext context) => GestureDetector(
       onTapDown: (details) => _handleTap(context, details, cumulativeData),
       onPanUpdate: (details) => _handlePan(context, details, cumulativeData),
       onPanEnd: (_) => onHoverIndexChanged(null),
@@ -246,7 +243,6 @@ class _InteractiveOverlay extends StatelessWidget {
             : null,
       ),
     );
-  }
 
   void _handleTap(BuildContext context, TapDownDetails details, List<double> data) {
     final renderBox = context.findRenderObject() as RenderBox;

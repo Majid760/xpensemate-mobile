@@ -1,10 +1,11 @@
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
-import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/theme/colors/app_colors.dart';
-import 'package:xpensemate/features/dashboard/domain/entities/weekly_stats_entity.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
+import 'package:xpensemate/features/dashboard/domain/entities/weekly_stats_entity.dart';
 
 class TotalExpensesWidget extends StatefulWidget {
   const TotalExpensesWidget({

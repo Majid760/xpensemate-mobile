@@ -48,8 +48,7 @@ class _TabletInsightsLayout extends StatelessWidget {
   final WeeklyStatsEntity weeklyStats;
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
+  Widget build(BuildContext context) => Row(
       children: [
         Expanded(
           child: _HighestDayCard(weeklyStats: weeklyStats),
@@ -64,7 +63,6 @@ class _TabletInsightsLayout extends StatelessWidget {
         ),
       ],
     );
-  }
 }
 
 class _MobileInsightsLayout extends StatelessWidget {
@@ -75,8 +73,7 @@ class _MobileInsightsLayout extends StatelessWidget {
   final WeeklyStatsEntity weeklyStats;
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget build(BuildContext context) => Column(
       children: [
         Row(
           children: [
@@ -93,7 +90,6 @@ class _MobileInsightsLayout extends StatelessWidget {
         _DailyAverageCard(weeklyStats: weeklyStats),
       ],
     );
-  }
 }
 
 class _HighestDayCard extends StatelessWidget {
@@ -104,8 +100,7 @@ class _HighestDayCard extends StatelessWidget {
   final WeeklyStatsEntity weeklyStats;
 
   @override
-  Widget build(BuildContext context) {
-    return _InsightCard(
+  Widget build(BuildContext context) => _InsightCard(
       icon: Icons.trending_up_rounded,
       iconColor: AppColors.success,
       title: context.l10n.highestDay,
@@ -114,7 +109,6 @@ class _HighestDayCard extends StatelessWidget {
       backgroundColor: AppColors.success.withValues(alpha: 0.08),
       borderColor: AppColors.success.withValues(alpha: 0.15),
     );
-  }
 
   String _formatDayName(BuildContext context, String date) {
     try {
@@ -129,7 +123,7 @@ class _HighestDayCard extends StatelessWidget {
         context.l10n.sunday,
       ];
       return 'on ${weekdays[dateTime.weekday - 1]}';
-    } on Exception catch (e) {
+    } on Exception catch (_) {
       return 'on $date';
     }
   }
@@ -143,8 +137,7 @@ class _LowestDayCard extends StatelessWidget {
   final WeeklyStatsEntity weeklyStats;
 
   @override
-  Widget build(BuildContext context) {
-    return _InsightCard(
+  Widget build(BuildContext context) => _InsightCard(
       icon: Icons.trending_down_rounded,
       iconColor: AppColors.warning,
       title: context.l10n.lowestDay,
@@ -153,7 +146,6 @@ class _LowestDayCard extends StatelessWidget {
       backgroundColor: AppColors.warning.withValues(alpha: 0.08),
       borderColor: AppColors.warning.withValues(alpha: 0.15),
     );
-  }
 
   String _formatDayName(BuildContext context, String date) {
     try {
@@ -168,7 +160,7 @@ class _LowestDayCard extends StatelessWidget {
         context.l10n.sunday,
       ];
       return 'on ${weekdays[dateTime.weekday - 1]}';
-    } on Exception catch (e) {
+    } on Exception catch (_) {
       return 'on $date';
     }
   }
@@ -182,8 +174,7 @@ class _DailyAverageCard extends StatelessWidget {
   final WeeklyStatsEntity weeklyStats;
 
   @override
-  Widget build(BuildContext context) {
-    return _InsightCard(
+  Widget build(BuildContext context) => _InsightCard(
       icon: Icons.analytics_outlined,
       iconColor: AppColors.info,
       title: context.l10n.dailyAverage,
@@ -193,7 +184,6 @@ class _DailyAverageCard extends StatelessWidget {
       borderColor: AppColors.info.withValues(alpha: 0.15),
       isFullWidth: true,
     );
-  }
 }
 
 class _InsightCard extends StatelessWidget {
@@ -226,7 +216,6 @@ class _InsightCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: borderColor,
-          width: 1,
         ),
       ),
       child: Column(

@@ -1,10 +1,10 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
-import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/theme/colors/app_colors.dart';
-import 'package:xpensemate/features/dashboard/domain/entities/weekly_stats_entity.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
+import 'package:xpensemate/features/dashboard/domain/entities/weekly_stats_entity.dart';
 
 class BalanceRemainingWidget extends StatefulWidget {
   const BalanceRemainingWidget({
@@ -62,15 +62,13 @@ class _BalanceRemainingWidgetState extends State<BalanceRemainingWidget>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(BuildContext context) => Container(
       padding: EdgeInsets.all(context.lg),
       decoration: BoxDecoration(
         color: context.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: context.colorScheme.outline.withValues(alpha: 0.1),
-          width: 1,
         ),
         boxShadow: [
           BoxShadow(
@@ -96,7 +94,6 @@ class _BalanceRemainingWidgetState extends State<BalanceRemainingWidget>
         ],
       ),
     );
-  }
 }
 
 class _CircularProgressPainter extends CustomPainter {
@@ -153,10 +150,8 @@ class _CircularProgressPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return oldDelegate is _CircularProgressPainter &&
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => oldDelegate is _CircularProgressPainter &&
         oldDelegate.progress != progress;
-  }
 }
 
 class _CircularProgressIndicator extends StatelessWidget {
@@ -169,14 +164,12 @@ class _CircularProgressIndicator extends StatelessWidget {
   final WeeklyStatsEntity weeklyStats;
 
   @override
-  Widget build(BuildContext context) {
-    return SizedBox(
+  Widget build(BuildContext context) => SizedBox(
       width: 120,
       height: 120,
       child: AnimatedBuilder(
         animation: progressAnimation,
-        builder: (context, child) {
-          return CustomPaint(
+        builder: (context, child) => CustomPaint(
             painter: _CircularProgressPainter(
               progress: progressAnimation.value,
               backgroundColor: context.colorScheme.surfaceContainerHighest,
@@ -189,11 +182,9 @@ class _CircularProgressIndicator extends StatelessWidget {
                 weeklyStats: weeklyStats,
               ),
             ),
-          );
-        },
+          ),
       ),
     );
-  }
 }
 
 class _CircularProgressContent extends StatelessWidget {
@@ -206,11 +197,10 @@ class _CircularProgressContent extends StatelessWidget {
   final WeeklyStatsEntity weeklyStats;
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget build(BuildContext context) => Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(
+        const Icon(
           Icons.account_balance_wallet_outlined,
           color: AppColors.success,
           size: 24,
@@ -235,7 +225,6 @@ class _CircularProgressContent extends StatelessWidget {
         ),
       ],
     );
-  }
 }
 
 class _TitleAndSubtitleSection extends StatelessWidget {
@@ -246,8 +235,7 @@ class _TitleAndSubtitleSection extends StatelessWidget {
   final WeeklyStatsEntity weeklyStats;
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget build(BuildContext context) => Column(
       children: [
         Text(
           context.l10n.balanceRemaining,
@@ -261,7 +249,7 @@ class _TitleAndSubtitleSection extends StatelessWidget {
         ),
         SizedBox(height: context.xs),
         Text(
-          '${context.l10n.ofPreposition} ${CurrencyFormatter.format(weeklyStats.weeklyBudget)} ${context.l10n.budget}',
+          '${context.l10n.of12} ${CurrencyFormatter.format(weeklyStats.weeklyBudget)} ${context.l10n.budget}',
           style: context.textTheme.bodySmall?.copyWith(
             color: context.colorScheme.onSurfaceVariant,
             fontWeight: FontWeight.w500,
@@ -272,5 +260,4 @@ class _TitleAndSubtitleSection extends StatelessWidget {
         ),
       ],
     );
-  }
 }

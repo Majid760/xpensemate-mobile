@@ -71,6 +71,8 @@ dependencies:
   reactive_forms: ^18.1.1
   reactive_image_picker: ^8.0.1
   reactive_phone_form_field: ^5.0.2
+  fl_chart: ^1.0.0
+
 
 
 

@@ -20,15 +20,14 @@ import 'package:xpensemate/features/dashboard/data/repositories/dashboard_reposi
 import 'package:xpensemate/features/dashboard/domain/repositories/dashboard_repository.dart';
 import 'package:xpensemate/features/dashboard/domain/usecases/get_budget_goals_usecase.dart';
 import 'package:xpensemate/features/dashboard/domain/usecases/get_product_weekly_analytics_usecase.dart';
-import 'package:xpensemate/features/dashboard/domain/usecases/get_product_weekly_analytics_for_category_usecase.dart';
 import 'package:xpensemate/features/dashboard/domain/usecases/get_weekly_stats_usecase.dart';
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
-import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
 import 'package:xpensemate/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:xpensemate/features/profile/data/repositories/profile_repository_impl.dart';
 import 'package:xpensemate/features/profile/domain/repositories/profile_repository.dart';
 import 'package:xpensemate/features/profile/domain/usecases/update_profile_image_usecase.dart';
 import 'package:xpensemate/features/profile/domain/usecases/update_profile_usecase.dart';
+import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
 
 /// Global, lazy singleton
 final sl = GetIt.instance;
@@ -120,12 +119,11 @@ Future<void> initLocator() async {
     sl.registerLazySingleton(() => GetWeeklyStatsUseCase(sl()));
     sl.registerLazySingleton(() => GetBudgetGoalsUseCase(sl()));
     sl.registerLazySingleton(() => GetProductWeeklyAnalyticsUseCase(sl()));
-    sl.registerLazySingleton(() => GetProductWeeklyAnalyticsForCategoryUseCase(sl()));
 
     // ---------- Presentation Layer ----------
     sl.registerFactory(() => AuthCubit(sl()));
     sl.registerFactory(() => ProfileCubit(sl()));
-    sl.registerFactory(() => DashboardCubit(sl(), sl(), sl(), sl()));
+    sl.registerFactory(() => DashboardCubit(sl(), sl(), sl()));
 
     AppLogger.i('Service locator initialized successfully');
   } on Exception catch (e) {
@@ -136,10 +134,6 @@ Future<void> initLocator() async {
     rethrow;
   }
 }
-
-
-
-
 
 /// ------------------------------------------------------------------
 /// 3️⃣  Cleanup (for testing or app reset)
@@ -164,7 +158,4 @@ extension ServiceLocatorExtension on GetIt {
   AuthCubit get authCubit => this<AuthCubit>();
   ProfileCubit get profileCubit => this<ProfileCubit>();
   DashboardCubit get dashboardCubit => this<DashboardCubit>();
-
-
-
 }

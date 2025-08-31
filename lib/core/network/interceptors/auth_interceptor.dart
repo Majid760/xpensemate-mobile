@@ -118,7 +118,6 @@ final class AuthInterceptor extends QueuedInterceptor {
         AppLogger.e(
           'Refresh error status code: ${refreshError.response?.statusCode}',
         );
-
         // Only clear tokens if refresh token is actually invalid (401)
         // Don't clear tokens for network errors, timeouts, etc.
         if (refreshError.response?.statusCode == 401) {
@@ -129,7 +128,6 @@ final class AuthInterceptor extends QueuedInterceptor {
             'Refresh failed due to network/other error, keeping existing tokens',
           );
         }
-
         return handler.reject(err);
       }
     } on Exception catch (e) {

@@ -3,7 +3,6 @@ import 'package:xpensemate/core/error/exceptions.dart';
 
 /// Base class for all failures in the application
 abstract class Failure extends Equatable {
-
   const Failure({
     required this.message,
     this.stackTrace,
@@ -22,7 +21,6 @@ abstract class Failure extends Equatable {
 
 /// Failure that represents a server-side error
 class ServerFailure extends Failure {
-
   const ServerFailure({
     super.message = 'Server error occurred',
     this.statusCode,
@@ -32,7 +30,8 @@ class ServerFailure extends Failure {
   final int? statusCode;
 
   @override
-  String toString() => 'ServerFailure: $message${statusCode != null ? ' (Status: $statusCode)' : ''}';
+  String toString() =>
+      'ServerFailure: $message${statusCode != null ? ' (Status: $statusCode)' : ''}';
 }
 
 /// Failure that represents a network connectivity issue
@@ -73,7 +72,6 @@ class AuthorizationFailure extends Failure {
 
 /// Failure that represents a validation error
 class ValidationFailure extends Failure {
-
   const ValidationFailure({
     super.message = 'Validation failed',
     this.errors,
@@ -83,7 +81,8 @@ class ValidationFailure extends Failure {
   final Map<String, List<String>>? errors;
 
   @override
-  String toString() => 'ValidationFailure: $message${errors != null ? '\nErrors: $errors' : ''}';
+  String toString() =>
+      'ValidationFailure: $message${errors != null ? '\nErrors: $errors' : ''}';
 }
 
 /// Failure that represents a not found error

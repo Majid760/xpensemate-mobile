@@ -56,44 +56,53 @@ class _BalanceRemainingWidgetState extends State<BalanceRemainingWidget>
   }
 
   double _calculateProgressPercentage() {
-    if (widget.weeklyStats.weeklyBudget <= 0) return 0;
-    return (widget.weeklyStats.balanceLeft / widget.weeklyStats.weeklyBudget)
-        .clamp(0.0, 1.0);
+    // Match web implementation:
+    // percentage = max > 0 ? Math.min((Math.abs(value) / max) * 100, 100) : 0
+
+    // If weeklyBudget is 0 or negative, show no progress
+    if (widget.weeklyStats.weeklyBudget <= 0) {
+      return 0;
+    }
+
+    // Calculate percentage based on absolute value of balanceLeft, capped at 100%
+    // This matches the web implementation
+    final absBalanceLeft = widget.weeklyStats.balanceLeft.abs();
+    return (absBalanceLeft / widget.weeklyStats.weeklyBudget).clamp(0.0, 1.0);
   }
 
   @override
   Widget build(BuildContext context) => Container(
-      padding: EdgeInsets.all(context.lg),
-      decoration: BoxDecoration(
-        color: context.colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: context.colorScheme.outline.withValues(alpha: 0.1),
+        padding: EdgeInsets.all(context.lg),
+        decoration: BoxDecoration(
+          color: context.colorScheme.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: context.colorScheme.outline.withValues(alpha: 0.1),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: context.colorScheme.shadow.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: context.colorScheme.shadow.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          // Circular Progress
-          _CircularProgressIndicator(
-            progressAnimation: _progressAnimation,
-            weeklyStats: widget.weeklyStats,
-          ),
-          SizedBox(height: context.md),
-          
-          // Title and Subtitle
-          _TitleAndSubtitleSection(
-            weeklyStats: widget.weeklyStats,
-          ),
-        ],
-      ),
-    );
+        child: Column(
+          children: [
+            // Circular Progress
+            _CircularProgressIndicator(
+              progressAnimation: _progressAnimation,
+              weeklyStats: widget.weeklyStats,
+            ),
+            SizedBox(height: context.md),
+
+            // Title and Subtitle
+            _TitleAndSubtitleSection(
+              weeklyStats: widget.weeklyStats,
+            ),
+          ],
+        ),
+      );
 }
 
 class _CircularProgressPainter extends CustomPainter {
@@ -150,8 +159,9 @@ class _CircularProgressPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => oldDelegate is _CircularProgressPainter &&
-        oldDelegate.progress != progress;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =>
+      oldDelegate is _CircularProgressPainter &&
+      oldDelegate.progress != progress;
 }
 
 class _CircularProgressIndicator extends StatelessWidget {
@@ -165,15 +175,17 @@ class _CircularProgressIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-      width: 120,
-      height: 120,
-      child: AnimatedBuilder(
-        animation: progressAnimation,
-        builder: (context, child) => CustomPaint(
+        width: 120,
+        height: 120,
+        child: AnimatedBuilder(
+          animation: progressAnimation,
+          builder: (context, child) => CustomPaint(
             painter: _CircularProgressPainter(
               progress: progressAnimation.value,
               backgroundColor: context.colorScheme.surfaceContainerHighest,
-              progressColor: AppColors.success,
+              progressColor: weeklyStats.balanceLeft < 0
+                  ? AppColors.error
+                  : AppColors.success,
               strokeWidth: 8,
             ),
             child: Center(
@@ -183,8 +195,8 @@ class _CircularProgressIndicator extends StatelessWidget {
               ),
             ),
           ),
-      ),
-    );
+        ),
+      );
 }
 
 class _CircularProgressContent extends StatelessWidget {
@@ -196,35 +208,54 @@ class _CircularProgressContent extends StatelessWidget {
   final Animation<double> progressAnimation;
   final WeeklyStatsEntity weeklyStats;
 
+  String _calculatePercentageText(
+    double progressValue,
+    WeeklyStatsEntity stats,
+  ) {
+    // Match web implementation: percentage display calculation
+    // If we have a budget, calculate absolute percentage
+    if (stats.weeklyBudget > 0) {
+      final absPercentage =
+          ((stats.balanceLeft.abs() / stats.weeklyBudget) * 100)
+              .clamp(0.0, 100.0);
+      return '${absPercentage.round()}%';
+    }
+
+    // If no budget, return 0%
+    return '0%';
+  }
+
   @override
   Widget build(BuildContext context) => Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Icon(
-          Icons.account_balance_wallet_outlined,
-          color: AppColors.success,
-          size: 24,
-        ),
-        SizedBox(height: context.xs),
-        Text(
-          CurrencyFormatter.format(weeklyStats.balanceLeft),
-          style: context.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w800,
-            color: context.colorScheme.onSurface,
-            letterSpacing: -0.5,
-          ),
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
-        ),
-        Text(
-          '${(progressAnimation.value * 100).round()}%',
-          style: context.textTheme.bodySmall?.copyWith(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.account_balance_wallet_outlined,
             color: AppColors.success,
-            fontWeight: FontWeight.w600,
+            size: 24,
           ),
-        ),
-      ],
-    );
+          SizedBox(height: context.xs),
+          Text(
+            CurrencyFormatter.format(weeklyStats.balanceLeft),
+            style: context.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: context.colorScheme.onSurface,
+              letterSpacing: -0.5,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
+          Text(
+            _calculatePercentageText(progressAnimation.value, weeklyStats),
+            style: context.textTheme.bodySmall?.copyWith(
+              color: weeklyStats.balanceLeft < 0
+                  ? AppColors.error
+                  : AppColors.success,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      );
 }
 
 class _TitleAndSubtitleSection extends StatelessWidget {
@@ -236,28 +267,28 @@ class _TitleAndSubtitleSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Column(
-      children: [
-        Text(
-          context.l10n.balanceRemaining,
-          style: context.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w700,
-            color: context.colorScheme.onSurface,
+        children: [
+          Text(
+            context.l10n.balanceRemaining,
+            style: context.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: context.colorScheme.onSurface,
+            ),
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
           ),
-          textAlign: TextAlign.center,
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
-        ),
-        SizedBox(height: context.xs),
-        Text(
-          '${context.l10n.of12} ${CurrencyFormatter.format(weeklyStats.weeklyBudget)} ${context.l10n.budget}',
-          style: context.textTheme.bodySmall?.copyWith(
-            color: context.colorScheme.onSurfaceVariant,
-            fontWeight: FontWeight.w500,
+          SizedBox(height: context.xs),
+          Text(
+            '${context.l10n.of12} ${CurrencyFormatter.format(weeklyStats.weeklyBudget)} ${context.l10n.budget}',
+            style: context.textTheme.bodySmall?.copyWith(
+              color: context.colorScheme.onSurfaceVariant,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
           ),
-          textAlign: TextAlign.center,
-          overflow: TextOverflow.ellipsis,
-          maxLines: 2,
-        ),
-      ],
-    );
+        ],
+      );
 }

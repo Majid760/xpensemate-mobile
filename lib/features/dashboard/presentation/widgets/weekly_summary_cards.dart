@@ -136,8 +136,7 @@ class _WeeklySummaryCardsState extends State<WeeklySummaryCards>
           itemCount: summaryData.length,
           itemBuilder: (context, index) => AnimatedBuilder(
             animation: _animationControllers[index],
-            builder: (context, child) {
-              return Transform.translate(
+            builder: (context, child) => Transform.translate(
                 offset: Offset(0, _slideAnimations[index].value),
                 child: Opacity(
                   opacity: _fadeAnimations[index].value,
@@ -145,8 +144,7 @@ class _WeeklySummaryCardsState extends State<WeeklySummaryCards>
                     data: summaryData[index],
                   ),
                 ),
-              );
-            },
+              ),
           ),
         );
       },
@@ -325,8 +323,7 @@ class _HorizontalSummaryCard extends StatelessWidget {
   final _HorizontalSummaryItem item;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(BuildContext context) => Container(
       width: 140,
       padding: EdgeInsets.all(context.sm),
       decoration: BoxDecoration(
@@ -373,5 +370,4 @@ class _HorizontalSummaryCard extends StatelessWidget {
         ],
       ),
     );
-  }
 }

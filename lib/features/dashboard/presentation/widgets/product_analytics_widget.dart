@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/widget/error_state_widget.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/product_weekly_analytics_entity.dart';
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/product_analytics_bar_chart.dart';
@@ -28,21 +29,66 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
     _selectedCategory = widget.initialCategory;
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Ensure the selected category is valid after we have access to the state
+    _syncCategoryWithState();
+  }
+
+  void _syncCategoryWithState() {
+    final state = context.read<DashboardCubit>().state;
+    if (state.productAnalytics != null &&
+        state.productAnalytics!.availableCategories.isNotEmpty) {
+      // Check if the currently selected category exists in available categories (case insensitive)
+      bool categoryExists = false;
+      for (final category in state.productAnalytics!.availableCategories) {
+        if (category.toLowerCase() == _selectedCategory.toLowerCase()) {
+          // Update to use the exact case from available categories
+          if (_selectedCategory != category) {
+            setState(() {
+              _selectedCategory = category;
+              print('Updated to match case: $_selectedCategory');
+            });
+          }
+          categoryExists = true;
+          break;
+        }
+      }
+
+      // If the selected category doesn't exist in available categories
+      if (!categoryExists) {
+        // First try to use the current category from state
+        if (state.productAnalytics!.availableCategories
+            .contains(state.productAnalytics!.currentCategory)) {
+          setState(() {
+            _selectedCategory = state.productAnalytics!.currentCategory;
+            print('Using current category from state: $_selectedCategory');
+          });
+        } else {
+          // Otherwise use the first available category
+          setState(() {
+            _selectedCategory =
+                state.productAnalytics!.availableCategories.first;
+            print('Using first available category: $_selectedCategory');
+          });
+        }
+      }
+    }
+  }
+
   void _onCategoryChanged(String category) {
-    print('🔄 ProductAnalyticsWidget: Category changed from $_selectedCategory to $category');
+    print('Category changed from $_selectedCategory to $category');
     if (_selectedCategory != category) {
       setState(() {
         _selectedCategory = category;
       });
-      print('📊 ProductAnalyticsWidget: Calling loadProductAnalyticsForCategory($category)');
-      context.read<DashboardCubit>().loadProductAnalyticsForCategory(category);
-    } else {
-      print('⚠️ ProductAnalyticsWidget: Category unchanged, skipping reload');
     }
   }
 
   List<String> _getAvailableCategories(
-      ProductWeeklyAnalyticsEntity? analytics,) {
+    ProductWeeklyAnalyticsEntity? analytics,
+  ) {
     if (analytics?.availableCategories.isNotEmpty ?? false) {
       return analytics!.availableCategories;
     }
@@ -78,7 +124,12 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
               if (state.state == DashboardStates.loading)
                 _buildLoadingState(context)
               else if (state.state == DashboardStates.error)
-                _buildErrorState(context, state.errorMessage)
+                ErrorStateSectionWidget(
+                  errorMsg: state.errorMessage,
+                  onRetry: () {
+                    context.read<DashboardCubit>().loadProductAnalytics();
+                  },
+                )
               else if (state.productAnalytics != null &&
                   _isValidAnalyticsData(state.productAnalytics))
                 _buildAnalyticsContent(context, state.productAnalytics!)
@@ -95,11 +146,21 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
           final availableCategories =
               _getAvailableCategories(state.productAnalytics);
 
-          if (!availableCategories.contains(_selectedCategory)) {
+          // Ensure selected category is valid
+          if (availableCategories.isNotEmpty &&
+              !availableCategories.contains(_selectedCategory)) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted && availableCategories.isNotEmpty) {
+              if (mounted) {
                 setState(() {
-                  _selectedCategory = availableCategories.first;
+                  // Use the current category from state if it's available and valid
+                  if (state.productAnalytics != null &&
+                      availableCategories
+                          .contains(state.productAnalytics!.currentCategory)) {
+                    _selectedCategory = state.productAnalytics!.currentCategory;
+                  } else {
+                    // Otherwise use first available category
+                    _selectedCategory = availableCategories.first;
+                  }
                 });
               }
             });
@@ -145,33 +206,34 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
       );
 
   Widget _buildAnalyticsContent(
-          BuildContext context, ProductWeeklyAnalyticsEntity analytics,) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Chart section with targeted rebuild
-        _ChartSection(),
-        SizedBox(height: context.md),
+    BuildContext context,
+    ProductWeeklyAnalyticsEntity analytics,
+  ) =>
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Chart section with targeted rebuild
+          const _ChartSection(),
+          SizedBox(height: context.md),
 
-        // Weekly Summary section
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: context.md),
-          child: Text(
-            'Weekly Summary',
-            style: context.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: context.colorScheme.onSurface,
+          // Weekly Summary section
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: context.md),
+            child: Text(
+              'Weekly Summary',
+              style: context.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: context.colorScheme.onSurface,
+              ),
             ),
           ),
-        ),
-        SizedBox(height: context.sm),
+          SizedBox(height: context.sm),
 
-        // Summary cards - mobile layout only
-        WeeklySummaryHorizontalCards(productAnalytics: analytics),
-        SizedBox(height: context.sm),
-      ],
-    );
-  }
+          // Summary cards - mobile layout only
+          WeeklySummaryHorizontalCards(productAnalytics: analytics),
+          SizedBox(height: context.sm),
+        ],
+      );
 
   Widget _buildLoadingState(BuildContext context) => Container(
         height: 200,
@@ -180,45 +242,6 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
           child: CircularProgressIndicator(
             color: AppColors.primary,
             strokeWidth: 2,
-          ),
-        ),
-      );
-
-  Widget _buildErrorState(BuildContext context, String? errorMessage) =>
-      Container(
-        height: 200,
-        padding: EdgeInsets.all(context.lg),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.error_outline,
-                size: 32,
-                color: AppColors.error,
-              ),
-              SizedBox(height: context.sm),
-              Text(
-                'Failed to load analytics',
-                style: context.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: context.colorScheme.onSurface,
-                ),
-              ),
-              SizedBox(height: context.sm),
-              ElevatedButton(
-                onPressed: () {
-                  context.read<DashboardCubit>().loadProductAnalytics();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(
-                      horizontal: context.md, vertical: context.sm,),
-                ),
-                child: const Text('Retry'),
-              ),
-            ],
           ),
         ),
       );
@@ -252,7 +275,9 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
                   padding: EdgeInsets.symmetric(
-                      horizontal: context.md, vertical: context.sm,),
+                    horizontal: context.md,
+                    vertical: context.sm,
+                  ),
                 ),
                 child: const Text('Load Analytics'),
               ),
@@ -274,7 +299,32 @@ class _CategoryDropdown extends StatelessWidget {
   final ValueChanged<String>? onChanged;
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) {
+    // Ensure the selected category exactly matches one in the categories list
+    String effectiveSelectedCategory = selectedCategory;
+
+    // If the selected category is not in the list (case sensitive),
+    // try to find a case-insensitive match
+    if (!categories.contains(selectedCategory)) {
+      for (final category in categories) {
+        if (category.toLowerCase() == selectedCategory.toLowerCase()) {
+          effectiveSelectedCategory = category;
+          print(
+              'Dropdown using case-matched category: $category instead of $selectedCategory');
+          break;
+        }
+      }
+    }
+
+    // If still not found, default to first category if available
+    if (!categories.contains(effectiveSelectedCategory) &&
+        categories.isNotEmpty) {
+      effectiveSelectedCategory = categories.first;
+      print(
+          'Dropdown defaulting to first category: $effectiveSelectedCategory');
+    }
+
+    return Container(
       height: 32, // Fixed smaller height
       padding: EdgeInsets.symmetric(
         horizontal: context.sm,
@@ -296,7 +346,7 @@ class _CategoryDropdown extends StatelessWidget {
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
-          value: selectedCategory,
+          value: effectiveSelectedCategory,
           icon: Icon(
             Icons.keyboard_arrow_down_rounded,
             color: context.colorScheme.onSurfaceVariant,
@@ -311,7 +361,10 @@ class _CategoryDropdown extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           dropdownColor: context.colorScheme.surface,
           onChanged: onChanged != null
-              ? (String? value) => value != null ? onChanged!(value) : null
+              ? (String? value) {
+                  print('Dropdown selected: $value');
+                  if (value != null) onChanged!(value);
+                }
               : null,
           items: categories
               .map(
@@ -329,35 +382,72 @@ class _CategoryDropdown extends StatelessWidget {
         ),
       ),
     );
+  }
 }
 
 class _ChartSection extends StatelessWidget {
   const _ChartSection();
 
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<DashboardCubit, DashboardState>(
-      buildWhen: (previous, current) {
-        // Only rebuild when productAnalytics data actually changes
-        return previous.productAnalytics != current.productAnalytics;
-      },
-      builder: (context, state) {
-        if (state.productAnalytics != null) {
-          return Container(
-            margin: EdgeInsets.symmetric(horizontal: context.sm),
-            decoration: BoxDecoration(
-              color: context.colorScheme.surfaceContainer.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: ProductAnalyticsBarChart(
-              key: ValueKey('chart_${state.productAnalytics!.currentCategory}_${state.productAnalytics!.hashCode}'),
-              productAnalytics: state.productAnalytics!,
-              height: 280,
-            ),
-          );
-        }
-        return const SizedBox.shrink();
-      },
-    );
-  }
+  Widget build(BuildContext context) =>
+      BlocBuilder<DashboardCubit, DashboardState>(
+        buildWhen: (previous, current) {
+          final shouldRebuild =
+              previous.productAnalytics != current.productAnalytics ||
+                  previous.state != current.state;
+
+          print(
+              '🔄 _ChartSection - buildWhen check: ${shouldRebuild ? 'REBUILDING' : 'SKIPPING'}');
+          if (previous.productAnalytics != null &&
+              current.productAnalytics != null) {
+            print(
+                '🔄 _ChartSection - Previous category: ${previous.productAnalytics!.currentCategory}');
+            print(
+                '🔄 _ChartSection - Current category: ${current.productAnalytics!.currentCategory}');
+            print(
+                '🔄 _ChartSection - Previous hash: ${previous.productAnalytics!.hashCode}');
+            print(
+                '🔄 _ChartSection - Current hash: ${current.productAnalytics!.hashCode}');
+            print(
+                '🔄 _ChartSection - Previous days count: ${previous.productAnalytics!.days.length}');
+            print(
+                '🔄 _ChartSection - Current days count: ${current.productAnalytics!.days.length}');
+          }
+
+          return shouldRebuild;
+        },
+        builder: (context, state) {
+          print('🔄 _ChartSection - Building chart section');
+
+          if (state.productAnalytics != null) {
+            print(
+                '🔄 _ChartSection - Category: ${state.productAnalytics!.currentCategory}');
+            print(
+                '🔄 _ChartSection - Days count: ${state.productAnalytics!.days.length}');
+            print(
+                '🔄 _ChartSection - Values: ${state.productAnalytics!.days.map((day) => day.total).toList()}');
+            print(
+                '🔄 _ChartSection - Using ValueKey: chart_${state.productAnalytics!.currentCategory}_${state.productAnalytics!.hashCode}');
+
+            return Container(
+              margin: EdgeInsets.symmetric(horizontal: context.sm),
+              decoration: BoxDecoration(
+                color:
+                    context.colorScheme.surfaceContainer.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: ProductAnalyticsBarChart(
+                key: ValueKey(
+                  'chart_${state.productAnalytics!.currentCategory}_${state.productAnalytics!.hashCode}',
+                ),
+                productAnalytics: state.productAnalytics!,
+                height: 280,
+              ),
+            );
+          }
+
+          print('🔄 _ChartSection - No analytics data available');
+          return const SizedBox.shrink();
+        },
+      );
 }

@@ -73,7 +73,9 @@ class _ProductAnalyticsBarChartState extends State<ProductAnalyticsBarChart>
         return _getShortDayName(date.weekday);
       } on Exception catch (_) {
         // If date parsing fails, use a default or the date string
-        return day.date.isNotEmpty ? day.date.substring(0, 3) : 'Day';
+        return day.date.isNotEmpty
+            ? day.date.substring(0, math.min(3, day.date.length))
+            : 'Day';
       }
     }).toList();
 
@@ -212,50 +214,112 @@ class _ProductAnalyticsBarChartState extends State<ProductAnalyticsBarChart>
         barGroups: _buildBarGroups(),
       );
 
-  List<BarChartGroupData> _buildBarGroups() =>
-      widget.productAnalytics.days.asMap().entries.map((entry) {
-        final index = entry.key;
-        final day = entry.value;
-        final animatedValue = day.total * _animationValue.value;
+  List<BarChartGroupData> _buildBarGroups() {
+    final days = widget.productAnalytics.days;
+    // Handle empty data gracefully
+    if (days.isEmpty) {
+      // EMERGENCY FIX: If days is empty but allCategoryData has data, try using that
+      if (widget.productAnalytics.allCategoryData.isNotEmpty) {
+        final firstCategory =
+            widget.productAnalytics.allCategoryData.keys.first;
+        final backupData =
+            widget.productAnalytics.allCategoryData[firstCategory];
 
-        // Calculate responsive bar width based on available space
-        const baseWidth = 16.0; // Thinner bars
-        final constraints = MediaQuery.of(context).size;
-        final barsWidth = baseWidth * constraints.width / 400;
+        if (backupData != null && backupData.isNotEmpty) {
+          return backupData.asMap().entries.map((entry) {
+            final index = entry.key;
+            final day = entry.value;
+            final animatedValue = day.total * _animationValue.value;
 
-        return BarChartGroupData(
-          x: index,
-          barRods: [
-            BarChartRodData(
-              toY: animatedValue,
-              gradient: LinearGradient(
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                colors: [
-                  AppColors.primary.withValues(alpha: 0.7),
-                  AppColors.primary,
-                  AppColors.primary.withValues(alpha: 0.9),
-                ],
-                stops: const [0.0, 0.5, 1.0],
-              ),
-              width:
-                  barsWidth.clamp(12.0, 20.0), // Ensure reasonable width range
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(4),
-                topRight: Radius.circular(4),
-              ),
-              backDrawRodData: BackgroundBarChartRodData(
-                show: true,
-                toY: _maxValue * 1.15,
-                color: Theme.of(context)
-                    .colorScheme
-                    .surfaceContainerHigh
-                    .withValues(alpha: 0.2),
-              ),
+            // Calculate responsive bar width based on available space
+            const baseWidth = 16.0; // Thinner bars
+            final constraints = MediaQuery.of(context).size;
+            final barsWidth = baseWidth * constraints.width / 400;
+
+            return BarChartGroupData(
+              x: index,
+              barRods: [
+                BarChartRodData(
+                  toY: animatedValue,
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [
+                      AppColors.primary.withValues(alpha: 0.7),
+                      AppColors.primary,
+                      AppColors.primary.withValues(alpha: 0.9),
+                    ],
+                    stops: const [0.0, 0.5, 1.0],
+                  ),
+                  width: barsWidth.clamp(
+                    12.0,
+                    20.0,
+                  ), // Ensure reasonable width range
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(4),
+                    topRight: Radius.circular(4),
+                  ),
+                  backDrawRodData: BackgroundBarChartRodData(
+                    show: true,
+                    toY: _maxValue * 1.15,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .surfaceContainerHigh
+                        .withValues(alpha: 0.2),
+                  ),
+                ),
+              ],
+            );
+          }).toList();
+        }
+      }
+
+      return [];
+    }
+
+    return days.asMap().entries.map((entry) {
+      final index = entry.key;
+      final day = entry.value;
+      final animatedValue = day.total * _animationValue.value;
+
+      // Calculate responsive bar width based on available space
+      const baseWidth = 16.0; // Thinner bars
+      final constraints = MediaQuery.of(context).size;
+      final barsWidth = baseWidth * constraints.width / 400;
+
+      return BarChartGroupData(
+        x: index,
+        barRods: [
+          BarChartRodData(
+            toY: animatedValue,
+            gradient: LinearGradient(
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+              colors: [
+                AppColors.primary.withValues(alpha: 0.7),
+                AppColors.primary,
+                AppColors.primary.withValues(alpha: 0.9),
+              ],
+              stops: const [0.0, 0.5, 1.0],
             ),
-          ],
-        );
-      }).toList();
+            width: barsWidth.clamp(12.0, 20.0), // Ensure reasonable width range
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(4),
+              topRight: Radius.circular(4),
+            ),
+            backDrawRodData: BackgroundBarChartRodData(
+              show: true,
+              toY: _maxValue * 1.15,
+              color: Theme.of(context)
+                  .colorScheme
+                  .surfaceContainerHigh
+                  .withValues(alpha: 0.2),
+            ),
+          ),
+        ],
+      );
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) => AspectRatio(

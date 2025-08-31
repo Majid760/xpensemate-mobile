@@ -5,8 +5,8 @@ import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/active_budget_section_widget.dart';
-import 'package:xpensemate/features/dashboard/presentation/widgets/weekly_financial_overview_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/product_analytics_widget.dart';
+import 'package:xpensemate/features/dashboard/presentation/widgets/weekly_financial_overview_widget.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -51,17 +51,19 @@ class _DashboardPageState extends State<DashboardPage>
   }
 
   @override
-  Widget build(BuildContext context) => BlocConsumer<DashboardCubit, DashboardState>(
-      listener: (context, state) {
-        if (state.state == DashboardStates.error && state.errorMessage != null) {
-          AppSnackBar.show(
-            context: context,
-            message: state.errorMessage!,
-            type: SnackBarType.error,
-          );
-        }
-      },
-      builder: (context, state) => Scaffold(
+  Widget build(BuildContext context) =>
+      BlocConsumer<DashboardCubit, DashboardState>(
+        listener: (context, state) {
+          if (state.state == DashboardStates.error &&
+              state.errorMessage != null) {
+            AppSnackBar.show(
+              context: context,
+              message: state.errorMessage!,
+              type: SnackBarType.error,
+            );
+          }
+        },
+        builder: (context, state) => Scaffold(
           backgroundColor: context.colorScheme.surface,
           body: RefreshIndicator(
             onRefresh: () async => _loadDashboardData(),
@@ -97,7 +99,7 @@ class _DashboardPageState extends State<DashboardPage>
                             onRetry: _loadDashboardData,
                           ),
                           SizedBox(height: context.lg),
-                          
+
                           // Active Budget Section
                           if (state.budgetGoals != null)
                             ActiveBudgetSectionWidget(
@@ -105,12 +107,12 @@ class _DashboardPageState extends State<DashboardPage>
                             ),
                           if (state.budgetGoals != null)
                             SizedBox(height: context.lg),
-                          
+
                           // Product Analytics Section
                           const ProductAnalyticsWidget(),
-                          
+
                           SizedBox(height: context.lg),
-                          
+
                           // Additional padding at bottom for better scrolling
                           SizedBox(height: context.xl),
                         ],
@@ -122,5 +124,5 @@ class _DashboardPageState extends State<DashboardPage>
             ),
           ),
         ),
-    );
+      );
 }

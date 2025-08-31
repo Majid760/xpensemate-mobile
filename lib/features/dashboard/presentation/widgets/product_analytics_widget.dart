@@ -41,14 +41,13 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
     if (state.productAnalytics != null &&
         state.productAnalytics!.availableCategories.isNotEmpty) {
       // Check if the currently selected category exists in available categories (case insensitive)
-      bool categoryExists = false;
+      var categoryExists = false;
       for (final category in state.productAnalytics!.availableCategories) {
         if (category.toLowerCase() == _selectedCategory.toLowerCase()) {
           // Update to use the exact case from available categories
           if (_selectedCategory != category) {
             setState(() {
               _selectedCategory = category;
-              print('Updated to match case: $_selectedCategory');
             });
           }
           categoryExists = true;
@@ -101,8 +100,7 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
   @override
   Widget build(BuildContext context) =>
       BlocBuilder<DashboardCubit, DashboardState>(
-        builder: (context, state) => Container(
-          margin: EdgeInsets.symmetric(horizontal: context.sm),
+        builder: (context, state) => DecoratedBox(
           decoration: BoxDecoration(
             color: context.colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
@@ -134,7 +132,11 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
                   _isValidAnalyticsData(state.productAnalytics))
                 _buildAnalyticsContent(context, state.productAnalytics!)
               else
-                _buildEmptyState(context),
+                ErrorStateSectionWidget(
+                  errorMsg: 'No analytics data available',
+                  onRetry: () =>
+                      context.read<DashboardCubit>().loadProductAnalytics(),
+                ),
             ],
           ),
         ),
@@ -245,46 +247,6 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
           ),
         ),
       );
-
-  Widget _buildEmptyState(BuildContext context) => Container(
-        height: 200,
-        padding: EdgeInsets.all(context.lg),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.analytics_outlined,
-                size: 32,
-                color: context.colorScheme.onSurfaceVariant,
-              ),
-              SizedBox(height: context.sm),
-              Text(
-                'No analytics data available',
-                style: context.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: context.colorScheme.onSurface,
-                ),
-              ),
-              SizedBox(height: context.sm),
-              ElevatedButton(
-                onPressed: () {
-                  context.read<DashboardCubit>().loadProductAnalytics();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: context.md,
-                    vertical: context.sm,
-                  ),
-                ),
-                child: const Text('Load Analytics'),
-              ),
-            ],
-          ),
-        ),
-      );
 }
 
 class _CategoryDropdown extends StatelessWidget {
@@ -301,7 +263,7 @@ class _CategoryDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Ensure the selected category exactly matches one in the categories list
-    String effectiveSelectedCategory = selectedCategory;
+    var effectiveSelectedCategory = selectedCategory;
 
     // If the selected category is not in the list (case sensitive),
     // try to find a case-insensitive match
@@ -396,41 +358,11 @@ class _ChartSection extends StatelessWidget {
               previous.productAnalytics != current.productAnalytics ||
                   previous.state != current.state;
 
-          print(
-              '🔄 _ChartSection - buildWhen check: ${shouldRebuild ? 'REBUILDING' : 'SKIPPING'}');
-          if (previous.productAnalytics != null &&
-              current.productAnalytics != null) {
-            print(
-                '🔄 _ChartSection - Previous category: ${previous.productAnalytics!.currentCategory}');
-            print(
-                '🔄 _ChartSection - Current category: ${current.productAnalytics!.currentCategory}');
-            print(
-                '🔄 _ChartSection - Previous hash: ${previous.productAnalytics!.hashCode}');
-            print(
-                '🔄 _ChartSection - Current hash: ${current.productAnalytics!.hashCode}');
-            print(
-                '🔄 _ChartSection - Previous days count: ${previous.productAnalytics!.days.length}');
-            print(
-                '🔄 _ChartSection - Current days count: ${current.productAnalytics!.days.length}');
-          }
-
           return shouldRebuild;
         },
         builder: (context, state) {
-          print('🔄 _ChartSection - Building chart section');
-
           if (state.productAnalytics != null) {
-            print(
-                '🔄 _ChartSection - Category: ${state.productAnalytics!.currentCategory}');
-            print(
-                '🔄 _ChartSection - Days count: ${state.productAnalytics!.days.length}');
-            print(
-                '🔄 _ChartSection - Values: ${state.productAnalytics!.days.map((day) => day.total).toList()}');
-            print(
-                '🔄 _ChartSection - Using ValueKey: chart_${state.productAnalytics!.currentCategory}_${state.productAnalytics!.hashCode}');
-
-            return Container(
-              margin: EdgeInsets.symmetric(horizontal: context.sm),
+            return DecoratedBox(
               decoration: BoxDecoration(
                 color:
                     context.colorScheme.surfaceContainer.withValues(alpha: 0.3),
@@ -446,7 +378,6 @@ class _ChartSection extends StatelessWidget {
             );
           }
 
-          print('🔄 _ChartSection - No analytics data available');
           return const SizedBox.shrink();
         },
       );

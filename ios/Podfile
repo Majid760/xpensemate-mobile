@@ -1,0 +1,98 @@
+# Uncomment this line to define a global platform for your project
+platform :ios, '15.0'
+
+# CocoaPods analytics sends network stats synchronously affecting flutter build latency.
+ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+
+project 'Runner', {
+  'Debug' => :debug,
+  'Profile' => :release,
+  'Release' => :release,
+}
+
+def flutter_root
+  generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
+  unless File.exist?(generated_xcode_build_settings_path)
+    raise "#{generated_xcode_build_settings_path} must exist. If you're running pod install manually, make sure flutter pub get is executed first"
+  end
+
+  File.foreach(generated_xcode_build_settings_path) do |line|
+    matches = line.match(/FLUTTER_ROOT\=(.*)/)
+    return matches[1].strip if matches
+  end
+  raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try deleting Generated.xcconfig, then run flutter pub get"
+end
+
+require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
+
+flutter_ios_podfile_setup
+
+target 'Runner' do
+  use_frameworks!
+  use_modular_headers!
+
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+  
+  # Permission handler configurations
+  # Uncomment the permissions you need for your app
+  permissions_path = '../node_modules/react-native-permissions/ios'
+  
+  # Camera and Photo Library permissions (for image_picker)
+  # pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
+  # pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary"
+  
+  # Location permissions
+  # pod 'Permission-LocationWhenInUse', :path => "#{permissions_path}/LocationWhenInUse"
+  # pod 'Permission-LocationAlways', :path => "#{permissions_path}/LocationAlways"
+  
+  # Notification permissions
+  # pod 'Permission-Notifications', :path => "#{permissions_path}/Notifications"
+  
+  # Face ID permissions
+  # pod 'Permission-FaceID', :path => "#{permissions_path}/FaceID"
+  
+  # Contacts permissions
+  # pod 'Permission-Contacts', :path => "#{permissions_path}/Contacts"
+  
+  # Calendar permissions
+  # pod 'Permission-Calendars', :path => "#{permissions_path}/Calendars"
+  
+  # Microphone permissions
+  # pod 'Permission-Microphone', :path => "#{permissions_path}/Microphone"
+
+  target 'RunnerTests' do
+    inherit! :search_paths
+  end
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    flutter_additional_ios_build_settings(target)
+    
+    # Fix for permission_handler package
+    target.build_configurations.each do |config|
+      # Ensure deployment target is iOS 15.0 or higher
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+      
+      # Enable bitcode if needed
+      config.build_settings['ENABLE_BITCODE'] = 'NO'
+      
+      # Fix for image_picker and camera permissions
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
+        '$(inherited)',
+        ## dart: PermissionGroup.camera
+        'PERMISSION_CAMERA=1',
+        ## dart: PermissionGroup.photos
+        'PERMISSION_PHOTOS=1',
+        ## dart: PermissionGroup.notification
+        'PERMISSION_NOTIFICATIONS=1',
+        ## dart: PermissionGroup.location
+        'PERMISSION_LOCATION=1',
+        ## dart: PermissionGroup.locationWhenInUse
+        'PERMISSION_LOCATION_WHEN_IN_USE=1',
+        ## dart: PermissionGroup.microphone
+        'PERMISSION_MICROPHONE=1',
+      ]
+    end
+  end
+end

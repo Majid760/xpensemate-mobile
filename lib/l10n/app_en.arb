@@ -280,6 +280,7 @@
   "galleryPermissionMessage": "We need gallery access to choose photos.",
 
   "personalInformation": "Enter your bio",
+  "day": "Day",
 
   "male": "Male",
   "female": "Female",
@@ -472,4 +473,5 @@
   "fri": "Fri",
   "sat": "Sat",
   "sun": "Sun"
+
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/error_state_widget.dart';
@@ -133,7 +134,7 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
                 _buildAnalyticsContent(context, state.productAnalytics!)
               else
                 ErrorStateSectionWidget(
-                  errorMsg: 'No analytics data available',
+                  errorMsg: context.l10n.noDataAvailable,
                   onRetry: () =>
                       context.read<DashboardCubit>().loadProductAnalytics(),
                 ),
@@ -188,7 +189,7 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
                 SizedBox(width: context.sm),
                 Expanded(
                   child: Text(
-                    'Analytics',
+                    context.l10n.dashboard,
                     style: context.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: context.colorScheme.onSurface,
@@ -222,7 +223,7 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: context.md),
             child: Text(
-              'Weekly Summary',
+              context.l10n.weeklyInsights,
               style: context.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: context.colorScheme.onSurface,
@@ -340,7 +341,7 @@ class _CategoryDropdown extends StatelessWidget {
                   ),
                 ),
               )
-              .toList(),
+              .toList(growable: false),
         ),
       ),
     );

@@ -975,6 +975,12 @@ abstract class AppLocalizations {
   /// **'Enter your bio'**
   String get personalInformation;
 
+  /// No description provided for @day.
+  ///
+  /// In en, this message translates to:
+  /// **'Day'**
+  String get day;
+
   /// No description provided for @male.
   ///
   /// In en, this message translates to:

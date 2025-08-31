@@ -67,7 +67,7 @@ class _TotalExpensesWidgetState extends State<TotalExpensesWidget>
     if (widget.weeklyStats.weeklyBudget <= 0) {
       // For web consistency, use 1000 as reference amount
       if (widget.weeklyStats.weekTotal > 0) {
-        return (widget.weeklyStats.weekTotal / 1000.0).clamp(0.0, 1.0);
+        return (widget.weeklyStats.weekTotal / 1000).clamp(0.0, 1.0);
       }
       return 0.0;
     }
@@ -255,7 +255,7 @@ class _CircularProgressContent extends StatelessWidget {
             maxLines: 1,
           ),
           Text(
-            '${_calculatePercentageText(progressAnimation.value, weeklyStats)}',
+            _calculatePercentageText(progressAnimation.value, weeklyStats),
             style: context.textTheme.bodySmall?.copyWith(
               color: AppColors.primary,
               fontWeight: FontWeight.w600,

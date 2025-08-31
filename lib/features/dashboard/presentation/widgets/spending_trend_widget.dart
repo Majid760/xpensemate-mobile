@@ -56,64 +56,65 @@ class _SpendingTrendWidgetState extends State<SpendingTrendWidget>
 
   @override
   Widget build(BuildContext context) => Container(
-      padding: EdgeInsets.all(context.md),
-      decoration: BoxDecoration(
-        color: context.colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: context.colorScheme.outline.withValues(alpha: 0.1),
+        padding: EdgeInsets.all(context.md),
+        decoration: BoxDecoration(
+          color: context.colorScheme.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: context.colorScheme.outline.withValues(alpha: 0.1),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: context.colorScheme.shadow.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: context.colorScheme.shadow.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header
-          Row(
-            children: [
-              const Icon(
-                Icons.trending_up_rounded,
-                color: AppColors.secondary,
-                size: 18,
-              ),
-              SizedBox(width: context.xs),
-              Expanded(
-                child: Text(
-                  context.l10n.spendingTrend,
-                  style: context.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: context.colorScheme.onSurface,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Row(
+              children: [
+                const Icon(
+                  Icons.trending_up_rounded,
+                  color: AppColors.secondary,
+                  size: 18,
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: context.md),
-          
-          // Line Chart
-          AnimatedBuilder(
-            animation: _animation,
-            builder: (context, child) => SizedBox(
+                SizedBox(width: context.xs),
+                Expanded(
+                  child: Text(
+                    context.l10n.spendingTrend,
+                    style: context.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: context.colorScheme.onSurface,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: context.md),
+
+            // Line Chart
+            AnimatedBuilder(
+              animation: _animation,
+              builder: (context, child) => SizedBox(
                 height: 120,
                 child: _LineChart(
                   weeklyStats: widget.weeklyStats,
                   animation: _animation,
-                  onHoverIndexChanged: (index) => setState(() => _hoveredIndex = index),
+                  onHoverIndexChanged: (index) =>
+                      setState(() => _hoveredIndex = index),
                   hoveredIndex: _hoveredIndex,
                 ),
               ),
-          ),
-        ],
-      ),
-    );
+            ),
+          ],
+        ),
+      );
 }
 
 class _LineChart extends StatelessWidget {
@@ -162,7 +163,7 @@ class _LineChart extends StatelessWidget {
             backgroundColor: context.colorScheme.surfaceContainerHighest,
           ),
         ),
-        
+
         // Interactive overlay for tooltip
         Positioned.fill(
           child: _InteractiveOverlay(
@@ -172,7 +173,7 @@ class _LineChart extends StatelessWidget {
             weeklyStats: weeklyStats,
           ),
         ),
-        
+
         // Day labels
         Positioned(
           bottom: 0,
@@ -194,24 +195,24 @@ class _EmptyChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.trending_up_outlined,
-            size: 32,
-            color: context.colorScheme.onSurfaceVariant,
-          ),
-          SizedBox(height: context.sm),
-          Text(
-            context.l10n.noTrendData,
-            style: context.textTheme.bodySmall?.copyWith(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.trending_up_outlined,
+              size: 32,
               color: context.colorScheme.onSurfaceVariant,
             ),
-          ),
-        ],
-      ),
-    );
+            SizedBox(height: context.sm),
+            Text(
+              context.l10n.noTrendData,
+              style: context.textTheme.bodySmall?.copyWith(
+                color: context.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      );
 }
 
 class _InteractiveOverlay extends StatelessWidget {
@@ -229,38 +230,46 @@ class _InteractiveOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-      onTapDown: (details) => _handleTap(context, details, cumulativeData),
-      onPanUpdate: (details) => _handlePan(context, details, cumulativeData),
-      onPanEnd: (_) => onHoverIndexChanged(null),
-      child: ColoredBox(
-        color: Colors.transparent,
-        child: hoveredIndex != null
-            ? _ChartTooltip(
-                hoveredIndex: hoveredIndex!,
-                cumulativeData: cumulativeData,
-                weeklyStats: weeklyStats,
-              )
-            : null,
-      ),
-    );
+        onTapDown: (details) => _handleTap(context, details, cumulativeData),
+        onPanUpdate: (details) => _handlePan(context, details, cumulativeData),
+        onPanEnd: (_) => onHoverIndexChanged(null),
+        child: ColoredBox(
+          color: Colors.transparent,
+          child: hoveredIndex != null
+              ? _ChartTooltip(
+                  hoveredIndex: hoveredIndex!,
+                  cumulativeData: cumulativeData,
+                  weeklyStats: weeklyStats,
+                )
+              : null,
+        ),
+      );
 
-  void _handleTap(BuildContext context, TapDownDetails details, List<double> data) {
-    final renderBox = context.findRenderObject() as RenderBox;
-    final localPosition = details.localPosition;
-    final index = _getIndexFromPosition(localPosition, renderBox.size, data.length);
-    onHoverIndexChanged(index);
+  void _handleTap(
+      BuildContext context, TapDownDetails details, List<double> data) {
+    final renderBox = context.findRenderObject();
+    if (renderBox is RenderBox) {
+      final localPosition = details.localPosition;
+      final index =
+          _getIndexFromPosition(localPosition, renderBox.size, data.length);
+      onHoverIndexChanged(index);
+    }
   }
 
-  void _handlePan(BuildContext context, DragUpdateDetails details, List<double> data) {
-    final renderBox = context.findRenderObject() as RenderBox;
-    final localPosition = details.localPosition;
-    final index = _getIndexFromPosition(localPosition, renderBox.size, data.length);
-    onHoverIndexChanged(index);
+  void _handlePan(
+      BuildContext context, DragUpdateDetails details, List<double> data) {
+    final renderBox = context.findRenderObject();
+    if (renderBox is RenderBox) {
+      final localPosition = details.localPosition;
+      final index =
+          _getIndexFromPosition(localPosition, renderBox.size, data.length);
+      onHoverIndexChanged(index);
+    }
   }
 
   int? _getIndexFromPosition(Offset position, Size size, int dataLength) {
     if (dataLength == 0) return null;
-    
+
     final relativeX = position.dx / size.width;
     final index = (relativeX * dataLength).round().clamp(0, dataLength - 1);
     return index;
@@ -359,7 +368,7 @@ class _DayLabels extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dailyBreakdown = weeklyStats.dailyBreakdown;
-    
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: dailyBreakdown.asMap().entries.map((entry) {
@@ -425,9 +434,9 @@ class _LineChartPainter extends CustomPainter {
       final x = i * stepX;
       final y = chartHeight - (data[i] / maxValue * chartHeight);
       final animatedY = chartHeight - ((chartHeight - y) * animation.value);
-      
+
       points.add(Offset(x, animatedY));
-      
+
       if (i == 0) {
         path.moveTo(x, animatedY);
       } else {
@@ -461,6 +470,7 @@ class _LineChartPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => oldDelegate is _LineChartPainter &&
-        oldDelegate.animation.value != animation.value;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =>
+      oldDelegate is _LineChartPainter &&
+      oldDelegate.animation.value != animation.value;
 }

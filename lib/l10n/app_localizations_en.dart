@@ -468,6 +468,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get personalInformation => 'Enter your bio';
 
   @override
+  String get day => 'Day';
+
+  @override
   String get male => 'Male';
 
   @override

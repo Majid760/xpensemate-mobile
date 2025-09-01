@@ -14,30 +14,17 @@ class WeeklyInsightsWidget extends StatelessWidget {
   final WeeklyStatsEntity weeklyStats;
 
   @override
-  Widget build(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            context.l10n.weeklyInsights,
-            style: context.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: context.colorScheme.onSurface,
-            ),
-          ),
-          SizedBox(height: context.md),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final isTablet = constraints.maxWidth > 600;
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final isTablet = constraints.maxWidth > 600;
 
-              if (isTablet) {
-                return _TabletInsightsLayout(weeklyStats: weeklyStats);
-              } else {
-                return _MobileInsightsLayout(weeklyStats: weeklyStats);
-              }
-            },
-          ),
-        ],
-      );
+      if (isTablet) {
+        return _TabletInsightsLayout(weeklyStats: weeklyStats);
+      } else {
+        return _MobileInsightsLayout(weeklyStats: weeklyStats);
+      }
+    },
+  );
 }
 
 class _TabletInsightsLayout extends StatelessWidget {
@@ -73,23 +60,21 @@ class _MobileInsightsLayout extends StatelessWidget {
   final WeeklyStatsEntity weeklyStats;
 
   @override
-  Widget build(BuildContext context) => Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: _HighestDayCard(weeklyStats: weeklyStats),
-              ),
-              SizedBox(width: context.sm),
-              Expanded(
-                child: _LowestDayCard(weeklyStats: weeklyStats),
-              ),
-            ],
-          ),
-          SizedBox(height: context.sm),
-          _DailyAverageCard(weeklyStats: weeklyStats),
-        ],
-      );
+  Widget build(BuildContext context) => Row(
+    children: [
+      Expanded(
+        child: _HighestDayCard(weeklyStats: weeklyStats),
+      ),
+      SizedBox(width: context.sm),
+      Expanded(
+        child: _LowestDayCard(weeklyStats: weeklyStats),
+      ),
+      SizedBox(width: context.sm),
+      Expanded(
+        child: _DailyAverageCard(weeklyStats: weeklyStats),
+      ),
+    ],
+  );
 }
 
 class _HighestDayCard extends StatelessWidget {
@@ -102,12 +87,12 @@ class _HighestDayCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => _InsightCard(
         icon: Icons.trending_up_rounded,
-        iconColor: AppColors.success,
-        title: context.l10n.highestDay,
-        amount: CurrencyFormatter.format(weeklyStats.highestDay.total),
+        iconColor: Colors.green,
+        title: "Highest",
+        amount: "\$${weeklyStats.highestDay.total.toStringAsFixed(0)}",
         subtitle: _formatDayName(context, weeklyStats.highestDay.date),
-        backgroundColor: AppColors.success.withValues(alpha: 0.08),
-        borderColor: AppColors.success.withValues(alpha: 0.15),
+        backgroundColor: Colors.white,
+        borderColor: Colors.transparent,
       );
 
   String _formatDayName(BuildContext context, String date) {
@@ -139,12 +124,12 @@ class _LowestDayCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => _InsightCard(
         icon: Icons.trending_down_rounded,
-        iconColor: AppColors.warning,
-        title: context.l10n.lowestDay,
-        amount: CurrencyFormatter.format(weeklyStats.lowestDay.total),
+        iconColor: Colors.red,
+        title: "Lowest",
+        amount: "\$${weeklyStats.lowestDay.total.toStringAsFixed(0)}",
         subtitle: _formatDayName(context, weeklyStats.lowestDay.date),
-        backgroundColor: AppColors.warning.withValues(alpha: 0.08),
-        borderColor: AppColors.warning.withValues(alpha: 0.15),
+        backgroundColor: Colors.white,
+        borderColor: Colors.transparent,
       );
 
   String _formatDayName(BuildContext context, String date) {
@@ -175,14 +160,13 @@ class _DailyAverageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _InsightCard(
-        icon: Icons.analytics_outlined,
-        iconColor: AppColors.info,
-        title: context.l10n.dailyAverage,
-        amount: CurrencyFormatter.format(weeklyStats.dailyAverage),
-        subtitle: context.l10n.acrossSevenDays,
-        backgroundColor: AppColors.info.withValues(alpha: 0.08),
-        borderColor: AppColors.info.withValues(alpha: 0.15),
-        isFullWidth: true,
+        icon: Icons.attach_money,
+        iconColor: Colors.blue,
+        title: "Average",
+        amount: "\$${weeklyStats.dailyAverage.toStringAsFixed(2)}",
+        subtitle: "Daily",
+        backgroundColor: Colors.white,
+        borderColor: Colors.transparent,
       );
 }
 
@@ -212,11 +196,16 @@ class _InsightCard extends StatelessWidget {
         width: isFullWidth ? double.infinity : null,
         padding: EdgeInsets.all(context.md),
         decoration: BoxDecoration(
-          color: backgroundColor,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: borderColor,
-          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
+              spreadRadius: 1,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,39 +215,38 @@ class _InsightCard extends StatelessWidget {
                 Icon(
                   icon,
                   color: iconColor,
-                  size: 18,
+                  size: 24,
                 ),
                 SizedBox(width: context.xs),
                 Expanded(
                   child: Text(
-                    title.toUpperCase(),
-                    style: context.textTheme.labelSmall?.copyWith(
+                    title,
+                    style: context.textTheme.titleMedium?.copyWith(
                       color: context.colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.5,
+                      fontWeight: FontWeight.w500,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
-            SizedBox(height: context.sm),
+            SizedBox(height: context.md),
             Text(
               amount,
-              style: context.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w800,
+              style: context.textTheme.displaySmall?.copyWith(
+                fontWeight: FontWeight.w700,
                 color: context.colorScheme.onSurface,
                 letterSpacing: -0.5,
+                fontSize: 32,
               ),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),
-            SizedBox(height: context.xs),
             Text(
               subtitle,
-              style: context.textTheme.bodySmall?.copyWith(
-                color: context.colorScheme.onSurfaceVariant,
-                fontWeight: FontWeight.w500,
+              style: context.textTheme.titleMedium?.copyWith(
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w400,
               ),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,

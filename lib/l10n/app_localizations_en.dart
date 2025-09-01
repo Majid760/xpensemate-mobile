@@ -586,6 +586,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cumulative => 'cumulative';
 
   @override
+  String get goodMorning => 'Good Morning';
+
+  @override
+  String get goodAfternoon => 'Good Afternoon';
+
+  @override
+  String get goodEvening => 'Good Evening';
+
+  @override
+  String get financialOverviewSubtitle => 'Here\'s your financial overview';
+
+  @override
+  String get totalBalance => 'Total Balance';
+
+  @override
+  String get vsLastWeek => 'vs last week';
+
+  @override
+  String get available => 'Available';
+
+  @override
+  String get spentThisWeek => 'Spent This Week';
+
+  @override
   String get activeBudgets => 'Active Budgets';
 
   @override

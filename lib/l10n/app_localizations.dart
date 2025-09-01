@@ -1203,6 +1203,54 @@ abstract class AppLocalizations {
   /// **'cumulative'**
   String get cumulative;
 
+  /// Morning greeting shown before noon
+  ///
+  /// In en, this message translates to:
+  /// **'Good Morning'**
+  String get goodMorning;
+
+  /// Afternoon greeting shown between noon and evening
+  ///
+  /// In en, this message translates to:
+  /// **'Good Afternoon'**
+  String get goodAfternoon;
+
+  /// Evening greeting shown after 5 PM
+  ///
+  /// In en, this message translates to:
+  /// **'Good Evening'**
+  String get goodEvening;
+
+  /// Subtitle shown below greeting in dashboard
+  ///
+  /// In en, this message translates to:
+  /// **'Here\'s your financial overview'**
+  String get financialOverviewSubtitle;
+
+  /// Label for total balance in financial overview
+  ///
+  /// In en, this message translates to:
+  /// **'Total Balance'**
+  String get totalBalance;
+
+  /// Comparison text for financial metrics
+  ///
+  /// In en, this message translates to:
+  /// **'vs last week'**
+  String get vsLastWeek;
+
+  /// Label for available balance
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get available;
+
+  /// Label for amount spent in current week
+  ///
+  /// In en, this message translates to:
+  /// **'Spent This Week'**
+  String get spentThisWeek;
+
   /// Title for active budgets section
   ///
   /// In en, this message translates to:

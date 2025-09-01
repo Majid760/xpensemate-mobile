@@ -63,5 +63,15 @@
     
     "language": "Langue",
     "selectLanguage": "Sélectionner la langue",
-    "languageChanged": "Langue modifiée avec succès"
+    "languageChanged": "Langue modifiée avec succès",
+    
+    // Dashboard strings
+    "goodMorning": "Bonjour",
+    "goodAfternoon": "Bon après-midi",
+    "goodEvening": "Bonsoir",
+    "financialOverviewSubtitle": "Voici votre aperçu financier",
+    "totalBalance": "Solde total",
+    "vsLastWeek": "par rapport à la semaine dernière",
+    "available": "Disponible",
+    "spentThisWeek": "Dépensé cette semaine"
   }

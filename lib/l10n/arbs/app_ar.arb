@@ -63,5 +63,15 @@
     
     "language": "اللغة",
     "selectLanguage": "اختر اللغة",
-    "languageChanged": "تم تغيير اللغة بنجاح"
+    "languageChanged": "تم تغيير اللغة بنجاح",
+    
+    // Dashboard strings
+    "goodMorning": "صباح الخير",
+    "goodAfternoon": "مساء الخير",
+    "goodEvening": "مساء الخير",
+    "financialOverviewSubtitle": "إليك نظرة عامة على وضعك المالي",
+    "totalBalance": "الرصيد الإجمالي",
+    "vsLastWeek": "مقارنة بالأسبوع الماضي",
+    "available": "متاح",
+    "spentThisWeek": "المنفق هذا الأسبوع"
   }

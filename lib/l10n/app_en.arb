@@ -408,6 +408,39 @@
     "description": "Label for cumulative values in charts"
   },
   
+  "goodMorning": "Good Morning",
+  "@goodMorning": {
+    "description": "Morning greeting shown before noon"
+  },
+  "goodAfternoon": "Good Afternoon",
+  "@goodAfternoon": {
+    "description": "Afternoon greeting shown between noon and evening"
+  },
+  "goodEvening": "Good Evening",
+  "@goodEvening": {
+    "description": "Evening greeting shown after 5 PM"
+  },
+  "financialOverviewSubtitle": "Here's your financial overview",
+  "@financialOverviewSubtitle": {
+    "description": "Subtitle shown below greeting in dashboard"
+  },
+  "totalBalance": "Total Balance",
+  "@totalBalance": {
+    "description": "Label for total balance in financial overview"
+  },
+  "vsLastWeek": "vs last week",
+  "@vsLastWeek": {
+    "description": "Comparison text for financial metrics"
+  },
+  "available": "Available",
+  "@available": {
+    "description": "Label for available balance"
+  },
+  "spentThisWeek": "Spent This Week",
+  "@spentThisWeek": {
+    "description": "Label for amount spent in current week"
+  },
+
   "@@active_budget_section": "Active budget section related strings",
   "activeBudgets": "Active Budgets",
   "@activeBudgets": {

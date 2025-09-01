@@ -72,7 +72,7 @@ class _BalanceRemainingWidgetState extends State<BalanceRemainingWidget>
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: EdgeInsets.all(context.lg),
+        padding: EdgeInsets.all(context.md),
         decoration: BoxDecoration(
           color: context.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),

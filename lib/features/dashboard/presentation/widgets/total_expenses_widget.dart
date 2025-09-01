@@ -79,7 +79,8 @@ class _TotalExpensesWidgetState extends State<TotalExpensesWidget>
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: EdgeInsets.all(context.lg),
+        // Fixed height to ensure consistency with BalanceRemainingWidget
+        padding: EdgeInsets.all(context.md),
         decoration: BoxDecoration(
           color: context.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),

@@ -15,16 +15,16 @@ class WeeklyInsightsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
-    builder: (context, constraints) {
-      final isTablet = constraints.maxWidth > 600;
+        builder: (context, constraints) {
+          final isTablet = constraints.maxWidth > 600;
 
-      if (isTablet) {
-        return _TabletInsightsLayout(weeklyStats: weeklyStats);
-      } else {
-        return _MobileInsightsLayout(weeklyStats: weeklyStats);
-      }
-    },
-  );
+          if (isTablet) {
+            return _TabletInsightsLayout(weeklyStats: weeklyStats);
+          } else {
+            return _MobileInsightsLayout(weeklyStats: weeklyStats);
+          }
+        },
+      );
 }
 
 class _TabletInsightsLayout extends StatelessWidget {
@@ -61,20 +61,20 @@ class _MobileInsightsLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(
-    children: [
-      Expanded(
-        child: _HighestDayCard(weeklyStats: weeklyStats),
-      ),
-      SizedBox(width: context.sm),
-      Expanded(
-        child: _LowestDayCard(weeklyStats: weeklyStats),
-      ),
-      SizedBox(width: context.sm),
-      Expanded(
-        child: _DailyAverageCard(weeklyStats: weeklyStats),
-      ),
-    ],
-  );
+        children: [
+          Expanded(
+            child: _HighestDayCard(weeklyStats: weeklyStats),
+          ),
+          SizedBox(width: context.sm),
+          Expanded(
+            child: _LowestDayCard(weeklyStats: weeklyStats),
+          ),
+          SizedBox(width: context.sm),
+          Expanded(
+            child: _DailyAverageCard(weeklyStats: weeklyStats),
+          ),
+        ],
+      );
 }
 
 class _HighestDayCard extends StatelessWidget {
@@ -87,11 +87,11 @@ class _HighestDayCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => _InsightCard(
         icon: Icons.trending_up_rounded,
-        iconColor: Colors.green,
-        title: "Highest",
+        iconColor: AppColors.success,
+        title: context.l10n.highestDay,
         amount: "\$${weeklyStats.highestDay.total.toStringAsFixed(0)}",
         subtitle: _formatDayName(context, weeklyStats.highestDay.date),
-        backgroundColor: Colors.white,
+        backgroundColor: context.colorScheme.surface,
         borderColor: Colors.transparent,
       );
 
@@ -124,11 +124,11 @@ class _LowestDayCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => _InsightCard(
         icon: Icons.trending_down_rounded,
-        iconColor: Colors.red,
-        title: "Lowest",
+        iconColor: AppColors.danger,
+        title: context.l10n.lowestDay,
         amount: "\$${weeklyStats.lowestDay.total.toStringAsFixed(0)}",
         subtitle: _formatDayName(context, weeklyStats.lowestDay.date),
-        backgroundColor: Colors.white,
+        backgroundColor: context.colorScheme.surface,
         borderColor: Colors.transparent,
       );
 
@@ -161,11 +161,11 @@ class _DailyAverageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => _InsightCard(
         icon: Icons.attach_money,
-        iconColor: Colors.blue,
-        title: "Average",
+        iconColor: AppColors.info,
+        title: context.l10n.dailyAverage,
         amount: "\$${weeklyStats.dailyAverage.toStringAsFixed(2)}",
-        subtitle: "Daily",
-        backgroundColor: Colors.white,
+        subtitle: context.l10n.acrossSevenDays,
+        backgroundColor: context.colorScheme.surface,
         borderColor: Colors.transparent,
       );
 }
@@ -196,11 +196,11 @@ class _InsightCard extends StatelessWidget {
         width: isFullWidth ? double.infinity : null,
         padding: EdgeInsets.all(context.md),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: backgroundColor,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
+              color: context.colorScheme.shadow.withValues(alpha: 0.05),
               blurRadius: 8,
               spreadRadius: 1,
               offset: const Offset(0, 2),
@@ -209,6 +209,7 @@ class _InsightCard extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
               children: [
@@ -233,19 +234,18 @@ class _InsightCard extends StatelessWidget {
             SizedBox(height: context.md),
             Text(
               amount,
-              style: context.textTheme.displaySmall?.copyWith(
+              style: context.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.w700,
                 color: context.colorScheme.onSurface,
                 letterSpacing: -0.5,
-                fontSize: 32,
               ),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),
             Text(
               subtitle,
-              style: context.textTheme.titleMedium?.copyWith(
-                color: Colors.grey[600],
+              style: context.textTheme.titleSmall?.copyWith(
+                color: context.colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w400,
               ),
               overflow: TextOverflow.ellipsis,

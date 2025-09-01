@@ -97,7 +97,7 @@ class _HeaderSection extends StatelessWidget {
           SizedBox(width: context.md),
           Expanded(
             child: Text(
-              "Financial Overview",
+              context.l10n.weeklyFinancialOverview,
               style: context.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w700,
                 color: context.colorScheme.onSurface,

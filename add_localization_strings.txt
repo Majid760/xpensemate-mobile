@@ -1,0 +1,75 @@
+// New localization strings to add to app_localizations.dart
+
+// Greetings based on time of day
+  /// No description provided for @goodMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Morning'**
+  String get goodMorning;
+
+  /// No description provided for @goodAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Afternoon'**
+  String get goodAfternoon;
+
+  /// No description provided for @goodEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Evening'**
+  String get goodEvening;
+
+  /// Financial overview subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Here\'s your financial overview'**
+  String get financialOverviewSubtitle;
+
+  /// Total balance label
+  ///
+  /// In en, this message translates to:
+  /// **'Total Balance'**
+  String get totalBalance;
+
+  /// Text comparing to last week
+  ///
+  /// In en, this message translates to:
+  /// **'vs last week'**
+  String get vsLastWeek;
+
+  /// Available balance label
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get available;
+
+  /// Spent this week label
+  ///
+  /// In en, this message translates to:
+  /// **'Spent This Week'**
+  String get spentThisWeek;
+
+// Add these strings to app_localizations_en.dart
+  @override
+  String get goodMorning => 'Good Morning';
+
+  @override
+  String get goodAfternoon => 'Good Afternoon';
+
+  @override
+  String get goodEvening => 'Good Evening';
+
+  @override
+  String get financialOverviewSubtitle => 'Here\'s your financial overview';
+
+  @override
+  String get totalBalance => 'Total Balance';
+
+  @override
+  String get vsLastWeek => 'vs last week';
+
+  @override
+  String get available => 'Available';
+
+  @override
+  String get spentThisWeek => 'Spent This Week';

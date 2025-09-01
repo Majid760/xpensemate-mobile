@@ -69,7 +69,7 @@ class _TotalExpensesWidgetState extends State<TotalExpensesWidget>
       if (widget.weeklyStats.weekTotal > 0) {
         return (widget.weeklyStats.weekTotal / 1000).clamp(0.0, 1.0);
       }
-      return 0.0;
+      return 0;
     }
 
     // Normal calculation - percentage of budget spent (same as web)

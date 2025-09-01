@@ -264,7 +264,7 @@ class _DashboardPageState extends State<DashboardPage>
                   child: FadeTransition(
                     opacity: _fadeAnimation,
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: context.md),
+                      padding: EdgeInsets.zero,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

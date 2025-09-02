@@ -7,6 +7,7 @@ import 'package:xpensemate/features/dashboard/domain/entities/weekly_stats_entit
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/balance_remaining_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/daily_spending_pattern_widget.dart';
+import 'package:xpensemate/features/dashboard/presentation/widgets/section_header_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/spending_trend_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/total_expenses_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/weekly_insights_widget.dart';
@@ -43,8 +44,9 @@ class WeeklyFinancialOverviewWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
-              _HeaderSection(
-                onRetry: onRetry,
+              SectionHeaderWidget(
+                title: context.l10n.weeklyFinancialOverview,
+                icon: Icons.calendar_today_rounded,
               ),
               SizedBox(height: context.lg),
 
@@ -64,50 +66,6 @@ class WeeklyFinancialOverviewWidget extends StatelessWidget {
             ],
           ),
         ),
-      );
-}
-
-class _HeaderSection extends StatelessWidget {
-  const _HeaderSection({
-    required this.onRetry,
-  });
-
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) => Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(context.sm),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.primary.withValues(alpha: 0.15),
-                  AppColors.secondary.withValues(alpha: 0.08),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              Icons.calendar_today_rounded,
-              color: AppColors.primary,
-              size: 20,
-            ),
-          ),
-          SizedBox(width: context.md),
-          Expanded(
-            child: Text(
-              context.l10n.weeklyFinancialOverview,
-              style: context.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: context.colorScheme.onSurface,
-                letterSpacing: -0.3,
-              ),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-            ),
-          ),
-        ],
       );
 }
 

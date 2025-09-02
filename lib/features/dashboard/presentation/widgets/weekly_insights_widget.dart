@@ -242,6 +242,7 @@ class _InsightCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),
+            SizedBox(height: context.md),
             Text(
               subtitle,
               style: context.textTheme.titleSmall?.copyWith(

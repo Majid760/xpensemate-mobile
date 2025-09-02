@@ -4,6 +4,7 @@ import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/budget_goals_entity.dart';
+import 'package:xpensemate/features/dashboard/presentation/widgets/section_header_widget.dart';
 
 class ActiveBudgetSectionWidget extends StatelessWidget {
   const ActiveBudgetSectionWidget({
@@ -34,41 +35,16 @@ class ActiveBudgetSectionWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header
-            const _SectionHeader(),
+            SectionHeaderWidget(
+              title: context.l10n.activeBudgets,
+              icon: Icons.abc_rounded,
+            ),
             SizedBox(height: context.md),
 
             // Budget List
             _BudgetList(budgetGoals: budgetGoals),
           ],
         ),
-      );
-}
-
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader();
-
-  @override
-  Widget build(BuildContext context) => Row(
-        children: [
-          const Icon(
-            Icons.savings_outlined,
-            color: AppColors.primary,
-            size: 18,
-          ),
-          SizedBox(width: context.xs),
-          Expanded(
-            child: Text(
-              context.l10n.activeBudgets,
-              style: context.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: context.colorScheme.onSurface,
-              ),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-            ),
-          ),
-          const _CreateBudgetButton(),
-        ],
       );
 }
 

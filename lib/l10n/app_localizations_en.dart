@@ -406,6 +406,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logoutConfirmationMessage => 'Are you sure to want to logout?';
 
   @override
+  String get seeDetail => 'See Detail';
+
+  @override
   String get selectImage => 'Select Image';
 
   @override

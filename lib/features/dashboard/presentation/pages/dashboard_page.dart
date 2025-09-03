@@ -117,72 +117,6 @@ class _DashboardPageState extends State<DashboardPage>
     }
   }
 
-  // Helper methods to format financial data
-  String _getTotalBalanceText(DashboardState state) {
-    if (state.weeklyStats == null) {
-      return r'$0';
-    }
-    // Using weeklyBudget as the total balance for demonstration
-    final totalBalance = state.weeklyStats!.weeklyBudget;
-    return '\$${totalBalance.toStringAsFixed(0)}';
-  }
-
-  String _getAvailableBalanceText(DashboardState state) {
-    if (state.weeklyStats == null) {
-      return r'$0';
-    }
-    final availableBalance = state.weeklyStats!.balanceLeft > 0
-        ? state.weeklyStats!.balanceLeft
-        : 0.0;
-    return '\$${availableBalance.toStringAsFixed(0)}';
-  }
-
-  String _getSpentThisWeekText(DashboardState state) {
-    if (state.weeklyStats == null) {
-      return r'$0';
-    }
-    return '\$${state.weeklyStats!.weekTotal.toStringAsFixed(0)}';
-  }
-
-  // Calculate percentage change based on weekly stats
-  String _calculateGrowthPercentage(DashboardState state) {
-    if (state.weeklyStats == null) {
-      return '+0.0%';
-    }
-
-    // In a real app, you would compare with previous week data
-    // For now, we'll calculate a reasonable value based on budget and spending
-    final weeklyBudget = state.weeklyStats!.weeklyBudget;
-    final totalSpent = state.weeklyStats!.weekTotal;
-
-    if (weeklyBudget <= 0) return '+0.0%';
-
-    // Calculate percentage of budget remaining
-    final remainingPercent = (1 - (totalSpent / weeklyBudget)) * 100;
-
-    // Generate a percentage that looks realistic (positive if under budget)
-    final changePercent =
-        remainingPercent > 0 ? remainingPercent / 8 : -remainingPercent / 8;
-    final sign = changePercent >= 0 ? '+' : '';
-
-    return '$sign${changePercent.toStringAsFixed(1)}%';
-  }
-
-  // Determine if growth is positive or negative for styling
-  bool _isPositiveGrowth(DashboardState state) {
-    if (state.weeklyStats == null) {
-      return true;
-    }
-
-    final weeklyBudget = state.weeklyStats!.weeklyBudget;
-    final totalSpent = state.weeklyStats!.weekTotal;
-
-    if (weeklyBudget <= 0) return true;
-
-    // If we've spent less than our budget, it's positive
-    return totalSpent <= weeklyBudget;
-  }
-
   @override
   Widget build(BuildContext context) =>
       BlocConsumer<DashboardCubit, DashboardState>(
@@ -206,12 +140,10 @@ class _DashboardPageState extends State<DashboardPage>
               physics: const BouncingScrollPhysics(),
               slivers: [
                 SliverAppBar(
-                  expandedHeight:
-                      320, // Increased height to accommodate the new header
+                  expandedHeight: 320,
                   pinned: true,
                   elevation: 0,
                   backgroundColor: AppColors.primary,
-
                   actions: [
                     Padding(
                       padding: const EdgeInsets.only(right: 16),

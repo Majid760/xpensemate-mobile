@@ -63,14 +63,12 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
             .contains(state.productAnalytics!.currentCategory)) {
           setState(() {
             _selectedCategory = state.productAnalytics!.currentCategory;
-            print('Using current category from state: $_selectedCategory');
           });
         } else {
           // Otherwise use the first available category
           setState(() {
             _selectedCategory =
                 state.productAnalytics!.availableCategories.first;
-            print('Using first available category: $_selectedCategory');
           });
         }
       }
@@ -78,7 +76,6 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
   }
 
   void _onCategoryChanged(String category) {
-    print('Category changed from $_selectedCategory to $category');
     if (_selectedCategory != category) {
       setState(() {
         _selectedCategory = category;
@@ -101,7 +98,8 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
   @override
   Widget build(BuildContext context) =>
       BlocBuilder<DashboardCubit, DashboardState>(
-        builder: (context, state) => DecoratedBox(
+        builder: (context, state) => Container(
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: context.colorScheme.surface,
             borderRadius: BorderRadius.circular(16),

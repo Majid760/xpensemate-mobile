@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/route/utils/router_extension.dart';
 import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
+import 'package:xpensemate/core/widget/app_button.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/budget_goals_entity.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/section_header_widget.dart';
 
@@ -16,17 +18,23 @@ class ActiveBudgetSectionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: EdgeInsets.all(context.md),
+        padding: EdgeInsets.all(context.lg),
         decoration: BoxDecoration(
           color: context.colorScheme.surface,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: context.colorScheme.outline.withValues(alpha: 0.1),
           ),
           boxShadow: [
             BoxShadow(
-              color: context.colorScheme.shadow.withValues(alpha: 0.05),
-              blurRadius: 10,
+              color: context.colorScheme.shadow.withValues(alpha: 0.08),
+              blurRadius: 20,
+              offset: const Offset(0, 4),
+            ),
+            BoxShadow(
+              color: context.colorScheme.primary.withValues(alpha: 0.02),
+              blurRadius: 8,
+              spreadRadius: 1,
               offset: const Offset(0, 2),
             ),
           ],
@@ -37,51 +45,18 @@ class ActiveBudgetSectionWidget extends StatelessWidget {
             // Header
             SectionHeaderWidget(
               title: context.l10n.activeBudgets,
-              icon: Icons.abc_rounded,
+              icon: Icons.account_balance_wallet_outlined,
+              action: AppButton.textButton(
+                text: context.l10n.seeDetail,
+                textColor: context.primaryColor,
+                onPressed: context.goToDashboard,
+              ),
             ),
-            SizedBox(height: context.md),
+            SizedBox(height: context.lg),
 
             // Budget List
             _BudgetList(budgetGoals: budgetGoals),
           ],
-        ),
-      );
-}
-
-class _CreateBudgetButton extends StatelessWidget {
-  const _CreateBudgetButton();
-
-  @override
-  Widget build(BuildContext context) => Material(
-        color: AppColors.primary.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
-        child: InkWell(
-          onTap: () {},
-          borderRadius: BorderRadius.circular(8),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: context.sm,
-              vertical: context.xs,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  Icons.add_rounded,
-                  color: AppColors.primary,
-                  size: 14,
-                ),
-                SizedBox(width: context.xs),
-                Text(
-                  context.l10n.createBudget,
-                  style: context.textTheme.bodySmall?.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
         ),
       );
 }
@@ -157,7 +132,7 @@ class _MobileLayout extends StatelessWidget {
         children: goals
             .map(
               (goal) => Padding(
-                padding: EdgeInsets.only(bottom: context.sm),
+                padding: EdgeInsets.only(bottom: context.md),
                 child: _BudgetCard(goal: goal),
               ),
             )
@@ -174,6 +149,7 @@ class _TabletLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: goals
             .asMap()
             .entries
@@ -181,7 +157,7 @@ class _TabletLayout extends StatelessWidget {
               (entry) => Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(
-                    right: entry.key < goals.length - 1 ? context.sm : 0,
+                    right: entry.key < goals.length - 1 ? context.md : 0,
                   ),
                   child: _BudgetCard(goal: entry.value),
                 ),
@@ -208,13 +184,36 @@ class _BudgetCard extends StatelessWidget {
     final status = _getBudgetStatus(progress);
 
     return Container(
-      padding: EdgeInsets.all(context.sm),
+      padding: EdgeInsets.all(context.md),
       decoration: BoxDecoration(
-        color: status.backgroundColor.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: status.color.withValues(alpha: 0.2),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            context.colorScheme.surface,
+            context.colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
+            context.colorScheme.surface,
+          ],
         ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: status.color.withValues(alpha: 0.15),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: status.color.withValues(alpha: 0.1),
+            blurRadius: 8,
+            spreadRadius: 1,
+            offset: const Offset(0, 2),
+          ),
+          BoxShadow(
+            color: context.colorScheme.shadow.withValues(alpha: 0.05),
+            blurRadius: 4,
+            spreadRadius: 0,
+            offset: const Offset(0, 1),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -225,14 +224,14 @@ class _BudgetCard extends StatelessWidget {
             category: goal.category,
             priority: goal.priority,
           ),
-          SizedBox(height: context.sm),
+          SizedBox(height: context.md),
 
           // Progress Bar
           _ProgressBar(
             progress: progress,
             color: status.color,
           ),
-          SizedBox(height: context.sm),
+          SizedBox(height: context.md),
 
           // Budget Details
           _BudgetDetails(
@@ -247,7 +246,7 @@ class _BudgetCard extends StatelessWidget {
   }
 
   _BudgetStatus _getBudgetStatus(double progress) {
-    if (progress >= 1.0) {
+    if (progress >= 1) {
       return const _BudgetStatus(
         label: 'overBudget',
         color: AppColors.error,
@@ -289,8 +288,8 @@ class _BudgetHeader extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: context.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
+                  style: context.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
                     color: context.colorScheme.onSurface,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -299,8 +298,9 @@ class _BudgetHeader extends StatelessWidget {
                 SizedBox(height: context.xs),
                 Text(
                   category,
-                  style: context.textTheme.bodySmall?.copyWith(
+                  style: context.textTheme.bodyMedium?.copyWith(
                     color: context.colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w500,
                   ),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
@@ -326,19 +326,33 @@ class _PriorityChip extends StatelessWidget {
 
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: context.xs,
-        vertical: 2,
+        horizontal: context.sm,
+        vertical: 4,
       ),
       decoration: BoxDecoration(
-        color: priorityData.color.withValues(alpha: 0.1),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            priorityData.color.withValues(alpha: 0.15),
+            priorityData.color.withValues(alpha: 0.25),
+          ],
+        ),
         borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: priorityData.color.withValues(alpha: 0.1),
+            blurRadius: 2,
+            spreadRadius: 0,
+            offset: const Offset(0, 1),
+          ),
+        ],
       ),
       child: Text(
         priorityData.label,
-        style: context.textTheme.bodySmall?.copyWith(
+        style: context.textTheme.labelSmall?.copyWith(
           color: priorityData.color,
           fontWeight: FontWeight.w600,
-          fontSize: 10,
         ),
       ),
     );
@@ -377,18 +391,41 @@ class _ProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        height: 6,
+        height: 10,
         decoration: BoxDecoration(
           color: context.colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(3),
+          borderRadius: BorderRadius.circular(5),
+          boxShadow: [
+            BoxShadow(
+              color: context.colorScheme.shadow.withValues(alpha: 0.05),
+              blurRadius: 2,
+              spreadRadius: 0,
+              offset: const Offset(0, 1),
+            ),
+          ],
         ),
         child: FractionallySizedBox(
           alignment: Alignment.centerLeft,
           widthFactor: progress,
           child: Container(
             decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(3),
+              gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  color.withValues(alpha: 0.7),
+                  color,
+                ],
+              ),
+              borderRadius: BorderRadius.circular(5),
+              boxShadow: [
+                BoxShadow(
+                  color: color.withValues(alpha: 0.3),
+                  blurRadius: 4,
+                  spreadRadius: 0,
+                  offset: const Offset(0, 0),
+                ),
+              ],
             ),
           ),
         ),
@@ -410,24 +447,48 @@ class _BudgetDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${CurrencyFormatter.format(spent)} ${context.l10n.spent}',
+                  CurrencyFormatter.format(spent),
+                  style: context.textTheme.titleMedium?.copyWith(
+                    color: context.colorScheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  context.l10n.spent,
                   style: context.textTheme.bodySmall?.copyWith(
                     color: context.colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w500,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Text(
-                  '${CurrencyFormatter.format(remaining)} ${context.l10n.remaining}',
-                  style: context.textTheme.bodySmall?.copyWith(
+                  CurrencyFormatter.format(remaining),
+                  style: context.textTheme.titleMedium?.copyWith(
                     color: status.color,
                     fontWeight: FontWeight.w600,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  context.l10n.remaining,
+                  style: context.textTheme.bodySmall?.copyWith(
+                    color: context.colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w500,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -464,19 +525,33 @@ class _StatusChip extends StatelessWidget {
 
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: context.xs,
-        vertical: 2,
+        horizontal: context.sm,
+        vertical: 4,
       ),
       decoration: BoxDecoration(
-        color: status.color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(6),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            status.color.withValues(alpha: 0.15),
+            status.color.withValues(alpha: 0.25),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: status.color.withValues(alpha: 0.1),
+            blurRadius: 2,
+            spreadRadius: 0,
+            offset: const Offset(0, 1),
+          ),
+        ],
       ),
       child: Text(
         statusText,
-        style: context.textTheme.bodySmall?.copyWith(
+        style: context.textTheme.labelSmall?.copyWith(
           color: status.color,
           fontWeight: FontWeight.w600,
-          fontSize: 10,
         ),
       ),
     );

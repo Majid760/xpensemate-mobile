@@ -855,6 +855,12 @@ abstract class AppLocalizations {
   /// **'Are you sure to want to logout?'**
   String get logoutConfirmationMessage;
 
+  /// No description provided for @seeDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'See Detail'**
+  String get seeDetail;
+
   /// No description provided for @selectImage.
   ///
   /// In en, this message translates to:

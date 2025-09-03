@@ -221,6 +221,8 @@
   "phoneNumberMustBeAtLeast10Digits": "Phone number must be at least 10 digits",
   "logoutConfirmationMessage" : "Are you sure to want to logout?",
 
+  "seeDetail": "See Detail",
+
   
   "@@image_picker_section": "Image picker related strings",
   "selectImage": "Select Image",

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
-import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/weekly_stats_entity.dart';
 
@@ -86,7 +85,7 @@ class _HighestDayCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => _InsightCard(
         icon: Icons.trending_up_rounded,
-        iconColor: AppColors.success,
+        iconColor: context.colorScheme.primary,
         title: context.l10n.highestDay,
         amount: "\$${weeklyStats.highestDay.total.toStringAsFixed(0)}",
         subtitle: _formatDayName(context, weeklyStats.highestDay.date),
@@ -123,7 +122,7 @@ class _LowestDayCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => _InsightCard(
         icon: Icons.trending_down_rounded,
-        iconColor: AppColors.danger,
+        iconColor: context.colorScheme.error,
         title: context.l10n.lowestDay,
         amount: "\$${weeklyStats.lowestDay.total.toStringAsFixed(0)}",
         subtitle: _formatDayName(context, weeklyStats.lowestDay.date),
@@ -160,7 +159,7 @@ class _DailyAverageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => _InsightCard(
         icon: Icons.attach_money,
-        iconColor: AppColors.info,
+        iconColor: context.colorScheme.secondary,
         title: context.l10n.dailyAverage,
         amount: "\$${weeklyStats.dailyAverage.toStringAsFixed(2)}",
         subtitle: context.l10n.acrossSevenDays,

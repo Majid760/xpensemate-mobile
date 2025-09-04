@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
-import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/weekly_stats_entity.dart';
@@ -184,8 +183,8 @@ class _CircularProgressIndicator extends StatelessWidget {
               progress: progressAnimation.value,
               backgroundColor: context.colorScheme.surfaceContainerHighest,
               progressColor: weeklyStats.balanceLeft < 0
-                  ? AppColors.error
-                  : AppColors.success,
+                  ? context.colorScheme.error
+                  : context.colorScheme.primary,
               strokeWidth: 8,
             ),
             child: Center(
@@ -229,9 +228,11 @@ class _CircularProgressContent extends StatelessWidget {
   Widget build(BuildContext context) => Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
+          Icon(
             Icons.account_balance_wallet_outlined,
-            color: AppColors.success,
+            color: weeklyStats.balanceLeft < 0
+                ? context.colorScheme.error
+                : context.colorScheme.primary,
             size: 24,
           ),
           SizedBox(height: context.xs),
@@ -249,8 +250,8 @@ class _CircularProgressContent extends StatelessWidget {
             _calculatePercentageText(progressAnimation.value, weeklyStats),
             style: context.textTheme.bodySmall?.copyWith(
               color: weeklyStats.balanceLeft < 0
-                  ? AppColors.error
-                  : AppColors.success,
+                  ? context.colorScheme.error
+                  : context.colorScheme.primary,
               fontWeight: FontWeight.w600,
             ),
           ),

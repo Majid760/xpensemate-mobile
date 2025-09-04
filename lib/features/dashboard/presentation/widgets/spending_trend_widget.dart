@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
-import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/weekly_stats_entity.dart';
@@ -77,9 +76,9 @@ class _SpendingTrendWidgetState extends State<SpendingTrendWidget>
             // Header
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.trending_up_rounded,
-                  color: AppColors.secondary,
+                  color: context.secondaryColor,
                   size: 18,
                 ),
                 SizedBox(width: context.xs),
@@ -159,7 +158,7 @@ class _LineChart extends StatelessWidget {
             data: cumulativeData,
             maxValue: maxValue,
             animation: animation,
-            primaryColor: AppColors.secondary,
+            primaryColor: context.secondaryColor,
             backgroundColor: context.colorScheme.surfaceContainerHighest,
           ),
         ),
@@ -330,7 +329,7 @@ class _ChartTooltip extends StatelessWidget {
             Text(
               '${context.l10n.cumulative}: ${CurrencyFormatter.format(value)}',
               style: context.textTheme.bodySmall?.copyWith(
-                color: AppColors.secondary,
+                color: context.secondaryColor,
                 fontWeight: FontWeight.w600,
               ),
             ),

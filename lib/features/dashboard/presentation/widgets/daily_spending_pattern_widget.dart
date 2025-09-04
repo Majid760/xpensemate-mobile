@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
-import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/weekly_stats_entity.dart';
 
@@ -93,9 +92,9 @@ class _HeaderRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Row(
         children: [
-          const Icon(
+          Icon(
             Icons.bar_chart_rounded,
-            color: AppColors.primary,
+            color: context.primaryColor,
             size: 18,
           ),
           SizedBox(width: context.xs),
@@ -207,14 +206,14 @@ class _BarColumn extends StatelessWidget {
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
                 colors: [
-                  AppColors.primary,
-                  AppColors.primary.withValues(alpha: 0.7),
+                  context.primaryColor,
+                  context.primaryColor.withValues(alpha: 0.7),
                 ],
               ),
               borderRadius: BorderRadius.circular(4),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.3),
+                  color: context.primaryColor.withValues(alpha: 0.3),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),

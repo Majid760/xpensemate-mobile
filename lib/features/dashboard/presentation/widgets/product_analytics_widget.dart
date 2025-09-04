@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
-import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/error_state_widget.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/product_weekly_analytics_entity.dart';
@@ -175,12 +174,12 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.1),
+                    color: context.primaryColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.analytics_outlined,
-                    color: AppColors.primary,
+                    color: context.primaryColor,
                     size: 18,
                   ),
                 ),
@@ -239,9 +238,9 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
   Widget _buildLoadingState(BuildContext context) => Container(
         height: 200,
         padding: EdgeInsets.all(context.lg),
-        child: const Center(
+        child: Center(
           child: CircularProgressIndicator(
-            color: AppColors.primary,
+            color: context.primaryColor,
             strokeWidth: 2,
           ),
         ),

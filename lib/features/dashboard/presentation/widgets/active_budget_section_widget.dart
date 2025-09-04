@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/route/utils/router_extension.dart';
-import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
@@ -247,22 +246,22 @@ class _BudgetCard extends StatelessWidget {
 
   _BudgetStatus _getBudgetStatus(double progress) {
     if (progress >= 1) {
-      return const _BudgetStatus(
+      return _BudgetStatus(
         label: 'overBudget',
-        color: AppColors.error,
-        backgroundColor: AppColors.error,
+        color: context.colorScheme.error,
+        backgroundColor: context.colorScheme.error,
       );
     } else if (progress >= 0.8) {
-      return const _BudgetStatus(
+      return _BudgetStatus(
         label: 'nearLimit',
-        color: AppColors.warning,
-        backgroundColor: AppColors.warning,
+        color: context.colorScheme.secondary,
+        backgroundColor: context.colorScheme.secondary,
       );
     } else {
-      return const _BudgetStatus(
+      return _BudgetStatus(
         label: 'onTrack',
-        color: AppColors.success,
-        backgroundColor: AppColors.success,
+        color: context.colorScheme.primary,
+        backgroundColor: context.colorScheme.primary,
       );
     }
   }
@@ -361,20 +360,20 @@ class _PriorityChip extends StatelessWidget {
   _PriorityData _getPriorityData(String priority) {
     switch (priority) {
       case 'high':
-        return const _PriorityData(
-          label: 'High',
-          color: AppColors.error,
+        return _PriorityData(
+          label: context.l10n.highPriority,
+          color: context.colorScheme.error,
         );
       case 'medium':
-        return const _PriorityData(
-          label: 'Medium',
-          color: AppColors.warning,
+        return _PriorityData(
+          label: context.l10n.mediumPriority,
+          color: context.colorScheme.secondary,
         );
       case 'low':
       default:
-        return const _PriorityData(
-          label: 'Low',
-          color: AppColors.success,
+        return _PriorityData(
+          label: context.l10n.lowPriority,
+          color: context.colorScheme.primary,
         );
     }
   }
@@ -501,7 +500,7 @@ class _BudgetDetails extends StatelessWidget {
 }
 
 class _StatusChip extends StatelessWidget {
-  const _StatusChip({
+  _StatusChip({
     required this.status,
   });
 

@@ -72,7 +72,8 @@ dependencies:
   reactive_image_picker: ^8.0.1
   reactive_phone_form_field: ^5.0.2
   fl_chart: ^1.0.0
-  ai_glow: ^0.0.2
+  infinite_scroll_pagination: ^5.1.1
+
 
 
 

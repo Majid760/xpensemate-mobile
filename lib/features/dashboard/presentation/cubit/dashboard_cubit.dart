@@ -25,24 +25,24 @@ class DashboardCubit extends Cubit<DashboardState> {
 
   /// Load weekly statistics
   Future<void> loadWeeklyStats() async {
-    emit(state.copyWith(state: DashboardStates.loading));
-
+    if (state.weeklyStats == null) {
+      emit(state.copyWith(state: DashboardStates.loading));
+    }
     final result = await _getWeeklyStatsUseCase(const NoParams());
     result.fold(
-        (failure) => emit(
-              state.copyWith(
-                state: DashboardStates.error,
-                errorMessage: failure.message,
-              ),
-            ), (weeklyStats) {
-      print('Weekly Stats: ${weeklyStats.toString()}');
-      emit(
+      (failure) => emit(
+        state.copyWith(
+          state: DashboardStates.error,
+          errorMessage: failure.message,
+        ),
+      ),
+      (weeklyStats) => emit(
         state.copyWith(
           state: DashboardStates.loaded,
           weeklyStats: weeklyStats,
         ),
-      );
-    });
+      ),
+    );
   }
 
   /// Load budget goals with optional parameters
@@ -53,8 +53,9 @@ class DashboardCubit extends Cubit<DashboardState> {
     DateTime? startDate,
     DateTime? endDate,
   }) async {
-    emit(state.copyWith(state: DashboardStates.loading));
-
+    if (state.budgetGoals == null) {
+      emit(state.copyWith(state: DashboardStates.loading));
+    }
     final params = GetBudgetGoalsParams(
       page: page,
       limit: limit,
@@ -71,32 +72,25 @@ class DashboardCubit extends Cubit<DashboardState> {
           errorMessage: failure.message,
         ),
       ),
-      (budgetGoals) {
-        print('Budget Goals: ${budgetGoals.toString()}');
-        emit(
-          state.copyWith(
-            state: DashboardStates.loaded,
-            budgetGoals: budgetGoals,
-          ),
-        );
-      },
+      (budgetGoals) => emit(
+        state.copyWith(
+          state: DashboardStates.loaded,
+          budgetGoals: budgetGoals,
+        ),
+      ),
     );
   }
 
   /// Load product weekly analytics
   Future<void> loadProductAnalytics() async {
-    print('🚀 DashboardCubit: Starting loadProductAnalytics');
     // Only show loading state if we don't have any existing data
     if (state.productAnalytics == null) {
-      print('🔄 No existing data, emitting loading state');
       emit(state.copyWith(state: DashboardStates.loading));
     }
 
-    print('📡 Calling GetProductWeeklyAnalyticsUseCase...');
     final result = await _getProductWeeklyAnalyticsUseCase(const NoParams());
     result.fold(
       (failure) {
-        print('❌ ProductAnalytics failed: ${failure.message}');
         emit(
           state.copyWith(
             state: DashboardStates.error,
@@ -126,65 +120,57 @@ class DashboardCubit extends Cubit<DashboardState> {
     emit(state.copyWith(state: DashboardStates.loading));
 
     try {
-      // Load weekly stats first
-      final weeklyStatsResult = await _getWeeklyStatsUseCase(const NoParams());
+      // Load all data concurrently for better performance
+      final weeklyStatsFuture = _getWeeklyStatsUseCase(const NoParams());
+      final budgetGoalsFuture = _getBudgetGoalsUseCase(
+        GetBudgetGoalsParams(
+          page: page,
+          limit: limit,
+          duration: duration,
+          startDate: startDate,
+          endDate: endDate,
+        ),
+      );
+      final productAnalyticsFuture =
+          _getProductWeeklyAnalyticsUseCase(const NoParams());
 
-      weeklyStatsResult.fold(
-        (failure) => emit(
+      final results = await Future.wait([
+        weeklyStatsFuture,
+        budgetGoalsFuture,
+        productAnalyticsFuture,
+      ]);
+
+      final failures = <String>[];
+      final data = <dynamic>[];
+      for (final result in results) {
+        result.fold(
+          (failure) => failures.add(failure.message),
+          data.add,
+        );
+      }
+      if (failures.isNotEmpty) {
+        emit(
           state.copyWith(
             state: DashboardStates.error,
-            errorMessage: failure.message,
+            errorMessage: failures.first,
           ),
-        ),
-        (weeklyStats) async {
-          // Load budget goals after weekly stats success
-          final budgetGoalsResult = await _getBudgetGoalsUseCase(
-            GetBudgetGoalsParams(
-              page: page,
-              limit: limit,
-              duration: duration,
-              startDate: startDate,
-              endDate: endDate,
-            ),
-          );
-
-          budgetGoalsResult.fold(
-            (failure) => emit(
-              state.copyWith(
-                state: DashboardStates.error,
-                errorMessage: failure.message,
-              ),
-            ),
-            (budgetGoals) async {
-              // Load product analytics after budget goals success
-              final productAnalyticsResult =
-                  await _getProductWeeklyAnalyticsUseCase(const NoParams());
-
-              productAnalyticsResult.fold(
-                (failure) => emit(
-                  state.copyWith(
-                    state: DashboardStates.error,
-                    errorMessage: failure.message,
-                  ),
-                ),
-                (productAnalytics) => emit(
-                  state.copyWith(
-                    state: DashboardStates.loaded,
-                    weeklyStats: weeklyStats,
-                    budgetGoals: budgetGoals,
-                    productAnalytics: productAnalytics,
-                  ),
-                ),
-              );
-            },
-          );
-        },
-      );
-    } catch (e) {
+        );
+      } else {
+        emit(
+          state.copyWith(
+            state: DashboardStates.loaded,
+            weeklyStats: data[0] as WeeklyStatsEntity,
+            budgetGoals: data[1] as BudgetGoalsEntity,
+            productAnalytics: data[2] as ProductWeeklyAnalyticsEntity,
+          ),
+        );
+      }
+    } on Exception catch (e, s) {
       emit(
         state.copyWith(
           state: DashboardStates.error,
           errorMessage: 'An unexpected error occurred: $e',
+          stackTrace: s,
         ),
       );
     }

@@ -180,7 +180,7 @@ class _BudgetCard extends StatelessWidget {
         : 0.0;
 
     final remaining = goal.setBudget - goal.currentSpending;
-    final status = _getBudgetStatus(progress);
+    final status = _getBudgetStatus(progress, context);
 
     return Container(
       padding: EdgeInsets.all(context.md),
@@ -209,7 +209,6 @@ class _BudgetCard extends StatelessWidget {
           BoxShadow(
             color: context.colorScheme.shadow.withValues(alpha: 0.05),
             blurRadius: 4,
-            spreadRadius: 0,
             offset: const Offset(0, 1),
           ),
         ],
@@ -244,7 +243,7 @@ class _BudgetCard extends StatelessWidget {
     );
   }
 
-  _BudgetStatus _getBudgetStatus(double progress) {
+  _BudgetStatus _getBudgetStatus(double progress, BuildContext context) {
     if (progress >= 1) {
       return _BudgetStatus(
         label: 'overBudget',
@@ -321,7 +320,7 @@ class _PriorityChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final priorityData = _getPriorityData(priority.toLowerCase());
+    final priorityData = _getPriorityData(priority.toLowerCase(), context);
 
     return Container(
       padding: EdgeInsets.symmetric(
@@ -342,7 +341,6 @@ class _PriorityChip extends StatelessWidget {
           BoxShadow(
             color: priorityData.color.withValues(alpha: 0.1),
             blurRadius: 2,
-            spreadRadius: 0,
             offset: const Offset(0, 1),
           ),
         ],
@@ -357,7 +355,7 @@ class _PriorityChip extends StatelessWidget {
     );
   }
 
-  _PriorityData _getPriorityData(String priority) {
+  _PriorityData _getPriorityData(String priority, BuildContext context) {
     switch (priority) {
       case 'high':
         return _PriorityData(
@@ -398,7 +396,6 @@ class _ProgressBar extends StatelessWidget {
             BoxShadow(
               color: context.colorScheme.shadow.withValues(alpha: 0.05),
               blurRadius: 2,
-              spreadRadius: 0,
               offset: const Offset(0, 1),
             ),
           ],
@@ -410,7 +407,6 @@ class _ProgressBar extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
                 colors: [
                   color.withValues(alpha: 0.7),
                   color,
@@ -421,8 +417,6 @@ class _ProgressBar extends StatelessWidget {
                 BoxShadow(
                   color: color.withValues(alpha: 0.3),
                   blurRadius: 4,
-                  spreadRadius: 0,
-                  offset: const Offset(0, 0),
                 ),
               ],
             ),
@@ -541,7 +535,6 @@ class _StatusChip extends StatelessWidget {
           BoxShadow(
             color: status.color.withValues(alpha: 0.1),
             blurRadius: 2,
-            spreadRadius: 0,
             offset: const Offset(0, 1),
           ),
         ],

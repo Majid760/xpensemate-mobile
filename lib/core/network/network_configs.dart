@@ -49,6 +49,18 @@ class NetworkConfigs {
   static const String expenseStats = '/dashboard/expense/stats';
   static const String activity = '/dashboard/activity';
 
+  // expense endpoints
+  static const String getAllExpenses = '/expenses';
+  static const String createExpense = '/create-expense';
+  // Get monthly expense summary
+  static const String expenseCategories = '/expense/summary/monthly';
+  // Update an expense
+  static const String updateExpense = '/expense/:id';
+  static const String deleteExpense = '/expense/:id';
+  static const String getExpense = '/expense/:id';
+  // expense insight endpoints
+  static const String expenseInsight = '/expenses/stats';
+
   // ------------------------------------------------------------------
   //  Static Pages URLs
   // ------------------------------------------------------------------

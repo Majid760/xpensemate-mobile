@@ -82,38 +82,25 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
   }
 
   void _onFabTap() {
-    logI('FAB tapped - toggling state');
     _toggleFab();
   }
 
-  bool _isInActiveInteraction() => _isFabActionInProgress || _isNavigating;
-
-  bool _shouldPreventFabHiding() => _isInActiveInteraction();
-
-  bool _canHideFab() => _isFabExpanded && !_isInActiveInteraction();
-
-  bool _shouldProcessTap() => _isFabExpanded && !_shouldPreventFabHiding();
-
   void _onItemTapped(int index, BuildContext context) {
-    logI(
-        'Navigation item tapped - Index: $index, Label: ${_navItems[index].label}',);
     if (index == 2) {
       _toggleFab();
       return;
     }
     if (_isFabExpanded) {
-      logI('Hiding FAB due to navigation item tap');
       _toggleFab();
     }
 
     final current = _calculateSelectedIndex(context);
     if (current != index) {
       _isNavigating = true;
-      logI('Starting navigation to: ${_navItems[index].route}');
       _animationController
           .forward()
           .then((_) => _animationController.reverse());
-      
+
       // Navigate to the correct route based on the tab index
       switch (index) {
         case 0: // Dashboard
@@ -129,28 +116,16 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
           context.goToProfile();
           break;
       }
-      
+
       // Reset navigation flag after a delay
       Future.delayed(const Duration(milliseconds: 500), () {
         _isNavigating = false;
-        logI('Navigation completed');
       });
     }
   }
 
-  void _logFabState() {
-    logI('FAB State: ${_isFabExpanded ? 'EXPANDED' : 'COLLAPSED'}');
-    logI('FAB Action In Progress: $_isFabActionInProgress');
-    logI('Navigation In Progress: $_isNavigating');
-    logI('In Active Interaction: ${_isInActiveInteraction()}');
-    logI('Should Prevent FAB Hiding: ${_shouldPreventFabHiding()}');
-    logI('Can Hide FAB: ${_canHideFab()}');
-    logI('Should Process Tap: ${_shouldProcessTap()}');
-  }
-
   void _toggleFab() {
     setState(() => _isFabExpanded = !_isFabExpanded);
-    _logFabState();
     _isFabExpanded
         ? _fabAnimationController.forward()
         : _fabAnimationController.reverse();

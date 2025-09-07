@@ -1,16 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class ExpenseStatsEntity extends Equatable {
-  final double totalSpent;
-  final double dailyAverage;
-  final double spendingVelocityPercent;
-  final String spendingVelocityMessage;
-  final int trackingStreak;
-  final DateTime startDate;
-  final DateTime endDate;
-  final List<TrendEntity> trend;
-  final List<CategoryStatsEntity> categories;
-
   const ExpenseStatsEntity({
     required this.totalSpent,
     required this.dailyAverage,
@@ -22,6 +12,15 @@ class ExpenseStatsEntity extends Equatable {
     required this.trend,
     required this.categories,
   });
+  final double totalSpent;
+  final double dailyAverage;
+  final double spendingVelocityPercent;
+  final String spendingVelocityMessage;
+  final int trackingStreak;
+  final DateTime startDate;
+  final DateTime endDate;
+  final List<TrendEntity> trend;
+  final List<CategoryStatsEntity> categories;
 
   ExpenseStatsEntity copyWith({
     double? totalSpent,
@@ -63,13 +62,12 @@ class ExpenseStatsEntity extends Equatable {
 }
 
 class TrendEntity extends Equatable {
-  final String label;
-  final double amount;
-
   const TrendEntity({
     required this.label,
     required this.amount,
   });
+  final String label;
+  final double amount;
 
   TrendEntity copyWith({
     String? label,
@@ -85,13 +83,12 @@ class TrendEntity extends Equatable {
 }
 
 class CategoryStatsEntity extends Equatable {
-  final String category;
-  final double amount;
-
   const CategoryStatsEntity({
     required this.category,
     required this.amount,
   });
+  final String category;
+  final double amount;
 
   CategoryStatsEntity copyWith({
     String? category,

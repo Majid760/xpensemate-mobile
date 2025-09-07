@@ -18,15 +18,10 @@ class ExpenseCubit extends Cubit<ExpenseState> {
   final GetExpensesUseCase _getExpensesUseCase;
   final GetExpenseStatsUseCase _getExpenseStatsUseCase;
 
-  /// Load expenses with pagination and filtering
+  /// Load expenses with pagination (matches web app: /expenses?page=${page}&limit=${limit})
   Future<void> loadExpenses({
     int page = 1,
     int limit = 10,
-    DateTime? startDate,
-    DateTime? endDate,
-    String? categoryId,
-    String? sortBy,
-    bool? ascending,
   }) async {
     // Only show loading state if we don't have any existing data
     if (state.expenses == null) {
@@ -36,11 +31,6 @@ class ExpenseCubit extends Cubit<ExpenseState> {
     final params = GetExpensesParams(
       page: page,
       limit: limit,
-      startDate: startDate,
-      endDate: endDate,
-      categoryId: categoryId,
-      sortBy: sortBy,
-      ascending: ascending,
     );
 
     final result = await _getExpensesUseCase(params);
@@ -62,8 +52,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
 
   /// Load expense statistics
   Future<void> loadExpenseStats({
-    DateTime? startDate,
-    DateTime? endDate,
+    String? period,
   }) async {
     // Only show loading state if we don't have any existing data
     if (state.expenseStats == null) {
@@ -71,8 +60,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
     }
 
     final params = GetExpenseStatsParams(
-      startDate: startDate,
-      endDate: endDate,
+      period: period,
     );
 
     final result = await _getExpenseStatsUseCase(params);
@@ -96,11 +84,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
   Future<void> loadExpenseData({
     int page = 1,
     int limit = 10,
-    DateTime? startDate,
-    DateTime? endDate,
-    String? categoryId,
-    String? sortBy,
-    bool? ascending,
+    String? period,
   }) async {
     emit(state.copyWith(state: ExpenseStates.loading));
 
@@ -110,18 +94,12 @@ class ExpenseCubit extends Cubit<ExpenseState> {
         GetExpensesParams(
           page: page,
           limit: limit,
-          startDate: startDate,
-          endDate: endDate,
-          categoryId: categoryId,
-          sortBy: sortBy,
-          ascending: ascending,
         ),
       );
 
       final expenseStatsFuture = _getExpenseStatsUseCase(
         GetExpenseStatsParams(
-          startDate: startDate,
-          endDate: endDate,
+          period: period,
         ),
       );
 
@@ -139,6 +117,8 @@ class ExpenseCubit extends Cubit<ExpenseState> {
         );
       }
       if (failures.isNotEmpty) {
+        print('error 1 => ${failures[0].toString()}');
+
         emit(
           state.copyWith(
             state: ExpenseStates.error,
@@ -146,6 +126,8 @@ class ExpenseCubit extends Cubit<ExpenseState> {
           ),
         );
       } else {
+        print(
+            " stats data is ${(data[1] as ExpenseStatsEntity).categories.length}");
         emit(
           state.copyWith(
             state: ExpenseStates.loaded,

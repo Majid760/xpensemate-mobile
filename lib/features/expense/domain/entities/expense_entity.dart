@@ -1,24 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class ExpenseEntity extends Equatable {
-  final String id;
-  final String userId;
-  final String name;
-  final double amount;
-  final String? budgetGoalId;
-  final DateTime date;
-  final String time;
-  final String location;
-  final String categoryId;
-  final String categoryName;
-  final String detail;
-  final String paymentMethod;
-  final List<String> attachments;
-  final bool isDeleted;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final RecurringEntity recurring;
-
   const ExpenseEntity({
     required this.id,
     required this.userId,
@@ -38,6 +20,23 @@ class ExpenseEntity extends Equatable {
     required this.updatedAt,
     required this.recurring,
   });
+  final String id;
+  final String userId;
+  final String name;
+  final double amount;
+  final String? budgetGoalId;
+  final DateTime date;
+  final String time;
+  final String location;
+  final String categoryId;
+  final String categoryName;
+  final String detail;
+  final String paymentMethod;
+  final List<String> attachments;
+  final bool isDeleted;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final RecurringEntity recurring;
 
   ExpenseEntity copyWith({
     String? id,
@@ -101,13 +100,12 @@ class ExpenseEntity extends Equatable {
 }
 
 class RecurringEntity extends Equatable {
-  final bool isRecurring;
-  final String frequency;
-
   const RecurringEntity({
     required this.isRecurring,
     required this.frequency,
   });
+  final bool isRecurring;
+  final String frequency;
 
   RecurringEntity copyWith({
     bool? isRecurring,

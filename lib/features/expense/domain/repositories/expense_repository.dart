@@ -4,36 +4,29 @@ import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart'
 import 'package:xpensemate/features/expense/domain/entities/expense_stats_entity.dart';
 
 abstract class ExpenseRepository {
-  /// Fetch expenses with pagination
+  /// Fetch expenses with pagination (matches web app: /expenses?page=${page}&limit=${limit})
   Future<Either<Failure, ExpensePaginationEntity>> getExpenses({
     required int page,
     required int limit,
-    DateTime? startDate,
-    DateTime? endDate,
-    String? categoryId,
-    String? sortBy,
-    bool? ascending,
   });
 
   /// Fetch expense statistics
   Future<Either<Failure, ExpenseStatsEntity>> getExpenseStats({
-    DateTime? startDate,
-    DateTime? endDate,
+    String? period,
   });
 }
 
 class ExpensePaginationEntity {
-  final List<ExpenseEntity> expenses;
-  final int total;
-  final int page;
-  final int totalPages;
-
   ExpensePaginationEntity({
     required this.expenses,
     required this.total,
     required this.page,
     required this.totalPages,
   });
+  final List<ExpenseEntity> expenses;
+  final int total;
+  final int page;
+  final int totalPages;
 
   ExpensePaginationEntity copyWith({
     List<ExpenseEntity>? expenses,

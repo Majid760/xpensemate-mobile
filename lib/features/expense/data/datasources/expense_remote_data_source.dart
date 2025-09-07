@@ -6,21 +6,15 @@ import 'package:xpensemate/features/expense/data/models/expense_pagination_model
 import 'package:xpensemate/features/expense/data/models/expense_stats_model.dart';
 
 abstract class ExpenseRemoteDataSource {
-  /// Fetches expenses with pagination and filtering
+  /// Fetches expenses with pagination (matches web app: /expenses?page=${page}&limit=${limit})
   Future<Either<Failure, ExpensePaginationModel>> getExpenses({
     required int page,
     required int limit,
-    DateTime? startDate,
-    DateTime? endDate,
-    String? categoryId,
-    String? sortBy,
-    bool? ascending,
   });
 
   /// Fetches expense statistics
   Future<Either<Failure, ExpenseStatsModel>> getExpenseStats({
-    DateTime? startDate,
-    DateTime? endDate,
+    String? period,
   });
 }
 
@@ -32,33 +26,11 @@ class ExpenseRemoteDataSourceImpl implements ExpenseRemoteDataSource {
   Future<Either<Failure, ExpensePaginationModel>> getExpenses({
     required int page,
     required int limit,
-    DateTime? startDate,
-    DateTime? endDate,
-    String? categoryId,
-    String? sortBy,
-    bool? ascending,
   }) {
     final queryParams = <String, dynamic>{
       'page': page,
       'limit': limit,
     };
-    
-    if (startDate != null) {
-      queryParams['startDate'] = startDate.toIso8601String();
-    }
-    if (endDate != null) {
-      queryParams['endDate'] = endDate.toIso8601String();
-    }
-    if (categoryId != null) {
-      queryParams['categoryId'] = categoryId;
-    }
-    if (sortBy != null) {
-      queryParams['sortBy'] = sortBy;
-    }
-    if (ascending != null) {
-      queryParams['ascending'] = ascending;
-    }
-    
     return _networkClient.get(
       NetworkConfigs.getAllExpenses,
       query: queryParams,
@@ -68,18 +40,10 @@ class ExpenseRemoteDataSourceImpl implements ExpenseRemoteDataSource {
 
   @override
   Future<Either<Failure, ExpenseStatsModel>> getExpenseStats({
-    DateTime? startDate,
-    DateTime? endDate,
+    String? period,
   }) {
     final queryParams = <String, dynamic>{};
-    
-    if (startDate != null) {
-      queryParams['startDate'] = startDate.toIso8601String();
-    }
-    if (endDate != null) {
-      queryParams['endDate'] = endDate.toIso8601String();
-    }
-    
+    queryParams['period'] = period ?? 'weekly';
     return _networkClient.get(
       NetworkConfigs.expenseInsight,
       query: queryParams,

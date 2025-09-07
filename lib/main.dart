@@ -10,9 +10,9 @@ import 'package:xpensemate/core/route/app_router.dart';
 import 'package:xpensemate/core/route/utils/router_middleware_guard.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/theme/app_theme.dart';
-import 'package:xpensemate/core/widget/app_custom_dialog.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
+import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
 import 'package:xpensemate/firebase_options.dart';
 import 'package:xpensemate/l10n/app_localizations.dart';
@@ -53,6 +53,10 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<DashboardCubit>(
             create: (context) => sl.dashboardCubit,
+            lazy: false,
+          ),
+          BlocProvider<ExpenseCubit>(
+            create: (context) => sl.expenseCubit,
             lazy: false,
           ),
           // Other cubits/blocs

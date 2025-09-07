@@ -22,6 +22,13 @@ import 'package:xpensemate/features/dashboard/domain/usecases/get_budget_goals_u
 import 'package:xpensemate/features/dashboard/domain/usecases/get_product_weekly_analytics_usecase.dart';
 import 'package:xpensemate/features/dashboard/domain/usecases/get_weekly_stats_usecase.dart';
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
+import 'package:xpensemate/features/expense/data/datasources/expense_remote_data_source.dart';
+import 'package:xpensemate/features/expense/data/repositories/expense_repository_impl.dart';
+import 'package:xpensemate/features/expense/domain/repositories/expense_repository.dart';
+import 'package:xpensemate/features/expense/domain/usecases/get_expense_stats_usecase.dart';
+import 'package:xpensemate/features/expense/domain/usecases/get_expenses_usecase.dart';
+import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
+import 'package:xpensemate/features/home/presentation/cubit/home_cubit.dart';
 import 'package:xpensemate/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:xpensemate/features/profile/data/repositories/profile_repository_impl.dart';
 import 'package:xpensemate/features/profile/domain/repositories/profile_repository.dart';
@@ -91,6 +98,9 @@ Future<void> initLocator() async {
     sl.registerLazySingleton<DashboardRemoteDataSource>(
       () => DashboardRemoteDataSourceImpl(sl()),
     );
+    sl.registerLazySingleton<ExpenseRemoteDataSource>(
+      () => ExpenseRemoteDataSourceImpl(sl()),
+    );
 
     // ---------- Repositories ----------
     sl.registerLazySingleton<AuthRepository>(
@@ -106,6 +116,10 @@ Future<void> initLocator() async {
       () => DashboardRepositoryImpl(sl()),
     );
 
+    sl.registerLazySingleton<ExpenseRepository>(
+      () => ExpenseRepositoryImpl(sl()),
+    );
+
     // ---------- Use-cases ----------
     sl.registerLazySingleton(() => ForgotPasswordUseCase(sl()));
     sl.registerLazySingleton(() => RefreshTokenUseCase(sl()));
@@ -119,11 +133,15 @@ Future<void> initLocator() async {
     sl.registerLazySingleton(() => GetWeeklyStatsUseCase(sl()));
     sl.registerLazySingleton(() => GetBudgetGoalsUseCase(sl()));
     sl.registerLazySingleton(() => GetProductWeeklyAnalyticsUseCase(sl()));
+    // expense use cases
+    sl.registerLazySingleton(() => GetExpensesUseCase(sl()));
+    sl.registerLazySingleton(() => GetExpenseStatsUseCase(sl()));
 
     // ---------- Presentation Layer ----------
     sl.registerFactory(() => AuthCubit(sl()));
     sl.registerFactory(() => ProfileCubit(sl()));
     sl.registerFactory(() => DashboardCubit(sl(), sl(), sl()));
+    sl.registerFactory(() => ExpenseCubit(sl(), sl()));
 
     AppLogger.i('Service locator initialized successfully');
   } on Exception catch (e) {
@@ -158,4 +176,6 @@ extension ServiceLocatorExtension on GetIt {
   AuthCubit get authCubit => this<AuthCubit>();
   ProfileCubit get profileCubit => this<ProfileCubit>();
   DashboardCubit get dashboardCubit => this<DashboardCubit>();
+  HomeCubit get homeCubit => this<HomeCubit>();
+  ExpenseCubit get expenseCubit => this<ExpenseCubit>();
 }

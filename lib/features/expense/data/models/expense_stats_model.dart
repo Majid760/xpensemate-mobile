@@ -1,3 +1,5 @@
+import 'package:xpensemate/core/utils/app_logger.dart';
+
 import 'package:xpensemate/features/expense/domain/entities/expense_stats_entity.dart';
 
 class ExpenseStatsModel extends ExpenseStatsEntity {
@@ -27,34 +29,41 @@ class ExpenseStatsModel extends ExpenseStatsEntity {
       );
 
   factory ExpenseStatsModel.fromJson(Map<String, dynamic> json) {
-    final data = json['data'] as Map<String, dynamic>? ?? {};
+    try {
+      final data = json as Map<String, dynamic>? ?? {};
 
-    final trendList = (data['trend'] as List<dynamic>?)
-            ?.map((e) => TrendModel.fromJson(e as Map<String, dynamic>))
-            .toList() ??
-        [];
+      final trendList = (data['trend'] as List<dynamic>?)
+              ?.map((e) => TrendModel.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [];
 
-    final categoriesList = (data['categories'] as List<dynamic>?)
-            ?.map((e) => CategoryStatsModel.fromJson(e as Map<String, dynamic>))
-            .toList() ??
-        [];
+      final categoriesList = (data['categories'] as List<dynamic>?)
+              ?.map(
+                  (e) => CategoryStatsModel.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [];
 
-    return ExpenseStatsModel(
-      totalSpent: (data['totalSpent'] as num?)?.toDouble() ?? 0.0,
-      dailyAverage: (data['dailyAverage'] as num?)?.toDouble() ?? 0.0,
-      spendingVelocityPercent:
-          (data['spendingVelocityPercent'] as num?)?.toDouble() ?? 0.0,
-      spendingVelocityMessage: data['spendingVelocityMessage'] as String? ?? '',
-      trackingStreak: (data['trackingStreak'] as int?) ?? 0,
-      startDate: DateTime.parse(
-        data['startDate'] as String? ?? DateTime.now().toIso8601String(),
-      ),
-      endDate: DateTime.parse(
-        data['endDate'] as String? ?? DateTime.now().toIso8601String(),
-      ),
-      trend: trendList,
-      categories: categoriesList,
-    );
+      return ExpenseStatsModel(
+        totalSpent: (data['totalSpent'] as num?)?.toDouble() ?? 0.0,
+        dailyAverage: (data['dailyAverage'] as num?)?.toDouble() ?? 0.0,
+        spendingVelocityPercent:
+            (data['spendingVelocityPercent'] as num?)?.toDouble() ?? 0.0,
+        spendingVelocityMessage:
+            data['spendingVelocityMessage'] as String? ?? '',
+        trackingStreak: (data['trackingStreak'] as int?) ?? 0,
+        startDate: DateTime.parse(
+          data['startDate'] as String? ?? DateTime.now().toIso8601String(),
+        ),
+        endDate: DateTime.parse(
+          data['endDate'] as String? ?? DateTime.now().toIso8601String(),
+        ),
+        trend: trendList,
+        categories: categoriesList,
+      );
+    } on Exception catch (e) {
+      AppLogger.e("error while parsing expenses model => $e");
+      throw Exception(e);
+    }
   }
 
   Map<String, dynamic> toJson() => {

@@ -1,6 +1,6 @@
 import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/features/expense/data/models/expense_model.dart';
-import 'package:xpensemate/features/expense/domain/repositories/expense_repository.dart';
+import 'package:xpensemate/features/expense/domain/entities/expense_pagination_entity.dart';
 
 class ExpensePaginationModel extends ExpensePaginationEntity {
   ExpensePaginationModel({

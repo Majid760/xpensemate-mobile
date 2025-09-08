@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:xpensemate/features/expense/domain/entities/expense_pagination_entity.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_stats_entity.dart';
 import 'package:xpensemate/features/expense/domain/repositories/expense_repository.dart';
 import 'package:xpensemate/features/expense/domain/usecases/get_expense_stats_usecase.dart';
@@ -12,7 +13,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
     this._getExpensesUseCase,
     this._getExpenseStatsUseCase,
   ) : super(const ExpenseState()) {
-    loadExpenseData();
+    // loadExpenseData();
   }
 
   final GetExpensesUseCase _getExpensesUseCase;
@@ -117,8 +118,6 @@ class ExpenseCubit extends Cubit<ExpenseState> {
         );
       }
       if (failures.isNotEmpty) {
-        print('error 1 => ${failures[0].toString()}');
-
         emit(
           state.copyWith(
             state: ExpenseStates.error,
@@ -126,8 +125,6 @@ class ExpenseCubit extends Cubit<ExpenseState> {
           ),
         );
       } else {
-        print(
-            " stats data is ${(data[1] as ExpenseStatsEntity).categories.length}");
         emit(
           state.copyWith(
             state: ExpenseStates.loaded,

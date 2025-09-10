@@ -5,8 +5,9 @@ import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dar
 import 'package:xpensemate/features/expense/presentation/widgets/expense_item_widget.dart';
 
 class ExpenseListWidget extends StatelessWidget {
-  const ExpenseListWidget({super.key});
-
+  const ExpenseListWidget({super.key, this.onDelete, this.onEdit});
+  final void Function(String expenseId)? onDelete;
+  final void Function(String expenseId)? onEdit;
   @override
   Widget build(BuildContext context) => BlocBuilder<ExpenseCubit, ExpenseState>(
         builder: (context, state) {
@@ -40,24 +41,8 @@ class ExpenseListWidget extends StatelessWidget {
                     return ExpenseListItem(
                       expense: expense,
                       isLast: index == expenses.length - 1,
-                      onDelete: () {
-                        // TODO: Implement delete functionality
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Delete functionality to be implemented'),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      },
-                      onEdit: () {
-                        // TODO: Implement edit functionality
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Edit functionality to be implemented'),
-                            backgroundColor: Colors.blue,
-                          ),
-                        );
-                      },
+                      onDelete: onDelete,
+                      onEdit: onEdit,
                     );
                   },
                   childCount: expenses.length,

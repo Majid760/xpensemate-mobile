@@ -2,8 +2,10 @@ import 'package:dartz/dartz.dart';
 import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/core/network/network_configs.dart';
 import 'package:xpensemate/core/network/network_contracts.dart';
+import 'package:xpensemate/features/expense/data/models/expense_model.dart';
 import 'package:xpensemate/features/expense/data/models/expense_pagination_model.dart';
 import 'package:xpensemate/features/expense/data/models/expense_stats_model.dart';
+import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
 
 abstract class ExpenseRemoteDataSource {
   /// Fetches expenses with pagination (matches web app: /expenses?page=${page}&limit=${limit})
@@ -16,6 +18,12 @@ abstract class ExpenseRemoteDataSource {
   Future<Either<Failure, ExpenseStatsModel>> getExpenseStats({
     String? period,
   });
+
+  /// Delete an expense by ID
+  Future<Either<Failure, bool>> deleteExpense(String expenseId);
+
+  /// Update an expense
+  Future<Either<Failure, ExpenseModel>> updateExpense(ExpenseEntity expense);
 }
 
 class ExpenseRemoteDataSourceImpl implements ExpenseRemoteDataSource {
@@ -48,6 +56,25 @@ class ExpenseRemoteDataSourceImpl implements ExpenseRemoteDataSource {
       NetworkConfigs.expenseInsight,
       query: queryParams,
       fromJson: ExpenseStatsModel.fromJson,
+    );
+  }
+
+  @override
+  Future<Either<Failure, bool>> deleteExpense(String expenseId) =>
+      _networkClient.delete(
+        NetworkConfigs.deleteExpense,
+        query: {'id': expenseId},
+        fromJson: (json) => json['type'] == "success",
+      );
+
+  @override
+  Future<Either<Failure, ExpenseModel>> updateExpense(ExpenseEntity expense) {
+    final endpoint = NetworkConfigs.updateExpense.replaceAll(':id', expense.id);
+    final expenseModel = ExpenseModel.fromEntity(expense);
+    return _networkClient.put(
+      endpoint,
+      data: expenseModel.toJson(),
+      fromJson: ExpenseModel.fromJson,
     );
   }
 }

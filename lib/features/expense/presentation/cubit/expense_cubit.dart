@@ -1,10 +1,13 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_pagination_entity.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_stats_entity.dart';
-import 'package:xpensemate/features/expense/domain/repositories/expense_repository.dart';
+import 'package:xpensemate/features/expense/domain/usecases/delete_expense_usecase.dart';
 import 'package:xpensemate/features/expense/domain/usecases/get_expense_stats_usecase.dart';
 import 'package:xpensemate/features/expense/domain/usecases/get_expenses_usecase.dart';
+import 'package:xpensemate/features/expense/domain/usecases/update_expense_usecase.dart';
 
 part 'expense_state.dart';
 
@@ -12,12 +15,16 @@ class ExpenseCubit extends Cubit<ExpenseState> {
   ExpenseCubit(
     this._getExpensesUseCase,
     this._getExpenseStatsUseCase,
+    this._deleteExpenseUseCase,
+    this._updateExpenseUseCase,
   ) : super(const ExpenseState()) {
-    // loadExpenseData();
+    loadExpenseData();
   }
 
   final GetExpensesUseCase _getExpensesUseCase;
   final GetExpenseStatsUseCase _getExpenseStatsUseCase;
+  final DeleteExpenseUseCase _deleteExpenseUseCase;
+  final UpdateExpenseUseCase _updateExpenseUseCase;
 
   /// Load expenses with pagination (matches web app: /expenses?page=${page}&limit=${limit})
   Future<void> loadExpenses({
@@ -143,4 +150,107 @@ class ExpenseCubit extends Cubit<ExpenseState> {
       );
     }
   }
+
+  // delete expense
+  Future<void> deleteExpense({required String expenseId}) async {
+    // Store the original state in case we need to revert
+    final originalExpenses = state.expenses;
+
+    // First, update local state immediately for better UX
+    if (state.expenses != null) {
+      final updatedExpenses = state.expenses!.expenses
+          .where((expense) => expense.id != expenseId)
+          .toList();
+
+      final updatedPagination = state.expenses!.copyWith(
+        expenses: updatedExpenses,
+        total: state.expenses!.total - 1,
+      );
+
+      emit(state.copyWith(expenses: updatedPagination));
+    }
+
+    // Then make the remote call
+    final result = await _deleteExpenseUseCase(expenseId);
+    result.fold(
+      (failure) {
+        // If the remote call fails, revert the local change
+        emit(
+          state.copyWith(
+            state: ExpenseStates.error,
+            errorMessage: failure.message,
+            expenses: originalExpenses, // Revert to original state
+          ),
+        );
+      },
+      (success) {
+        // If successful, ensure the state reflects the deletion
+        if (success) {
+          emit(
+            state.copyWith(
+              state: ExpenseStates.loaded,
+            ),
+          );
+        } else {
+          // Handle case where deletion wasn't successful
+          // Revert to original state
+          emit(
+            state.copyWith(
+              state: ExpenseStates.error,
+              errorMessage: 'Failed to delete expense',
+              expenses: originalExpenses, // Revert to original state
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  // update expense
+  Future<void> updateExpense({required ExpenseEntity expense}) async {
+    // Store the original state in case we need to revert
+    final originalExpenses = state.expenses;
+
+    // First, update local state immediately for better UX
+    if (state.expenses != null) {
+      final updatedExpenses = state.expenses!.expenses.map((e) {
+        return e.id == expense.id ? expense : e;
+      }).toList();
+
+      final updatedPagination = state.expenses!.copyWith(
+        expenses: updatedExpenses,
+      );
+
+      emit(state.copyWith(expenses: updatedPagination));
+    }
+
+    // Then make the remote call
+    final result = await _updateExpenseUseCase(expense);
+    result.fold(
+      (failure) {
+        // If the remote call fails, revert the local change
+        emit(
+          state.copyWith(
+            state: ExpenseStates.error,
+            errorMessage: failure.message,
+            expenses: originalExpenses, // Revert to original state
+          ),
+        );
+      },
+      (updatedExpense) {
+        // If successful, ensure the state reflects the update
+        emit(
+          state.copyWith(
+            state: ExpenseStates.loaded,
+          ),
+        );
+      },
+    );
+  }
+}
+
+// extension of expense cubit on context
+
+extension ExpenseCubitX on BuildContext {
+  ExpenseCubit get expenseCubit => read<ExpenseCubit>();
 }

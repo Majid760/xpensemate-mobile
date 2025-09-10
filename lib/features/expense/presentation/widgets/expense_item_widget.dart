@@ -14,8 +14,8 @@ class ExpenseListItem extends StatelessWidget {
   });
   final ExpenseEntity expense;
   final bool isLast;
-  final VoidCallback? onDelete;
-  final VoidCallback? onEdit;
+  final void Function(String expenseId)? onDelete;
+  final void Function(String expenseId)? onEdit;
 
   String _formatDate(DateTime date) {
     final now = DateTime.now();
@@ -63,9 +63,9 @@ class ExpenseListItem extends StatelessWidget {
           ),
           onDismissed: (direction) {
             if (direction == DismissDirection.startToEnd) {
-              onDelete?.call();
+              onDelete?.call(expense.id);
             } else {
-              onEdit?.call();
+              onEdit?.call(expense.id);
             }
           },
           child: Card(

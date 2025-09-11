@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/widget/error_state_widget.dart';
+import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
 import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
 import 'package:xpensemate/features/expense/presentation/widgets/expense_item_widget.dart';
 
 class ExpenseListWidget extends StatelessWidget {
   const ExpenseListWidget({super.key, this.onDelete, this.onEdit});
   final void Function(String expenseId)? onDelete;
-  final void Function(String expenseId)? onEdit;
+  final void Function(ExpenseEntity expenseEntity)? onEdit;
   @override
   Widget build(BuildContext context) => BlocBuilder<ExpenseCubit, ExpenseState>(
         builder: (context, state) {

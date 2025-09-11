@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
+import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
 import 'package:xpensemate/core/widget/app_custom_dialog.dart';
 import 'package:xpensemate/core/widget/app_custom_dropdown_widget.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
+import 'package:xpensemate/features/auth/domain/entities/user.dart';
+import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
 import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
+import 'package:xpensemate/features/expense/presentation/widgets/expense_form_widget.dart';
 import 'package:xpensemate/features/expense/presentation/widgets/expense_list_header_widget.dart';
 import 'package:xpensemate/features/expense/presentation/widgets/expense_list_widget.dart';
 import 'package:xpensemate/features/expense/presentation/widgets/expense_stats_widget.dart';
@@ -84,19 +89,9 @@ class _ExpensePageContentState extends State<ExpensePageContent>
                   ExpenseStatsWidget(stats: state.expenseStats),
                   const ExpenseListHeaderWidget(),
                   ExpenseListWidget(
-                    onEdit: (expenseId) {},
+                    onEdit: (updatedEntity) {},
                     onDelete: (expenseId) {
-                      if (state.expenses?.expenses.isEmpty ?? true) return;
-                      AppCustomDialogs.showDelete(
-                        context: context,
-                        title: 'Delete expense',
-                        message:
-                            'Are you sure you want to delete this expense?',
-                        onConfirm: () {},
-                        onCancel: () {
-                          Navigator.of(context).pop();
-                        },
-                      );
+                      context.expenseCubit.deleteExpense(expenseId: expenseId);
                     },
                   ),
                   // Bottom padding for FAB

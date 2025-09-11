@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
+import 'package:xpensemate/core/widget/app_custom_dialog.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
+import 'package:xpensemate/l10n/app_localizations.dart';
 
 class ExpenseListItem extends StatelessWidget {
   const ExpenseListItem({
@@ -15,7 +17,7 @@ class ExpenseListItem extends StatelessWidget {
   final ExpenseEntity expense;
   final bool isLast;
   final void Function(String expenseId)? onDelete;
-  final void Function(String expenseId)? onEdit;
+  final void Function(ExpenseEntity expenseEntity)? onEdit;
 
   String _formatDate(DateTime date) {
     final now = DateTime.now();
@@ -27,6 +29,22 @@ class ExpenseListItem extends StatelessWidget {
     return '${date.day}/${date.month}/${date.year}';
   }
 
+  // Show confirmation dialog before deleting using AppCustomDialog
+  Future<bool?> _showDeleteConfirmation(BuildContext context) async {
+    final localizations = AppLocalizations.of(context);
+    return AppCustomDialogs.showDelete(
+      context: context,
+      title: localizations?.delete ?? 'Delete',
+      message:
+          '${localizations?.confirmDelete ?? 'Are you sure you want to delete this item?'}\n\n${localizations?.deleteWarning ?? 'This action cannot be undone.'}',
+      onConfirm: () {
+        onDelete
+            ?.call(expense.id); // Call delete function only after confirmation
+      },
+      onCancel: () {},
+    );
+  }
+
   @override
   Widget build(BuildContext context) => Container(
         margin: EdgeInsets.only(
@@ -34,7 +52,6 @@ class ExpenseListItem extends StatelessWidget {
         ),
         child: Dismissible(
           key: Key(expense.id),
-          direction: DismissDirection.horizontal,
           background: Container(
             decoration: BoxDecoration(
               color: Colors.red,
@@ -61,11 +78,20 @@ class ExpenseListItem extends StatelessWidget {
               size: 30,
             ),
           ),
+          confirmDismiss: (direction) async {
+            if (direction == DismissDirection.startToEnd) {
+              return _showDeleteConfirmation(context);
+            } else {
+              return false;
+            }
+          },
           onDismissed: (direction) {
             if (direction == DismissDirection.startToEnd) {
-              onDelete?.call(expense.id);
+              // Show confirmation dialog for deletion
+              _showDeleteConfirmation(context);
             } else {
-              onEdit?.call(expense.id);
+              // Directly call edit for swipe to the left
+              onEdit?.call(expense);
             }
           },
           child: Card(

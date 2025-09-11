@@ -287,7 +287,7 @@ class AppBottomSheetService {
 
       final effectiveConfig = config ?? const BottomSheetConfig();
       final result = await _showWithStyle<T>(
-      context: context,
+        context: context,
         child: child,
         title: title,
         style: style,
@@ -495,7 +495,7 @@ class AppBottomSheetService {
             config: config,
             child: child,
           ),
-      backgroundColor: Colors.transparent,
+          backgroundColor: Colors.transparent,
           barrierColor: config.barrierColor,
           expand: config.expand,
           isDismissible: config.isDismissible,
@@ -512,10 +512,10 @@ class AppBottomSheetService {
         return showCupertinoModalBottomSheet<T>(
           context: context,
           builder: (_) => AppBottomSheetContent(
-        title: title,
+            title: title,
             config: config,
-        child: child,
-      ),
+            child: child,
+          ),
           backgroundColor: Colors.transparent,
           barrierColor: config.barrierColor,
           expand: config.expand,
@@ -736,7 +736,7 @@ class _AppBottomSheetContentState extends State<AppBottomSheetContent>
     // Start animation
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-    _animationController.forward();
+        _animationController.forward();
       }
     });
   }
@@ -761,9 +761,9 @@ class _AppBottomSheetContentState extends State<AppBottomSheetContent>
     }
 
     if (mounted) {
-    await _animationController.reverse();
-    if (mounted) {
-      Navigator.of(context).pop();
+      await _animationController.reverse();
+      if (mounted) {
+        Navigator.of(context).pop();
       }
     }
   }
@@ -832,10 +832,10 @@ class _AppBottomSheetContentState extends State<AppBottomSheetContent>
             _buildSimpleBackground(),
 
           // Main bottom sheet container
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
             child: AnimatedContainer(
               duration: widget.config.duration,
               curve: widget.config.animationCurve,
@@ -849,10 +849,10 @@ class _AppBottomSheetContentState extends State<AppBottomSheetContent>
 
   Widget _buildBlurredBackground() => GestureDetector(
         onTap: widget.config.isDismissible ? _handleClose : null,
-                child: Container(
+        child: Container(
           width: double.infinity,
           height: double.infinity,
-                  decoration: BoxDecoration(
+          decoration: BoxDecoration(
             color: widget.config.barrierColor ??
                 Colors.black.withValues(alpha: 0.4 * _animation.value),
           ),
@@ -878,14 +878,14 @@ class _AppBottomSheetContentState extends State<AppBottomSheetContent>
 
   BoxDecoration _buildSheetDecoration(ThemeData theme) => BoxDecoration(
         color: widget.config.backgroundColor ?? theme.colorScheme.surface,
-                    borderRadius: BorderRadius.only(
+        borderRadius: BorderRadius.only(
           topLeft: Radius.circular(widget.config.borderRadius),
           topRight: Radius.circular(widget.config.borderRadius),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
+        ),
+        boxShadow: [
+          BoxShadow(
             color: theme.shadowColor.withValues(alpha: 0.1),
-                        blurRadius: 20,
+            blurRadius: 20,
             offset: const Offset(0, -8),
           ),
           if (widget.config.elevation > 0)
@@ -899,14 +899,14 @@ class _AppBottomSheetContentState extends State<AppBottomSheetContent>
 
   Widget _buildSheetContent() => SafeArea(
         top: false,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
             // Header
-                      _buildHeader(),
+            _buildHeader(),
 
             // Main content
-                      Expanded(
+            Expanded(
               child: widget.config.scrollController != null
                   ? SingleChildScrollView(
                       controller: widget.config.scrollController,
@@ -919,7 +919,7 @@ class _AppBottomSheetContentState extends State<AppBottomSheetContent>
             if (widget.config.persistentFooterButtons != null) _buildFooter(),
           ],
         ),
-    );
+      );
 
   Widget _buildHeader() {
     if (!widget.config.showHandle &&
@@ -944,20 +944,20 @@ class _AppBottomSheetContentState extends State<AppBottomSheetContent>
               onTap: _canExpand ? _handleExpansion : null,
               child: Container(
                 width: 36,
-              height: 4,
+                height: 4,
                 margin: EdgeInsets.only(
                   bottom: widget.title != null || widget.config.showCloseButton
                       ? context.sm
                       : 0,
                 ),
-              decoration: BoxDecoration(
+                decoration: BoxDecoration(
                   color: Theme.of(context)
                       .colorScheme
                       .onSurfaceVariant
                       .withValues(alpha: _canExpand ? 0.6 : 0.4),
-                borderRadius: BorderRadius.circular(2),
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
-            ),
             ),
 
           // Title and close button row
@@ -1010,7 +1010,7 @@ class _AppBottomSheetContentState extends State<AppBottomSheetContent>
 
     return Container(
       padding: EdgeInsets.all(context.md),
-                      decoration: BoxDecoration(
+      decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
             color: Theme.of(context).dividerColor,
@@ -1060,9 +1060,9 @@ class WoltModalPages {
                     IconButton(
                       onPressed: onClose,
                       icon: const Icon(Icons.close),
-                  ),
-              ],
-            ),
+                    ),
+                  ],
+                ),
               )
             : null,
         stickyActionBar: actionButtons != null
@@ -1238,8 +1238,8 @@ class WoltModalPages {
               ),
             ],
           ),
-      ),
-    );
+        ),
+      );
 }
 
 /// Extension for preset configurations with Wolt styles

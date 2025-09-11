@@ -247,6 +247,27 @@ class ExpenseCubit extends Cubit<ExpenseState> {
       },
     );
   }
+
+  // create expense
+  Future<void> createExpense({required ExpenseEntity expense}) async {
+    // Then make the remote call
+    final result = await _updateExpenseUseCase(expense);
+    result.fold(
+      (failure) {
+        // If the remote call fails, emit an error state
+        emit(
+          state.copyWith(
+            state: ExpenseStates.error,
+            errorMessage: failure.message,
+          ),
+        );
+      },
+      (createdExpense) {
+        // If successful, reload the expenses to include the new one
+        loadExpenses();
+      },
+    );
+  }
 }
 
 // extension of expense cubit on context

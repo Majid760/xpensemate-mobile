@@ -15,7 +15,6 @@ import 'package:xpensemate/features/auth/domain/entities/user.dart';
 import 'package:xpensemate/features/auth/presentation/widgets/custom_text_form_field.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_state.dart';
-import 'package:xpensemate/core/utils/app_utils.dart';
 
 class ProfileEditWidget extends StatefulWidget {
   const ProfileEditWidget({
@@ -249,7 +248,9 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
     // Parse gender from form
 
     final formdata = Map<String, Object?>.from(_form.value);
-    formdata['dob'] =DateFormat("d/M/yyyy").parse(formdata['dob']! as String).toIso8601String();
+    formdata['dob'] = DateFormat("d/M/yyyy")
+        .parse(formdata['dob']! as String)
+        .toIso8601String();
     formdata['gender'] = formdata['gender'].toString().toLowerCase();
     formdata['firstName'] = formdata['name'].toString().split(' ').first;
     formdata['lastName'] = formdata['name'].toString().split(' ').last;
@@ -278,7 +279,8 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
               type: SnackBarType.error,
             );
           }
-          if(state.status == ProfileStatus.loaded && (state.message?.isNotEmpty ?? false)){
+          if (state.status == ProfileStatus.loaded &&
+              (state.message?.isNotEmpty ?? false)) {
             AppSnackBar.show(
               context: context,
               message: context.l10n.profileUpdatedSuccessfully,
@@ -302,18 +304,15 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
                         imageFile: state.imageFile,
                         imageUrl:
                             context.profileCubit.state.user?.profilePhotoUrl,
-                        onImageTap: ()  {
-                         
-                             AppDialogs.showImagePicker(
-                              context: context,
-                              onImageSelected: (file) {
-                                if (file != null) {
-                                  context.profileCubit.setImageFile(file);
-                                }
-                              },
-                            );
-                        
-                        
+                        onImageTap: () {
+                          AppDialogs.showImagePicker(
+                            context: context,
+                            onImageSelected: (file) {
+                              if (file != null) {
+                                context.profileCubit.setImageFile(file);
+                              }
+                            },
+                          );
                         },
                       ),
                     ),
@@ -411,8 +410,6 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
           ),
         ),
       );
-
-
 }
 
 void showEditProfile(BuildContext context) {

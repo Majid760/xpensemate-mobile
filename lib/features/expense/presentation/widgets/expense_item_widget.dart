@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
+import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
 import 'package:xpensemate/core/widget/app_custom_dialog.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
+import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
+import 'package:xpensemate/features/expense/presentation/widgets/expense_form_widget.dart';
 import 'package:xpensemate/l10n/app_localizations.dart';
 
 class ExpenseListItem extends StatelessWidget {
@@ -42,6 +45,38 @@ class ExpenseListItem extends StatelessWidget {
             ?.call(expense.id); // Call delete function only after confirmation
       },
       onCancel: () {},
+    );
+  }
+
+  void addExpense(ExpenseEntity entity, BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    AppBottomSheet.show<ExpenseEntity>(
+      context: context,
+      title: entity.id.isEmpty ? 'Add Expense' : 'Edit Expense',
+      config: BottomSheetConfig(
+        minHeight: screenHeight * 0.8,
+        maxHeight: screenHeight * 0.95,
+        padding: EdgeInsets.zero,
+      ),
+      child: ExpenseFormWidget(
+        expense: entity.id.isEmpty
+            ? null
+            : entity, // Pass null for new expense, entity for edit
+        onSave: (updatedEntity) {
+          // Handle save - either create new or update existing
+          if (entity.id.isEmpty) {
+            // This is a new expense
+            context.expenseCubit.createExpense(expense: updatedEntity);
+          } else {
+            // This is an existing expense
+            context.expenseCubit.updateExpense(expense: updatedEntity);
+          }
+          Navigator.of(context).pop(); // Close the bottom sheet
+        },
+        onCancel: () {
+          Navigator.of(context).pop(); // Close the bottom sheet
+        },
+      ),
     );
   }
 

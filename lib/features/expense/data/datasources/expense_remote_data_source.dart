@@ -62,9 +62,11 @@ class ExpenseRemoteDataSourceImpl implements ExpenseRemoteDataSource {
   @override
   Future<Either<Failure, bool>> deleteExpense(String expenseId) =>
       _networkClient.delete(
-        NetworkConfigs.deleteExpense,
-        query: {'id': expenseId},
-        fromJson: (json) => json['type'] == "success",
+        '${NetworkConfigs.deleteExpense}/$expenseId',
+        // query: {'id': expenseId},
+        // fromJson: (json) {
+        //   return json['type'] == "success";
+        // },
       );
 
   @override

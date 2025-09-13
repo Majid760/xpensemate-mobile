@@ -171,6 +171,7 @@ final class NetworkClientImp implements NetworkClient {
       }
       return Left(_mapDioError(e));
     } on Exception catch (e) {
+      logE("Failed to handle error: $e");
       return Left(ServerFailure(message: e.toString()));
     }
   }

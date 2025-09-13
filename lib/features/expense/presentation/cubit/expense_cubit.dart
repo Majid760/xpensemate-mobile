@@ -66,6 +66,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
     if (state.expenseStats == null) {
       emit(state.copyWith(state: ExpenseStates.loading));
     }
+    print("period: ${period}");
 
     final params = GetExpenseStatsParams(
       period: period,
@@ -73,19 +74,20 @@ class ExpenseCubit extends Cubit<ExpenseState> {
 
     final result = await _getExpenseStatsUseCase(params);
     result.fold(
-      (failure) => emit(
-        state.copyWith(
-          state: ExpenseStates.error,
-          errorMessage: failure.message,
-        ),
-      ),
-      (expenseStats) => emit(
+        (failure) => emit(
+              state.copyWith(
+                state: ExpenseStates.error,
+                errorMessage: failure.message,
+              ),
+            ), (expenseStats) {
+      print("expenseStats: ${expenseStats.dailyAverage}");
+      emit(
         state.copyWith(
           state: ExpenseStates.loaded,
           expenseStats: expenseStats,
         ),
-      ),
-    );
+      );
+    });
   }
 
   /// Load all expense data
@@ -166,43 +168,24 @@ class ExpenseCubit extends Cubit<ExpenseState> {
         expenses: updatedExpenses,
         total: state.expenses!.total - 1,
       );
-
       emit(state.copyWith(expenses: updatedPagination));
     }
 
-    // Then make the remote call
+    // Add a small delay to allow animation to complete
+    await Future.delayed(const Duration(milliseconds: 300));
+
     final result = await _deleteExpenseUseCase(expenseId);
     result.fold(
-      (failure) {
-        // If the remote call fails, revert the local change
-        emit(
-          state.copyWith(
-            state: ExpenseStates.error,
-            errorMessage: failure.message,
-            expenses: originalExpenses, // Revert to original state
-          ),
-        );
-      },
-      (success) {
-        // If successful, ensure the state reflects the deletion
-        if (success) {
-          emit(
-            state.copyWith(
-              state: ExpenseStates.loaded,
-            ),
-          );
-        } else {
-          // Handle case where deletion wasn't successful
-          // Revert to original state
-          emit(
-            state.copyWith(
-              state: ExpenseStates.error,
-              errorMessage: 'Failed to delete expense',
-              expenses: originalExpenses, // Revert to original state
-            ),
-          );
-        }
-      },
+      (failure) => emit(
+        state.copyWith(
+          state: ExpenseStates.error,
+          errorMessage: failure.message,
+          expenses: originalExpenses,
+        ),
+      ),
+      (success) => emit(
+        state.copyWith(state: ExpenseStates.loaded),
+      ),
     );
   }
 
@@ -264,7 +247,10 @@ class ExpenseCubit extends Cubit<ExpenseState> {
       },
       (createdExpense) {
         // If successful, reload the expenses to include the new one
-        loadExpenses();
+        // Add a small delay to allow for smooth transition
+        Future.delayed(const Duration(milliseconds: 100), () {
+          loadExpenses();
+        });
       },
     );
   }

@@ -9,6 +9,7 @@ class ExpenseListWidget extends StatelessWidget {
   const ExpenseListWidget({super.key, this.onDelete, this.onEdit});
   final void Function(String expenseId)? onDelete;
   final void Function(ExpenseEntity expenseEntity)? onEdit;
+
   @override
   Widget build(BuildContext context) => BlocBuilder<ExpenseCubit, ExpenseState>(
         builder: (context, state) {
@@ -33,6 +34,7 @@ class ExpenseListWidget extends StatelessWidget {
 
           if (state.expenses != null && state.expenses!.expenses.isNotEmpty) {
             final expenses = state.expenses!.expenses;
+
             return SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               sliver: SliverList(
@@ -51,6 +53,7 @@ class ExpenseListWidget extends StatelessWidget {
               ),
             );
           }
+
           return SliverToBoxAdapter(
             child: Center(
               child: ErrorStateSectionWidget(

@@ -240,7 +240,9 @@ class _ExpenseStatsSliverState extends State<ExpenseStatsSliver>
                           end: Alignment.bottomRight,
                           colors: [
                             Theme.of(context).primaryColor,
-                            Theme.of(context).primaryColor.withOpacity(0.8),
+                            Theme.of(context)
+                                .primaryColor
+                                .withValues(alpha: 0.8),
                           ],
                         ),
                       ),
@@ -284,10 +286,10 @@ class _ExpenseStatsSliverState extends State<ExpenseStatsSliver>
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.15),
+                    color: Colors.white.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withValues(alpha: 0.2),
                     ),
                   ),
                   child: Column(
@@ -308,7 +310,7 @@ class _ExpenseStatsSliverState extends State<ExpenseStatsSliver>
                           Container(
                             width: 1,
                             height: 50,
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withValues(alpha: 0.2),
                             margin: const EdgeInsets.symmetric(horizontal: 12),
                           ),
                           Expanded(
@@ -325,7 +327,7 @@ class _ExpenseStatsSliverState extends State<ExpenseStatsSliver>
                       // Divider
                       Container(
                         height: 1,
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         margin: const EdgeInsets.symmetric(vertical: 12),
                       ),
                       // Second row of stats
@@ -343,7 +345,7 @@ class _ExpenseStatsSliverState extends State<ExpenseStatsSliver>
                           Container(
                             width: 1,
                             height: 50,
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withValues(alpha: 0.2),
                             margin: const EdgeInsets.symmetric(horizontal: 12),
                           ),
                           Expanded(
@@ -382,7 +384,7 @@ class _ExpenseStatsSliverState extends State<ExpenseStatsSliver>
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.2),
+                  color: color.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -419,7 +421,7 @@ class _ExpenseStatsSliverState extends State<ExpenseStatsSliver>
           Text(
             subtitle,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.white.withValues(alpha: 0.7),
               fontSize: 10,
             ),
             maxLines: 2,
@@ -500,7 +502,7 @@ class ExpenseListItem extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
             side: BorderSide(
-              color: Theme.of(context).dividerColor.withOpacity(0.1),
+              color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
             ),
           ),
           child: InkWell(
@@ -514,7 +516,7 @@ class ExpenseListItem extends StatelessWidget {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: expense.color.withOpacity(0.1),
+                      color: expense.color.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: Icon(
@@ -544,7 +546,7 @@ class ExpenseListItem extends StatelessWidget {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: expense.color.withOpacity(0.1),
+                                color: expense.color.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
@@ -569,7 +571,7 @@ class ExpenseListItem extends StatelessWidget {
                                     color: Theme.of(context)
                                         .colorScheme
                                         .onSurface
-                                        .withOpacity(0.6),
+                                        .withValues(alpha: 0.6),
                                   ),
                             ),
                           ],
@@ -594,7 +596,7 @@ class ExpenseListItem extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(2),
                         decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.1),
+                          color: Colors.green.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: const Icon(

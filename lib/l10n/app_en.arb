@@ -507,6 +507,43 @@
   "thu": "Thu",
   "fri": "Fri",
   "sat": "Sat",
-  "sun": "Sun"
+  "sun": "Sun",
 
+  "@@expense_form_section": "Expense form related strings",
+  "description": "Description",
+  "@description": {
+    "description": "Expense description label"
+  },
+  "amount": "Amount",
+  "@amount": {
+    "description": "Expense amount label"
+  },
+  "category": "Category",
+  "@category": {
+    "description": "Expense category label"
+  },
+  "date": "Date",
+  "@date": {
+    "description": "Expense date label"
+  },
+  "time": "Time",
+  "@time": {
+    "description": "Expense time label"
+  },
+  "location": "Location",
+  "@location": {
+    "description": "Expense location label"
+  },
+  "paymentMethod": "Payment Method",
+  "@paymentMethod": {
+    "description": "Expense payment method label"
+  },
+  "details": "Details",
+  "@details": {
+    "description": "Expense details label"
+  },
+  "invalidAmount": "Please enter a valid amount",
+  "@invalidAmount": {
+    "description": "Invalid amount error message"
+  }
 }

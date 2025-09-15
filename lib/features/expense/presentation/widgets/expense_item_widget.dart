@@ -77,12 +77,14 @@ class _ExpenseListItemState extends State<ExpenseListItem>
 
     // Fade in animation
     _opacityAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _entranceController,
-      curve: const Interval(0.0, 0.7, curve: Curves.easeOut),
-    ));
+      begin: 0,
+      end: 1,
+    ).animate(
+      CurvedAnimation(
+        parent: _entranceController,
+        curve: const Interval(0, 0.7, curve: Curves.easeOut),
+      ),
+    );
   }
 
   void _initializeInteractionAnimations() {
@@ -176,53 +178,50 @@ class _ExpenseListItemState extends State<ExpenseListItem>
   Widget build(BuildContext context) => AnimatedBuilder(
         animation:
             Listenable.merge([_entranceController, _interactionController]),
-        builder: (context, child) {
-          return Transform.translate(
-            // Smooth entrance slide up from 50px below
-            offset: Offset(0, 50 * (1 - _slideAnimation.value)) +
-                _translateAnimation.value,
-            child: Transform.scale(
-              // Combine entrance scale with interaction scale
-              scale: _scaleAnimation.value * _interactionScaleAnimation.value,
-              alignment: Alignment.center,
-              child: Opacity(
-                opacity: _opacityAnimation.value,
-                child: Container(
-                  margin: EdgeInsets.only(
-                    bottom: widget.isLast ? 0 : 12,
-                  ),
-                  child: ExpenseDismissible(
+        builder: (context, child) => Transform.translate(
+          // Smooth entrance slide up from 50px below
+          offset: Offset(0, 50 * (1 - _slideAnimation.value)) +
+              _translateAnimation.value,
+          child: Transform.scale(
+            // Combine entrance scale with interaction scale
+            scale: _scaleAnimation.value * _interactionScaleAnimation.value,
+            child: Opacity(
+              opacity: _opacityAnimation.value,
+              child: Container(
+                margin: EdgeInsets.only(
+                  bottom: widget.isLast ? 0 : 12,
+                ),
+                child: ExpenseDismissible(
+                  expense: widget.expense,
+                  onDeleteConfirm: () async {
+                    final result = await _showDeleteConfirmation(context);
+                    if (result ?? false) {
+                      _handleDelete();
+                    }
+                    return result ?? false;
+                  },
+                  onEdit: () => widget.onEdit?.call(widget.expense),
+                  child: ExpenseCard(
                     expense: widget.expense,
-                    onDeleteConfirm: () async {
-                      final result = await _showDeleteConfirmation(context);
-                      if (result ?? false) {
-                        _handleDelete();
-                      }
-                      return result ?? false;
+                    elevation: _elevationAnimation.value,
+                    shadowOpacity: _shadowOpacityAnimation.value,
+                    onTapDown: (_) {
+                      HapticFeedback.selectionClick();
+                      _interactionController.forward();
                     },
-                    onEdit: () => widget.onEdit?.call(widget.expense),
-                    child: ExpenseCard(
-                      expense: widget.expense,
-                      elevation: _elevationAnimation.value,
-                      shadowOpacity: _shadowOpacityAnimation.value,
-                      onTapDown: (_) {
-                        HapticFeedback.selectionClick();
-                        _interactionController.forward();
-                      },
-                      onTapUp: (_) => _interactionController.reverse(),
-                      onTapCancel: () => _interactionController.reverse(),
-                    ),
+                    onTapUp: (_) => _interactionController.reverse(),
+                    onTapCancel: () => _interactionController.reverse(),
                   ),
                 ),
               ),
             ),
-          );
-        },
+          ),
+        ),
       );
 }
 
 // Dismissible Wrapper Widget with fade-out effect
-class ExpenseDismissible extends StatelessWidget {
+class ExpenseDismissible extends StatefulWidget {
   const ExpenseDismissible({
     super.key,
     required this.expense,
@@ -237,36 +236,63 @@ class ExpenseDismissible extends StatelessWidget {
   final VoidCallback onEdit;
 
   @override
-  Widget build(BuildContext context) => Dismissible(
-        key: Key('dismissible_${expense.id}'),
-        background: const DismissBackground(
-          alignment: Alignment.centerLeft,
-          color: Colors.red,
-          icon: Icons.delete,
-          label: 'Delete',
-        ),
-        secondaryBackground: const DismissBackground(
-          alignment: Alignment.centerRight,
-          color: Colors.blue,
-          icon: Icons.edit,
-          label: 'Edit',
-        ),
-        confirmDismiss: (direction) async {
-          await HapticFeedback.mediumImpact();
-          if (direction == DismissDirection.startToEnd) {
-            return await onDeleteConfirm();
-          } else if (direction == DismissDirection.endToStart) {
-            onEdit();
-            return false;
+  State<ExpenseDismissible> createState() => _ExpenseDismissibleState();
+}
+
+class _ExpenseDismissibleState extends State<ExpenseDismissible> {
+  bool _isDismissed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isDismissed) {
+      return const SizedBox.shrink();
+    }
+
+    return Dismissible(
+      key: Key('dismissible_${widget.expense.id}'),
+      background: const DismissBackground(
+        alignment: Alignment.centerLeft,
+        color: Colors.red,
+        icon: Icons.delete,
+        label: 'Delete',
+      ),
+      secondaryBackground: const DismissBackground(
+        alignment: Alignment.centerRight,
+        color: Colors.blue,
+        icon: Icons.edit,
+        label: 'Edit',
+      ),
+      confirmDismiss: (direction) async {
+        await HapticFeedback.mediumImpact();
+        if (direction == DismissDirection.startToEnd) {
+          final result = await widget.onDeleteConfirm();
+          if (result == true) {
+            setState(() {
+              _isDismissed = true;
+            });
           }
-          return false;
-        },
-        dismissThresholds: const {
-          DismissDirection.startToEnd: 0.4,
-          DismissDirection.endToStart: 0.4,
-        },
-        child: child,
-      );
+          return result;
+        } else if (direction == DismissDirection.endToStart) {
+          widget.onEdit();
+          return false; // Don't actually dismiss for edit
+        }
+        return false;
+      },
+      onDismissed: (direction) {
+        // This handler is required to properly remove the widget from the tree
+        if (direction == DismissDirection.startToEnd) {
+          setState(() {
+            _isDismissed = true;
+          });
+        }
+      },
+      dismissThresholds: const {
+        DismissDirection.startToEnd: 0.4,
+        DismissDirection.endToStart: 0.4,
+      },
+      child: widget.child,
+    );
+  }
 }
 
 // Static Dismiss Background Widget

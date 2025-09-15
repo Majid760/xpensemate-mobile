@@ -66,8 +66,6 @@ class ExpenseCubit extends Cubit<ExpenseState> {
     if (state.expenseStats == null) {
       emit(state.copyWith(state: ExpenseStates.loading));
     }
-    print("period: ${period}");
-
     final params = GetExpenseStatsParams(
       period: period,
     );
@@ -155,10 +153,8 @@ class ExpenseCubit extends Cubit<ExpenseState> {
 
   // delete expense
   Future<void> deleteExpense({required String expenseId}) async {
-    // Store the original state in case we need to revert
     final originalExpenses = state.expenses;
 
-    // First, update local state immediately for better UX
     if (state.expenses != null) {
       final updatedExpenses = state.expenses!.expenses
           .where((expense) => expense.id != expenseId)
@@ -170,10 +166,6 @@ class ExpenseCubit extends Cubit<ExpenseState> {
       );
       emit(state.copyWith(expenses: updatedPagination));
     }
-
-    // Add a small delay to allow animation to complete
-    await Future.delayed(const Duration(milliseconds: 300));
-
     final result = await _deleteExpenseUseCase(expenseId);
     result.fold(
       (failure) => emit(
@@ -191,20 +183,35 @@ class ExpenseCubit extends Cubit<ExpenseState> {
 
   // update expense
   Future<void> updateExpense({required ExpenseEntity expense}) async {
-    // Store the original state in case we need to revert
     final originalExpenses = state.expenses;
-
-    // First, update local state immediately for better UX
     if (state.expenses != null) {
-      final updatedExpenses = state.expenses!.expenses.map((e) {
-        return e.id == expense.id ? expense : e;
-      }).toList();
-
+      final updatedExpenses = state.expenses!.expenses
+          .map((e) => e.id == expense.id ? expense : e)
+          .toList();
       final updatedPagination = state.expenses!.copyWith(
         expenses: updatedExpenses,
       );
-
       emit(state.copyWith(expenses: updatedPagination));
+
+      final result = await _updateExpenseUseCase(expense);
+      result.fold(
+        (failure) {
+          emit(
+            state.copyWith(
+              expenses: originalExpenses,
+              state: ExpenseStates.error,
+            ),
+          );
+        },
+        (success) {
+          emit(
+            state.copyWith(
+              expenses: originalExpenses,
+              state: ExpenseStates.loaded,
+            ),
+          );
+        },
+      );
     }
 
     // Then make the remote call

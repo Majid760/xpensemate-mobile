@@ -689,4 +689,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sun => 'Sun';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get amount => 'Amount';
+
+  @override
+  String get category => 'Category';
+
+  @override
+  String get date => 'Date';
+
+  @override
+  String get time => 'Time';
+
+  @override
+  String get location => 'Location';
+
+  @override
+  String get paymentMethod => 'Payment Method';
+
+  @override
+  String get details => 'Details';
+
+  @override
+  String get invalidAmount => 'Please enter a valid amount';
 }

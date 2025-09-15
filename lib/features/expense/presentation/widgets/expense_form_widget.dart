@@ -4,6 +4,7 @@ import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
+import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/features/auth/presentation/widgets/custom_text_form_field.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
 
@@ -30,25 +31,29 @@ class ExpenseFormWidget extends StatefulWidget {
 
 class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
   late final FormGroup _form;
-  late final List<Map<String, dynamic>> _categories;
+  late final List<String> _predefinedCategories;
   late final List<String> _paymentMethods;
+  bool _isCustomCategoryMode = false;
 
   @override
   void initState() {
     super.initState();
 
-    // Initialize categories - in a real app, these would come from an API
-    _categories = [
-      {'id': '1', 'name': 'Food & Dining'},
-      {'id': '2', 'name': 'Transportation'},
-      {'id': '3', 'name': 'Shopping'},
-      {'id': '4', 'name': 'Entertainment'},
-      {'id': '5', 'name': 'Utilities'},
-      {'id': '6', 'name': 'Healthcare'},
-      {'id': '7', 'name': 'Travel'},
-      {'id': '8', 'name': 'Education'},
-      {'id': '9', 'name': 'Personal Care'},
-      {'id': '10', 'name': 'Other'},
+    // Initialize predefined categories - in a real app, these would come from an API
+    _predefinedCategories = [
+      'Food',
+      'Transport',
+      'Entertainment',
+      'Shopping',
+      'Utilities',
+      'Healthcare',
+      'Education',
+      'Business',
+      'Travel',
+      'Subscription',
+      'Rent',
+      'Loan',
+      'Other',
     ];
 
     // Initialize payment methods
@@ -71,9 +76,10 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
           Validators.pattern(r'^\d*\.?\d*$'), // Allow only numeric input
         ],
       ),
-      'categoryId': FormControl<String>(
+      'category': FormControl<String>(
         validators: [Validators.required],
       ),
+      'customCategory': FormControl<String>(),
       'date': FormControl<DateTime>(
         validators: [Validators.required],
       ),
@@ -83,8 +89,6 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
       'location': FormControl<String>(),
       'paymentMethod': FormControl<String>(),
       'detail': FormControl<String>(),
-      'isRecurring': FormControl<bool>(value: false),
-      'frequency': FormControl<String>(value: 'monthly'),
     });
 
     // If editing an existing expense, populate the form
@@ -106,101 +110,185 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
   void _populateFormFromExpense(ExpenseEntity expense) {
     _form.control('name').value = expense.name;
     _form.control('amount').value = expense.amount.toStringAsFixed(2);
-    _form.control('categoryId').value = expense.categoryId;
+
+    final categoryName = expense.categoryName;
+
+    // Check if the expense category exists in our predefined list
+    if (_predefinedCategories
+        .any((cat) => cat.toLowerCase() == categoryName.toLowerCase())) {
+      // Category exists in predefined list - just select it
+      _form.control('category').value = categoryName;
+      _isCustomCategoryMode = false;
+    } else if (categoryName.isNotEmpty) {
+      // Category doesn't exist in predefined list - add it and select it
+      _predefinedCategories.add(categoryName);
+      _form.control('category').value = categoryName;
+      _isCustomCategoryMode = false;
+    }
+
     _form.control('date').value = expense.date;
     _form.control('time').value = expense.time;
     _form.control('location').value = expense.location;
     _form.control('paymentMethod').value = expense.paymentMethod;
     _form.control('detail').value = expense.detail;
-    _form.control('isRecurring').value = expense.recurring.isRecurring;
-    _form.control('frequency').value = expense.recurring.frequency;
   }
 
   String _formatTime(DateTime dateTime) =>
       '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
 
   Future<void> _submitForm() async {
-    _form.markAllAsTouched();
+    try {
+      _form.markAllAsTouched();
 
-    if (!_form.valid) return;
+      // Determine the category value based on which field is being used
+      String categoryValue;
+      if (_isCustomCategoryMode) {
+        // If in custom category mode, use the custom category field
+        final customCategory = _form.control('customCategory').value as String?;
+        if (customCategory == null || customCategory.trim().isEmpty) {
+          _form.control('customCategory').setErrors({'required': true});
+          return;
+        }
+        categoryValue = customCategory.trim();
 
-    // Parse amount from string to double
-    final amountString =
-        (_form.control('amount').value as String?)?.trim() ?? '0';
-    final amount = double.tryParse(amountString);
+        // Add the custom category to predefined list for future use
+        if (!_predefinedCategories
+            .any((cat) => cat.toLowerCase() == categoryValue.toLowerCase())) {
+          _predefinedCategories.add(categoryValue);
+        }
+      } else {
+        // If not in custom mode, use the regular category field
+        final selectedCategory = _form.control('category').value as String?;
+        if (selectedCategory == null || selectedCategory.isEmpty) {
+          _form.control('category').setErrors({'required': true});
+          return;
+        }
+        categoryValue = selectedCategory;
+      }
 
-    // Validate amount
-    if (amount == null || amount < 0) {
-      _form
-          .control('amount')
-          .setErrors({'invalid': 'Please enter a valid amount'});
-      return;
+      // Validate the rest of the form
+      if (!_form.valid) return;
+
+      // Parse amount from string to double
+      final amountString =
+          (_form.control('amount').value as String?)?.trim() ?? '0';
+      final amount = double.tryParse(amountString);
+
+      // Validate amount
+      if (amount == null || amount < 0) {
+        _form
+            .control('amount')
+            .setErrors({'invalid': 'Please enter a valid amount'});
+        return;
+      }
+
+      // Create or update expense entity
+      final expense = ExpenseEntity(
+        id: widget.expense?.id ??
+            DateTime.now().millisecondsSinceEpoch.toString(),
+        userId: widget.expense?.userId ??
+            'current_user_id', // This would come from auth in real app
+        name: (_form.control('name').value as String?)?.trim() ?? '',
+        amount: amount,
+        budgetGoalId: widget.expense?.budgetGoalId,
+        date: _form.control('date').value as DateTime? ?? DateTime.now(),
+        time: _form.control('time').value as String? ??
+            _formatTime(DateTime.now()),
+        location: (_form.control('location').value as String?)?.trim() ?? '',
+        categoryId: categoryValue,
+        categoryName: categoryValue,
+        detail: (_form.control('detail').value as String?)?.trim() ?? '',
+        paymentMethod: _form.control('paymentMethod').value as String? ?? '',
+        attachments: widget.expense?.attachments ?? [],
+        isDeleted: widget.expense?.isDeleted ?? false,
+        createdAt: widget.expense?.createdAt ?? DateTime.now(),
+        updatedAt: DateTime.now(),
+        recurring: RecurringEntity(
+          isRecurring: widget.expense?.recurring.isRecurring ?? false,
+          frequency: widget.expense?.recurring.frequency ?? '',
+        ),
+      );
+
+      widget.onSave(expense);
+    } on Exception catch (error) {
+      AppSnackBar.show(context: context, message: error.toString());
     }
+  }
 
-    // Create or update expense entity
-    final expense = ExpenseEntity(
-      id: widget.expense?.id ??
-          DateTime.now().millisecondsSinceEpoch.toString(),
-      userId: widget.expense?.userId ??
-          'current_user_id', // This would come from auth in real app
-      name: (_form.control('name').value as String?)?.trim() ?? '',
-      amount: amount,
-      budgetGoalId: widget.expense?.budgetGoalId,
-      date: _form.control('date').value as DateTime? ?? DateTime.now(),
-      time:
-          _form.control('time').value as String? ?? _formatTime(DateTime.now()),
-      location: (_form.control('location').value as String?)?.trim() ?? '',
-      categoryId: _form.control('categoryId').value as String? ?? '',
-      categoryName:
-          _getCategoryName(_form.control('categoryId').value as String? ?? ''),
-      detail: (_form.control('detail').value as String?)?.trim() ?? '',
-      paymentMethod: _form.control('paymentMethod').value as String? ?? '',
-      attachments: widget.expense?.attachments ?? [],
-      isDeleted: widget.expense?.isDeleted ?? false,
-      createdAt: widget.expense?.createdAt ?? DateTime.now(),
-      updatedAt: DateTime.now(),
-      recurring: RecurringEntity(
-        isRecurring: _form.control('isRecurring').value as bool? ?? false,
-        frequency: _form.control('frequency').value as String? ?? 'monthly',
+  List<DropdownMenuItem<String>> _buildCategoryDropdownItems() {
+    final items = <DropdownMenuItem<String>>[];
+
+    // Add "Add Custom Category" option at the top
+    items.add(
+      DropdownMenuItem<String>(
+        value: 'ADD_CUSTOM_CATEGORY',
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Text(
+            '+ Add Custom Category',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
       ),
     );
 
-    widget.onSave(expense);
-  }
-
-  String _getCategoryName(String categoryId) {
-    final category = _categories.firstWhere(
-      (cat) => cat['id'] == categoryId,
-      orElse: () => {'name': 'Other'},
-    );
-    return category['name'] as String;
-  }
-
-  List<DropdownMenuItem<String>> _buildCategoryDropdownItems() => _categories
-      .map(
-        (category) => DropdownMenuItem<String>(
-          value: category['id'] as String,
-          child: Text(category['name'] as String),
+    // Add separator
+    items.add(
+      DropdownMenuItem<String>(
+        enabled: false,
+        child: Divider(
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+          height: 1,
         ),
-      )
-      .toList();
+      ),
+    );
+
+    // Add the predefined categories
+    items.addAll(
+      _predefinedCategories
+          .map(
+            (category) => DropdownMenuItem<String>(
+              value: category,
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                child: Text(
+                  category,
+                  style: TextStyle(
+                    color: context.colorScheme.onSurface,
+                  ),
+                ),
+              ),
+            ),
+          )
+          .toList(),
+    );
+
+    return items;
+  }
 
   List<DropdownMenuItem<String>> _buildPaymentMethodDropdownItems() =>
       _paymentMethods
           .map(
             (method) => DropdownMenuItem<String>(
               value: method,
-              child: Text(method),
+              child: Container(
+                color: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Text(
+                  method,
+                  style: TextStyle(
+                    color: context.colorScheme.onSurface,
+                  ),
+                ),
+              ),
             ),
           )
           .toList();
-
-  List<DropdownMenuItem<String>> _buildFrequencyDropdownItems() => [
-        const DropdownMenuItem(value: 'daily', child: Text('Daily')),
-        const DropdownMenuItem(value: 'weekly', child: Text('Weekly')),
-        const DropdownMenuItem(value: 'monthly', child: Text('Monthly')),
-        const DropdownMenuItem(value: 'yearly', child: Text('Yearly')),
-      ];
 
   Future<void> _selectDate() async {
     final picked = await showDatePicker(
@@ -261,8 +349,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                   // Expense name
                   ReactiveAppField(
                     formControlName: 'name',
-                    labelText: '${l10n.name} *',
-                    hintText: 'Enter expense name',
+                    labelText: '${l10n.description} *',
+                    hintText: l10n.description,
                     prefixIcon: Icon(
                       Icons.description_outlined,
                       color:
@@ -278,7 +366,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                   // Amount
                   ReactiveAppField(
                     formControlName: 'amount',
-                    labelText: 'Amount *',
+                    labelText: '${l10n.amount} *',
                     hintText: '0.00',
                     fieldType: FieldType.decimal,
                     prefixIcon: Icon(
@@ -289,7 +377,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                     textInputAction: TextInputAction.next,
                     validationMessages: {
                       'required': (error) => l10n.fieldRequired,
-                      'pattern': (error) => 'Please enter a valid amount',
+                      'pattern': (error) => l10n.invalidAmount,
                     },
                     showErrors: (control) {
                       final hasError = control.hasError == true;
@@ -299,58 +387,68 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                   ),
                   const SizedBox(height: AppSpacing.md),
 
-                  // Category
+                  // Category field with custom category support
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Category *',
-                        style: textTheme.labelLarge?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
+                      ReactiveAppField(
+                        formControlName: 'category',
+                        labelText: '${l10n.category} *',
+                        hintText: l10n.category,
+                        dropdownItems: _buildCategoryDropdownItems(),
+                        fieldType: FieldType.dropdown,
+                        validationMessages: {
+                          'required': (error) => l10n.fieldRequired,
+                        },
+                        onDropdownChanged: (value) {
+                          if (value.value == 'ADD_CUSTOM_CATEGORY') {
+                            setState(() {
+                              _isCustomCategoryMode = true;
+                            });
+                            // Clear the dropdown selection when entering custom mode
+                            _form.control('category').value = null;
+                            // Clear any validation errors
+                            _form.control('category').setErrors({});
+                          } else if (value.value != null) {
+                            setState(() {
+                              _isCustomCategoryMode = false;
+                            });
+                            // Clear custom category field when selecting from dropdown
+                            _form.control('customCategory').value = null;
+                            _form.control('customCategory').setErrors({});
+                          }
+                        },
                       ),
-                      const SizedBox(height: AppSpacing.xs),
-                      DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: context.colorScheme.surfaceContainer
-                              .withValues(alpha: 0.7),
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: context.colorScheme.primary
-                                  .withValues(alpha: 0.1),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: ReactiveDropdownField<String>(
-                          formControlName: 'categoryId',
-                          items: _buildCategoryDropdownItems(),
-                          hint: const Text('Select category'),
-                          isExpanded: true,
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(
-                              Icons.category_outlined,
-                              color: colorScheme.onSurfaceVariant
-                                  .withValues(alpha: 0.6),
-                            ),
-                            border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: AppSpacing.md,
-                              vertical: AppSpacing.sm,
-                            ),
+
+                      // Custom category text field
+                      if (_isCustomCategoryMode) ...[
+                        const SizedBox(height: AppSpacing.md),
+                        ReactiveAppField(
+                          formControlName: 'customCategory',
+                          labelText: 'Custom Category *',
+                          hintText: 'Enter custom category name',
+                          prefixIcon: Icon(
+                            Icons.category_outlined,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurfaceVariant
+                                .withValues(alpha: 0.6),
                           ),
+                          textInputAction: TextInputAction.next,
                           validationMessages: {
                             'required': (error) => l10n.fieldRequired,
                           },
+                          showErrors: (control) {
+                            final hasError = control.hasError == true;
+                            final touched = control.touched == true;
+                            return hasError && touched;
+                          },
                         ),
-                      ),
+                      ],
                     ],
                   ),
-                  const SizedBox(height: AppSpacing.md),
 
-                  // Date and Time row
+                  const SizedBox(height: AppSpacing.md),
                   Row(
                     children: [
                       Expanded(
@@ -358,7 +456,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Date *',
+                              '${l10n.date} *',
                               style: textTheme.labelLarge?.copyWith(
                                 color: colorScheme.onSurfaceVariant,
                               ),
@@ -387,8 +485,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                                     borderRadius: BorderRadius.circular(16),
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(
-                                        horizontal: AppSpacing.md,
-                                        vertical: AppSpacing.sm,
+                                        horizontal: 14,
+                                        vertical: 14,
                                       ),
                                       child: Row(
                                         children: [
@@ -402,7 +500,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                                           Text(
                                             date != null
                                                 ? '${date.day}/${date.month}/${date.year}'
-                                                : 'Select date',
+                                                : l10n.date,
                                             style:
                                                 textTheme.bodyLarge?.copyWith(
                                               color: date != null
@@ -427,7 +525,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Time *',
+                              '${l10n.time} *',
                               style: textTheme.labelLarge?.copyWith(
                                 color: colorScheme.onSurfaceVariant,
                               ),
@@ -456,8 +554,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                                     borderRadius: BorderRadius.circular(16),
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(
-                                        horizontal: AppSpacing.md,
-                                        vertical: AppSpacing.sm,
+                                        horizontal: 14,
+                                        vertical: 14,
                                       ),
                                       child: Row(
                                         children: [
@@ -469,7 +567,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                                           ),
                                           const SizedBox(width: AppSpacing.sm),
                                           Text(
-                                            time ?? 'Select time',
+                                            time ?? l10n.time,
                                             style:
                                                 textTheme.bodyLarge?.copyWith(
                                               color: time != null
@@ -495,8 +593,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                   // Location
                   ReactiveAppField(
                     formControlName: 'location',
-                    labelText: 'Location',
-                    hintText: 'Enter location',
+                    labelText: l10n.location,
+                    hintText: l10n.location,
                     prefixIcon: Icon(
                       Icons.location_on_outlined,
                       color:
@@ -505,60 +603,20 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                     textInputAction: TextInputAction.next,
                   ),
                   const SizedBox(height: AppSpacing.md),
-
-                  // Payment method
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Payment Method',
-                        style: textTheme.labelLarge?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.xs),
-                      DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: context.colorScheme.surfaceContainer
-                              .withValues(alpha: 0.7),
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: context.colorScheme.primary
-                                  .withValues(alpha: 0.1),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: ReactiveDropdownField<String>(
-                          formControlName: 'paymentMethod',
-                          items: _buildPaymentMethodDropdownItems(),
-                          hint: const Text('Select payment method'),
-                          isExpanded: true,
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(
-                              Icons.account_balance_wallet_outlined,
-                              color: colorScheme.onSurfaceVariant
-                                  .withValues(alpha: 0.6),
-                            ),
-                            border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: AppSpacing.md,
-                              vertical: AppSpacing.sm,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                  ReactiveAppField(
+                    formControlName: 'paymentMethod',
+                    labelText: l10n.paymentMethod,
+                    hintText: l10n.paymentMethod,
+                    fieldType: FieldType.dropdown,
+                    dropdownItems: _buildPaymentMethodDropdownItems(),
                   ),
-                  const SizedBox(height: AppSpacing.md),
 
+                  const SizedBox(height: AppSpacing.md),
                   // Details
                   ReactiveAppField(
                     formControlName: 'detail',
-                    labelText: 'Details',
-                    hintText: 'Enter details',
+                    labelText: l10n.details,
+                    hintText: l10n.details,
                     fieldType: FieldType.textarea,
                     maxLines: 3,
                     prefixIcon: Icon(
@@ -580,6 +638,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                           child: AppButton.secondary(
                             onPressed: widget.onCancel,
                             text: l10n.cancel.toUpperCase(),
+                            textColor: Colors.white,
                           ),
                         ),
                       if (widget.onCancel != null)
@@ -589,6 +648,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                           onPressed: _submitForm,
                           text: (widget.expense == null ? l10n.add : l10n.save)
                               .toUpperCase(),
+                          textColor: Colors.white,
                         ),
                       ),
                     ],

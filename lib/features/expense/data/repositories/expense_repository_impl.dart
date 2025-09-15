@@ -54,7 +54,8 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
 
   @override
   Future<Either<Failure, ExpenseEntity>> updateExpense(
-          ExpenseEntity expense) async =>
+    ExpenseEntity expense,
+  ) async =>
       remoteDataSource.updateExpense(expense).then(
             (value) => value.fold(
               Left.new,

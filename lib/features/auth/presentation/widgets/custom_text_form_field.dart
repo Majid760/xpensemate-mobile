@@ -412,7 +412,6 @@ class _ReactiveAppFieldState extends State<ReactiveAppField> {
         style: theme.textTheme.bodyLarge?.copyWith(
           color: colorScheme.onSurface,
         ),
-        
       );
 
   Widget _buildDropdownField(ThemeData theme, ColorScheme colorScheme) {
@@ -422,37 +421,136 @@ class _ReactiveAppFieldState extends State<ReactiveAppField> {
             .map(
               (String value) => DropdownMenuItem<String>(
                 value: value,
-                child: Text(
-                  genderOptionsWithIcons[value]?['displayName'] as String? ??
-                      value,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: colorScheme.onSurface,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Row(
+                    children: [
+                      Icon(
+                        genderOptionsWithIcons[value]?['icon'] as IconData? ??
+                            Icons.circle,
+                        size: 20,
+                        color: colorScheme.primary,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        genderOptionsWithIcons[value]?['displayName']
+                                as String? ??
+                            value,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: colorScheme.onSurface,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             )
             .toList();
 
-    return ReactiveDropdownField<String>(
-      formControlName: widget.formControlName,
-      decoration: _getInputDecoration(theme, colorScheme),
-      items: items,
-      onChanged: widget.onDropdownChanged,
-      showErrors: widget.showErrors,
-      validationMessages: widget.validationMessages ?? {},
-      style: theme.textTheme.bodyLarge?.copyWith(
-        color: colorScheme.onSurface,
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: colorScheme.outline.withValues(alpha: 0.2),
+          width: 1.5,
+        ),
       ),
-      dropdownColor:
-          colorScheme.surfaceContainerHighest.withValues(alpha: 0.95),
-      icon: Icon(
-        Icons.keyboard_arrow_down_rounded,
-        size: 20,
-        color: colorScheme.onSurfaceVariant,
+      child: ReactiveDropdownField<String>(
+        formControlName: widget.formControlName,
+        decoration: InputDecoration(
+          hintText: _getHintText(),
+          hintStyle: theme.textTheme.bodyLarge?.copyWith(
+            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+          ),
+          prefixIcon: _getPrefixIcon(),
+          filled: false,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          suffixIcon: Container(
+            padding: const EdgeInsets.only(right: 12),
+            child: Icon(
+              Icons.keyboard_arrow_down_rounded,
+              size: 24,
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+          suffixIconConstraints: const BoxConstraints(
+            minWidth: 24,
+            minHeight: 24,
+          ),
+        ),
+        items: items,
+        onChanged: widget.onDropdownChanged,
+        showErrors: widget.showErrors,
+        validationMessages: widget.validationMessages ?? {},
+        style: theme.textTheme.bodyLarge?.copyWith(
+          color: colorScheme.onSurface,
+          fontWeight: FontWeight.w500,
+        ),
+        dropdownColor: colorScheme.surface,
+        icon: const SizedBox.shrink(), // Hide default icon
+        isExpanded: true,
+        menuMaxHeight: 300,
+        borderRadius: BorderRadius.circular(12),
+        selectedItemBuilder: (BuildContext context) => items
+            .map<Widget>(
+              (DropdownMenuItem<String> item) => Container(
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.zero,
+                child: Row(
+                  children: [
+                    // Get the icon from the original item
+                    if (item.value != null &&
+                        genderOptionsWithIcons.containsKey(item.value))
+                      Icon(
+                        genderOptionsWithIcons[item.value!]?['icon']
+                                as IconData? ??
+                            Icons.circle,
+                        size: 20,
+                        color: colorScheme.primary,
+                      ),
+                    if (item.value != null &&
+                        genderOptionsWithIcons.containsKey(item.value))
+                      const SizedBox(width: 12),
+                    Text(
+                      item.value != null &&
+                              genderOptionsWithIcons.containsKey(item.value)
+                          ? (genderOptionsWithIcons[item.value!]?['displayName']
+                                  as String? ??
+                              item.value!)
+                          : item.value ?? '',
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: colorScheme.onSurface,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+            .toList(),
       ),
-      isExpanded: true,
-      menuMaxHeight: 200,
-      borderRadius: BorderRadius.circular(12),
     );
   }
 

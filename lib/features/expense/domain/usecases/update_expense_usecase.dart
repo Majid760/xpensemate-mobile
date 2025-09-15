@@ -7,7 +7,6 @@ class UpdateExpenseUseCase {
   UpdateExpenseUseCase(this.repository);
   final ExpenseRepository repository;
 
-  Future<Either<Failure, ExpenseEntity>> call(ExpenseEntity expense) async {
-    return await repository.updateExpense(expense);
-  }
+  Future<Either<Failure, ExpenseEntity>> call(ExpenseEntity expense) async =>
+      repository.updateExpense(expense);
 }

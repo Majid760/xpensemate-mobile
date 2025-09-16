@@ -15,7 +15,7 @@ class ExpenseListWidget extends StatelessWidget {
         builder: (context, state) {
           if (state.state == ExpenseStates.loading) {
             return const SliverToBoxAdapter(
-              child: Center(child: CircularProgressIndicator.adaptive()),
+              child: Align(child: CircularProgressIndicator.adaptive()),
             );
           }
 

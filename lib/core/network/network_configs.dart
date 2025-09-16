@@ -55,7 +55,7 @@ class NetworkConfigs {
   // Get monthly expense summary
   static const String expenseCategories = '/expense/summary/monthly';
   // Update an expense
-  static const String updateExpense = '/expense/';
+  static const String updateExpense = '/expense';
   static const String deleteExpense = '/expense';
   static const String getExpense = '/expense/:id';
   // expense insight endpoints

@@ -192,43 +192,20 @@ class ExpenseCubit extends Cubit<ExpenseState> {
         expenses: updatedExpenses,
       );
       emit(state.copyWith(expenses: updatedPagination));
-
-      final result = await _updateExpenseUseCase(expense);
-      result.fold(
-        (failure) {
-          emit(
-            state.copyWith(
-              expenses: originalExpenses,
-              state: ExpenseStates.error,
-            ),
-          );
-        },
-        (success) {
-          emit(
-            state.copyWith(
-              expenses: originalExpenses,
-              state: ExpenseStates.loaded,
-            ),
-          );
-        },
-      );
     }
 
-    // Then make the remote call
     final result = await _updateExpenseUseCase(expense);
     result.fold(
       (failure) {
-        // If the remote call fails, revert the local change
         emit(
           state.copyWith(
             state: ExpenseStates.error,
             errorMessage: failure.message,
-            expenses: originalExpenses, // Revert to original state
+            expenses: originalExpenses,
           ),
         );
       },
       (updatedExpense) {
-        // If successful, ensure the state reflects the update
         emit(
           state.copyWith(
             state: ExpenseStates.loaded,

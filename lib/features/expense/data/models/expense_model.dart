@@ -21,16 +21,38 @@ class ExpenseModel extends ExpenseEntity {
     required super.recurring,
   });
 
+  factory ExpenseModel.fromEntity(ExpenseEntity entity) => ExpenseModel(
+        id: entity.id,
+        userId: entity.userId,
+        name: entity.name,
+        amount: entity.amount,
+        budgetGoalId: entity.budgetGoalId,
+        date: entity.date,
+        time: entity.time,
+        location: entity.location,
+        categoryId: entity.categoryId,
+        categoryName: entity.categoryName,
+        detail: entity.detail,
+        paymentMethod: entity.paymentMethod,
+        attachments: entity.attachments,
+        isDeleted: entity.isDeleted,
+        createdAt: entity.createdAt,
+        updatedAt: entity.updatedAt,
+        recurring: RecurringModel.fromEntity(entity.recurring),
+      );
+
   factory ExpenseModel.fromJson(Map<String, dynamic> json) {
     final recurringData = json['recurring'] as Map<String, dynamic>? ?? {};
-    
+
     return ExpenseModel(
       id: json['_id'] as String? ?? '',
       userId: json['user_id'] as String? ?? '',
       name: json['name'] as String? ?? '',
       amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
       budgetGoalId: json['budget_goal_id'] as String?,
-      date: DateTime.parse(json['date'] as String? ?? DateTime.now().toIso8601String()),
+      date: DateTime.parse(
+        json['date'] as String? ?? DateTime.now().toIso8601String(),
+      ),
       time: json['time'] as String? ?? '',
       location: json['location'] as String? ?? '',
       categoryId: json['category_id'] is Map<String, dynamic>
@@ -46,77 +68,55 @@ class ExpenseModel extends ExpenseEntity {
               .toList() ??
           [],
       isDeleted: json['is_deleted'] as bool? ?? false,
-      createdAt: DateTime.parse(json['created_at'] as String? ?? DateTime.now().toIso8601String()),
-      updatedAt: DateTime.parse(json['updated_at'] as String? ?? DateTime.now().toIso8601String()),
+      createdAt: DateTime.parse(
+        json['created_at'] as String? ?? DateTime.now().toIso8601String(),
+      ),
+      updatedAt: DateTime.parse(
+        json['updated_at'] as String? ?? DateTime.now().toIso8601String(),
+      ),
       recurring: RecurringModel.fromJson(recurringData),
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      '_id': id,
-      'user_id': userId,
-      'name': name,
-      'amount': amount,
-      'budget_goal_id': budgetGoalId,
-      'date': date.toIso8601String(),
-      'time': time,
-      'location': location,
-      'category_id': categoryId,
-      'category': categoryName,
-      'detail': detail,
-      'payment_method': paymentMethod,
-      'attachments': attachments,
-      'is_deleted': isDeleted,
-      'created_at': createdAt.toIso8601String(),
-      'updated_at': updatedAt.toIso8601String(),
-      'recurring': (recurring as RecurringModel).toJson(),
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        '_id': id,
+        'user_id': userId,
+        'name': name,
+        'amount': amount,
+        'budget_goal_id': budgetGoalId,
+        'date': date.toIso8601String(),
+        'time': time,
+        'location': location,
+        'category_id': categoryId,
+        'category': categoryName,
+        'detail': detail,
+        'payment_method': paymentMethod,
+        'attachments': attachments,
+        'is_deleted': isDeleted,
+        'created_at': createdAt.toIso8601String(),
+        'updated_at': updatedAt.toIso8601String(),
+        'recurring': RecurringModel.fromEntity(recurring).toJson(),
+      };
 
-  factory ExpenseModel.fromEntity(ExpenseEntity entity) {
-    return ExpenseModel(
-      id: entity.id,
-      userId: entity.userId,
-      name: entity.name,
-      amount: entity.amount,
-      budgetGoalId: entity.budgetGoalId,
-      date: entity.date,
-      time: entity.time,
-      location: entity.location,
-      categoryId: entity.categoryId,
-      categoryName: entity.categoryName,
-      detail: entity.detail,
-      paymentMethod: entity.paymentMethod,
-      attachments: entity.attachments,
-      isDeleted: entity.isDeleted,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-      recurring: entity.recurring,
-    );
-  }
-
-  ExpenseEntity toEntity() {
-    return ExpenseEntity(
-      id: id,
-      userId: userId,
-      name: name,
-      amount: amount,
-      budgetGoalId: budgetGoalId,
-      date: date,
-      time: time,
-      location: location,
-      categoryId: categoryId,
-      categoryName: categoryName,
-      detail: detail,
-      paymentMethod: paymentMethod,
-      attachments: attachments,
-      isDeleted: isDeleted,
-      createdAt: createdAt,
-      updatedAt: updatedAt,
-      recurring: recurring,
-    );
-  }
+  ExpenseEntity toEntity() => ExpenseEntity(
+        id: id,
+        userId: userId,
+        name: name,
+        amount: amount,
+        budgetGoalId: budgetGoalId,
+        date: date,
+        time: time,
+        location: location,
+        categoryId: categoryId,
+        categoryName: categoryName,
+        detail: detail,
+        paymentMethod: paymentMethod,
+        attachments: attachments,
+        isDeleted: isDeleted,
+        createdAt: createdAt,
+        updatedAt: updatedAt,
+        recurring: recurring,
+      );
 }
 
 class RecurringModel extends RecurringEntity {
@@ -125,31 +125,23 @@ class RecurringModel extends RecurringEntity {
     required super.frequency,
   });
 
-  factory RecurringModel.fromJson(Map<String, dynamic> json) {
-    return RecurringModel(
-      isRecurring: json['is_recurring'] as bool? ?? false,
-      frequency: json['frequency'] as String? ?? 'monthly',
-    );
-  }
+  factory RecurringModel.fromEntity(RecurringEntity entity) => RecurringModel(
+        isRecurring: entity.isRecurring,
+        frequency: entity.frequency,
+      );
 
-  Map<String, dynamic> toJson() {
-    return {
-      'is_recurring': isRecurring,
-      'frequency': frequency,
-    };
-  }
+  factory RecurringModel.fromJson(Map<String, dynamic> json) => RecurringModel(
+        isRecurring: json['is_recurring'] as bool? ?? false,
+        frequency: json['frequency'] as String? ?? 'monthly',
+      );
 
-  factory RecurringModel.fromEntity(RecurringEntity entity) {
-    return RecurringModel(
-      isRecurring: entity.isRecurring,
-      frequency: entity.frequency,
-    );
-  }
+  Map<String, dynamic> toJson() => {
+        'is_recurring': isRecurring,
+        'frequency': frequency,
+      };
 
-  RecurringEntity toEntity() {
-    return RecurringEntity(
-      isRecurring: isRecurring,
-      frequency: frequency,
-    );
-  }
+  RecurringEntity toEntity() => RecurringEntity(
+        isRecurring: isRecurring,
+        frequency: frequency,
+      );
 }

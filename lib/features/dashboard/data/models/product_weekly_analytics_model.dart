@@ -227,7 +227,7 @@ class ProductWeeklyAnalyticsModel extends ProductWeeklyAnalyticsEntity {
       final categoryData = responseData[currentCategory] as List? ?? [];
 
       AppLogger.d(
-        "Category data for '$currentCategory': ${categoryData.toString()}",
+        "Category data for '$currentCategory': $categoryData",
       );
       AppLogger.d("Category data length: ${categoryData.length}");
 

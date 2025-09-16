@@ -18,7 +18,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
       Left.new,
       (remoteWeeklyStats) {
         final weeklyStats = remoteWeeklyStats;
-        return right(weeklyStats.toEntity());
+        return right(weeklyStats);
       },
     );
   }
@@ -40,30 +40,34 @@ class DashboardRepositoryImpl implements DashboardRepository {
     );
     return remoteBudgetGoals.fold(
       Left.new,
-      (remoteBudgetGoals) => right(remoteBudgetGoals.toEntity()),
+      right,
     );
   }
 
   @override
-  Future<Either<Failure, ProductWeeklyAnalyticsEntity>> getProductWeeklyAnalytics() async {
-    final remoteProductAnalytics = await _remoteDataSource.getProductWeeklyAnalytics();
+  Future<Either<Failure, ProductWeeklyAnalyticsEntity>>
+      getProductWeeklyAnalytics() async {
+    final remoteProductAnalytics =
+        await _remoteDataSource.getProductWeeklyAnalytics();
     return remoteProductAnalytics.fold(
       Left.new,
       (remoteProductAnalytics) {
         final productAnalytics = remoteProductAnalytics;
-        return right(productAnalytics.toEntity());
+        return right(productAnalytics);
       },
     );
   }
 
   @override
-  Future<Either<Failure, ProductWeeklyAnalyticsEntity>> getProductWeeklyAnalyticsForCategory(String category) async {
-    final remoteProductAnalytics = await _remoteDataSource.getProductWeeklyAnalyticsForCategory(category);
+  Future<Either<Failure, ProductWeeklyAnalyticsEntity>>
+      getProductWeeklyAnalyticsForCategory(String category) async {
+    final remoteProductAnalytics =
+        await _remoteDataSource.getProductWeeklyAnalyticsForCategory(category);
     return remoteProductAnalytics.fold(
       Left.new,
       (remoteProductAnalytics) {
         final productAnalytics = remoteProductAnalytics;
-        return right(productAnalytics.toEntity());
+        return right(productAnalytics);
       },
     );
   }

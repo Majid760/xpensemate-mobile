@@ -1,4 +1,4 @@
-// import logger 
+// import logger
 import 'package:xpensemate/core/utils/app_logger.dart';
 
 import 'package:xpensemate/features/dashboard/domain/entities/budget_goals_entity.dart';
@@ -6,8 +6,6 @@ import 'package:xpensemate/features/dashboard/domain/entities/budget_goals_entit
 // ------------------------------------------------------------------
 //  Main Budget Goals Model
 // ------------------------------------------------------------------
-
-
 
 class BudgetGoalsModel extends BudgetGoalsEntity {
   const BudgetGoalsModel({
@@ -20,30 +18,35 @@ class BudgetGoalsModel extends BudgetGoalsEntity {
 
   factory BudgetGoalsModel.fromJson(Map<String, dynamic> json) {
     try {
-      AppLogger.d("Parsing BudgetGoalsModel from JSON: ${json.toString()}");
-      
-      // Check if this is a wrapped response (with type, title, message, data)
-      // or a direct response
       Map<String, dynamic> actualData;
       if (json.containsKey('data') && json.containsKey('type')) {
         // This is a wrapped response, extract the actual data
         actualData = json['data'] as Map<String, dynamic>? ?? {};
-        AppLogger.d("Found wrapped response, extracting data: ${actualData.toString()}");
+        AppLogger.d(
+          "Found wrapped response, extracting data: $actualData",
+        );
       } else {
-        // This is a direct response
         actualData = json;
         AppLogger.d("Direct response format detected");
       }
-      
+
       return BudgetGoalsModel(
         goals: (actualData['goals'] as List? ?? [])
             .map((e) => BudgetGoalModel.fromJson(e as Map<String, dynamic>))
             .toList(),
         pagination: actualData['pagination'] != null
-            ? PaginationModel.fromJson(actualData['pagination'] as Map<String, dynamic>)
-            : const PaginationModel(currentPage: 1, totalPages: 1, totalGoals: 0),
+            ? PaginationModel.fromJson(
+                actualData['pagination'] as Map<String, dynamic>,
+              )
+            : const PaginationModel(
+                currentPage: 1,
+                totalPages: 1,
+                totalGoals: 0,
+              ),
         stats: actualData['stats'] != null
-            ? BudgetStatsModel.fromJson(actualData['stats'] as Map<String, dynamic>)
+            ? BudgetStatsModel.fromJson(
+                actualData['stats'] as Map<String, dynamic>,
+              )
             : const BudgetStatsModel(
                 totalGoals: 0,
                 activeGoals: 0,
@@ -53,46 +56,48 @@ class BudgetGoalsModel extends BudgetGoalsEntity {
               ),
         duration: actualData['duration'] as String? ?? '',
         dateRange: actualData['dateRange'] != null
-            ? DateRangeModel.fromJson(actualData['dateRange'] as Map<String, dynamic>)
+            ? DateRangeModel.fromJson(
+                actualData['dateRange'] as Map<String, dynamic>,
+              )
             : DateRangeModel(
                 startDate: DateTime.now(),
                 endDate: DateTime.now(),
               ),
       );
     } catch (e) {
-      AppLogger.e("Error parsing BudgetGoalsModel from JSON: ${json.toString()}", e);
+      AppLogger.e(
+        "Error parsing BudgetGoalsModel from JSON: $json",
+        e,
+      );
       rethrow;
     }
   }
 
-  factory BudgetGoalsModel.fromEntity(BudgetGoalsEntity entity) => BudgetGoalsModel(
-      goals: entity.goals
-          .map(BudgetGoalModel.fromEntity)
-          .toList(),
-      pagination: PaginationModel.fromEntity(entity.pagination),
-      stats: BudgetStatsModel.fromEntity(entity.stats),
-      duration: entity.duration,
-      dateRange: DateRangeModel.fromEntity(entity.dateRange),
-    );
+  factory BudgetGoalsModel.fromEntity(BudgetGoalsEntity entity) =>
+      BudgetGoalsModel(
+        goals: entity.goals.map(BudgetGoalModel.fromEntity).toList(),
+        pagination: PaginationModel.fromEntity(entity.pagination),
+        stats: BudgetStatsModel.fromEntity(entity.stats),
+        duration: entity.duration,
+        dateRange: DateRangeModel.fromEntity(entity.dateRange),
+      );
 
   BudgetGoalsEntity toEntity() => BudgetGoalsEntity(
-      goals: goals,
-      pagination: pagination,
-      stats: stats,
-      duration: duration,
-      dateRange: dateRange,
-    );
+        goals: goals,
+        pagination: pagination,
+        stats: stats,
+        duration: duration,
+        dateRange: dateRange,
+      );
 
   Map<String, dynamic> toJson() => {
-      'goals': goals.map((e) => (e as BudgetGoalModel).toJson()).toList(),
-      'pagination': (pagination as PaginationModel).toJson(),
-      'stats': (stats as BudgetStatsModel).toJson(),
-      'duration': duration,
-      'dateRange': (dateRange as DateRangeModel).toJson(),
-    };
+        'goals': goals.map((e) => (e as BudgetGoalModel).toJson()).toList(),
+        'pagination': (pagination as PaginationModel).toJson(),
+        'stats': (stats as BudgetStatsModel).toJson(),
+        'duration': duration,
+        'dateRange': (dateRange as DateRangeModel).toJson(),
+      };
 }
-
-
 
 // ------------------------------------------------------------------
 //  Sub-models for Budget Goals
@@ -121,7 +126,7 @@ class BudgetGoalModel extends BudgetGoalEntity {
         currentSpending: (json['currentSpending'] as num?)?.toDouble() ?? 0.0,
         priority: json['priority'] as String? ?? '',
         status: json['status'] as String? ?? '',
-        date: json['date'] != null 
+        date: json['date'] != null
             ? DateTime.tryParse(json['date'] as String) ?? DateTime.now()
             : DateTime.now(),
         createdAt: json['created_at'] != null
@@ -134,41 +139,42 @@ class BudgetGoalModel extends BudgetGoalEntity {
     }
   }
 
-  factory BudgetGoalModel.fromEntity(BudgetGoalEntity entity) => BudgetGoalModel(
-      id: entity.id,
-      name: entity.name,
-      category: entity.category,
-      setBudget: entity.setBudget,
-      currentSpending: entity.currentSpending,
-      priority: entity.priority,
-      status: entity.status,
-      date: entity.date,
-      createdAt: entity.createdAt,
-    );
+  factory BudgetGoalModel.fromEntity(BudgetGoalEntity entity) =>
+      BudgetGoalModel(
+        id: entity.id,
+        name: entity.name,
+        category: entity.category,
+        setBudget: entity.setBudget,
+        currentSpending: entity.currentSpending,
+        priority: entity.priority,
+        status: entity.status,
+        date: entity.date,
+        createdAt: entity.createdAt,
+      );
 
   BudgetGoalEntity toEntity() => BudgetGoalEntity(
-      id: id,
-      name: name,
-      category: category,
-      setBudget: setBudget,
-      currentSpending: currentSpending,
-      priority: priority,
-      status: status,
-      date: date,
-      createdAt: createdAt,
-    );
+        id: id,
+        name: name,
+        category: category,
+        setBudget: setBudget,
+        currentSpending: currentSpending,
+        priority: priority,
+        status: status,
+        date: date,
+        createdAt: createdAt,
+      );
 
   Map<String, dynamic> toJson() => {
-      '_id': id,
-      'name': name,
-      'category': category,
-      'setBudget': setBudget,
-      'currentSpending': currentSpending,
-      'priority': priority,
-      'status': status,
-      'date': date.toIso8601String(),
-      'created_at': createdAt.toIso8601String(),
-    };
+        '_id': id,
+        'name': name,
+        'category': category,
+        'setBudget': setBudget,
+        'currentSpending': currentSpending,
+        'priority': priority,
+        'status': status,
+        'date': date.toIso8601String(),
+        'created_at': createdAt.toIso8601String(),
+      };
 }
 
 class PaginationModel extends PaginationEntity {
@@ -191,23 +197,24 @@ class PaginationModel extends PaginationEntity {
     }
   }
 
-  factory PaginationModel.fromEntity(PaginationEntity entity) => PaginationModel(
-      currentPage: entity.currentPage,
-      totalPages: entity.totalPages,
-      totalGoals: entity.totalGoals,
-    );
+  factory PaginationModel.fromEntity(PaginationEntity entity) =>
+      PaginationModel(
+        currentPage: entity.currentPage,
+        totalPages: entity.totalPages,
+        totalGoals: entity.totalGoals,
+      );
 
   PaginationEntity toEntity() => PaginationEntity(
-      currentPage: currentPage,
-      totalPages: totalPages,
-      totalGoals: totalGoals,
-    );
+        currentPage: currentPage,
+        totalPages: totalPages,
+        totalGoals: totalGoals,
+      );
 
   Map<String, dynamic> toJson() => {
-      'currentPage': currentPage,
-      'totalPages': totalPages,
-      'totalGoals': totalGoals,
-    };
+        'currentPage': currentPage,
+        'totalPages': totalPages,
+        'totalGoals': totalGoals,
+      };
 }
 
 class BudgetStatsModel extends BudgetStatsEntity {
@@ -226,7 +233,8 @@ class BudgetStatsModel extends BudgetStatsEntity {
         activeGoals: json['activeGoals'] as int? ?? 0,
         achievedGoals: json['achievedGoals'] as int? ?? 0,
         totalBudgeted: (json['totalBudgeted'] as num?)?.toDouble() ?? 0.0,
-        totalAchievedBudget: (json['totalAchievedBudget'] as num?)?.toDouble() ?? 0.0,
+        totalAchievedBudget:
+            (json['totalAchievedBudget'] as num?)?.toDouble() ?? 0.0,
       );
     } catch (e) {
       AppLogger.e("Error parsing BudgetStatsModel from JSON", e);
@@ -234,29 +242,30 @@ class BudgetStatsModel extends BudgetStatsEntity {
     }
   }
 
-  factory BudgetStatsModel.fromEntity(BudgetStatsEntity entity) => BudgetStatsModel(
-      totalGoals: entity.totalGoals,
-      activeGoals: entity.activeGoals,
-      achievedGoals: entity.achievedGoals,
-      totalBudgeted: entity.totalBudgeted,
-      totalAchievedBudget: entity.totalAchievedBudget,
-    );
+  factory BudgetStatsModel.fromEntity(BudgetStatsEntity entity) =>
+      BudgetStatsModel(
+        totalGoals: entity.totalGoals,
+        activeGoals: entity.activeGoals,
+        achievedGoals: entity.achievedGoals,
+        totalBudgeted: entity.totalBudgeted,
+        totalAchievedBudget: entity.totalAchievedBudget,
+      );
 
   BudgetStatsEntity toEntity() => BudgetStatsEntity(
-      totalGoals: totalGoals,
-      activeGoals: activeGoals,
-      achievedGoals: achievedGoals,
-      totalBudgeted: totalBudgeted,
-      totalAchievedBudget: totalAchievedBudget,
-    );
+        totalGoals: totalGoals,
+        activeGoals: activeGoals,
+        achievedGoals: achievedGoals,
+        totalBudgeted: totalBudgeted,
+        totalAchievedBudget: totalAchievedBudget,
+      );
 
   Map<String, dynamic> toJson() => {
-      'totalGoals': totalGoals,
-      'activeGoals': activeGoals,
-      'achievedGoals': achievedGoals,
-      'totalBudgeted': totalBudgeted,
-      'totalAchievedBudget': totalAchievedBudget,
-    };
+        'totalGoals': totalGoals,
+        'activeGoals': activeGoals,
+        'achievedGoals': achievedGoals,
+        'totalBudgeted': totalBudgeted,
+        'totalAchievedBudget': totalAchievedBudget,
+      };
 }
 
 class DateRangeModel extends DateRangeEntity {
@@ -282,18 +291,17 @@ class DateRangeModel extends DateRangeEntity {
   }
 
   factory DateRangeModel.fromEntity(DateRangeEntity entity) => DateRangeModel(
-      startDate: entity.startDate,
-      endDate: entity.endDate,
-    );
+        startDate: entity.startDate,
+        endDate: entity.endDate,
+      );
 
   DateRangeEntity toEntity() => DateRangeEntity(
-      startDate: startDate,
-      endDate: endDate,
-    );
+        startDate: startDate,
+        endDate: endDate,
+      );
 
   Map<String, dynamic> toJson() => {
-      'startDate': startDate.toIso8601String(),
-      'endDate': endDate.toIso8601String(),
-    };
+        'startDate': startDate.toIso8601String(),
+        'endDate': endDate.toIso8601String(),
+      };
 }
-

@@ -20,10 +20,12 @@ abstract class DashboardRemoteDataSource {
   });
 
   /// Fetches product weekly analytics
-  Future<Either<Failure, ProductWeeklyAnalyticsModel>> getProductWeeklyAnalytics();
-  
+  Future<Either<Failure, ProductWeeklyAnalyticsModel>>
+      getProductWeeklyAnalytics();
+
   /// Fetches product weekly analytics for a specific category
-  Future<Either<Failure, ProductWeeklyAnalyticsModel>> getProductWeeklyAnalyticsForCategory(String category);
+  Future<Either<Failure, ProductWeeklyAnalyticsModel>>
+      getProductWeeklyAnalyticsForCategory(String category);
 }
 
 class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
@@ -46,7 +48,7 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
     DateTime? endDate,
   }) {
     final queryParams = <String, dynamic>{};
-    
+
     if (page != null) queryParams['page'] = page;
     if (limit != null) queryParams['limit'] = limit;
     if (duration != null) queryParams['duration'] = duration;
@@ -56,7 +58,7 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
     if (endDate != null) {
       queryParams['end_date'] = endDate.toIso8601String();
     }
-    
+
     return _networkClient.get(
       NetworkConfigs.budgetGoals,
       query: queryParams,
@@ -65,26 +67,28 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
   }
 
   @override
-  Future<Either<Failure, ProductWeeklyAnalyticsModel>> getProductWeeklyAnalytics() =>
-      _networkClient.get(
-        NetworkConfigs.expenseStats,
-        fromJson: ProductWeeklyAnalyticsModel.fromJson,
-      );
+  Future<Either<Failure, ProductWeeklyAnalyticsModel>>
+      getProductWeeklyAnalytics() => _networkClient.get(
+            NetworkConfigs.expenseStats,
+            fromJson: ProductWeeklyAnalyticsModel.fromJson,
+          );
 
   @override
-  Future<Either<Failure, ProductWeeklyAnalyticsModel>> getProductWeeklyAnalyticsForCategory(String category) async {
+  Future<Either<Failure, ProductWeeklyAnalyticsModel>>
+      getProductWeeklyAnalyticsForCategory(String category) async {
     final response = await _networkClient.get(
       NetworkConfigs.expenseStats,
       fromJson: (json) => json, // Get raw JSON first
     );
-    
+
     return response.fold(
       (failure) => Left(failure),
       (rawJson) {
         try {
-          final model = ProductWeeklyAnalyticsModel.fromJsonForCategory(rawJson, category);
+          final model = ProductWeeklyAnalyticsModel.fromJsonForCategory(
+              rawJson, category);
           return Right(model);
-        } catch (e) {
+        } on Exception catch (e) {
           return Left(ServerFailure(message: e.toString()));
         }
       },

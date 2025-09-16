@@ -6,7 +6,7 @@ import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/active_budget_section_widget.dart';
-import 'package:xpensemate/features/dashboard/presentation/widgets/financial_overview_card_widget.dart';
+import 'package:xpensemate/features/dashboard/presentation/widgets/dashboard_header_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/product_analytics_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/weekly_financial_overview_widget.dart';
 
@@ -63,8 +63,6 @@ class _DashboardPageState extends State<DashboardPage>
   }
 
   void _onScroll() {
-    final scrollPosition = _scrollController.offset;
-
     // Determine which section is currently visible
     var newTitle = context.l10n.dashboard;
 
@@ -143,7 +141,7 @@ class _DashboardPageState extends State<DashboardPage>
                   expandedHeight: 320,
                   pinned: true,
                   elevation: 0,
-                  backgroundColor: AppColors.primary,
+                  backgroundColor: context.colorScheme.primary,
                   actions: [
                     Padding(
                       padding: const EdgeInsets.only(right: 16),
@@ -151,9 +149,9 @@ class _DashboardPageState extends State<DashboardPage>
                         alignment: Alignment.center,
                         children: [
                           IconButton(
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.notifications_outlined,
-                              color: Colors.white,
+                              color: context.colorScheme.onPrimary,
                               size: 28,
                             ),
                             onPressed: () {},
@@ -165,15 +163,16 @@ class _DashboardPageState extends State<DashboardPage>
                               width: 12,
                               height: 12,
                               decoration: BoxDecoration(
-                                color: Colors.amber,
+                                color: context.colorScheme.tertiary,
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: Colors.white,
+                                  color: context.colorScheme.onPrimary,
                                   width: 2,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.amber.withValues(alpha: 0.5),
+                                    color: context.colorScheme.tertiary
+                                        .withValues(alpha: 0.5),
                                     blurRadius: 6,
                                     spreadRadius: 1,
                                   ),
@@ -208,26 +207,29 @@ class _DashboardPageState extends State<DashboardPage>
                               onRetry: _loadDashboardData,
                             ),
                           ),
-                          SizedBox(height: context.lg),
 
-                          // Active Budget Section
-                          if (state.budgetGoals != null)
-                            KeyedSubtree(
-                              key: _sectionKeys['activeBudgets'],
-                              child: ActiveBudgetSectionWidget(
-                                budgetGoals: state.budgetGoals!,
-                              ),
-                            ),
-                          if (state.budgetGoals != null)
+                          if (state.state != DashboardStates.error) ...[
                             SizedBox(height: context.lg),
 
-                          // Product Analytics Section
-                          KeyedSubtree(
-                            key: _sectionKeys['productAnalytics'],
-                            child: const ProductAnalyticsWidget(),
-                          ),
+                            // Active Budget Section
+                            if (state.budgetGoals != null)
+                              KeyedSubtree(
+                                key: _sectionKeys['activeBudgets'],
+                                child: ActiveBudgetSectionWidget(
+                                  budgetGoals: state.budgetGoals!,
+                                ),
+                              ),
+                            if (state.budgetGoals != null)
+                              SizedBox(height: context.lg),
 
-                          SizedBox(height: context.lg),
+                            // Product Analytics Section
+                            KeyedSubtree(
+                              key: _sectionKeys['productAnalytics'],
+                              child: const ProductAnalyticsWidget(),
+                            ),
+
+                            SizedBox(height: context.lg),
+                          ],
 
                           // Additional padding at bottom for better scrolling
                           SizedBox(height: context.xl),
@@ -238,101 +240,6 @@ class _DashboardPageState extends State<DashboardPage>
                 ),
               ],
             ),
-          ),
-        ),
-      );
-}
-
-// Separate widget for the dashboard header
-class DashboardHeaderWidget extends StatelessWidget {
-  const DashboardHeaderWidget({
-    super.key,
-    required this.state,
-    required this.getGreeting,
-  });
-  final DashboardState state;
-  final String Function() getGreeting;
-
-  @override
-  Widget build(BuildContext context) => SingleChildScrollView(
-        physics: const NeverScrollableScrollPhysics(),
-        child: Container(
-          padding: const EdgeInsets.fromLTRB(24, 50, 24, 24),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                context.colorScheme.primary,
-                context.colorScheme.secondary.withValues(alpha: 0.9),
-              ],
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: context.colorScheme.primary.withValues(alpha: 0.2),
-                blurRadius: 10,
-                spreadRadius: 2,
-                offset: const Offset(0, 3),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 16),
-              // Greeting Text
-              Row(
-                children: [
-                  Text(
-                    '${getGreeting()} ',
-                    style: context.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: context.colorScheme.onPrimary,
-                      letterSpacing: -0.5,
-                      shadows: [
-                        Shadow(
-                          color: context.colorScheme.primaryContainer
-                              .withValues(alpha: 0.3),
-                          blurRadius: 4,
-                          offset: const Offset(1, 1),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Text(
-                    '👋',
-                    style: context.textTheme.headlineMedium?.copyWith(
-                      color: context.colorScheme.onPrimary,
-                      shadows: [
-                        Shadow(
-                          color: context.colorScheme.onPrimary
-                              .withValues(alpha: 0.2),
-                          blurRadius: 8,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              Text(
-                context.l10n.financialOverviewSubtitle,
-                style: context.textTheme.titleMedium?.copyWith(
-                  color: context.colorScheme.onPrimary.withValues(alpha: 0.95),
-                  fontWeight: FontWeight.w400,
-                  shadows: [
-                    Shadow(
-                      color: context.colorScheme.primary.withValues(alpha: 0.2),
-                      blurRadius: 2,
-                      offset: const Offset(0, 1),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              // Financial Overview Card (now using separate widget)
-              FinancialOverviewCardWidget(state: state),
-            ],
           ),
         ),
       );

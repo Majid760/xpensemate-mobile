@@ -18,8 +18,10 @@ abstract class DashboardRepository {
   });
 
   /// Fetches product weekly analytics for the dashboard
-  Future<Either<Failure, ProductWeeklyAnalyticsEntity>> getProductWeeklyAnalytics();
-  
+  Future<Either<Failure, ProductWeeklyAnalyticsEntity>>
+      getProductWeeklyAnalytics();
+
   /// Fetches product weekly analytics for a specific category
-  Future<Either<Failure, ProductWeeklyAnalyticsEntity>> getProductWeeklyAnalyticsForCategory(String category);
+  Future<Either<Failure, ProductWeeklyAnalyticsEntity>>
+      getProductWeeklyAnalyticsForCategory(String category);
 }

@@ -1,7 +1,49 @@
 // import logger
 import 'package:xpensemate/core/utils/app_logger.dart';
-
+import 'package:xpensemate/features/expense/data/models/budgets_model.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/budget_goals_entity.dart';
+import 'package:xpensemate/features/dashboard/domain/entities/budgets_list_entity.dart';
+
+class BudgetsListModel extends BudgetsListEntity {
+  const BudgetsListModel({
+    required super.budgets,
+    required super.total,
+    required super.page,
+    required super.totalPages,
+  });
+
+  factory BudgetsListModel.fromJson(Map<String, dynamic> json) =>
+      BudgetsListModel(
+        budgets: (json['data'] as List? ?? [])
+            .map((e) => BudgetModel.fromJson(e as Map<String, dynamic>))
+            .toList(),
+        total: json['total'] as int? ?? 0,
+        page: json['page'] as int? ?? 1,
+        totalPages: json['totalPages'] as int? ?? 1,
+      );
+
+  factory BudgetsListModel.fromEntity(BudgetsListEntity entity) =>
+      BudgetsListModel(
+        budgets: entity.budgets,
+        total: entity.total,
+        page: entity.page,
+        totalPages: entity.totalPages,
+      );
+
+  BudgetsListEntity toEntity() => BudgetsListEntity(
+        budgets: budgets,
+        total: total,
+        page: page,
+        totalPages: totalPages,
+      );
+
+  Map<String, dynamic> toJson() => {
+        'data': budgets.map((e) => (e as BudgetModel).toJson()).toList(),
+        'total': total,
+        'page': page,
+        'totalPages': totalPages,
+      };
+}
 
 // ------------------------------------------------------------------
 //  Main Budget Goals Model

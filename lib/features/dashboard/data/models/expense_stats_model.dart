@@ -24,20 +24,21 @@ class DailyExpenseModel extends DailyExpenseEntity {
     }
   }
 
-  factory DailyExpenseModel.fromEntity(DailyExpenseEntity entity) => DailyExpenseModel(
-      date: entity.date,
-      total: entity.total,
-    );
+  factory DailyExpenseModel.fromEntity(DailyExpenseEntity entity) =>
+      DailyExpenseModel(
+        date: entity.date,
+        total: entity.total,
+      );
 
   DailyExpenseEntity toEntity() => DailyExpenseEntity(
-      date: date,
-      total: total,
-    );
+        date: date,
+        total: total,
+      );
 
   Map<String, dynamic> toJson() => {
-      'date': date,
-      'total': total,
-    };
+        'date': date,
+        'total': total,
+      };
 }
 
 class DayExpenseModel extends DayExpenseEntity {
@@ -58,20 +59,21 @@ class DayExpenseModel extends DayExpenseEntity {
     }
   }
 
-  factory DayExpenseModel.fromEntity(DayExpenseEntity entity) => DayExpenseModel(
-      date: entity.date,
-      total: entity.total,
-    );
+  factory DayExpenseModel.fromEntity(DayExpenseEntity entity) =>
+      DayExpenseModel(
+        date: entity.date,
+        total: entity.total,
+      );
 
   DayExpenseEntity toEntity() => DayExpenseEntity(
-      date: date,
-      total: total,
-    );
+        date: date,
+        total: total,
+      );
 
   Map<String, dynamic> toJson() => {
-      'date': date,
-      'total': total,
-    };
+        'date': date,
+        'total': total,
+      };
 }
 
 // ------------------------------------------------------------------
@@ -104,11 +106,13 @@ class ExpenseStatsModel extends ExpenseStatsEntity {
         weeklyBudget: (json['weeklyBudget'] as num?)?.toDouble() ?? 0.0,
         dailyAverage: (json['dailyAverage'] as num?)?.toDouble() ?? 0.0,
         highestDay: json['highestDay'] != null
-            ? DayExpenseModel.fromJson(json['highestDay'] as Map<String, dynamic>)
-            : const DayExpenseModel(date: '', total: 0.0),
+            ? DayExpenseModel.fromJson(
+                json['highestDay'] as Map<String, dynamic>)
+            : const DayExpenseModel(date: '', total: 0),
         lowestDay: json['lowestDay'] != null
-            ? DayExpenseModel.fromJson(json['lowestDay'] as Map<String, dynamic>)
-            : const DayExpenseModel(date: '', total: 0.0),
+            ? DayExpenseModel.fromJson(
+                json['lowestDay'] as Map<String, dynamic>)
+            : const DayExpenseModel(date: '', total: 0),
       );
     } catch (e) {
       AppLogger.e("Error parsing ExpenseStatsModel from JSON", e);
@@ -116,42 +120,40 @@ class ExpenseStatsModel extends ExpenseStatsEntity {
     }
   }
 
-  factory ExpenseStatsModel.fromEntity(ExpenseStatsEntity entity) => ExpenseStatsModel(
-      days: entity.days
-          .map(DailyExpenseModel.fromEntity)
-          .toList(),
-      dailyBreakdown: entity.dailyBreakdown
-          .map(DailyExpenseModel.fromEntity)
-          .toList(),
-      weekTotal: entity.weekTotal,
-      balanceLeft: entity.balanceLeft,
-      weeklyBudget: entity.weeklyBudget,
-      dailyAverage: entity.dailyAverage,
-      highestDay: DayExpenseModel.fromEntity(entity.highestDay),
-      lowestDay: DayExpenseModel.fromEntity(entity.lowestDay),
-    );
+  factory ExpenseStatsModel.fromEntity(ExpenseStatsEntity entity) =>
+      ExpenseStatsModel(
+        days: entity.days.map(DailyExpenseModel.fromEntity).toList(),
+        dailyBreakdown:
+            entity.dailyBreakdown.map(DailyExpenseModel.fromEntity).toList(),
+        weekTotal: entity.weekTotal,
+        balanceLeft: entity.balanceLeft,
+        weeklyBudget: entity.weeklyBudget,
+        dailyAverage: entity.dailyAverage,
+        highestDay: DayExpenseModel.fromEntity(entity.highestDay),
+        lowestDay: DayExpenseModel.fromEntity(entity.lowestDay),
+      );
 
   ExpenseStatsEntity toEntity() => ExpenseStatsEntity(
-      days: days,
-      dailyBreakdown: dailyBreakdown,
-      weekTotal: weekTotal,
-      balanceLeft: balanceLeft,
-      weeklyBudget: weeklyBudget,
-      dailyAverage: dailyAverage,
-      highestDay: highestDay,
-      lowestDay: lowestDay,
-    );
+        days: days,
+        dailyBreakdown: dailyBreakdown,
+        weekTotal: weekTotal,
+        balanceLeft: balanceLeft,
+        weeklyBudget: weeklyBudget,
+        dailyAverage: dailyAverage,
+        highestDay: highestDay,
+        lowestDay: lowestDay,
+      );
 
   Map<String, dynamic> toJson() => {
-      'days': days.map((e) => (e as DailyExpenseModel).toJson()).toList(),
-      'dailyBreakdown': dailyBreakdown
-          .map((e) => (e as DailyExpenseModel).toJson())
-          .toList(),
-      'weekTotal': weekTotal,
-      'balanceLeft': balanceLeft,
-      'weeklyBudget': weeklyBudget,
-      'dailyAverage': dailyAverage,
-      'highestDay': (highestDay as DayExpenseModel).toJson(),
-      'lowestDay': (lowestDay as DayExpenseModel).toJson(),
-    };
+        'days': days.map((e) => (e as DailyExpenseModel).toJson()).toList(),
+        'dailyBreakdown': dailyBreakdown
+            .map((e) => (e as DailyExpenseModel).toJson())
+            .toList(),
+        'weekTotal': weekTotal,
+        'balanceLeft': balanceLeft,
+        'weeklyBudget': weeklyBudget,
+        'dailyAverage': dailyAverage,
+        'highestDay': (highestDay as DayExpenseModel).toJson(),
+        'lowestDay': (lowestDay as DayExpenseModel).toJson(),
+      };
 }

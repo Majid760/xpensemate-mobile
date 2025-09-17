@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:xpensemate/core/error/failures.dart';
+import 'package:xpensemate/features/dashboard/domain/entities/budgets_list_entity.dart';
 import 'package:xpensemate/features/expense/data/datasources/expense_remote_data_source.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_pagination_entity.dart';
@@ -61,4 +62,24 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
               (model) => Right(model.toEntity()),
             ),
           );
+
+  @override
+  Future<Either<Failure, BudgetsListEntity>> getBudgets({
+    int? page,
+    int? limit,
+    String? status,
+  }) async {
+    final remoteBudgets = await remoteDataSource.getBudgets(
+      page: page,
+      limit: limit,
+      status: status,
+    );
+    return remoteBudgets.fold(
+      Left.new,
+      (remoteBudgets) {
+        final budgets = remoteBudgets.toEntity();
+        return right(budgets);
+      },
+    );
+  }
 }

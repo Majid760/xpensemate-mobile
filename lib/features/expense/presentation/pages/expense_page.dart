@@ -42,6 +42,7 @@ class _ExpensePageContentState extends State<ExpensePageContent>
   @override
   void initState() {
     super.initState();
+    context.expenseCubit.loadBudgets();
     _scrollController = ScrollController();
   }
 

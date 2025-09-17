@@ -2,6 +2,8 @@ import 'package:dartz/dartz.dart';
 import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/core/network/network_configs.dart';
 import 'package:xpensemate/core/network/network_contracts.dart';
+import 'package:xpensemate/features/dashboard/data/models/budget_goals_model.dart';
+import 'package:xpensemate/features/dashboard/domain/entities/budget_goals_entity.dart';
 import 'package:xpensemate/features/expense/data/models/expense_model.dart';
 import 'package:xpensemate/features/expense/data/models/expense_pagination_model.dart';
 import 'package:xpensemate/features/expense/data/models/expense_stats_model.dart';
@@ -24,6 +26,14 @@ abstract class ExpenseRemoteDataSource {
 
   /// Update an expense
   Future<Either<Failure, ExpenseModel>> updateExpense(ExpenseEntity expense);
+
+  /// Update an expense
+  /// Fetches budgets
+  Future<Either<Failure, BudgetsListModel>> getBudgets({
+    int? page,
+    int? limit,
+    String? status,
+  });
 }
 
 class ExpenseRemoteDataSourceImpl implements ExpenseRemoteDataSource {
@@ -73,6 +83,26 @@ class ExpenseRemoteDataSourceImpl implements ExpenseRemoteDataSource {
       '${NetworkConfigs.updateExpense}/${expense.id}',
       data: expenseModel.toJson(),
       fromJson: ExpenseModel.fromJson,
+    );
+  }
+
+  @override
+  Future<Either<Failure, BudgetsListModel>> getBudgets({
+    int? page,
+    int? limit,
+    String? status,
+  }) {
+    final queryParams = <String, dynamic>{};
+
+    if (page != null) queryParams['page'] = page;
+    if (limit != null) queryParams['limit'] = limit;
+    if (status != null) queryParams['status'] = status;
+
+    return _networkClient.get(
+      NetworkConfigs.budgets,
+      query: queryParams,
+      fromJson: (data) =>
+          BudgetsListModel.fromJson(data['data'] as Map<String, dynamic>),
     );
   }
 }

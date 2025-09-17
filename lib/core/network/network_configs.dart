@@ -9,7 +9,7 @@ class NetworkConfigs {
   static String get baseUrl => switch (_env) {
         'prod' => 'http://192.168.15.148:5001/api/v1',
         'stg' => 'http://192.168.15.148:5001/api/v1',
-        _ => 'http://192.168.0.100:5001/api/v1', // dev
+        _ => 'http://192.168.0.105:5001/api/v1', // dev
       };
 
   // ------------------------------------------------------------------
@@ -60,6 +60,13 @@ class NetworkConfigs {
   static const String getExpense = '/expense/:id';
   // expense insight endpoints
   static const String expenseInsight = '/expenses/stats';
+
+  // budget goals endpoints
+  // get budget goals bases on status
+  static const String getBudgetBasedOnStatus = '/budget-goals/status/:status';
+  
+  // budgets endpoints
+  static const String budgets = '/budgets';
 
   // ------------------------------------------------------------------
   //  Static Pages URLs

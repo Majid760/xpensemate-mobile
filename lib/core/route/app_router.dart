@@ -12,13 +12,12 @@ import 'package:xpensemate/core/route/utils/router_middleware_guard.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
 
 class AppRouter {
-  
   AppRouter(this._authCubit, this._routeGuards);
   final AuthCubit _authCubit;
   final RouteGuards _routeGuards;
 
   late final GoRouter router = GoRouter(
-    debugLogDiagnostics: true,
+    // debugLogDiagnostics: true,
     initialLocation: RouteConstants.splash,
     refreshListenable: _authCubit,
     redirect: _routeGuards.globalRedirect,
@@ -30,10 +29,10 @@ class AppRouter {
         name: RouteNames.splash,
         builder: (context, state) => const SplashPage(),
       ),
-      
+
       // Auth Routes
       ...AuthRoutes.routes,
-  
+
       // Main App Shell with Bottom Navigation
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
@@ -46,26 +45,11 @@ class AppRouter {
     ],
   );
 
-  static final GlobalKey<NavigatorState> _rootNavigatorKey = 
+  static final GlobalKey<NavigatorState> _rootNavigatorKey =
       GlobalKey<NavigatorState>(debugLabel: 'root');
-  static final GlobalKey<NavigatorState> _shellNavigatorKey = 
+  static final GlobalKey<NavigatorState> _shellNavigatorKey =
       GlobalKey<NavigatorState>(debugLabel: 'shell');
 
   static GlobalKey<NavigatorState> get rootNavigatorKey => _rootNavigatorKey;
   static GlobalKey<NavigatorState> get shellNavigatorKey => _shellNavigatorKey;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

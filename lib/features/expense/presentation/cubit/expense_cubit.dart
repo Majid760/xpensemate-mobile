@@ -5,6 +5,7 @@ import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart'
 import 'package:xpensemate/features/expense/domain/entities/expense_pagination_entity.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_stats_entity.dart';
 import 'package:xpensemate/features/expense/domain/usecases/delete_expense_usecase.dart';
+import 'package:xpensemate/features/expense/domain/usecases/get_budgets_usecase.dart';
 import 'package:xpensemate/features/expense/domain/usecases/get_expense_stats_usecase.dart';
 import 'package:xpensemate/features/expense/domain/usecases/get_expenses_usecase.dart';
 import 'package:xpensemate/features/expense/domain/usecases/update_expense_usecase.dart';
@@ -17,6 +18,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
     this._getExpenseStatsUseCase,
     this._deleteExpenseUseCase,
     this._updateExpenseUseCase,
+    this._budgetsUseCase,
   ) : super(const ExpenseState()) {
     loadExpenseData();
   }
@@ -25,6 +27,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
   final GetExpenseStatsUseCase _getExpenseStatsUseCase;
   final DeleteExpenseUseCase _deleteExpenseUseCase;
   final UpdateExpenseUseCase _updateExpenseUseCase;
+  final GetBudgetsUseCase _budgetsUseCase;
 
   /// Load expenses with pagination (matches web app: /expenses?page=${page}&limit=${limit})
   Future<void> loadExpenses({
@@ -237,6 +240,27 @@ class ExpenseCubit extends Cubit<ExpenseState> {
         });
       },
     );
+  }
+
+  // load the budgets
+  Future<void> loadBudgets(
+      {String status = "active", int? page, int? limit}) async {
+    final params = GetBudgetsParams(
+      status: status,
+      page: page,
+      limit: limit,
+    );
+    final result = await _budgetsUseCase(params);
+    result.fold((failure) {
+      emit(
+        state.copyWith(
+          state: ExpenseStates.error,
+          errorMessage: failure.message,
+        ),
+      );
+    }, (success) {
+      print("thi is page list offofofofoof => ${success.budgets.length}");
+    });
   }
 }
 

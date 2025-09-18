@@ -64,9 +64,9 @@ class NetworkConfigs {
   // budget goals endpoints
   // get budget goals bases on status
   static const String getBudgetBasedOnStatus = '/budget-goals/status/:status';
-  
+
   // budgets endpoints
-  static const String budgets = '/budgets';
+  static const String budgets = '/budget-goals/status';
 
   // ------------------------------------------------------------------
   //  Static Pages URLs

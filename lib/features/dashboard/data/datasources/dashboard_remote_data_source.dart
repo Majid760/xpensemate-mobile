@@ -80,13 +80,14 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       NetworkConfigs.expenseStats,
       fromJson: (json) => json, // Get raw JSON first
     );
-
     return response.fold(
-      (failure) => Left(failure),
+      Left.new,
       (rawJson) {
         try {
           final model = ProductWeeklyAnalyticsModel.fromJsonForCategory(
-              rawJson, category);
+            rawJson,
+            category,
+          );
           return Right(model);
         } on Exception catch (e) {
           return Left(ServerFailure(message: e.toString()));

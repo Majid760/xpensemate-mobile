@@ -7,6 +7,7 @@ class ExpenseState extends Equatable {
     this.state = ExpenseStates.initial,
     this.expenses,
     this.expenseStats,
+    this.budgets,
     this.errorMessage,
     this.stackTrace,
   });
@@ -14,6 +15,7 @@ class ExpenseState extends Equatable {
   final ExpenseStates state;
   final ExpensePaginationEntity? expenses;
   final ExpenseStatsEntity? expenseStats;
+  final BudgetsListEntity? budgets;
   final String? errorMessage;
   final StackTrace? stackTrace;
 
@@ -21,6 +23,7 @@ class ExpenseState extends Equatable {
     ExpenseStates? state,
     ExpensePaginationEntity? expenses,
     ExpenseStatsEntity? expenseStats,
+    BudgetsListEntity? budgets,
     String? errorMessage,
     StackTrace? stackTrace,
   }) =>
@@ -28,6 +31,7 @@ class ExpenseState extends Equatable {
         state: state ?? this.state,
         expenses: expenses ?? this.expenses,
         expenseStats: expenseStats ?? this.expenseStats,
+        budgets: budgets ?? this.budgets,
         errorMessage: errorMessage ?? this.errorMessage,
         stackTrace: stackTrace ?? this.stackTrace,
       );
@@ -37,6 +41,7 @@ class ExpenseState extends Equatable {
         state,
         expenses,
         expenseStats,
+        budgets,
         errorMessage,
         stackTrace,
       ];

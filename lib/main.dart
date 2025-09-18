@@ -29,8 +29,15 @@ void main() async {
       runApp(const MyApp());
     },
     (error, stack) {
-      debugPrint('Caught error: $error'); // log it!
-      //  Send to Crashlytics or show user-friendly dialog
+      // Improved error logging with more context and better formatting
+      debugPrint('🔥 FATAL ERROR CAUGHT IN MAIN:');
+      debugPrint('==============================');
+      debugPrint('Error: $error');
+      debugPrint('Stack trace: $stack');
+      debugPrint('==============================');
+
+      // TODO: Implement proper error reporting to Crashlytics or other error tracking service
+      // Example: FirebaseCrashlytics.instance.recordError(error, stack);
     },
   );
 }

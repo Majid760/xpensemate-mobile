@@ -66,6 +66,7 @@ class _ExpensePageContentState extends State<ExpensePageContent>
       child: ExpenseFormWidget(
         expense: entity,
         onSave: (expense) {
+          Navigator.pop(context);
           context.expenseCubit.updateExpense(expense: expense).then((value) {
             if (context.mounted) {
               AppSnackBar.show(

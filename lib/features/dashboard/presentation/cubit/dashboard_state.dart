@@ -7,7 +7,6 @@ class DashboardState extends Equatable {
     this.state = DashboardStates.initial,
     this.weeklyStats,
     this.budgetGoals,
-    this.budgets,
     this.productAnalytics,
     this.errorMessage,
     this.stackTrace,
@@ -16,7 +15,6 @@ class DashboardState extends Equatable {
   final DashboardStates state;
   final WeeklyStatsEntity? weeklyStats;
   final BudgetGoalsEntity? budgetGoals;
-  final BudgetsListEntity? budgets;
   final ProductWeeklyAnalyticsEntity? productAnalytics;
   final String? errorMessage;
   final StackTrace? stackTrace;
@@ -25,7 +23,6 @@ class DashboardState extends Equatable {
     DashboardStates? state,
     WeeklyStatsEntity? weeklyStats,
     BudgetGoalsEntity? budgetGoals,
-    BudgetsListEntity? budgets,
     ProductWeeklyAnalyticsEntity? productAnalytics,
     String? errorMessage,
     StackTrace? stackTrace,
@@ -34,7 +31,6 @@ class DashboardState extends Equatable {
         state: state ?? this.state,
         weeklyStats: weeklyStats ?? this.weeklyStats,
         budgetGoals: budgetGoals ?? this.budgetGoals,
-        budgets: budgets ?? this.budgets,
         productAnalytics: productAnalytics ?? this.productAnalytics,
         errorMessage: errorMessage ?? this.errorMessage,
         stackTrace: stackTrace ?? this.stackTrace,
@@ -45,7 +41,6 @@ class DashboardState extends Equatable {
         state,
         weeklyStats,
         budgetGoals,
-        budgets,
         productAnalytics,
         errorMessage,
         stackTrace,

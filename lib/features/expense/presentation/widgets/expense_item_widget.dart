@@ -379,19 +379,27 @@ class ExpenseCard extends StatelessWidget {
           onTapDown: onTapDown,
           onTapUp: onTapUp,
           onTapCancel: onTapCancel,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ExpenseIcon(expense: expense),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: ExpenseContent(expense: expense),
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ExpenseIcon(expense: expense),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: ExpenseContent(expense: expense),
+                    ),
+                  ],
                 ),
-                ExpenseStatusIndicator(expense: expense),
-              ],
-            ),
+              ),
+              Positioned(
+                bottom: 12,
+                right: 16,
+                child: ExpenseStatusIndicator(expense: expense),
+              ),
+            ],
           ),
         ),
       );
@@ -692,7 +700,9 @@ class ExpenseStatusIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Column(
         crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
         children: [
+          // Green checkmark indicator (always shown)
           Container(
             padding: const EdgeInsets.all(2),
             decoration: BoxDecoration(
@@ -705,6 +715,35 @@ class ExpenseStatusIndicator extends StatelessWidget {
               color: Colors.green,
             ),
           ),
+          // Show budget goal indicator at the bottom if expense is linked to a budget goal
+          if (expense.budgetGoalId != null &&
+              expense.budgetGoalId!.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: Colors.purple.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: Colors.purple.withValues(alpha: 0.3)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.account_balance_outlined,
+                      size: 12, color: Colors.purple),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Budget',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.purple,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       );
 }

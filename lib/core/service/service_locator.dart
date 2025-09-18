@@ -146,7 +146,9 @@ Future<void> initLocator() async {
     // ---------- Presentation Layer ----------
     sl.registerFactory(() => AuthCubit(sl()));
     sl.registerFactory(() => ProfileCubit(sl()));
-    sl.registerFactory(() => DashboardCubit(sl(), sl(), sl(), sl()));
+    sl.registerFactory(
+      () => DashboardCubit(sl(), sl(), sl()),
+    );
     sl.registerFactory(() => ExpenseCubit(sl(), sl(), sl(), sl(), sl()));
 
     AppLogger.i('Service locator initialized successfully');

@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:xpensemate/features/dashboard/domain/entities/budgets_list_entity.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_pagination_entity.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_stats_entity.dart';
@@ -243,8 +244,11 @@ class ExpenseCubit extends Cubit<ExpenseState> {
   }
 
   // load the budgets
-  Future<void> loadBudgets(
-      {String status = "active", int? page, int? limit}) async {
+  Future<void> loadBudgets({
+    String status = "active",
+    int? page,
+    int? limit,
+  }) async {
     final params = GetBudgetsParams(
       status: status,
       page: page,
@@ -259,7 +263,12 @@ class ExpenseCubit extends Cubit<ExpenseState> {
         ),
       );
     }, (success) {
-      print("thi is page list offofofofoof => ${success.budgets.length}");
+      emit(
+        state.copyWith(
+          state: ExpenseStates.loaded,
+          budgets: success,
+        ),
+      );
     });
   }
 }

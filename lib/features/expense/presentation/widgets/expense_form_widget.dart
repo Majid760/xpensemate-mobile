@@ -6,7 +6,9 @@ import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/features/auth/presentation/widgets/custom_text_form_field.dart';
+import 'package:xpensemate/features/dashboard/domain/entities/budgets_list_entity.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
+import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
 
 class ExpenseFormWidget extends StatefulWidget {
   const ExpenseFormWidget({
@@ -34,11 +36,17 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
   late final List<String> _predefinedCategories;
   late final List<String> _paymentMethods;
   bool _isCustomCategoryMode = false;
+  BudgetsListEntity? _budgets;
+  bool _isBudgetsLoading = true;
 
   @override
   void initState() {
     super.initState();
+    _initializeForm();
+    _loadBudgets();
+  }
 
+  void _initializeForm() {
     // Initialize predefined categories - in a real app, these would come from an API
     _predefinedCategories = [
       'Food',
@@ -80,6 +88,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
         validators: [Validators.required],
       ),
       'customCategory': FormControl<String>(),
+      'budgetGoalId': FormControl<String>(), // Add budget form control
       'date': FormControl<DateTime>(
         validators: [Validators.required],
       ),
@@ -98,6 +107,63 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
       // Set default values for new expense
       _form.control('date').value = DateTime.now();
       _form.control('time').value = _formatTime(DateTime.now());
+    }
+  }
+
+  Future<void> _loadBudgets() async {
+    try {
+      setState(() {
+        _isBudgetsLoading = true;
+      });
+
+      await context.expenseCubit.loadBudgets();
+
+      if (mounted) {
+        final budgets = context.expenseCubit.state.budgets;
+        setState(() {
+          _budgets = budgets ??
+              const BudgetsListEntity(
+                budgets: [],
+                total: 0,
+                page: 0,
+                totalPages: 0,
+              );
+          _isBudgetsLoading = false;
+          if (budgets != null && budgets.budgets.isNotEmpty) {
+            _form.control('budgetGoalId').value = budgets.budgets
+                .firstWhere(
+                  (budget) => budget.id == widget.expense!.budgetGoalId,
+                )
+                .name;
+          }
+        });
+
+        // If editing an expense and budgets are now loaded, set the budget
+        if (widget.expense?.budgetGoalId != null && _budgets != null) {
+          _setBudgetFromExpense(widget.expense!.budgetGoalId!);
+        }
+      }
+    } on Exception catch (error) {
+      if (mounted) {
+        setState(() {
+          _isBudgetsLoading = false;
+          _budgets = const BudgetsListEntity(
+              budgets: [], total: 0, page: 0, totalPages: 0);
+        });
+        AppSnackBar.show(
+            context: context, message: 'Failed to load budgets: $error');
+      }
+    }
+  }
+
+  void _setBudgetFromExpense(String budgetGoalId) {
+    // Only set the budget if it exists in the fetched budgets list
+    // The dropdown will show the budget name but store the ID
+    if (_budgets?.budgets.any((budget) => budget.id == budgetGoalId) == true) {
+      _form.control('budgetGoalId').value = budgetGoalId; // Store the ID
+    } else {
+      // If the budget ID doesn't exist in current budgets, set to no budget
+      _form.control('budgetGoalId').value = 'NO_BUDGET';
     }
   }
 
@@ -125,6 +191,9 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
       _form.control('category').value = categoryName;
       _isCustomCategoryMode = false;
     }
+
+    // Don't set budget here - it will be set after budgets are loaded and validated
+    // This prevents showing the raw ID in the dropdown
 
     _form.control('date').value = expense.date;
     _form.control('time').value = expense.time;
@@ -182,6 +251,13 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
         return;
       }
 
+      // Get selected budget ID and handle the special "NO_BUDGET" case
+      final selectedBudgetId = _form.control('budgetGoalId').value as String?;
+      final budgetGoalId = selectedBudgetId == 'NO_BUDGET'
+          ? null
+          : _budgets?.budgets
+              .firstWhere((budget) => budget.name == selectedBudgetId)
+              .id; // Use the selected budget ID directly
       // Create or update expense entity
       final expense = ExpenseEntity(
         id: widget.expense?.id ??
@@ -190,7 +266,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
             'current_user_id', // This would come from auth in real app
         name: (_form.control('name').value as String?)?.trim() ?? '',
         amount: amount,
-        budgetGoalId: widget.expense?.budgetGoalId,
+        budgetGoalId:
+            budgetGoalId, // Use processed budget ID (null if NO_BUDGET selected)
         date: _form.control('date').value as DateTime? ?? DateTime.now(),
         time: _form.control('time').value as String? ??
             _formatTime(DateTime.now()),
@@ -266,6 +343,69 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
           )
           .toList(),
     );
+
+    return items;
+  }
+
+  List<DropdownMenuItem<String>> _buildBudgetDropdownItems() {
+    final items = <DropdownMenuItem<String>>[];
+
+    // Add "No Budget" option
+    items.add(
+      DropdownMenuItem<String>(
+        value:
+            'NO_BUDGET', // Use a special value instead of null for better handling
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Text(
+            'No Budget Goal',
+            style: TextStyle(
+              color: context.colorScheme.onSurfaceVariant,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Add available budgets - use budget ID as value but display budget name
+    if (_budgets?.budgets.isNotEmpty == true) {
+      items.addAll(
+        _budgets!.budgets.map(
+          (budget) => DropdownMenuItem<String>(
+            value: budget.name, // Value is the budget ID (for form submission)
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    budget.name, // Display name shows the budget name
+                    style: TextStyle(
+                      color: context.colorScheme.onSurface,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  if (budget.name.isNotEmpty == true) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      budget.detail,
+                      style: TextStyle(
+                        color: context.colorScheme.onSurfaceVariant,
+                        fontSize: 12,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
 
     return items;
   }
@@ -588,6 +728,47 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: AppSpacing.md),
+                  // Budget selection
+                  if (_isBudgetsLoading)
+                    Center(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: colorScheme.primary,
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.sm),
+                            Text(
+                              'Loading budgets...',
+                              style: textTheme.bodyMedium?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  else
+                    ReactiveAppField(
+                      formControlName: 'budgetGoalId',
+                      labelText: 'Link to Budget',
+                      hintText: 'Select budget goal (optional)',
+                      fieldType: FieldType.dropdown,
+                      dropdownItems: _buildBudgetDropdownItems(),
+                      prefixIcon: Icon(
+                        Icons.account_balance_wallet_outlined,
+                        color:
+                            colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                      ),
+                    ),
                   const SizedBox(height: AppSpacing.md),
 
                   // Location

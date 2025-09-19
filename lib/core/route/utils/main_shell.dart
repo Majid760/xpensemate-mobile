@@ -5,9 +5,13 @@ import 'package:go_router/go_router.dart';
 import 'package:xpensemate/core/route/utils/router_extension.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 
+// Define a typedef for the custom FAB action
+typedef FabActionCallback = void Function();
+
 class MainShell extends StatefulWidget {
-  const MainShell({super.key, required this.child});
+  const MainShell({super.key, required this.child, this.customFabAction});
   final Widget child;
+  final FabActionCallback? customFabAction;
 
   @override
   State<MainShell> createState() => _MainShellState();
@@ -82,12 +86,25 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
   }
 
   void _onFabTap() {
+    // If custom action is provided, use it instead of default behavior
+    if (widget.customFabAction != null) {
+      widget.customFabAction!();
+      return;
+    }
+
+    // Default behavior - toggle FAB
     _toggleFab();
   }
 
   void _onItemTapped(int index, BuildContext context) {
     if (index == 2) {
-      _toggleFab();
+      // Only toggle FAB if no custom action is provided
+      if (widget.customFabAction == null) {
+        _toggleFab();
+      } else {
+        // Execute custom action directly
+        widget.customFabAction!();
+      }
       return;
     }
     if (_isFabExpanded) {
@@ -125,10 +142,13 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
   }
 
   void _toggleFab() {
-    setState(() => _isFabExpanded = !_isFabExpanded);
-    _isFabExpanded
-        ? _fabAnimationController.forward()
-        : _fabAnimationController.reverse();
+    // Only toggle if no custom action is provided
+    if (widget.customFabAction == null) {
+      setState(() => _isFabExpanded = !_isFabExpanded);
+      _isFabExpanded
+          ? _fabAnimationController.forward()
+          : _fabAnimationController.reverse();
+    }
   }
 
   void _onFabAction(FabAction action, int index) {
@@ -276,17 +296,19 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
             ),
 
             /* ---------- arc action buttons ---------- */
-            ..._fabActions.asMap().entries.map((e) {
-              final idx = e.key;
-              final action = e.value;
-              return _ArcActionButton(
-                action: action,
-                animation: _fabAnimation,
-                index: idx,
-                total: _fabActions.length,
-                onTap: () => _onFabAction(action, idx),
-              );
-            }),
+            // Only show arc action buttons if no custom action is provided
+            if (widget.customFabAction == null)
+              ..._fabActions.asMap().entries.map((e) {
+                final idx = e.key;
+                final action = e.value;
+                return _ArcActionButton(
+                  action: action,
+                  animation: _fabAnimation,
+                  index: idx,
+                  total: _fabActions.length,
+                  onTap: () => _onFabAction(action, idx),
+                );
+              }),
           ],
         ),
       );

@@ -9,7 +9,11 @@ import 'package:xpensemate/core/route/utils/error_page.dart';
 import 'package:xpensemate/core/route/utils/main_shell.dart';
 import 'package:xpensemate/core/route/utils/route_constants.dart';
 import 'package:xpensemate/core/route/utils/router_middleware_guard.dart';
+import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:xpensemate/features/expense/presentation/pages/expense_page.dart';
+import 'package:xpensemate/features/expense/presentation/widgets/expense_form_widget.dart';
+import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
 
 class AppRouter {
   AppRouter(this._authCubit, this._routeGuards);
@@ -17,7 +21,7 @@ class AppRouter {
   final RouteGuards _routeGuards;
 
   late final GoRouter router = GoRouter(
-    // debugLogDiagnostics: true,
+    debugLogDiagnostics: true,
     initialLocation: RouteConstants.splash,
     refreshListenable: _authCubit,
     redirect: _routeGuards.globalRedirect,
@@ -36,7 +40,19 @@ class AppRouter {
       // Main App Shell with Bottom Navigation
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
-        builder: (context, state, child) => MainShell(child: child),
+        builder: (context, state, child) {
+          // Check if we're on the expense page and provide custom FAB action
+          if (state.matchedLocation == '/home/budget') {
+            return MainShell(
+              child: child,
+              customFabAction: () {
+                addExpense(context);
+              },
+            );
+          }
+          // For other pages, use default behavior
+          return MainShell(child: child);
+        },
         routes: [
           ...HomeRoutes.routes,
           ...ProfileRoutes.routes,

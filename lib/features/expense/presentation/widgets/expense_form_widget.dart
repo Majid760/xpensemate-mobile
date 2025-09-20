@@ -96,7 +96,9 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
         validators: [Validators.required],
       ),
       'location': FormControl<String>(),
-      'paymentMethod': FormControl<String>(),
+      'paymentMethod': FormControl<String>(
+        value: 'Cash', // Set Cash as default payment method
+      ),
       'detail': FormControl<String>(),
     });
 
@@ -107,6 +109,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
       // Set default values for new expense
       _form.control('date').value = DateTime.now();
       _form.control('time').value = _formatTime(DateTime.now());
+      // Payment method is already set to 'Cash' by default above
     }
   }
 
@@ -129,7 +132,9 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                 totalPages: 0,
               );
           _isBudgetsLoading = false;
-          if (budgets != null && budgets.budgets.isNotEmpty) {
+          if (budgets != null &&
+              budgets.budgets.isNotEmpty &&
+              widget.expense != null) {
             _form.control('budgetGoalId').value = budgets.budgets
                 .firstWhere(
                   (budget) => budget.id == widget.expense!.budgetGoalId,
@@ -207,7 +212,15 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
 
   Future<void> _submitForm() async {
     try {
-      _form.markAllAsTouched();
+      if (!_form.valid) {
+        AppSnackBar.show(
+          context: context,
+          message: "Please fill out all required fields",
+          type: SnackBarType.error,
+        );
+        _form.markAllAsTouched();
+        return;
+      }
 
       // Determine the category value based on which field is being used
       String categoryValue;
@@ -236,7 +249,6 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
       }
 
       // Validate the rest of the form
-      if (!_form.valid) return;
 
       // Parse amount from string to double
       final amountString =
@@ -275,14 +287,15 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
         categoryId: categoryValue,
         categoryName: categoryValue,
         detail: (_form.control('detail').value as String?)?.trim() ?? '',
-        paymentMethod: _form.control('paymentMethod').value as String? ?? '',
+        paymentMethod:
+            _form.control('paymentMethod').value as String? ?? 'cash',
         attachments: widget.expense?.attachments ?? [],
         isDeleted: widget.expense?.isDeleted ?? false,
         createdAt: widget.expense?.createdAt ?? DateTime.now(),
         updatedAt: DateTime.now(),
         recurring: RecurringEntity(
           isRecurring: widget.expense?.recurring.isRecurring ?? false,
-          frequency: widget.expense?.recurring.frequency ?? '',
+          frequency: widget.expense?.recurring.frequency ?? 'monthly',
         ),
       );
 
@@ -508,7 +521,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                     formControlName: 'amount',
                     labelText: '${l10n.amount} *',
                     hintText: '0.00',
-                    fieldType: FieldType.decimal,
+                    fieldType: FieldType.number,
                     prefixIcon: Icon(
                       Icons.attach_money_outlined,
                       color:
@@ -519,11 +532,11 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                       'required': (error) => l10n.fieldRequired,
                       'pattern': (error) => l10n.invalidAmount,
                     },
-                    showErrors: (control) {
-                      final hasError = control.hasError == true;
-                      final touched = control.touched == true;
-                      return hasError && touched;
-                    },
+                    // showErrors: (control) {
+                    //   final hasError = control.hasError == true;
+                    //   final touched = control.touched == true;
+                    //   return hasError && touched;
+                    // },
                   ),
                   const SizedBox(height: AppSpacing.md),
 

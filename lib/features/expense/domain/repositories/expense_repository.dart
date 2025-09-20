@@ -18,10 +18,13 @@ abstract class ExpenseRepository {
 
   Future<Either<Failure, ExpenseEntity>> updateExpense(ExpenseEntity expense);
 
-  /// Fetches budgets with optional pagination and filters
   Future<Either<Failure, BudgetsListEntity>> getBudgets({
     int? page,
     int? limit,
     String? status,
+  });
+
+  Future<Either<Failure, bool>> createExpense({
+    required ExpenseEntity expense,
   });
 }

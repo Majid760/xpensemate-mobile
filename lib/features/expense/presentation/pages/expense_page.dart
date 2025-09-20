@@ -144,6 +144,36 @@ class _ExpensePageContentState extends State<ExpensePageContent>
       );
 }
 
+// This function can be called from other pages or components
+// to trigger the add expense action
+void addExpense(BuildContext context) {
+  final screenHeight = MediaQuery.of(context).size.height;
+  AppBottomSheet.show<void>(
+    context: context,
+    title: 'Add Expense',
+    config: BottomSheetConfig(
+      minHeight: screenHeight * 0.8,
+      maxHeight: screenHeight * 0.95,
+      padding: EdgeInsets.zero,
+    ),
+    child: ExpenseFormWidget(
+      onSave: (expense) {
+        Navigator.of(context).pop();
+        context.expenseCubit.createExpense(expense: expense).then((value) {
+          if (context.mounted) {
+            AppSnackBar.show(
+              context: context,
+              message: 'Expense added successfully',
+              type: SnackBarType.success,
+            );
+          }
+        });
+      },
+      onCancel: () => Navigator.of(context).pop(),
+    ),
+  );
+}
+
 class MockExpense {
   MockExpense({
     required this.title,

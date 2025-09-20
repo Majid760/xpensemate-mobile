@@ -5,6 +5,7 @@ import 'package:xpensemate/features/dashboard/domain/entities/budgets_list_entit
 import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_pagination_entity.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_stats_entity.dart';
+import 'package:xpensemate/features/expense/domain/usecases/create_expense_usecase.dart';
 import 'package:xpensemate/features/expense/domain/usecases/delete_expense_usecase.dart';
 import 'package:xpensemate/features/expense/domain/usecases/get_budgets_usecase.dart';
 import 'package:xpensemate/features/expense/domain/usecases/get_expense_stats_usecase.dart';
@@ -20,6 +21,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
     this._deleteExpenseUseCase,
     this._updateExpenseUseCase,
     this._budgetsUseCase,
+    this._createExpenseUseCase,
   ) : super(const ExpenseState()) {
     loadExpenseData();
   }
@@ -29,6 +31,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
   final DeleteExpenseUseCase _deleteExpenseUseCase;
   final UpdateExpenseUseCase _updateExpenseUseCase;
   final GetBudgetsUseCase _budgetsUseCase;
+  final CreateExpensesUseCase _createExpenseUseCase;
 
   /// Load expenses with pagination (matches web app: /expenses?page=${page}&limit=${limit})
   Future<void> loadExpenses({
@@ -82,7 +85,6 @@ class ExpenseCubit extends Cubit<ExpenseState> {
                 errorMessage: failure.message,
               ),
             ), (expenseStats) {
-      print("expenseStats: ${expenseStats.dailyAverage}");
       emit(
         state.copyWith(
           state: ExpenseStates.loaded,
@@ -222,10 +224,11 @@ class ExpenseCubit extends Cubit<ExpenseState> {
   // create expense
   Future<void> createExpense({required ExpenseEntity expense}) async {
     // Then make the remote call
-    final result = await _updateExpenseUseCase(expense);
+    final result = await _createExpenseUseCase(
+      CreateExpensesParams(expenseEntity: expense),
+    );
     result.fold(
       (failure) {
-        // If the remote call fails, emit an error state
         emit(
           state.copyWith(
             state: ExpenseStates.error,
@@ -234,11 +237,17 @@ class ExpenseCubit extends Cubit<ExpenseState> {
         );
       },
       (createdExpense) {
-        // If successful, reload the expenses to include the new one
-        // Add a small delay to allow for smooth transition
-        Future.delayed(const Duration(milliseconds: 100), () {
-          loadExpenses();
-        });
+        emit(
+          state.copyWith(
+            state: ExpenseStates.loaded,
+            expenses: ExpensePaginationEntity(
+              page: state.expenses?.page ?? 0,
+              totalPages: state.expenses?.totalPages ?? 0,
+              expenses: [expense, ...?state.expenses?.expenses],
+              total: state.expenses?.total ?? 0 + 1,
+            ),
+          ),
+        );
       },
     );
   }

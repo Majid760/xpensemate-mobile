@@ -2,9 +2,6 @@ import 'package:dartz/dartz.dart';
 import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/core/network/network_configs.dart';
 import 'package:xpensemate/core/network/network_contracts.dart';
-import 'package:xpensemate/features/dashboard/data/models/budget_goals_model.dart';
-import 'package:xpensemate/features/dashboard/domain/entities/budget_goals_entity.dart';
-import 'package:xpensemate/features/expense/data/models/budgets_model.dart';
 import 'package:xpensemate/features/expense/data/models/budgets_list_model.dart';
 import 'package:xpensemate/features/expense/data/models/expense_model.dart';
 import 'package:xpensemate/features/expense/data/models/expense_pagination_model.dart';
@@ -12,6 +9,10 @@ import 'package:xpensemate/features/expense/data/models/expense_stats_model.dart
 import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
 
 abstract class ExpenseRemoteDataSource {
+  Future<Either<Failure, bool>> createExpense({
+    required ExpenseEntity expense,
+  });
+
   /// Fetches expenses with pagination (matches web app: /expenses?page=${page}&limit=${limit})
   Future<Either<Failure, ExpensePaginationModel>> getExpenses({
     required int page,
@@ -40,6 +41,18 @@ abstract class ExpenseRemoteDataSource {
 class ExpenseRemoteDataSourceImpl implements ExpenseRemoteDataSource {
   ExpenseRemoteDataSourceImpl(this._networkClient);
   final NetworkClient _networkClient;
+
+  @override
+  Future<Either<Failure, bool>> createExpense({
+    required ExpenseEntity expense,
+  }) {
+    print('${ExpenseModel.fromEntity(expense).toJson()}');
+    return _networkClient.post(
+      NetworkConfigs.createExpense,
+      data: ExpenseModel.fromEntity(expense).toJson().remove('_id'),
+      fromJson: (json) => json['data'] as bool? ?? true,
+    );
+  }
 
   @override
   Future<Either<Failure, ExpensePaginationModel>> getExpenses({

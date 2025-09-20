@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
 import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
@@ -135,9 +136,9 @@ class _ExpenseListItemState extends State<ExpenseListItem>
 
     await AppCustomDialogs.showDelete(
       context: context,
-      title: localizations?.delete ?? 'Delete',
+      title: localizations?.delete ?? context.l10n.delete,
       message:
-          '${localizations?.confirmDelete ?? 'Are you sure you want to delete this item?'}\n\n${localizations?.deleteWarning ?? 'This action cannot be undone.'}',
+          '${localizations?.confirmDelete ?? context.l10n.confirmDelete}\n\n${localizations?.deleteWarning ?? context.l10n.deleteWarning}',
       onConfirm: () => confirmResult = true,
       onCancel: () => confirmResult = false,
     );
@@ -153,7 +154,7 @@ class _ExpenseListItemState extends State<ExpenseListItem>
     final screenHeight = MediaQuery.of(context).size.height;
     AppBottomSheet.show<ExpenseEntity>(
       context: context,
-      title: entity.id.isEmpty ? 'Add Expense' : 'Edit Expense',
+      title: entity.id.isEmpty ? context.l10n.add : context.l10n.edit,
       config: BottomSheetConfig(
         minHeight: screenHeight * 0.8,
         maxHeight: screenHeight * 0.95,
@@ -250,17 +251,17 @@ class _ExpenseDismissibleState extends State<ExpenseDismissible> {
 
     return Dismissible(
       key: Key('dismissible_${widget.expense.id}'),
-      background: const DismissBackground(
+      background: DismissBackground(
         alignment: Alignment.centerLeft,
-        color: Colors.red,
+        color: context.colorScheme.error,
         icon: Icons.delete,
-        label: 'Delete',
+        label: context.l10n.delete,
       ),
-      secondaryBackground: const DismissBackground(
+      secondaryBackground: DismissBackground(
         alignment: Alignment.centerRight,
-        color: Colors.blue,
+        color: context.colorScheme.primary,
         icon: Icons.edit,
-        label: 'Edit',
+        label: context.l10n.edit,
       ),
       confirmDismiss: (direction) async {
         await HapticFeedback.mediumImpact();
@@ -332,9 +333,8 @@ class DismissBackground extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               label,
-              style: const TextStyle(
+              style: context.textTheme.bodySmall?.copyWith(
                 color: Colors.white,
-                fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -488,20 +488,20 @@ class ExpenseHeaderRow extends StatelessWidget {
           Expanded(
             child: Text(
               expense.name,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: context.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
               overflow: TextOverflow.ellipsis,
             ),
           ),
           Text(
             CurrencyFormatter.format(expense.amount),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: expense.amount < 0
-                      ? Theme.of(context).colorScheme.error
-                      : Colors.green,
-                ),
+            style: context.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: expense.amount < 0
+                  ? context.colorScheme.error
+                  : context.colorScheme.primary,
+            ),
           ),
         ],
       );
@@ -529,22 +529,19 @@ class ExpenseCategoryDateRow extends StatelessWidget {
             ),
             child: Text(
               expense.categoryName,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: context.colorScheme.primary,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                  ),
+              style: context.textTheme.bodySmall?.copyWith(
+                color: context.colorScheme.primary,
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
           const SizedBox(width: 8),
           Text(
             formattedDate,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(alpha: 0.6),
-                ),
+            style: context.textTheme.bodySmall?.copyWith(
+              color: context.colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
           ),
         ],
       );
@@ -592,20 +589,16 @@ class ExpenseLocationRow extends StatelessWidget {
           Icon(
             Icons.location_on_outlined,
             size: 14,
-            color:
-                Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+            color: context.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
           const SizedBox(width: 4),
           Expanded(
             child: Text(
               expense.location,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.6),
-                    fontSize: 12,
-                  ),
+              style: context.textTheme.bodySmall?.copyWith(
+                color: context.colorScheme.onSurface.withValues(alpha: 0.6),
+                fontSize: 12,
+              ),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -628,22 +621,24 @@ class ExpenseRecurringIndicator extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
-              color: Colors.blue.withValues(alpha: 0.1),
+              color: context.colorScheme.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
+              border: Border.all(
+                  color: context.colorScheme.primary.withValues(alpha: 0.3)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.autorenew, size: 12, color: Colors.blue),
+                Icon(Icons.autorenew,
+                    size: 12, color: context.colorScheme.primary),
                 const SizedBox(width: 4),
                 Text(
                   expense.recurring.frequency,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.blue,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                      ),
+                  style: context.textTheme.bodySmall?.copyWith(
+                    color: context.colorScheme.primary,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),
@@ -670,19 +665,15 @@ class ExpenseDetailItem extends StatelessWidget {
           Icon(
             icon,
             size: 14,
-            color:
-                Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+            color: context.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
           const SizedBox(width: 4),
           Text(
             text,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(alpha: 0.6),
-                  fontSize: 12,
-                ),
+            style: context.textTheme.bodySmall?.copyWith(
+              color: context.colorScheme.onSurface.withValues(alpha: 0.6),
+              fontSize: 12,
+            ),
           ),
         ],
       );
@@ -706,13 +697,13 @@ class ExpenseStatusIndicator extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(2),
             decoration: BoxDecoration(
-              color: Colors.green.withValues(alpha: 0.1),
+              color: context.colorScheme.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.check,
               size: 12,
-              color: Colors.green,
+              color: context.colorScheme.primary,
             ),
           ),
           // Show budget goal indicator at the bottom if expense is linked to a budget goal
@@ -722,23 +713,25 @@ class ExpenseStatusIndicator extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: Colors.purple.withValues(alpha: 0.1),
+                color: context.colorScheme.tertiary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: Colors.purple.withValues(alpha: 0.3)),
+                border: Border.all(
+                    color:
+                        context.colorScheme.secondary.withValues(alpha: 0.3)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.account_balance_outlined,
-                      size: 12, color: Colors.purple),
+                  Icon(Icons.account_balance_outlined,
+                      size: 12, color: context.colorScheme.secondary),
                   const SizedBox(width: 4),
                   Text(
-                    'Budget',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.purple,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                        ),
+                    context.l10n.budget, // Using localization
+                    style: context.textTheme.bodySmall?.copyWith(
+                      color: context.colorScheme.secondary,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ],
               ),

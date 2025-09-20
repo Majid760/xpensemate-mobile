@@ -12,6 +12,17 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
   final ExpenseRemoteDataSource remoteDataSource;
 
   @override
+  Future<Either<Failure, bool>> createExpense({
+    required ExpenseEntity expense,
+  }) =>
+      remoteDataSource.createExpense(expense: expense).then(
+            (value) => value.fold(
+              Left.new,
+              Right.new,
+            ),
+          );
+
+  @override
   Future<Either<Failure, ExpensePaginationEntity>> getExpenses({
     required int page,
     required int limit,

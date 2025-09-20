@@ -25,6 +25,7 @@ import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit
 import 'package:xpensemate/features/expense/data/datasources/expense_remote_data_source.dart';
 import 'package:xpensemate/features/expense/data/repositories/expense_repository_impl.dart';
 import 'package:xpensemate/features/expense/domain/repositories/expense_repository.dart';
+import 'package:xpensemate/features/expense/domain/usecases/create_expense_usecase.dart';
 import 'package:xpensemate/features/expense/domain/usecases/delete_expense_usecase.dart';
 import 'package:xpensemate/features/expense/domain/usecases/get_budgets_usecase.dart';
 import 'package:xpensemate/features/expense/domain/usecases/get_expense_stats_usecase.dart';
@@ -142,6 +143,7 @@ Future<void> initLocator() async {
     sl.registerLazySingleton(() => DeleteExpenseUseCase(sl()));
     sl.registerLazySingleton(() => UpdateExpenseUseCase(sl()));
     sl.registerLazySingleton(() => GetBudgetGoalsUseCase(sl()));
+    sl.registerLazySingleton(() => CreateExpensesUseCase(sl()));
 
     // ---------- Presentation Layer ----------
     sl.registerFactory(() => AuthCubit(sl()));
@@ -149,7 +151,7 @@ Future<void> initLocator() async {
     sl.registerFactory(
       () => DashboardCubit(sl(), sl(), sl()),
     );
-    sl.registerFactory(() => ExpenseCubit(sl(), sl(), sl(), sl(), sl()));
+    sl.registerFactory(() => ExpenseCubit(sl(), sl(), sl(), sl(), sl(), sl()));
 
     AppLogger.i('Service locator initialized successfully');
   } on Exception catch (e) {

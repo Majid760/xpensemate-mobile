@@ -22,24 +22,24 @@ class ExpenseModel extends ExpenseEntity {
   });
 
   factory ExpenseModel.fromEntity(ExpenseEntity entity) => ExpenseModel(
-        id: entity.id,
-        userId: entity.userId,
-        name: entity.name,
-        amount: entity.amount,
-        budgetGoalId: entity.budgetGoalId,
-        date: entity.date,
-        time: entity.time,
-        location: entity.location,
-        categoryId: entity.categoryId,
-        categoryName: entity.categoryName,
-        detail: entity.detail,
-        paymentMethod: entity.paymentMethod,
-        attachments: entity.attachments,
-        isDeleted: entity.isDeleted,
-        createdAt: entity.createdAt,
-        updatedAt: entity.updatedAt,
-        recurring: RecurringModel.fromEntity(entity.recurring),
-      );
+      id: entity.id,
+      userId: entity.userId,
+      name: entity.name,
+      amount: entity.amount,
+      budgetGoalId: entity.budgetGoalId,
+      date: entity.date,
+      time: entity.time,
+      location: entity.location,
+      categoryId: entity.categoryId,
+      categoryName: entity.categoryName,
+      detail: entity.detail,
+      paymentMethod: entity.paymentMethod,
+      attachments: entity.attachments,
+      isDeleted: entity.isDeleted,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
+      recurring: RecurringModel.fromEntity(entity.recurring),
+    );
 
   factory ExpenseModel.fromJson(Map<String, dynamic> json) {
     final recurringData = json['recurring'] as Map<String, dynamic>? ?? {};
@@ -90,7 +90,8 @@ class ExpenseModel extends ExpenseEntity {
         'category_id': categoryId,
         'category': categoryName,
         'detail': detail,
-        'payment_method': paymentMethod,
+        // payment_method will like this credit_card', 'debit_card',
+        'payment_method': paymentMethod.toLowerCase().replaceAll(' ', '_'),
         'attachments': attachments,
         'is_deleted': isDeleted,
         'created_at': createdAt.toIso8601String(),

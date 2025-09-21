@@ -46,10 +46,11 @@ class ExpenseRemoteDataSourceImpl implements ExpenseRemoteDataSource {
   Future<Either<Failure, bool>> createExpense({
     required ExpenseEntity expense,
   }) {
-    print('${ExpenseModel.fromEntity(expense).toJson()}');
+    final expenseModel = ExpenseModel.fromEntity(expense).toJson();
+    expenseModel.remove('_id');
     return _networkClient.post(
       NetworkConfigs.createExpense,
-      data: ExpenseModel.fromEntity(expense).toJson().remove('_id'),
+      data: expenseModel,
       fromJson: (json) => json['data'] as bool? ?? true,
     );
   }

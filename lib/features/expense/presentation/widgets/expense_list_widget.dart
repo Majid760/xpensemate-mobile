@@ -12,18 +12,55 @@ class ExpenseListWidget extends StatefulWidget {
     this.onDelete,
     this.onEdit,
     this.scrollThreshold = 5,
+    this.scrollController, // Add scroll controller parameter
   });
 
   final void Function(String expenseId)? onDelete;
   final void Function(ExpenseEntity expenseEntity)? onEdit;
   final int scrollThreshold; // Items before end to trigger loading
+  final ScrollController? scrollController; // Optional scroll controller
 
   @override
   State<ExpenseListWidget> createState() => _ExpenseListWidgetState();
 }
 
-class _ExpenseListWidgetState extends State<ExpenseListWidget> {
+class _ExpenseListWidgetState extends State<ExpenseListWidget>
+    with SingleTickerProviderStateMixin {
   late ExpenseCubit _expenseCubit;
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _bounceAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    );
+
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.2,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
+
+    _bounceAnimation = Tween<double>(
+      begin: 0.0,
+      end: -8.0,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.elasticOut,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   void didChangeDependencies() {
@@ -31,14 +68,23 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget> {
     _expenseCubit = context.read<ExpenseCubit>();
   }
 
-  void _handleExpenseDeleted(String expenseId) {
-    _expenseCubit.deleteExpense(expenseId: expenseId);
-    widget.onDelete?.call(expenseId);
+  void _scrollToTop() {
+    if (widget.scrollController != null) {
+      widget.scrollController!.animateTo(
+        0,
+        duration: const Duration(milliseconds: 800),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
-  void _handleExpenseUpdated(ExpenseEntity updatedExpense) {
-    _expenseCubit.updateExpense(expense: updatedExpense);
-    widget.onEdit?.call(updatedExpense);
+  void _startAnimation() {
+    _animationController.repeat(reverse: true);
+  }
+
+  void _stopAnimation() {
+    _animationController.stop();
+    _animationController.reset();
   }
 
   Widget _buildInitialLoading() => const SliverToBoxAdapter(
@@ -150,6 +196,52 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget> {
         ),
       );
 
+  Widget _buildScrollToTopButton() {
+    // Start animation when button is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _startAnimation();
+    });
+
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 24),
+        child: Align(
+          alignment: Alignment.bottomRight,
+          child: AnimatedBuilder(
+            animation: _animationController,
+            builder: (context, child) => Transform.translate(
+              offset: Offset(0, _bounceAnimation.value),
+              child: Transform.scale(
+                scale: _scaleAnimation.value,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: FloatingActionButton(
+                    onPressed: _scrollToTop,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                    child: const Icon(Icons.keyboard_arrow_up, size: 24),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildEndOfListIndicator() => SliverToBoxAdapter(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 24),
@@ -174,7 +266,7 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        context.l10n.loading,
+                        context.l10n.expenseLoaded,
                         style: TextStyle(
                           fontSize: 12,
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -207,6 +299,11 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget> {
                 behavior: SnackBarBehavior.floating,
               ),
             );
+          }
+
+          // Stop animation when state changes away from end of list
+          if (!state.hasReachedMax) {
+            _stopAnimation();
           }
         },
         builder: (context, state) {
@@ -244,8 +341,8 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget> {
                       return ExpenseListItem(
                         expense: expense,
                         isLast: index == expenses.length - 1,
-                        onDelete: _handleExpenseDeleted,
-                        onEdit: _handleExpenseUpdated,
+                        onDelete: widget.onDelete,
+                        onEdit: widget.onEdit,
                       );
                     },
                     childCount: expenses.length,
@@ -260,11 +357,13 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget> {
               if (state.hasPaginationError && !state.isLoadingMore)
                 _buildPaginationError(state),
 
-              // End of list indicator
+              // Scroll to top button when reached end
               if (state.hasReachedMax &&
                   !state.hasPaginationError &&
-                  expenses.isNotEmpty)
+                  expenses.isNotEmpty) ...[
                 _buildEndOfListIndicator(),
+                _buildScrollToTopButton(),
+              ],
             ],
           );
         },

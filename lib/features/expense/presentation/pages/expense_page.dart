@@ -111,6 +111,7 @@ class _ExpensePageContentState extends State<ExpensePageContent>
                   const ExpenseListHeaderWidget(),
                   ExpenseListWidget(
                     onEdit: (updatedEntity) {
+                      print('woowoowowow 123');
                       _editExpense(updatedEntity, context);
                     },
                     onDelete: (expenseId) {

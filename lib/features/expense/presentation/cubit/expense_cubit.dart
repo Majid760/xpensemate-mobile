@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -311,88 +313,39 @@ class ExpenseCubit extends Cubit<ExpenseState> {
     }
   }
 
-  /// Delete expense with optimistic updates and rollback on failure
-  Future<void> deleteExpense({required String expenseId}) async {
-    final originalExpenses = state.expenses;
-    final originalAllExpenses = List<ExpenseEntity>.from(_allExpenses);
-
-    // Optimistic update - remove from both local cache and state
-    _allExpenses.removeWhere((expense) => expense.id == expenseId);
-
-    if (state.expenses != null) {
-      final updatedExpenses = state.expenses!.expenses
-          .where((expense) => expense.id != expenseId)
-          .toList();
-
-      final updatedPagination = state.expenses!.copyWith(
-        expenses: updatedExpenses,
-        total: state.expenses!.total - 1,
-      );
-
-      emit(state.copyWith(expenses: updatedPagination));
-    }
-
-    // Make the API call
-    final result = await _deleteExpenseUseCase(expenseId);
-
-    result.fold(
-      (failure) {
-        // Rollback on failure
-        _allExpenses.clear();
-        _allExpenses.addAll(originalAllExpenses);
-
-        emit(
-          state.copyWith(
-            state: ExpenseStates.error,
-            errorMessage: failure.message,
-            expenses: originalExpenses,
-          ),
-        );
-      },
-      (success) => emit(state.copyWith(state: ExpenseStates.loaded)),
-    );
-  }
-
   /// Update expense with optimistic updates and rollback on failure
   Future<void> updateExpense({required ExpenseEntity expense}) async {
     final originalExpenses = state.expenses;
     final originalAllExpenses = List<ExpenseEntity>.from(_allExpenses);
-
-    // Optimistic update - update in both local cache and state
     final cacheIndex = _allExpenses.indexWhere((e) => e.id == expense.id);
     if (cacheIndex != -1) {
       _allExpenses[cacheIndex] = expense;
     }
-
     if (state.expenses != null) {
       final updatedExpenses = state.expenses!.expenses
           .map((e) => e.id == expense.id ? expense : e)
           .toList();
-
       final updatedPagination =
           state.expenses!.copyWith(expenses: updatedExpenses);
       emit(state.copyWith(expenses: updatedPagination));
     }
 
-    // Make the API call
     final result = await _updateExpenseUseCase(expense);
-
-    result.fold(
-      (failure) {
-        // Rollback on failure
-        _allExpenses.clear();
-        _allExpenses.addAll(originalAllExpenses);
-
-        emit(
-          state.copyWith(
-            state: ExpenseStates.error,
-            errorMessage: failure.message,
-            expenses: originalExpenses,
-          ),
-        );
-      },
-      (updatedExpense) => emit(state.copyWith(state: ExpenseStates.loaded)),
-    );
+    await result.fold((failure) {
+      _allExpenses.clear();
+      _allExpenses.addAll(originalAllExpenses);
+      emit(
+        state.copyWith(
+          state: ExpenseStates.error,
+          errorMessage: failure.message,
+          expenses: originalExpenses,
+        ),
+      );
+    }, (updatedExpense) async {
+      // Recalculate stats after successful update
+      unawaited(_recalculateExpenseStats());
+      emit(state.copyWith(state: ExpenseStates.loaded));
+    });
   }
 
   /// Create expense with optimistic updates
@@ -414,18 +367,15 @@ class ExpenseCubit extends Cubit<ExpenseState> {
       CreateExpensesParams(expenseEntity: expense),
     );
 
-    result.fold(
+    await result.fold(
       (failure) {
-        // Remove the optimistically added item on failure
         _allExpenses.removeWhere((e) => e.id == expense.id);
-
         final rollbackPagination = ExpensePaginationEntity(
           page: state.expenses?.page ?? 1,
           totalPages: state.expenses?.totalPages ?? 1,
           expenses: _allExpenses,
           total: (state.expenses?.total ?? 1) - 1,
         );
-
         emit(
           state.copyWith(
             state: ExpenseStates.error,
@@ -434,16 +384,68 @@ class ExpenseCubit extends Cubit<ExpenseState> {
           ),
         );
       },
-      (createdExpense) {
-        // Replace optimistic item with actual created item
+      (createdExpense) async {
         final index = _allExpenses.indexWhere((e) => e.id == expense.id);
         if (index != -1) {
           _allExpenses[index] = expense;
         }
-
+        unawaited(_recalculateExpenseStats());
         emit(state.copyWith(state: ExpenseStates.loaded));
       },
     );
+  }
+
+  /// Delete expense with optimistic updates and rollback on failure
+  Future<void> deleteExpense({required String expenseId}) async {
+    final originalExpenses = state.expenses;
+    final originalAllExpenses = List<ExpenseEntity>.from(_allExpenses);
+    _allExpenses.removeWhere((expense) => expense.id == expenseId);
+    if (state.expenses != null) {
+      final updatedExpenses = state.expenses!.expenses
+          .where((expense) => expense.id != expenseId)
+          .toList();
+
+      final updatedPagination = state.expenses!.copyWith(
+        expenses: updatedExpenses,
+        total: state.expenses!.total - 1,
+      );
+
+      emit(state.copyWith(expenses: updatedPagination));
+    }
+    final result = await _deleteExpenseUseCase(expenseId);
+    await result.fold(
+      (failure) {
+        _allExpenses.clear();
+        _allExpenses.addAll(originalAllExpenses);
+        emit(
+          state.copyWith(
+            state: ExpenseStates.error,
+            errorMessage: failure.message,
+            expenses: originalExpenses,
+          ),
+        );
+      },
+      (success) async {
+        unawaited(_recalculateExpenseStats());
+        emit(state.copyWith(state: ExpenseStates.loaded));
+      },
+    );
+  }
+
+  Future<void> _recalculateExpenseStats() async {
+    try {
+      final result = await _getExpenseStatsUseCase(GetExpenseStatsParams());
+      result.fold(
+        (failure) {
+          debugPrint('Failed to recalculate expense stats: ${failure.message}');
+        },
+        (expenseStats) {
+          emit(state.copyWith(expenseStats: expenseStats));
+        },
+      );
+    } on Exception catch (e) {
+      debugPrint('Unexpected error while recalculating expense stats: $e');
+    }
   }
 
   /// Load budgets

@@ -109,6 +109,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
       // Set default values for new expense
       _form.control('date').value = DateTime.now();
       _form.control('time').value = _formatTime(DateTime.now());
+      _form.control('budgetGoalId').value = 'NO_BUDGET';
       // Payment method is already set to 'Cash' by default above
     }
   }
@@ -132,20 +133,14 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                 totalPages: 0,
               );
           _isBudgetsLoading = false;
-          if (budgets != null &&
-              budgets.budgets.isNotEmpty &&
-              widget.expense != null) {
-            _form.control('budgetGoalId').value = budgets.budgets
-                .firstWhere(
-                  (budget) => budget.id == widget.expense!.budgetGoalId,
-                )
-                .name;
-          }
         });
 
         // If editing an expense and budgets are now loaded, set the budget
         if (widget.expense?.budgetGoalId != null && _budgets != null) {
           _setBudgetFromExpense(widget.expense!.budgetGoalId!);
+        } else if (widget.expense?.budgetGoalId == null) {
+          // If no budget in expense, set to NO_BUDGET
+          _form.control('budgetGoalId').value = 'NO_BUDGET';
         }
       }
     } on Exception catch (error) {
@@ -153,21 +148,37 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
         setState(() {
           _isBudgetsLoading = false;
           _budgets = const BudgetsListEntity(
-              budgets: [], total: 0, page: 0, totalPages: 0);
+            budgets: [],
+            total: 0,
+            page: 0,
+            totalPages: 0,
+          );
         });
         AppSnackBar.show(
-            context: context, message: 'Failed to load budgets: $error');
+          context: context,
+          message: 'Failed to load budgets: $error',
+        );
       }
     }
   }
 
   void _setBudgetFromExpense(String budgetGoalId) {
-    // Only set the budget if it exists in the fetched budgets list
-    // The dropdown will show the budget name but store the ID
-    if (_budgets?.budgets.any((budget) => budget.id == budgetGoalId) == true) {
-      _form.control('budgetGoalId').value = budgetGoalId; // Store the ID
-    } else {
+    if (_budgets?.budgets.isNotEmpty != true) {
+      // No budgets available, set to no budget
+      _form.control('budgetGoalId').value = 'NO_BUDGET';
+      return;
+    }
+
+    try {
+      // Find the budget by ID and set the dropdown to show its name
+      final matchingBudget = _budgets!.budgets.firstWhere(
+        (budget) => budget.id == budgetGoalId,
+      );
+      _form.control('budgetGoalId').value = matchingBudget.name;
+    } catch (e) {
       // If the budget ID doesn't exist in current budgets, set to no budget
+      debugPrint(
+          'Warning: Budget with ID "$budgetGoalId" not found in budget list');
       _form.control('budgetGoalId').value = 'NO_BUDGET';
     }
   }
@@ -239,7 +250,6 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
           _predefinedCategories.add(categoryValue);
         }
       } else {
-        // If not in custom mode, use the regular category field
         final selectedCategory = _form.control('category').value as String?;
         if (selectedCategory == null || selectedCategory.isEmpty) {
           _form.control('category').setErrors({'required': true});
@@ -248,14 +258,9 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
         categoryValue = selectedCategory;
       }
 
-      // Validate the rest of the form
-
-      // Parse amount from string to double
       final amountString =
           (_form.control('amount').value as String?)?.trim() ?? '0';
       final amount = double.tryParse(amountString);
-
-      // Validate amount
       if (amount == null || amount < 0) {
         _form
             .control('amount')
@@ -263,13 +268,28 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
         return;
       }
 
-      // Get selected budget ID and handle the special "NO_BUDGET" case
+      // Get selected budget ID and handle the special "NO_BUDGET" case safely
       final selectedBudgetId = _form.control('budgetGoalId').value as String?;
-      final budgetGoalId = selectedBudgetId == 'NO_BUDGET'
-          ? null
-          : _budgets?.budgets
-              .firstWhere((budget) => budget.name == selectedBudgetId)
-              .id; // Use the selected budget ID directly
+      String? budgetGoalId;
+
+      if (selectedBudgetId == null || selectedBudgetId == 'NO_BUDGET') {
+        // No budget selected or explicitly "NO_BUDGET"
+        budgetGoalId = null;
+      } else {
+        // Find the budget by name and get its ID
+        try {
+          final matchingBudget = _budgets?.budgets.firstWhere(
+            (budget) => budget.name == selectedBudgetId,
+          );
+          budgetGoalId = matchingBudget?.id;
+        } on Exception catch (_) {
+          // If no matching budget found, log warning and set to null
+          debugPrint(
+              'Warning: Selected budget "$selectedBudgetId" not found in budget list');
+          budgetGoalId = null;
+        }
+      }
+
       // Create or update expense entity
       final expense = ExpenseEntity(
         id: widget.expense?.id ??
@@ -381,12 +401,12 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
       ),
     );
 
-    // Add available budgets - use budget ID as value but display budget name
+    // Add available budgets - use budget name as value but store budget ID internally
     if (_budgets?.budgets.isNotEmpty == true) {
       items.addAll(
         _budgets!.budgets.map(
           (budget) => DropdownMenuItem<String>(
-            value: budget.name, // Value is the budget ID (for form submission)
+            value: budget.name, // Display value is the budget name
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Column(
@@ -394,13 +414,13 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    budget.name, // Display name shows the budget name
+                    budget.name,
                     style: TextStyle(
                       color: context.colorScheme.onSurface,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  if (budget.name.isNotEmpty == true) ...[
+                  if (budget.detail.isNotEmpty) ...[
                     const SizedBox(height: 2),
                     Text(
                       budget.detail,
@@ -532,11 +552,6 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> {
                       'required': (error) => l10n.fieldRequired,
                       'pattern': (error) => l10n.invalidAmount,
                     },
-                    // showErrors: (control) {
-                    //   final hasError = control.hasError == true;
-                    //   final touched = control.touched == true;
-                    //   return hasError && touched;
-                    // },
                   ),
                   const SizedBox(height: AppSpacing.md),
 

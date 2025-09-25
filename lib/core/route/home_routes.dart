@@ -21,13 +21,13 @@ abstract class HomeRoutes {
               builder: (context, state) => const DashboardPage(),
             ),
             GoRoute(
-              path: 'budget',
-              name: 'budget',
+              path: 'expense',
+              name: 'expense',
               builder: (context, state) => const ExpensePage(), // Placeholder
             ),
             GoRoute(
-              path: 'expense',
-              name: 'expense',
+              path: 'budget',
+              name: 'budget',
               builder: (context, state) => const HomePage(), // Placeholder
             ),
             GoRoute(

@@ -42,7 +42,7 @@ class AppRouter {
         navigatorKey: _shellNavigatorKey,
         builder: (context, state, child) {
           // Check if we're on the expense page and provide custom FAB action
-          if (state.matchedLocation == '/home/budget') {
+          if (state.matchedLocation == '/home/expense') {
             return MainShell(
               child: child,
               customFabAction: () {

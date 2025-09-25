@@ -60,6 +60,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loading => 'Loading...';
 
   @override
+  String get expenseLoaded => 'All expenses loaded successfully!';
+
+  @override
+  String get expenseDeleted => 'Expense deleted successfully!';
+
+  @override
+  String get expenseUpdated => 'Expense updated successfully!';
+
+  @override
+  String get expenseCreated => 'Expense created successfully!';
+
+  @override
+  String get expenseFailed => 'Expense failed to load!';
+
+  @override
+  String get expenseDeletedFailed => 'Expense failed to delete!';
+
+  @override
+  String get expenseUpdatedFailed => 'Expense failed to update!';
+
+  @override
+  String get expenseCreatedFailed => 'Expense failed to create!';
+
+  @override
   String get or => 'Or';
 
   @override

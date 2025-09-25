@@ -195,6 +195,54 @@ abstract class AppLocalizations {
   /// **'Loading...'**
   String get loading;
 
+  /// No description provided for @expenseLoaded.
+  ///
+  /// In en, this message translates to:
+  /// **'All expenses loaded successfully!'**
+  String get expenseLoaded;
+
+  /// No description provided for @expenseDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense deleted successfully!'**
+  String get expenseDeleted;
+
+  /// No description provided for @expenseUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense updated successfully!'**
+  String get expenseUpdated;
+
+  /// No description provided for @expenseCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense created successfully!'**
+  String get expenseCreated;
+
+  /// No description provided for @expenseFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense failed to load!'**
+  String get expenseFailed;
+
+  /// No description provided for @expenseDeletedFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense failed to delete!'**
+  String get expenseDeletedFailed;
+
+  /// No description provided for @expenseUpdatedFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense failed to update!'**
+  String get expenseUpdatedFailed;
+
+  /// No description provided for @expenseCreatedFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense failed to create!'**
+  String get expenseCreatedFailed;
+
   /// No description provided for @or.
   ///
   /// In en, this message translates to:

@@ -30,6 +30,15 @@
   "back": "Back",
   "done": "Done",
   "loading": "Loading...",
+  "expenseLoaded": "All expenses loaded successfully!",
+  "expenseDeleted": "Expense deleted successfully!",
+  "expenseUpdated": "Expense updated successfully!",
+  "expenseCreated": "Expense created successfully!",
+  "expenseFailed": "Expense failed to load!",
+  "expenseDeletedFailed": "Expense failed to delete!",
+  "expenseUpdatedFailed": "Expense failed to update!",
+  "expenseCreatedFailed": "Expense failed to create!",
+  
   "or": "Or",
   
   "@@authentication_section": "Authentication and user account strings",

@@ -35,22 +35,20 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
   );
 
   bool _isFabExpanded = false;
-  final bool _isFabActionInProgress = false;
-  bool _isNavigating = false;
 
   /* ---------- data ---------- */
   final _navItems = const [
     NavItem(icon: Icons.dashboard_rounded, label: 'Dashboard', route: '/home'),
     NavItem(
       icon: Icons.account_balance_wallet_rounded,
-      label: 'Budget',
-      route: '/home/budget',
+      label: 'Expense',
+      route: '/home/expense',
     ),
     NavItem(icon: Icons.add, label: 'Add', route: ''),
     NavItem(
       icon: Icons.payment_rounded,
-      label: 'Payment',
-      route: '/home/payment',
+      label: 'Budget',
+      route: '/home/budget',
     ),
     NavItem(icon: Icons.person_rounded, label: 'Profile', route: '/profile'),
   ];
@@ -76,8 +74,8 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
   /* ---------- helpers ---------- */
   int _calculateSelectedIndex(BuildContext context) {
     final loc = GoRouterState.of(context).matchedLocation;
-    if (loc.startsWith('/home/budget')) return 1;
-    if (loc.startsWith('/home/expense')) return 2;
+    if (loc.startsWith('/home/budget')) return 2;
+    if (loc.startsWith('/home/expense')) return 1;
     if (loc.startsWith('/home/payment')) return 3;
     if (loc.startsWith('/profile')) return 4;
     // Default to dashboard for /home and /home/dashboard
@@ -113,7 +111,6 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
 
     final current = _calculateSelectedIndex(context);
     if (current != index) {
-      _isNavigating = true;
       _animationController
           .forward()
           .then((_) => _animationController.reverse());
@@ -124,7 +121,7 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
           context.go('/home');
           break;
         case 1: // Budget
-          context.go('/home/budget');
+          context.go('/home/expense');
           break;
         case 3: // Payment
           context.go('/home/payment');
@@ -135,9 +132,7 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
       }
 
       // Reset navigation flag after a delay
-      Future.delayed(const Duration(milliseconds: 500), () {
-        _isNavigating = false;
-      });
+      Future.delayed(const Duration(milliseconds: 500), () {});
     }
   }
 

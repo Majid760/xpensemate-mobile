@@ -40,20 +40,20 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget>
     );
 
     _scaleAnimation = Tween<double>(
-      begin: 1.0,
+      begin: 1,
       end: 1.2,
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
-    ));
+    ),);
 
     _bounceAnimation = Tween<double>(
-      begin: 0.0,
-      end: -8.0,
+      begin: 0,
+      end: -8,
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.elasticOut,
-    ));
+    ),);
   }
 
   @override
@@ -253,7 +253,8 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget>
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceVariant,
+                    color:
+                        Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
@@ -334,8 +335,10 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget>
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       // Check if we should trigger loading more
-                      _expenseCubit.checkAndLoadMore(index,
-                          threshold: widget.scrollThreshold);
+                      _expenseCubit.checkAndLoadMore(
+                        index,
+                        threshold: widget.scrollThreshold,
+                      );
 
                       final expense = expenses[index];
                       return ExpenseListItem(

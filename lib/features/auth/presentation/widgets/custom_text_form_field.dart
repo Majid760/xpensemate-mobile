@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:reactive_image_picker/reactive_image_picker.dart';
 import 'package:reactive_phone_form_field/reactive_phone_form_field.dart';
@@ -60,6 +61,8 @@ class ReactiveAppField extends StatefulWidget {
     this.maxImages,
     this.imageQuality,
     this.onImageChanged,
+    // Text field specific
+    this.inputFormatters,
   });
 
   final String formControlName;
@@ -104,6 +107,9 @@ class ReactiveAppField extends StatefulWidget {
   final int? maxImages;
   final int? imageQuality;
   final ValueChanged<dynamic>? onImageChanged;
+
+  // Text field specific properties
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   State<ReactiveAppField> createState() => _ReactiveAppFieldState();
@@ -621,6 +627,7 @@ class _ReactiveAppFieldState extends State<ReactiveAppField> {
         decoration: _getInputDecoration(theme, colorScheme),
         autocorrect: _getAutocorrect(),
         enableSuggestions: _getEnableSuggestions(),
+        inputFormatters: widget.inputFormatters,
       );
 
   InputDecoration _getInputDecoration(

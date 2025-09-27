@@ -124,7 +124,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
       'amount': FormControl<String>(
         validators: [
           Validators.required,
-          Validators.pattern(r'^\d*\.?\d*$'), // Allow only numeric input
+          Validators.pattern(
+              r'^(\d+(\.\d+)?|\.\d+|\d*)$'), // Allow only valid numeric input
         ],
       ),
       'category': FormControl<String>(
@@ -218,10 +219,11 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
         (budget) => budget.id == budgetGoalId,
       );
       _form.control('budgetGoalId').value = matchingBudget.name;
-    } catch (e) {
+    } on Exception catch (e) {
       // If the budget ID doesn't exist in current budgets, set to no budget
       debugPrint(
-          'Warning: Budget with ID "$budgetGoalId" not found in budget list');
+        'Warning: Budget with ID "$budgetGoalId" not found in budget list',
+      );
       _form.control('budgetGoalId').value = 'NO_BUDGET';
     }
   }
@@ -307,10 +309,17 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
           (_form.control('amount').value as String?)?.trim() ?? '0';
       final amount = double.tryParse(amountString);
       if (amount == null || amount < 0) {
-        _form
-            .control('amount')
-            .setErrors({'invalid': 'Please enter a valid amount'});
-        return;
+        // Check if this is a pattern validation error first
+        if (_form.control('amount').hasError('pattern')) {
+          // Let the pattern validator handle the error message
+          return;
+        } else {
+          // Otherwise, set a generic error
+          _form
+              .control('amount')
+              .setErrors({'pattern': 'Please enter a valid amount'});
+          return;
+        }
       }
 
       // Get selected budget ID and handle the special "NO_BUDGET" case safely
@@ -330,7 +339,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
         } on Exception catch (_) {
           // If no matching budget found, log warning and set to null
           debugPrint(
-              'Warning: Selected budget "$selectedBudgetId" not found in budget list');
+            'Warning: Selected budget "$selectedBudgetId" not found in budget list',
+          );
           budgetGoalId = null;
         }
       }
@@ -378,7 +388,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
       DropdownMenuItem<String>(
         value: 'ADD_CUSTOM_CATEGORY',
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
           child: Text(
             '+ Add Custom Category',
             style: TextStyle(
@@ -437,10 +447,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
             'No Budget Goal',
-            style: TextStyle(
-              color: context.colorScheme.onSurfaceVariant,
-              fontStyle: FontStyle.italic,
-            ),
+            style: context.textTheme.bodyMedium,
           ),
         ),
       ),
@@ -494,7 +501,6 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
             (method) => DropdownMenuItem<String>(
               value: method,
               child: Container(
-                color: Colors.white,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Text(
@@ -557,373 +563,399 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
         position: _slideAnimation,
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.md),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Form fields
-                ReactiveForm(
-                  formGroup: _form,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Expense name
-                      ReactiveAppField(
-                        formControlName: 'name',
-                        labelText: '${l10n.description} *',
-                        hintText: l10n.description,
-                        prefixIcon: Icon(
-                          Icons.description_outlined,
-                          color: colorScheme.onSurfaceVariant
-                              .withValues(alpha: 0.6),
-                        ),
-                        textInputAction: TextInputAction.next,
-                        validationMessages: {
-                          'required': (error) => l10n.fieldRequired,
-                        },
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-
-                      // Amount
-                      ReactiveAppField(
-                        formControlName: 'amount',
-                        labelText: '${l10n.amount} *',
-                        hintText: '0.00',
-                        fieldType: FieldType.number,
-                        prefixIcon: Icon(
-                          Icons.attach_money_outlined,
-                          color: colorScheme.onSurfaceVariant
-                              .withValues(alpha: 0.6),
-                        ),
-                        textInputAction: TextInputAction.next,
-                        validationMessages: {
-                          'required': (error) => l10n.fieldRequired,
-                          'pattern': (error) => l10n.invalidAmount,
-                        },
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-
-                      // Category field with custom category support
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Form fields
+                    ReactiveForm(
+                      formGroup: _form,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
+                          // Expense name
                           ReactiveAppField(
-                            formControlName: 'category',
-                            labelText: '${l10n.category} *',
-                            hintText: l10n.category,
-                            dropdownItems: _buildCategoryDropdownItems(),
-                            fieldType: FieldType.dropdown,
+                            formControlName: 'name',
+                            labelText: '${l10n.description} *',
+                            hintText: l10n.description,
+                            prefixIcon: Icon(
+                              Icons.description_outlined,
+                              color: colorScheme.onSurfaceVariant
+                                  .withValues(alpha: 0.6),
+                            ),
+                            textInputAction: TextInputAction.next,
                             validationMessages: {
                               'required': (error) => l10n.fieldRequired,
                             },
-                            onDropdownChanged: (value) {
-                              if (value.value == 'ADD_CUSTOM_CATEGORY') {
-                                setState(() {
-                                  _isCustomCategoryMode = true;
-                                });
-                                // Clear the dropdown selection when entering custom mode
-                                _form.control('category').value = null;
-                                // Clear any validation errors
-                                _form.control('category').setErrors({});
-                              } else if (value.value != null) {
-                                setState(() {
-                                  _isCustomCategoryMode = false;
-                                });
-                                // Clear custom category field when selecting from dropdown
-                                _form.control('customCategory').value = null;
-                                _form.control('customCategory').setErrors({});
-                              }
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+
+                          // Amount
+                          ReactiveAppField(
+                            formControlName: 'amount',
+                            labelText: '${l10n.amount} *',
+                            hintText: '0.00',
+                            fieldType: FieldType.number,
+                            prefixIcon: Icon(
+                              Icons.attach_money_outlined,
+                              color: colorScheme.onSurfaceVariant
+                                  .withValues(alpha: 0.6),
+                            ),
+                            textInputAction: TextInputAction.next,
+                            validationMessages: {
+                              'required': (error) => l10n.fieldRequired,
+                              'pattern': (error) => l10n.invalidAmount,
+                            },
+                            showErrors: (control) {
+                              final hasError = control.hasError('required') ||
+                                  control.hasError('pattern');
+                              final touched = control.touched == true;
+                              return hasError && touched;
                             },
                           ),
+                          const SizedBox(height: AppSpacing.md),
 
-                          // Custom category text field
-                          if (_isCustomCategoryMode) ...[
-                            const SizedBox(height: AppSpacing.md),
+                          // Category field with custom category support
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ReactiveAppField(
+                                formControlName: 'category',
+                                labelText: '${l10n.category} *',
+                                hintText: l10n.category,
+                                dropdownItems: _buildCategoryDropdownItems(),
+                                fieldType: FieldType.dropdown,
+                                validationMessages: {
+                                  'required': (error) => l10n.fieldRequired,
+                                },
+                                onDropdownChanged: (value) {
+                                  if (value.value == 'ADD_CUSTOM_CATEGORY') {
+                                    setState(() {
+                                      _isCustomCategoryMode = true;
+                                    });
+                                    // Clear the dropdown selection when entering custom mode
+                                    _form.control('category').value = null;
+                                    // Clear any validation errors
+                                    _form.control('category').setErrors({});
+                                  } else if (value.value != null) {
+                                    setState(() {
+                                      _isCustomCategoryMode = false;
+                                    });
+                                    // Clear custom category field when selecting from dropdown
+                                    _form.control('customCategory').value =
+                                        null;
+                                    _form
+                                        .control('customCategory')
+                                        .setErrors({});
+                                  }
+                                },
+                              ),
+
+                              // Custom category text field
+                              if (_isCustomCategoryMode) ...[
+                                const SizedBox(height: AppSpacing.md),
+                                ReactiveAppField(
+                                  formControlName: 'customCategory',
+                                  labelText: 'Custom Category *',
+                                  hintText: 'Enter custom category name',
+                                  prefixIcon: Icon(
+                                    Icons.category_outlined,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant
+                                        .withValues(alpha: 0.6),
+                                  ),
+                                  textInputAction: TextInputAction.next,
+                                  validationMessages: {
+                                    'required': (error) => l10n.fieldRequired,
+                                  },
+                                  showErrors: (control) {
+                                    final hasError = control.hasError == true;
+                                    final touched = control.touched == true;
+                                    return hasError && touched;
+                                  },
+                                ),
+                              ],
+                            ],
+                          ),
+
+                          const SizedBox(height: AppSpacing.md),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${l10n.date} *',
+                                      style: textTheme.labelLarge?.copyWith(
+                                        color: colorScheme.onSurfaceVariant,
+                                      ),
+                                    ),
+                                    const SizedBox(height: AppSpacing.xs),
+                                    DecoratedBox(
+                                      decoration: BoxDecoration(
+                                        color: context
+                                            .colorScheme.surfaceContainer
+                                            .withValues(alpha: 0.7),
+                                        borderRadius: BorderRadius.circular(16),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: context.colorScheme.primary
+                                                .withValues(alpha: 0.1),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: ReactiveFormConsumer(
+                                        builder: (context, formModel, child) {
+                                          final date = formModel
+                                              .control('date')
+                                              .value as DateTime?;
+                                          return InkWell(
+                                            onTap: _selectDate,
+                                            borderRadius:
+                                                BorderRadius.circular(16),
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 14,
+                                                vertical: 14,
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons
+                                                        .calendar_today_outlined,
+                                                    color: colorScheme
+                                                        .onSurfaceVariant
+                                                        .withValues(alpha: 0.6),
+                                                    size: 20,
+                                                  ),
+                                                  const SizedBox(
+                                                    width: AppSpacing.sm,
+                                                  ),
+                                                  Text(
+                                                    date != null
+                                                        ? '${date.day}/${date.month}/${date.year}'
+                                                        : l10n.date,
+                                                    style: textTheme.bodyLarge
+                                                        ?.copyWith(
+                                                      color: date != null
+                                                          ? colorScheme
+                                                              .onSurface
+                                                          : colorScheme
+                                                              .onSurfaceVariant,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: AppSpacing.md),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${l10n.time} *',
+                                      style: textTheme.labelLarge?.copyWith(
+                                        color: colorScheme.onSurfaceVariant,
+                                      ),
+                                    ),
+                                    const SizedBox(height: AppSpacing.xs),
+                                    DecoratedBox(
+                                      decoration: BoxDecoration(
+                                        color: context
+                                            .colorScheme.surfaceContainer
+                                            .withValues(alpha: 0.7),
+                                        borderRadius: BorderRadius.circular(16),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: context.colorScheme.primary
+                                                .withValues(alpha: 0.1),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: ReactiveFormConsumer(
+                                        builder: (context, formModel, child) {
+                                          final time = formModel
+                                              .control('time')
+                                              .value as String?;
+                                          return InkWell(
+                                            onTap: _selectTime,
+                                            borderRadius:
+                                                BorderRadius.circular(16),
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 14,
+                                                vertical: 14,
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.access_time_outlined,
+                                                    color: colorScheme
+                                                        .onSurfaceVariant
+                                                        .withValues(alpha: 0.6),
+                                                    size: 20,
+                                                  ),
+                                                  const SizedBox(
+                                                    width: AppSpacing.sm,
+                                                  ),
+                                                  Text(
+                                                    time ?? l10n.time,
+                                                    style: textTheme.bodyLarge
+                                                        ?.copyWith(
+                                                      color: time != null
+                                                          ? colorScheme
+                                                              .onSurface
+                                                          : colorScheme
+                                                              .onSurfaceVariant,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          // Budget selection
+                          if (_isBudgetsLoading)
+                            Center(
+                              child: Container(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: colorScheme.primary,
+                                      ),
+                                    ),
+                                    const SizedBox(width: AppSpacing.sm),
+                                    Text(
+                                      'Loading budgets...',
+                                      style: textTheme.bodyMedium?.copyWith(
+                                        color: colorScheme.onSurfaceVariant,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          else
                             ReactiveAppField(
-                              formControlName: 'customCategory',
-                              labelText: 'Custom Category *',
-                              hintText: 'Enter custom category name',
+                              formControlName: 'budgetGoalId',
+                              labelText: 'Link to Budget',
+                              hintText: 'Select budget goal (optional)',
+                              fieldType: FieldType.dropdown,
+                              dropdownItems: _buildBudgetDropdownItems(),
                               prefixIcon: Icon(
-                                Icons.category_outlined,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurfaceVariant
+                                Icons.account_balance_wallet_outlined,
+                                color: colorScheme.onSurfaceVariant
                                     .withValues(alpha: 0.6),
                               ),
-                              textInputAction: TextInputAction.next,
-                              validationMessages: {
-                                'required': (error) => l10n.fieldRequired,
-                              },
-                              showErrors: (control) {
-                                final hasError = control.hasError == true;
-                                final touched = control.touched == true;
-                                return hasError && touched;
-                              },
                             ),
-                          ],
+                          const SizedBox(height: AppSpacing.md),
+
+                          // Location
+                          ReactiveAppField(
+                            formControlName: 'location',
+                            labelText: l10n.location,
+                            hintText: l10n.location,
+                            prefixIcon: Icon(
+                              Icons.location_on_outlined,
+                              color: colorScheme.onSurfaceVariant
+                                  .withValues(alpha: 0.6),
+                            ),
+                            textInputAction: TextInputAction.next,
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          ReactiveAppField(
+                            formControlName: 'paymentMethod',
+                            labelText: l10n.paymentMethod,
+                            hintText: l10n.paymentMethod,
+                            fieldType: FieldType.dropdown,
+                            dropdownItems: _buildPaymentMethodDropdownItems(),
+                          ),
+
+                          const SizedBox(height: AppSpacing.md),
+                          // Details
+                          ReactiveAppField(
+                            formControlName: 'detail',
+                            labelText: l10n.details,
+                            hintText: l10n.details,
+                            fieldType: FieldType.textarea,
+                            maxLines: 3,
+                            prefixIcon: Icon(
+                              Icons.notes_outlined,
+                              color: colorScheme.onSurfaceVariant
+                                  .withValues(alpha: 0.6),
+                            ),
+                            textInputAction: TextInputAction.newline,
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+
+                          const SizedBox(height: AppSpacing.xxl),
                         ],
                       ),
-
-                      const SizedBox(height: AppSpacing.md),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${l10n.date} *',
-                                  style: textTheme.labelLarge?.copyWith(
-                                    color: colorScheme.onSurfaceVariant,
-                                  ),
-                                ),
-                                const SizedBox(height: AppSpacing.xs),
-                                DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    color: context.colorScheme.surfaceContainer
-                                        .withValues(alpha: 0.7),
-                                    borderRadius: BorderRadius.circular(16),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: context.colorScheme.primary
-                                            .withValues(alpha: 0.1),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: ReactiveFormConsumer(
-                                    builder: (context, formModel, child) {
-                                      final date = formModel
-                                          .control('date')
-                                          .value as DateTime?;
-                                      return InkWell(
-                                        onTap: _selectDate,
-                                        borderRadius: BorderRadius.circular(16),
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 14,
-                                            vertical: 14,
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.calendar_today_outlined,
-                                                color: colorScheme
-                                                    .onSurfaceVariant
-                                                    .withValues(alpha: 0.6),
-                                                size: 20,
-                                              ),
-                                              const SizedBox(
-                                                  width: AppSpacing.sm),
-                                              Text(
-                                                date != null
-                                                    ? '${date.day}/${date.month}/${date.year}'
-                                                    : l10n.date,
-                                                style: textTheme.bodyLarge
-                                                    ?.copyWith(
-                                                  color: date != null
-                                                      ? colorScheme.onSurface
-                                                      : colorScheme
-                                                          .onSurfaceVariant,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: AppSpacing.md),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${l10n.time} *',
-                                  style: textTheme.labelLarge?.copyWith(
-                                    color: colorScheme.onSurfaceVariant,
-                                  ),
-                                ),
-                                const SizedBox(height: AppSpacing.xs),
-                                DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    color: context.colorScheme.surfaceContainer
-                                        .withValues(alpha: 0.7),
-                                    borderRadius: BorderRadius.circular(16),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: context.colorScheme.primary
-                                            .withValues(alpha: 0.1),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: ReactiveFormConsumer(
-                                    builder: (context, formModel, child) {
-                                      final time = formModel
-                                          .control('time')
-                                          .value as String?;
-                                      return InkWell(
-                                        onTap: _selectTime,
-                                        borderRadius: BorderRadius.circular(16),
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 14,
-                                            vertical: 14,
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.access_time_outlined,
-                                                color: colorScheme
-                                                    .onSurfaceVariant
-                                                    .withValues(alpha: 0.6),
-                                                size: 20,
-                                              ),
-                                              const SizedBox(
-                                                  width: AppSpacing.sm),
-                                              Text(
-                                                time ?? l10n.time,
-                                                style: textTheme.bodyLarge
-                                                    ?.copyWith(
-                                                  color: time != null
-                                                      ? colorScheme.onSurface
-                                                      : colorScheme
-                                                          .onSurfaceVariant,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      // Budget selection
-                      if (_isBudgetsLoading)
-                        Center(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: colorScheme.primary,
-                                  ),
-                                ),
-                                const SizedBox(width: AppSpacing.sm),
-                                Text(
-                                  'Loading budgets...',
-                                  style: textTheme.bodyMedium?.copyWith(
-                                    color: colorScheme.onSurfaceVariant,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      else
-                        ReactiveAppField(
-                          formControlName: 'budgetGoalId',
-                          labelText: 'Link to Budget',
-                          hintText: 'Select budget goal (optional)',
-                          fieldType: FieldType.dropdown,
-                          dropdownItems: _buildBudgetDropdownItems(),
-                          prefixIcon: Icon(
-                            Icons.account_balance_wallet_outlined,
-                            color: colorScheme.onSurfaceVariant
-                                .withValues(alpha: 0.6),
-                          ),
-                        ),
-                      const SizedBox(height: AppSpacing.md),
-
-                      // Location
-                      ReactiveAppField(
-                        formControlName: 'location',
-                        labelText: l10n.location,
-                        hintText: l10n.location,
-                        prefixIcon: Icon(
-                          Icons.location_on_outlined,
-                          color: colorScheme.onSurfaceVariant
-                              .withValues(alpha: 0.6),
-                        ),
-                        textInputAction: TextInputAction.next,
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      ReactiveAppField(
-                        formControlName: 'paymentMethod',
-                        labelText: l10n.paymentMethod,
-                        hintText: l10n.paymentMethod,
-                        fieldType: FieldType.dropdown,
-                        dropdownItems: _buildPaymentMethodDropdownItems(),
-                      ),
-
-                      const SizedBox(height: AppSpacing.md),
-                      // Details
-                      ReactiveAppField(
-                        formControlName: 'detail',
-                        labelText: l10n.details,
-                        hintText: l10n.details,
-                        fieldType: FieldType.textarea,
-                        maxLines: 3,
-                        prefixIcon: Icon(
-                          Icons.notes_outlined,
-                          color: colorScheme.onSurfaceVariant
-                              .withValues(alpha: 0.6),
-                        ),
-                        textInputAction: TextInputAction.newline,
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-
-                      const SizedBox(height: AppSpacing.xxl),
-
-                      // Action buttons
-                      Row(
-                        children: [
-                          if (widget.onCancel != null)
-                            Expanded(
-                              child: AppButton.secondary(
-                                onPressed: widget.onCancel,
-                                text: l10n.cancel.toUpperCase(),
-                                textColor: Colors.white,
-                              ),
-                            ),
-                          if (widget.onCancel != null)
-                            const SizedBox(width: AppSpacing.md),
-                          Expanded(
-                            child: AppButton.primary(
-                              onPressed: _submitForm,
-                              text: (widget.expense == null
-                                      ? l10n.add
-                                      : l10n.save)
-                                  .toUpperCase(),
-                              textColor: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              // Action buttons
+              SizedBox(
+                height: 48,
+                child: Row(
+                  children: [
+                    if (widget.onCancel != null)
+                      Expanded(
+                        child: AppButton.secondary(
+                          onPressed: widget.onCancel,
+                          text: l10n.cancel.toUpperCase(),
+                          textColor: Colors.white,
+                        ),
+                      ),
+                    if (widget.onCancel != null)
+                      const SizedBox(width: AppSpacing.md),
+                    Expanded(
+                      child: AppButton.primary(
+                        onPressed: _submitForm,
+                        text: (widget.expense == null ? l10n.add : l10n.save)
+                            .toUpperCase(),
+                        textColor: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

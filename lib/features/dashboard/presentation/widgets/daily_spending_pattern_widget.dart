@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/weekly_stats_entity.dart';
 
@@ -54,7 +55,7 @@ class _DailySpendingPatternWidgetState extends State<DailySpendingPatternWidget>
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: EdgeInsets.all(context.md),
+        padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
           color: context.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
@@ -74,7 +75,7 @@ class _DailySpendingPatternWidgetState extends State<DailySpendingPatternWidget>
           children: [
             // Header
             const _HeaderRow(),
-            SizedBox(height: context.md),
+            const SizedBox(height: AppSpacing.md),
 
             // Bar Chart
             _AnimatedBarChart(
@@ -97,7 +98,7 @@ class _HeaderRow extends StatelessWidget {
             color: context.primaryColor,
             size: 18,
           ),
-          SizedBox(width: context.xs),
+          const SizedBox(width: AppSpacing.xs),
           Expanded(
             child: Text(
               context.l10n.dailySpendingPattern,
@@ -170,7 +171,7 @@ class _BarChart extends StatelessWidget {
 
         return Expanded(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: context.xs),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
             child: _BarColumn(
               day: day,
               index: index,
@@ -200,7 +201,7 @@ class _BarColumn extends StatelessWidget {
         children: [
           // Bar
           Container(
-            height: 80 * animatedHeight,
+            height: 80.0 * animatedHeight,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.bottomCenter,
@@ -220,7 +221,7 @@ class _BarColumn extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: context.xs),
+          const SizedBox(height: AppSpacing.xs),
 
           // Day label
           Text(
@@ -279,7 +280,7 @@ class _EmptyChart extends StatelessWidget {
               size: 32,
               color: context.colorScheme.onSurfaceVariant,
             ),
-            SizedBox(height: context.sm),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               context.l10n.noSpendingData,
               style: context.textTheme.bodySmall?.copyWith(

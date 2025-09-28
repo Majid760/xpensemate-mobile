@@ -494,7 +494,7 @@ class _BudgetDetails extends StatelessWidget {
 }
 
 class _StatusChip extends StatelessWidget {
-  _StatusChip({
+  const _StatusChip({
     required this.status,
   });
 

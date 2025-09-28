@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
-import 'package:xpensemate/core/theme/colors/app_colors.dart';
+import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
@@ -20,7 +20,9 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage>
     with TickerProviderStateMixin {
   late AnimationController _fadeController;
+  late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
   late ScrollController _scrollController;
   String _currentSectionTitle = '';
   final Map<String, GlobalKey> _sectionKeys = {
@@ -40,6 +42,7 @@ class _DashboardPageState extends State<DashboardPage>
   @override
   void dispose() {
     _fadeController.dispose();
+    _slideController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -50,11 +53,27 @@ class _DashboardPageState extends State<DashboardPage>
       vsync: this,
     );
 
+    _slideController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+
     _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _fadeController, curve: Curves.easeOutQuart),
     );
 
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _slideController,
+        curve: Curves.easeOutCubic,
+      ),
+    );
+
     _fadeController.forward();
+    _slideController.forward();
   }
 
   void _initializeScrollController() {
@@ -144,7 +163,7 @@ class _DashboardPageState extends State<DashboardPage>
                   backgroundColor: context.colorScheme.primary,
                   actions: [
                     Padding(
-                      padding: const EdgeInsets.only(right: 16),
+                      padding: const EdgeInsets.only(right: AppSpacing.md),
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
@@ -194,46 +213,49 @@ class _DashboardPageState extends State<DashboardPage>
                 SliverToBoxAdapter(
                   child: FadeTransition(
                     opacity: _fadeAnimation,
-                    child: Padding(
-                      padding: EdgeInsets.zero,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Weekly Financial Overview Section
-                          KeyedSubtree(
-                            key: _sectionKeys['weeklyFinancialOverview'],
-                            child: WeeklyFinancialOverviewWidget(
-                              state: state,
-                              onRetry: _loadDashboardData,
-                            ),
-                          ),
-
-                          if (state.state != DashboardStates.error) ...[
-                            SizedBox(height: context.lg),
-
-                            // Active Budget Section
-                            if (state.budgetGoals != null)
-                              KeyedSubtree(
-                                key: _sectionKeys['activeBudgets'],
-                                child: ActiveBudgetSectionWidget(
-                                  budgetGoals: state.budgetGoals!,
-                                ),
+                    child: SlideTransition(
+                      position: _slideAnimation,
+                      child: Padding(
+                        padding: EdgeInsets.zero,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Weekly Financial Overview Section
+                            KeyedSubtree(
+                              key: _sectionKeys['weeklyFinancialOverview'],
+                              child: WeeklyFinancialOverviewWidget(
+                                state: state,
+                                onRetry: _loadDashboardData,
                               ),
-                            if (state.budgetGoals != null)
+                            ),
+
+                            if (state.state != DashboardStates.error) ...[
                               SizedBox(height: context.lg),
 
-                            // Product Analytics Section
-                            KeyedSubtree(
-                              key: _sectionKeys['productAnalytics'],
-                              child: const ProductAnalyticsWidget(),
-                            ),
+                              // Active Budget Section
+                              if (state.budgetGoals != null)
+                                KeyedSubtree(
+                                  key: _sectionKeys['activeBudgets'],
+                                  child: ActiveBudgetSectionWidget(
+                                    budgetGoals: state.budgetGoals!,
+                                  ),
+                                ),
+                              if (state.budgetGoals != null)
+                                SizedBox(height: context.lg),
 
-                            SizedBox(height: context.lg),
+                              // Product Analytics Section
+                              KeyedSubtree(
+                                key: _sectionKeys['productAnalytics'],
+                                child: const ProductAnalyticsWidget(),
+                              ),
+
+                              SizedBox(height: context.lg),
+                            ],
+
+                            // Additional padding at bottom for better scrolling
+                            SizedBox(height: context.xl),
                           ],
-
-                          // Additional padding at bottom for better scrolling
-                          SizedBox(height: context.xl),
-                        ],
+                        ),
                       ),
                     ),
                   ),

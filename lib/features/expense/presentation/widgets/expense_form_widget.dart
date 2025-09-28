@@ -125,7 +125,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
         validators: [
           Validators.required,
           Validators.pattern(
-              r'^(\d+(\.\d+)?|\.\d+|\d*)$'), // Allow only valid numeric input
+            r'^(\d+(\.\d+)?|\.\d+|\d*)$',
+          ), // Allow only valid numeric input
         ],
       ),
       'category': FormControl<String>(
@@ -219,8 +220,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
         (budget) => budget.id == budgetGoalId,
       );
       _form.control('budgetGoalId').value = matchingBudget.name;
-    } on Exception catch (e) {
-      // If the budget ID doesn't exist in current budgets, set to no budget
+    } on Exception catch (_) {
       debugPrint(
         'Warning: Budget with ID "$budgetGoalId" not found in budget list',
       );
@@ -382,17 +382,24 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
 
   List<DropdownMenuItem<String>> _buildCategoryDropdownItems() {
     final items = <DropdownMenuItem<String>>[];
+    final l10n = context.l10n;
+    final colorScheme = Theme.of(context).colorScheme;
 
     // Add "Add Custom Category" option at the top
     items.add(
       DropdownMenuItem<String>(
         value: 'ADD_CUSTOM_CATEGORY',
         child: Container(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.md,
+            AppSpacing.sm,
+            AppSpacing.md,
+            0,
+          ),
           child: Text(
             '+ Add Custom Category',
             style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
+              color: colorScheme.primary,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -405,7 +412,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
       DropdownMenuItem<String>(
         enabled: false,
         child: Divider(
-          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+          color: colorScheme.outline.withValues(alpha: 0.2),
           height: 1,
         ),
       ),
@@ -418,12 +425,14 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
             (category) => DropdownMenuItem<String>(
               value: category,
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: AppSpacing.xs,
+                ),
                 child: Text(
                   category,
                   style: TextStyle(
-                    color: context.colorScheme.onSurface,
+                    color: colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -437,6 +446,9 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
 
   List<DropdownMenuItem<String>> _buildBudgetDropdownItems() {
     final items = <DropdownMenuItem<String>>[];
+    final l10n = context.l10n;
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
     // Add "No Budget" option
     items.add(
@@ -444,7 +456,10 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
         value:
             'NO_BUDGET', // Use a special value instead of null for better handling
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
           child: Text(
             'No Budget Goal',
             style: context.textTheme.bodyMedium,
@@ -460,7 +475,10 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
           (budget) => DropdownMenuItem<String>(
             value: budget.name, // Display value is the budget name
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.sm,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -468,16 +486,16 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
                   Text(
                     budget.name,
                     style: TextStyle(
-                      color: context.colorScheme.onSurface,
+                      color: colorScheme.onSurface,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   if (budget.detail.isNotEmpty) ...[
-                    const SizedBox(height: 2),
+                    const SizedBox(height: AppSpacing.xs),
                     Text(
                       budget.detail,
                       style: TextStyle(
-                        color: context.colorScheme.onSurfaceVariant,
+                        color: colorScheme.onSurfaceVariant,
                         fontSize: 12,
                       ),
                       maxLines: 1,
@@ -495,24 +513,30 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
     return items;
   }
 
-  List<DropdownMenuItem<String>> _buildPaymentMethodDropdownItems() =>
-      _paymentMethods
-          .map(
-            (method) => DropdownMenuItem<String>(
-              value: method,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: Text(
-                  method,
-                  style: TextStyle(
-                    color: context.colorScheme.onSurface,
-                  ),
+  List<DropdownMenuItem<String>> _buildPaymentMethodDropdownItems() {
+    final l10n = context.l10n;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return _paymentMethods
+        .map(
+          (method) => DropdownMenuItem<String>(
+            value: method,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.md,
+              ),
+              child: Text(
+                method,
+                style: TextStyle(
+                  color: colorScheme.onSurface,
                 ),
               ),
             ),
-          )
-          .toList();
+          ),
+        )
+        .toList();
+  }
 
   Future<void> _selectDate() async {
     final picked = await showDatePicker(
@@ -598,7 +622,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
                           ReactiveAppField(
                             formControlName: 'amount',
                             labelText: '${l10n.amount} *',
-                            hintText: '0.00',
+                            hintText: l10n.amount,
                             fieldType: FieldType.number,
                             prefixIcon: Icon(
                               Icons.attach_money_outlined,
@@ -660,8 +684,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
                                 const SizedBox(height: AppSpacing.md),
                                 ReactiveAppField(
                                   formControlName: 'customCategory',
-                                  labelText: 'Custom Category *',
-                                  hintText: 'Enter custom category name',
+                                  labelText: '${l10n.category} *',
+                                  hintText: l10n.category,
                                   prefixIcon: Icon(
                                     Icons.category_outlined,
                                     color: Theme.of(context)
@@ -699,13 +723,14 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
                                     const SizedBox(height: AppSpacing.xs),
                                     DecoratedBox(
                                       decoration: BoxDecoration(
-                                        color: context
-                                            .colorScheme.surfaceContainer
+                                        color: colorScheme.surfaceContainer
                                             .withValues(alpha: 0.7),
-                                        borderRadius: BorderRadius.circular(16),
+                                        borderRadius: BorderRadius.circular(
+                                          AppSpacing.lg,
+                                        ),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: context.colorScheme.primary
+                                            color: colorScheme.primary
                                                 .withValues(alpha: 0.1),
                                             blurRadius: 8,
                                             offset: const Offset(0, 2),
@@ -719,13 +744,14 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
                                               .value as DateTime?;
                                           return InkWell(
                                             onTap: _selectDate,
-                                            borderRadius:
-                                                BorderRadius.circular(16),
+                                            borderRadius: BorderRadius.circular(
+                                              AppSpacing.lg,
+                                            ),
                                             child: Container(
                                               padding:
                                                   const EdgeInsets.symmetric(
-                                                horizontal: 14,
-                                                vertical: 14,
+                                                horizontal: AppSpacing.md,
+                                                vertical: AppSpacing.md,
                                               ),
                                               child: Row(
                                                 children: [
@@ -777,13 +803,14 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
                                     const SizedBox(height: AppSpacing.xs),
                                     DecoratedBox(
                                       decoration: BoxDecoration(
-                                        color: context
-                                            .colorScheme.surfaceContainer
+                                        color: colorScheme.surfaceContainer
                                             .withValues(alpha: 0.7),
-                                        borderRadius: BorderRadius.circular(16),
+                                        borderRadius: BorderRadius.circular(
+                                          AppSpacing.lg,
+                                        ),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: context.colorScheme.primary
+                                            color: colorScheme.primary
                                                 .withValues(alpha: 0.1),
                                             blurRadius: 8,
                                             offset: const Offset(0, 2),
@@ -797,13 +824,14 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
                                               .value as String?;
                                           return InkWell(
                                             onTap: _selectTime,
-                                            borderRadius:
-                                                BorderRadius.circular(16),
+                                            borderRadius: BorderRadius.circular(
+                                              AppSpacing.lg,
+                                            ),
                                             child: Container(
                                               padding:
                                                   const EdgeInsets.symmetric(
-                                                horizontal: 14,
-                                                vertical: 14,
+                                                horizontal: AppSpacing.md,
+                                                vertical: AppSpacing.md,
                                               ),
                                               child: Row(
                                                 children: [
@@ -845,8 +873,9 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
                           if (_isBudgetsLoading)
                             Center(
                               child: Container(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: AppSpacing.md,
+                                ),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -860,7 +889,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
                                     ),
                                     const SizedBox(width: AppSpacing.sm),
                                     Text(
-                                      'Loading budgets...',
+                                      '${l10n.loading} ${l10n.budget.toLowerCase()}...',
                                       style: textTheme.bodyMedium?.copyWith(
                                         color: colorScheme.onSurfaceVariant,
                                       ),

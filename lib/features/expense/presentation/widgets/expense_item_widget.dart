@@ -159,6 +159,8 @@ class _ExpenseListItemState extends State<ExpenseListItem>
         minHeight: screenHeight * 0.8,
         maxHeight: screenHeight * 0.95,
         padding: EdgeInsets.zero,
+        blurSigma: 5,
+        barrierColor: Colors.transparent,
       ),
       child: ExpenseFormWidget(
         expense: entity.id.isEmpty ? null : entity,

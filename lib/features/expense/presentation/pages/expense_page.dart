@@ -61,11 +61,12 @@ class _ExpensePageContentState extends State<ExpensePageContent>
       title: "Edit Expense",
       config: const BottomSheetConfig(
         padding: EdgeInsets.symmetric(horizontal: 8),
+        blurSigma: 5,
+        barrierColor: Colors.transparent,
       ),
       child: ExpenseFormWidget(
         expense: entity,
         onSave: (expense) {
-          Navigator.pop(context);
           context.expenseCubit.updateExpense(expense: expense).then((value) {
             if (context.mounted) {
               AppSnackBar.show(
@@ -73,6 +74,7 @@ class _ExpensePageContentState extends State<ExpensePageContent>
                 message: 'Expense updated successfully',
                 type: SnackBarType.success,
               );
+              Navigator.pop(context);
             }
           });
         },
@@ -155,6 +157,8 @@ void addExpense(BuildContext context) {
       minHeight: screenHeight * 0.8,
       maxHeight: screenHeight * 0.95,
       padding: EdgeInsets.zero,
+      blurSigma: 5,
+      barrierColor: Colors.transparent,
     ),
     child: ExpenseFormWidget(
       onSave: (expense) {

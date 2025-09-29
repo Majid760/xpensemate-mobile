@@ -1,6 +1,9 @@
 //lib/features/splash/presentation/pages/splash_page.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/theme/app_spacing.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/assset_path.dart';
 import 'package:xpensemate/core/widget/app_image.dart';
 
@@ -27,7 +30,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
   late AnimationController _mottoController;
   late Animation<double> _mottoFadeAnimation;
   late Animation<Offset> _mottoSlideAnimation;
-  final String _motto = "Track Smart, Spend Wise";
+  // final String _motto = "Track Smart, Spend Wise"; // Will use localized string
 
   // Loading animation
   late AnimationController _loadingController;
@@ -76,7 +79,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
     // Character animations - in reverse order
     for (var i = 0; i < _appName.length; i++) {
       final controller = AnimationController(
-        duration: const Duration(milliseconds: 400),
+        duration: const Duration(milliseconds: 200),
         vsync: this,
       );
       _characterControllers.add(controller);
@@ -166,13 +169,13 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
     await _logoController.forward();
 
     // Wait a bit after logo settles
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future<void>.delayed(const Duration(milliseconds: 300));
 
     // Start character animations in reverse order (e, t, a, M, e, s, n, e, p)
     for (var i = _appName.length - 1; i >= 0; i--) {
       if (mounted) {
         await _characterControllers[i].forward();
-        await Future.delayed(const Duration(milliseconds: 50));
+        await Future<void>.delayed(const Duration(milliseconds: 50));
       }
     }
 
@@ -195,7 +198,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
     }
 
     // Wait for loading to complete, then navigate
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future<void>.delayed(const Duration(milliseconds: 500));
 
     if (mounted) {
       context.go('/home');
@@ -214,75 +217,73 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Scaffold(
-      backgroundColor: theme.colorScheme.tertiary,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Logo and Text Row
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Animated Logo
-                SlideTransition(
-                  position: _logoSlideAnimation,
-                  child: FadeTransition(
-                    opacity: _logoFadeAnimation,
-                    child: Container(
-                      key: _logoKey,
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: AppImage.asset(
-                        AssetPaths.logoWithoutText,
-                        height: 50,
+  Widget build(BuildContext context) => Scaffold(
+        backgroundColor: context.colorScheme.tertiary,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Logo and Text Row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Animated Logo
+                  SlideTransition(
+                    position: _logoSlideAnimation,
+                    child: FadeTransition(
+                      opacity: _logoFadeAnimation,
+                      child: Container(
+                        key: _logoKey,
                         width: 50,
-                        color: theme.colorScheme.onPrimary,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: AppImage.asset(
+                          AssetPaths.logoWithoutText,
+                          height: 50,
+                          width: 50,
+                          color: context.colorScheme.onPrimary,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 4),
-                // Animated Text
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: _buildAnimatedText(),
-                ),
-              ],
-            ),
-            const SizedBox(height: 30),
-            // Animated Motto
-            SlideTransition(
-              position: _mottoSlideAnimation,
-              child: FadeTransition(
-                opacity: _mottoFadeAnimation,
-                child: Text(
-                  _motto,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white.withValues(alpha: 0.9),
-                    letterSpacing: 0.5,
+                  const SizedBox(width: AppSpacing.xs),
+                  // Animated Text
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: _buildAnimatedText(),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.md),
+              // Animated Motto
+              SlideTransition(
+                position: _mottoSlideAnimation,
+                child: FadeTransition(
+                  opacity: _mottoFadeAnimation,
+                  child: Text(
+                    context.l10n.moto,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color:
+                          context.colorScheme.onPrimary.withValues(alpha: .9),
+                      letterSpacing: 0.5,
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 50),
-            // Loading Animation
-            if (_showLoading) _buildLoadingAnimation(theme),
-          ],
+              const SizedBox(height: AppSpacing.xl),
+              // Loading Animation
+              if (_showLoading) _buildLoadingAnimation(context),
+            ],
+          ),
         ),
-      ),
-    );
-  }
+      );
 
-  Widget _buildLoadingAnimation(ThemeData theme) => Column(
+  Widget _buildLoadingAnimation(BuildContext context) => Column(
         children: [
           // Preparing text with dots animation
           AnimatedBuilder(
@@ -292,17 +293,17 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
               return FadeTransition(
                 opacity: _loadingProgressAnimation,
                 child: Text(
-                  'Preparing your workspace$dots',
+                  '${context.l10n.loading}$dots',
                   style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white.withValues(alpha: .7),
+                    fontSize: 16,
+                    color: context.colorScheme.onPrimary.withValues(alpha: .7),
                     fontWeight: FontWeight.w400,
                   ),
                 ),
               );
             },
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.sm),
           // Progress bar
           AnimatedBuilder(
             animation: _loadingProgressAnimation,
@@ -310,7 +311,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
               width: 200,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
+                color: context.colorScheme.onPrimary.withValues(alpha: .2),
                 borderRadius: BorderRadius.circular(2),
               ),
               child: Stack(
@@ -323,8 +324,8 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            theme.colorScheme.primary,
-                            theme.colorScheme.primary.withValues(alpha: 0.7),
+                            context.colorScheme.primary,
+                            context.colorScheme.primary.withValues(alpha: 0.7),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(2),
@@ -340,9 +341,10 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            Colors.white.withValues(alpha: 0),
-                            Colors.white.withValues(alpha: 0.6),
-                            Colors.white.withValues(alpha: 0),
+                            context.colorScheme.onPrimary.withValues(alpha: 0),
+                            context.colorScheme.onPrimary
+                                .withValues(alpha: 0.6),
+                            context.colorScheme.onPrimary.withValues(alpha: 0),
                           ],
                         ),
                       ),
@@ -381,11 +383,11 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
                   opacity: opacity,
                   child: Text(
                     _appName[i],
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 36,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      letterSpacing: 1,
+                      color: context.colorScheme.onPrimary,
+                      letterSpacing: AppSpacing.xs,
                       height: 1,
                     ),
                   ),

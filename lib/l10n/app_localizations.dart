@@ -771,6 +771,12 @@ abstract class AppLocalizations {
   /// **'Crafted with ❤️ for smarter expense tracking'**
   String get craftedWithLove;
 
+  /// No description provided for @moto.
+  ///
+  /// In en, this message translates to:
+  /// **'Track Smart, Spend Wise'**
+  String get moto;
+
   /// No description provided for @changeProfilePhoto.
   ///
   /// In en, this message translates to:

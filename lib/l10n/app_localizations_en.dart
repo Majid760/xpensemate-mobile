@@ -364,6 +364,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get craftedWithLove => 'Crafted with ❤️ for smarter expense tracking';
 
   @override
+  String get moto => 'Track Smart, Spend Wise';
+
+  @override
   String get changeProfilePhoto => 'Change Profile Photo';
 
   @override

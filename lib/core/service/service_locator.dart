@@ -15,6 +15,11 @@ import 'package:xpensemate/features/auth/data/repositories/auth_repository_impl.
 import 'package:xpensemate/features/auth/domain/repositories/auth_repository.dart';
 import 'package:xpensemate/features/auth/domain/usecases/cases_export.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:xpensemate/features/budget/data/datasources/budget_remote_data_source.dart';
+import 'package:xpensemate/features/budget/data/datasources/budget_remote_data_source_impl.dart';
+import 'package:xpensemate/features/budget/data/repositories/budget_repository_impl.dart';
+import 'package:xpensemate/features/budget/domain/repositories/budget_repository.dart';
+import 'package:xpensemate/features/budget/domain/usecases/usecase_export.dart';
 import 'package:xpensemate/features/dashboard/data/datasources/dashboard_remote_data_source.dart';
 import 'package:xpensemate/features/dashboard/data/repositories/dashboard_repository_impl.dart';
 import 'package:xpensemate/features/dashboard/domain/repositories/dashboard_repository.dart';
@@ -106,11 +111,15 @@ Future<void> initLocator() async {
       () => ExpenseRemoteDataSourceImpl(sl()),
     );
 
+    sl.registerLazySingleton<BudgetRemoteDataSource>(
+      () => BudgetRemoteDataSourceImpl(sl()),
+    );
+
     // ---------- Repositories ----------
     sl.registerLazySingleton<AuthRepository>(
       () => AuthRepositoryImpl(
-        remoteDataSource: sl(),
-        networkInfo: sl(), // AuthLocalDataSource if you need caching
+        sl(),
+        sl(), // AuthLocalDataSource if  need for caching caching
       ),
     );
     sl.registerLazySingleton<ProfileRepository>(
@@ -122,6 +131,10 @@ Future<void> initLocator() async {
 
     sl.registerLazySingleton<ExpenseRepository>(
       () => ExpenseRepositoryImpl(sl()),
+    );
+
+    sl.registerLazySingleton<BudgetRepository>(
+      () => BudgetRepositoryImpl(sl()),
     );
 
     // ---------- Use-cases ----------
@@ -144,6 +157,15 @@ Future<void> initLocator() async {
     sl.registerLazySingleton(() => UpdateExpenseUseCase(sl()));
     sl.registerLazySingleton(() => GetBudgetGoalsUseCase(sl()));
     sl.registerLazySingleton(() => CreateExpensesUseCase(sl()));
+    // budget use cases
+    sl.registerLazySingleton(() => CreateBudgetGoalUseCase(sl()));
+    sl.registerLazySingleton(() => GetBudgetsGoalsUseCase(sl()));
+    sl.registerLazySingleton(() => DeleteBudgetGoalUseCase(sl()));
+    sl.registerLazySingleton(() => GetBudgetGoalByIdUseCase(sl()));
+    sl.registerLazySingleton(() => GetBudgetGoalsByCategoryUseCase(sl()));
+    sl.registerLazySingleton(() => GetBudgetGoalsByStatusUseCase(sl()));
+    sl.registerLazySingleton(() => GetBudgetGoalsStatsUseCase(sl()));
+    sl.registerLazySingleton(() => UpdateBudgetGoalUseCase(sl()));
 
     // ---------- Presentation Layer ----------
     sl.registerFactory(() => AuthCubit(sl()));

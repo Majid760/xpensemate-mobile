@@ -5,9 +5,9 @@ import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.da
 import 'package:xpensemate/features/budget/domain/repositories/budget_repository.dart';
 
 class BudgetRepositoryImpl implements BudgetRepository {
-  BudgetRepositoryImpl({
-    required this.remoteDataSource,
-  });
+  BudgetRepositoryImpl(
+    this.remoteDataSource,
+  );
 
   final BudgetRemoteDataSource remoteDataSource;
 

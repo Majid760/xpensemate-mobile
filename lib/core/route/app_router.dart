@@ -9,11 +9,8 @@ import 'package:xpensemate/core/route/utils/error_page.dart';
 import 'package:xpensemate/core/route/utils/main_shell.dart';
 import 'package:xpensemate/core/route/utils/route_constants.dart';
 import 'package:xpensemate/core/route/utils/router_middleware_guard.dart';
-import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:xpensemate/features/expense/presentation/pages/expense_page.dart';
-import 'package:xpensemate/features/expense/presentation/widgets/expense_form_widget.dart';
-import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
 
 class AppRouter {
   AppRouter(this._authCubit, this._routeGuards);
@@ -22,7 +19,7 @@ class AppRouter {
 
   late final GoRouter router = GoRouter(
     debugLogDiagnostics: true,
-    initialLocation: RouteConstants.splash,
+    initialLocation: RouteConstants.budget,
     refreshListenable: _authCubit,
     redirect: _routeGuards.globalRedirect,
     errorBuilder: (context, state) => ErrorPage(error: state.error),

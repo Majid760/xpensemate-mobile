@@ -1,8 +1,8 @@
 // lib/core/router/routes/home_routes.dart
 import 'package:go_router/go_router.dart';
-import 'package:xpensemate/core/route/utils/main_shell.dart';
 import 'package:xpensemate/core/route/utils/route_constants.dart';
 import 'package:xpensemate/core/route/utils/router_middleware_guard.dart';
+import 'package:xpensemate/features/budget/presentation/pages/budget_page.dart';
 import 'package:xpensemate/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:xpensemate/features/expense/presentation/pages/expense_page.dart';
 import 'package:xpensemate/features/home/presentation/pages/home_page.dart';
@@ -28,7 +28,7 @@ abstract class HomeRoutes {
             GoRoute(
               path: 'budget',
               name: 'budget',
-              builder: (context, state) => const HomePage(), // Placeholder
+              builder: (context, state) => const BudgetPage(), // Placeholder
             ),
             GoRoute(
               path: 'payment',

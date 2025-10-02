@@ -74,6 +74,7 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
   /* ---------- helpers ---------- */
   int _calculateSelectedIndex(BuildContext context) {
     final loc = GoRouterState.of(context).matchedLocation;
+    print('Location 1234: $loc');
     if (loc.startsWith('/home/budget')) return 2;
     if (loc.startsWith('/home/expense')) return 1;
     if (loc.startsWith('/home/payment')) return 3;
@@ -116,15 +117,19 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
           .then((_) => _animationController.reverse());
 
       // Navigate to the correct route based on the tab index
+      print('Index 2323: $index');
       switch (index) {
         case 0: // Dashboard
           context.go('/home');
           break;
-        case 1: // Budget
+        case 1: // expense
           context.go('/home/expense');
           break;
+        case 2: // budget
+          context.go('/home/budget');
+          break;
         case 3: // Payment
-          context.go('/home/payment');
+          context.go('/home/budget');
           break;
         case 4: // Profile
           context.goToProfile();
@@ -148,6 +153,7 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
 
   void _onFabAction(FabAction action, int index) {
     logI('FAB Action clicked - Index: $index');
+    print('Action of: ${action.label}');
     context.goToProfile();
     _toggleFab();
   }

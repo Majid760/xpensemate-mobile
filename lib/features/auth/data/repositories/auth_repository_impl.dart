@@ -11,10 +11,10 @@ import 'package:xpensemate/features/auth/domain/repositories/auth_repository.dar
 class AuthRepositoryImpl
     with NetworkCheckMixin<Failure>
     implements AuthRepository {
-  AuthRepositoryImpl({
-    required this.remoteDataSource,
-    required this.networkInfo,
-  });
+  AuthRepositoryImpl(
+    this.remoteDataSource,
+    this.networkInfo,
+  );
   final AuthRemoteDataSource remoteDataSource;
   @override
   final NetworkInfoService networkInfo;
@@ -81,10 +81,12 @@ class AuthRepositoryImpl
 
   /// Sign in with Google
   @override
-  Future<Either<Failure, UserEntity>> signInWithGoogle({required String credential}) async {
+  Future<Either<Failure, UserEntity>> signInWithGoogle(
+      {required String credential}) async {
     try {
       return withNetworkCheck(() async {
-        final result = await remoteDataSource.signInWithGoogle(credential: credential);
+        final result =
+            await remoteDataSource.signInWithGoogle(credential: credential);
         return result.fold(
           left,
           (user) => right(user.toEntity()),

@@ -63,8 +63,26 @@ class NetworkConfigs {
 
   // budget goals endpoints
   // get budget goals bases on status
-  static const String getBudgetBasedOnStatus = '/budget-goals/status/:status';
-
+  static const String createBudget = '/create-budget-goal';
+  // get all budget goals with pagination and filters
+  static const String getBudgetGoals = '/budget-goals';
+  // get budget goal by status
+  static const String getBudgetGoalByStatus = '/budget-goals/status/:status';
+  // Get monthly budget goals summary
+  static const String getMonthlyBudgetGoalsSummary =
+      '/budget-goal/summary/monthly';
+  // Get a single budget goal by ID
+  static const String getBudgetGoalById = '/budget-goal/:id';
+  // Update a budget goal
+  static const String updateBudgetGoal = '/budget-goal/:id';
+// Delete a budget goal
+  static const String deleteBudgetGoal = '/budget-goal/:id';
+// Get a budget goal's progress
+  static const String getBudgetGoalProgress = '/budget-goal/:id/progress';
+  // Get goal stats by period
+  static const String budgetInsight = '/budget/goal-insights';
+  // Get all expense for specific budget
+  static const String getAllExpensesOfBudgetGoal = '/budget-goal/';
   // budgets endpoints
   static const String budgets = '/budget-goals/status';
 

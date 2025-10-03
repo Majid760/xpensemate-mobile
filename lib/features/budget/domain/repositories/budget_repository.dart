@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:xpensemate/core/error/failures.dart';
+import 'package:xpensemate/features/budget/data/models/budget_expense_model.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 
 abstract class BudgetRepository {
@@ -17,11 +18,18 @@ abstract class BudgetRepository {
   Future<Either<Failure, BudgetGoalEntity>> getBudgetGoal(String id);
 
   /// Creates a new budget goal
-  Future<Either<Failure, BudgetGoalEntity>> createBudgetGoal(BudgetGoalEntity budgetGoal);
+  Future<Either<Failure, BudgetGoalEntity>> createBudgetGoal(
+    BudgetGoalEntity budgetGoal,
+  );
 
   /// Updates an existing budget goal
-  Future<Either<Failure, BudgetGoalEntity>> updateBudgetGoal(BudgetGoalEntity budgetGoal);
+  Future<Either<Failure, BudgetGoalEntity>> updateBudgetGoal(
+    BudgetGoalEntity budgetGoal,
+  );
 
   /// Deletes a budget goal
   Future<Either<Failure, bool>> deleteBudgetGoal(String id);
+
+  Future<Either<Failure, BudgetExpensesListModel>>
+      getExpensesForSpecificBudgetGoal(String budgetGoalId);
 }

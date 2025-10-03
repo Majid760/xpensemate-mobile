@@ -3,6 +3,7 @@ import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/core/network/network_configs.dart';
 import 'package:xpensemate/core/network/network_contracts.dart';
 import 'package:xpensemate/features/budget/data/datasources/budget_remote_data_source.dart';
+import 'package:xpensemate/features/budget/data/models/budget_expense_model.dart';
 import 'package:xpensemate/features/budget/data/models/budget_goal_model.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 
@@ -58,7 +59,9 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
   ) =>
       _networkClient.put(
         '${NetworkConfigs.budgetGoals}/${budgetGoal.id}',
-        data: budgetGoal is BudgetGoalModel ? budgetGoal.toJson() : BudgetGoalModel.fromEntity(budgetGoal).toJson(),
+        data: budgetGoal is BudgetGoalModel
+            ? budgetGoal.toJson()
+            : BudgetGoalModel.fromEntity(budgetGoal).toJson(),
         fromJson: BudgetGoalModel.fromJson,
       );
 
@@ -68,4 +71,26 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
         '${NetworkConfigs.budgetGoals}/$budgetGoalId',
         fromJson: (json) => json['data'] as bool? ?? true,
       );
+
+  @override
+  Future<Either<Failure, BudgetExpensesListModel>>
+      getExpensesForSpecificBudgetGoal(String budgetGoalId) =>
+          _networkClient.get(
+            '${NetworkConfigs.getAllExpensesOfBudgetGoal}/$budgetGoalId/expenses',
+            fromJson: BudgetExpensesListModel.fromJson,
+          );
+
+  @override
+  Future<Either<Failure, BudgetGoalsListModel>> getBudgetGoalByStatus(
+    String budgetGoalId,
+  ) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<Failure, BudgetGoalsListModel>> getMonthlyBudgetGoalsSummary(
+    String budgetGoalId,
+  ) {
+    throw UnimplementedError();
+  }
 }

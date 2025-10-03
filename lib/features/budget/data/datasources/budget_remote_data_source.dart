@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:xpensemate/core/error/failures.dart';
+import 'package:xpensemate/features/budget/data/models/budget_expense_model.dart';
 import 'package:xpensemate/features/budget/data/models/budget_goal_model.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 
@@ -22,4 +23,16 @@ abstract class BudgetRemoteDataSource {
   );
 
   Future<Either<Failure, bool>> deleteBudgetGoal(String budgetGoalId);
+  Future<Either<Failure, BudgetGoalsListModel>> getBudgetGoalByStatus(
+    String budgetGoalId,
+  );
+
+  Future<Either<Failure, BudgetGoalsListModel>> getMonthlyBudgetGoalsSummary(
+    String budgetGoalId,
+  );
+
+  Future<Either<Failure, BudgetExpensesListModel>>
+      getExpensesForSpecificBudgetGoal(
+    String budgetGoalId,
+  );
 }

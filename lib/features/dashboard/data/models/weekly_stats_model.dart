@@ -24,20 +24,21 @@ class DailyStatsModel extends DailyStatsEntity {
     }
   }
 
-  factory DailyStatsModel.fromEntity(DailyStatsEntity entity) => DailyStatsModel(
-      date: entity.date,
-      total: entity.total,
-    );
+  factory DailyStatsModel.fromEntity(DailyStatsEntity entity) =>
+      DailyStatsModel(
+        date: entity.date,
+        total: entity.total,
+      );
 
   DailyStatsEntity toEntity() => DailyStatsEntity(
-      date: date,
-      total: total,
-    );
+        date: date,
+        total: total,
+      );
 
   Map<String, dynamic> toJson() => {
-      'date': date,
-      'total': total,
-    };
+        'date': date,
+        'total': total,
+      };
 }
 
 class DayStatsModel extends DayStatsEntity {
@@ -59,19 +60,19 @@ class DayStatsModel extends DayStatsEntity {
   }
 
   factory DayStatsModel.fromEntity(DayStatsEntity entity) => DayStatsModel(
-      date: entity.date,
-      total: entity.total,
-    );
+        date: entity.date,
+        total: entity.total,
+      );
 
   DayStatsEntity toEntity() => DayStatsEntity(
-      date: date,
-      total: total,
-    );
+        date: date,
+        total: total,
+      );
 
   Map<String, dynamic> toJson() => {
-      'date': date,
-      'total': total,
-    };
+        'date': date,
+        'total': total,
+      };
 }
 
 // ------------------------------------------------------------------
@@ -92,21 +93,20 @@ class WeeklyStatsModel extends WeeklyStatsEntity {
 
   factory WeeklyStatsModel.fromJson(Map<String, dynamic> json) {
     try {
-      AppLogger.d("Parsing WeeklyStatsModel from JSON: ${json.toString()}");
-      
       // Check if this is a wrapped response (with type, title, message, data)
       // or a direct response
       Map<String, dynamic> actualData;
       if (json.containsKey('data') && json.containsKey('type')) {
         // This is a wrapped response, extract the actual data
         actualData = json['data'] as Map<String, dynamic>? ?? {};
-        AppLogger.d("Found wrapped response, extracting data: ${actualData.toString()}");
+        AppLogger.d(
+            "Found wrapped response, extracting data: ${actualData.toString()}");
       } else {
         // This is a direct response
         actualData = json;
         AppLogger.d("Direct response format detected");
       }
-      
+
       return WeeklyStatsModel(
         days: (actualData['days'] as List? ?? [])
             .map((e) => DailyStatsModel.fromJson(e as Map<String, dynamic>))
@@ -119,54 +119,54 @@ class WeeklyStatsModel extends WeeklyStatsEntity {
         weeklyBudget: (actualData['weeklyBudget'] as num?)?.toDouble() ?? 0.0,
         dailyAverage: (actualData['dailyAverage'] as num?)?.toDouble() ?? 0.0,
         highestDay: actualData['highestDay'] != null
-            ? DayStatsModel.fromJson(actualData['highestDay'] as Map<String, dynamic>)
+            ? DayStatsModel.fromJson(
+                actualData['highestDay'] as Map<String, dynamic>)
             : const DayStatsModel(date: '', total: 0.0),
         lowestDay: actualData['lowestDay'] != null
-            ? DayStatsModel.fromJson(actualData['lowestDay'] as Map<String, dynamic>)
+            ? DayStatsModel.fromJson(
+                actualData['lowestDay'] as Map<String, dynamic>)
             : const DayStatsModel(date: '', total: 0.0),
       );
     } catch (e) {
-      AppLogger.e("Error parsing WeeklyStatsModel from JSON: ${json.toString()}", e);
+      AppLogger.e(
+          "Error parsing WeeklyStatsModel from JSON: ${json.toString()}", e);
       rethrow;
     }
   }
 
-  factory WeeklyStatsModel.fromEntity(WeeklyStatsEntity entity) => WeeklyStatsModel(
-      days: entity.days
-          .map(DailyStatsModel.fromEntity)
-          .toList(),
-      dailyBreakdown: entity.dailyBreakdown
-          .map(DailyStatsModel.fromEntity)
-          .toList(),
-      weekTotal: entity.weekTotal,
-      balanceLeft: entity.balanceLeft,
-      weeklyBudget: entity.weeklyBudget,
-      dailyAverage: entity.dailyAverage,
-      highestDay: DayStatsModel.fromEntity(entity.highestDay),
-      lowestDay: DayStatsModel.fromEntity(entity.lowestDay),
-    );
+  factory WeeklyStatsModel.fromEntity(WeeklyStatsEntity entity) =>
+      WeeklyStatsModel(
+        days: entity.days.map(DailyStatsModel.fromEntity).toList(),
+        dailyBreakdown:
+            entity.dailyBreakdown.map(DailyStatsModel.fromEntity).toList(),
+        weekTotal: entity.weekTotal,
+        balanceLeft: entity.balanceLeft,
+        weeklyBudget: entity.weeklyBudget,
+        dailyAverage: entity.dailyAverage,
+        highestDay: DayStatsModel.fromEntity(entity.highestDay),
+        lowestDay: DayStatsModel.fromEntity(entity.lowestDay),
+      );
 
   WeeklyStatsEntity toEntity() => WeeklyStatsEntity(
-      days: days,
-      dailyBreakdown: dailyBreakdown,
-      weekTotal: weekTotal,
-      balanceLeft: balanceLeft,
-      weeklyBudget: weeklyBudget,
-      dailyAverage: dailyAverage,
-      highestDay: highestDay,
-      lowestDay: lowestDay,
-    );
+        days: days,
+        dailyBreakdown: dailyBreakdown,
+        weekTotal: weekTotal,
+        balanceLeft: balanceLeft,
+        weeklyBudget: weeklyBudget,
+        dailyAverage: dailyAverage,
+        highestDay: highestDay,
+        lowestDay: lowestDay,
+      );
 
   Map<String, dynamic> toJson() => {
-      'days': days.map((e) => (e as DailyStatsModel).toJson()).toList(),
-      'dailyBreakdown': dailyBreakdown
-          .map((e) => (e as DailyStatsModel).toJson())
-          .toList(),
-      'weekTotal': weekTotal,
-      'balanceLeft': balanceLeft,
-      'weeklyBudget': weeklyBudget,
-      'dailyAverage': dailyAverage,
-      'highestDay': (highestDay as DayStatsModel).toJson(),
-      'lowestDay': (lowestDay as DayStatsModel).toJson(),
-    };
+        'days': days.map((e) => (e as DailyStatsModel).toJson()).toList(),
+        'dailyBreakdown':
+            dailyBreakdown.map((e) => (e as DailyStatsModel).toJson()).toList(),
+        'weekTotal': weekTotal,
+        'balanceLeft': balanceLeft,
+        'weeklyBudget': weeklyBudget,
+        'dailyAverage': dailyAverage,
+        'highestDay': (highestDay as DayStatsModel).toJson(),
+        'lowestDay': (lowestDay as DayStatsModel).toJson(),
+      };
 }

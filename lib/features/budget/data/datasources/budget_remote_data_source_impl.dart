@@ -35,7 +35,7 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
     }
 
     return _networkClient.get(
-      NetworkConfigs.budgetGoals,
+      NetworkConfigs.getBudgetGoals,
       query: queryParams,
       fromJson: BudgetGoalsListModel.fromJson,
     );

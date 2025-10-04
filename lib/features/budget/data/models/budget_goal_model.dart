@@ -126,14 +126,17 @@ class BudgetGoalsListModel extends BudgetGoalsListEntity {
 
   factory BudgetGoalsListModel.fromJson(Map<String, dynamic> json) {
     try {
+      print('this is json wowoowowowo=> ${json}');
       final data = json['data'] as Map<String, dynamic>? ?? {};
 
-      return BudgetGoalsListModel(
+      final BudgetGoalsListModel budgetGoalsListModel = BudgetGoalsListModel(
         budgetGoals: _parseBudgetGoalsList(data['budgetGoals'] as List? ?? []),
         total: data['total'] as int? ?? 0,
         page: data['page'] as int? ?? 1,
         totalPages: data['totalPages'] as int? ?? 1,
       );
+      print('this is budgetGoalsListModel => $budgetGoalsListModel');
+      return budgetGoalsListModel;
     } catch (e) {
       AppLogger.e("Error parsing BudgetGoalsListModel from JSON", e);
       rethrow;

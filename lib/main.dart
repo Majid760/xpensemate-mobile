@@ -11,6 +11,7 @@ import 'package:xpensemate/core/route/utils/router_middleware_guard.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/theme/app_theme.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
@@ -64,6 +65,10 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<ExpenseCubit>(
             create: (context) => sl.expenseCubit,
+            lazy: false,
+          ),
+          BlocProvider<BudgetCubit>(
+            create: (context) => sl.budgetCubit,
             lazy: false,
           ),
           // Other cubits/blocs

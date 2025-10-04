@@ -4,13 +4,16 @@ import 'package:xpensemate/core/usecase/usecase.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 import 'package:xpensemate/features/budget/domain/repositories/budget_repository.dart';
 
-class GetBudgetGoalsByCategoryUseCase extends UseCase<BudgetGoalsListEntity, GetBudgetGoalsByCategoryParams> {
+class GetBudgetGoalsByCategoryUseCase
+    extends UseCase<BudgetGoalsListEntity, GetBudgetGoalsByCategoryParams> {
   GetBudgetGoalsByCategoryUseCase(this.repository);
-  
+
   final BudgetRepository repository;
 
   @override
-  Future<Either<Failure, BudgetGoalsListEntity>> call(GetBudgetGoalsByCategoryParams params) =>
+  Future<Either<Failure, BudgetGoalsListEntity>> call(
+    GetBudgetGoalsByCategoryParams params,
+  ) =>
       repository.getBudgetGoals(
         category: params.category,
         page: params.page,
@@ -23,15 +26,15 @@ class GetBudgetGoalsByCategoryUseCase extends UseCase<BudgetGoalsListEntity, Get
 
 class GetBudgetGoalsByCategoryParams {
   const GetBudgetGoalsByCategoryParams({
-    required this.category,
+    this.category,
     this.page,
     this.limit,
     this.status,
     this.startDate,
     this.endDate,
   });
-  
-  final String category;
+
+  final String? category;
   final int? page;
   final int? limit;
   final String? status;

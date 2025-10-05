@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 
@@ -126,17 +128,12 @@ class BudgetGoalsListModel extends BudgetGoalsListEntity {
 
   factory BudgetGoalsListModel.fromJson(Map<String, dynamic> json) {
     try {
-      print('this is json wowoowowowo=> ${json}');
-      final data = json['data'] as Map<String, dynamic>? ?? {};
-
-      final BudgetGoalsListModel budgetGoalsListModel = BudgetGoalsListModel(
-        budgetGoals: _parseBudgetGoalsList(data['budgetGoals'] as List? ?? []),
-        total: data['total'] as int? ?? 0,
-        page: data['page'] as int? ?? 1,
-        totalPages: data['totalPages'] as int? ?? 1,
+      return BudgetGoalsListModel(
+        budgetGoals: _parseBudgetGoalsList(json['budgetGoals'] as List? ?? []),
+        total: json['total'] as int? ?? 0,
+        page: json['page'] as int? ?? 1,
+        totalPages: json['totalPages'] as int? ?? 1,
       );
-      print('this is budgetGoalsListModel => $budgetGoalsListModel');
-      return budgetGoalsListModel;
     } catch (e) {
       AppLogger.e("Error parsing BudgetGoalsListModel from JSON", e);
       rethrow;
@@ -145,11 +142,16 @@ class BudgetGoalsListModel extends BudgetGoalsListEntity {
 
   // Helper method to parse budget goals list - uses conditional approach for performance
   static List<BudgetGoalModel> _parseBudgetGoalsList(List<dynamic> jsonList) {
-    if (jsonList.isEmpty) return [];
+    try {
+      if (jsonList.isEmpty) return [];
 
-    final typedList = jsonList.cast<Map<String, dynamic>>();
+      final typedList = jsonList.cast<Map<String, dynamic>>();
 
-    return typedList.map(BudgetGoalModel.fromJson).toList();
+      return typedList.map(BudgetGoalModel.fromJson).toList();
+    } catch (e) {
+      print("Error parsing budget goals list: $e");
+      rethrow;
+    }
   }
 
   BudgetGoalsListEntity toEntity() => BudgetGoalsListEntity(

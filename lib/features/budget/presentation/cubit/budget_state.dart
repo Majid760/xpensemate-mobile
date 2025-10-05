@@ -47,6 +47,10 @@ class BudgetState extends Equatable {
         budgetGoals: budgetGoals ?? this.budgetGoals,
         errorMessage: errorMessage ?? this.errorMessage,
         stackTrace: stackTrace ?? this.stackTrace,
+        currentPage: currentPage ?? this.currentPage,
+        hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+        isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+        paginationError: paginationError ?? this.paginationError,
       );
 
   @override
@@ -55,5 +59,17 @@ class BudgetState extends Equatable {
         budgetGoals,
         errorMessage,
         stackTrace,
+        currentPage,
+        hasReachedMax,
+        isLoadingMore,
+        paginationError,
       ];
+
+  // Helper getters for UI logic
+  bool get isInitialLoading =>
+      state == BudgetStates.loading && budgetGoals == null;
+  bool get hasData => budgetGoals != null && budgetGoals!.budgetGoals.isNotEmpty;
+  bool get hasError => state == BudgetStates.error && budgetGoals == null;
+  bool get hasPaginationError => paginationError != null;
+  bool get canLoadMore => !hasReachedMax && !isLoadingMore && hasData;
 }

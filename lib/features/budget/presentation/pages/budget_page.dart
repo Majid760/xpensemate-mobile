@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:xpensemate/core/widget/app_button.dart';
+import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_state.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/budget_card_item.dart';
+import 'package:xpensemate/features/budget/presentation/widgets/budget_goal_list.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/insight_card_section.dart';
 
 class BudgetPage extends StatelessWidget {
@@ -11,41 +14,76 @@ class BudgetPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: const Color(0xFFF8F9FE),
-        body: SafeArea(
-          child: BlocListener<BudgetCubit, BudgetState>(
-            listener: (context, state) {},
-            child: CustomScrollView(
-              slivers: [
-                const BudgetAppBar(),
-                SliverPadding(
-                  padding: const EdgeInsets.all(16),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      const ExpandableStatsCard(),
-                      const SizedBox(height: 24),
-                      const SectionHeader(title: 'Budget Goals'),
-                      const SizedBox(height: 12),
-                      const BudgetGoalCard(
-                        title: 'funnn',
-                        category: 'TRANSPORT',
-                        amount: 146,
-                        spent: 146,
-                        deadline: 'Sep 10, 2025',
-                        overdueDays: 20,
-                        progress: 1,
-                        categoryColor: Color(0xFF6366F1),
-                      ),
-                      const SizedBox(height: 12),
-                      // Add more budget cards here
-                    ]),
-                  ),
-                ),
-              ],
-            ),
+        body: const BudgetPageBody(),
+      );
+}
+
+class BudgetPageBody extends StatelessWidget {
+  const BudgetPageBody({super.key});
+
+  @override
+  Widget build(BuildContext context) => const BudgetPageContent();
+}
+
+class BudgetPageContent extends StatefulWidget {
+  const BudgetPageContent({super.key});
+
+  @override
+  State<BudgetPageContent> createState() => _BudgetPageContentState();
+}
+
+class _BudgetPageContentState extends State<BudgetPageContent>
+    with TickerProviderStateMixin {
+  late ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _loadBudgetData() {
+    context.read<BudgetCubit>().refreshBudgetGoals();
+  }
+
+  @override
+  Widget build(BuildContext context) => RefreshIndicator(
+        onRefresh: () async => _loadBudgetData(),
+        color: Theme.of(context).primaryColor,
+        child: CustomScrollView(
+          controller: _scrollController,
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
           ),
+          slivers: [
+            const BudgetAppBar(),
+            SliverPadding(
+              padding: const EdgeInsets.all(16),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate([
+                  const ExpandableStatsCard(),
+                  const SizedBox(height: 24),
+                  const SectionHeader(title: 'Budget Goals'),
+                  const SizedBox(height: 12),
+                ]),
+              ),
+            ),
+            BudgetGoalsListWidget(scrollController: _scrollController),
+            // Bottom padding for FAB
+            const SliverToBoxAdapter(
+              child: SizedBox(height: 100),
+            ),
+          ],
         ),
       );
 }
+
 
 class BudgetAppBar extends StatelessWidget {
   const BudgetAppBar({super.key});
@@ -141,24 +179,5 @@ class SectionHeader extends StatelessWidget {
             ),
           ),
         ],
-      );
-}
-
-class AddBudgetFAB extends StatelessWidget {
-  const AddBudgetFAB({super.key});
-
-  @override
-  Widget build(BuildContext context) => FloatingActionButton.extended(
-        onPressed: () {},
-        backgroundColor: const Color(0xFF6366F1),
-        elevation: 4,
-        icon: const Icon(Icons.add_rounded),
-        label: const Text(
-          'Add Budget',
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 15,
-          ),
-        ),
       );
 }

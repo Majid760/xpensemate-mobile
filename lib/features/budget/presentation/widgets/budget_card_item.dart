@@ -113,8 +113,7 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
     );
   }
 
-  Widget _buildTopHeader(bool isCompleted, bool isOverdue) {
-    return Row(
+  Widget _buildTopHeader(bool isCompleted, bool isOverdue) => Row(
       children: [
         // Category icon
         Container(
@@ -123,7 +122,7 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
             color: Colors.white.withOpacity(0.25),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(
+          child: const Icon(
             Icons.directions_car_rounded,
             size: 22,
             color: Colors.white,
@@ -175,10 +174,8 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
         _buildMenuButton(),
       ],
     );
-  }
 
-  Widget _buildMenuButton() {
-    return Container(
+  Widget _buildMenuButton() => Container(
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.25),
         borderRadius: BorderRadius.circular(10),
@@ -205,7 +202,6 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
         ],
       ),
     );
-  }
 
   PopupMenuItem<String> _buildMenuItem(
     IconData icon,
@@ -239,8 +235,7 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
         ),
       );
 
-  Widget _buildAmountDisplay() {
-    return Row(
+  Widget _buildAmountDisplay() => Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         const Text(
@@ -277,10 +272,8 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
         ),
       ],
     );
-  }
 
-  Widget _buildProgressSection() {
-    return Column(
+  Widget _buildProgressSection() => Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -304,9 +297,9 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
                   ),
                 ),
                 const SizedBox(width: 6),
-                Text(
+                const Text(
                   'complete',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF9CA3AF),
@@ -328,10 +321,8 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
         ),
       ],
     );
-  }
 
-  Widget _buildStatsRow(double remaining, bool isOverdue) {
-    return Row(
+  Widget _buildStatsRow(double remaining, bool isOverdue) => Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
@@ -367,7 +358,6 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
         ),
       ],
     );
-  }
 }
 
 class _StatBox extends StatelessWidget {
@@ -384,8 +374,7 @@ class _StatBox extends StatelessWidget {
   final Color color;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(BuildContext context) => Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
       decoration: BoxDecoration(
         color: color.withOpacity(0.08),
@@ -421,5 +410,4 @@ class _StatBox extends StatelessWidget {
         ],
       ),
     );
-  }
 }

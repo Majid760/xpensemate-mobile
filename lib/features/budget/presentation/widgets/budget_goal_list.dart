@@ -151,7 +151,6 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
                           spent: budgetGoal.currentSpending,
                           deadline: budgetGoal.date.toString(),
                           overdueDays: 0, // You might want to calculate this
-                          progress: budgetGoal.progress / 100.0,
                           categoryColor: const Color(0xFF6366F1),
                         ),
                       );

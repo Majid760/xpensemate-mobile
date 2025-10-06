@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
 import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
+import 'package:xpensemate/features/budget/presentation/widgets/stats_row.dart';
 
 class BudgetGoalCard extends StatefulWidget {
   const BudgetGoalCard({
@@ -10,7 +12,6 @@ class BudgetGoalCard extends StatefulWidget {
     required this.spent,
     required this.deadline,
     required this.overdueDays,
-    required this.progress,
     required this.categoryColor,
   });
 
@@ -20,7 +21,6 @@ class BudgetGoalCard extends StatefulWidget {
   final double spent;
   final String deadline;
   final int overdueDays;
-  final double progress;
   final Color categoryColor;
 
   @override
@@ -39,7 +39,7 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
       duration: const Duration(milliseconds: 150),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.97).animate(
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.97).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
   }
@@ -52,9 +52,11 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
 
   @override
   Widget build(BuildContext context) {
+    final progress =
+        widget.amount > 0 ? math.min(widget.spent / widget.amount, 1.0) : 0.0;
     final remaining = widget.amount - widget.spent;
     final isOverdue = widget.overdueDays > 0;
-    final isCompleted = widget.progress >= 1.0;
+    final isCompleted = progress >= 1.0;
 
     return GestureDetector(
       onTapDown: (_) => _controller.forward(),
@@ -63,13 +65,13 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
       onTap: () {},
       child: ScaleTransition(
         scale: _scaleAnimation,
-        child: Container(
+        child: DecoratedBox(
           decoration: BoxDecoration(
             color: const Color(0xFFFAFAFA),
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.06),
+                color: Colors.black.withValues(alpha: 0.06),
                 blurRadius: 20,
                 offset: const Offset(0, 4),
               ),
@@ -77,34 +79,22 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
           ),
           child: Column(
             children: [
-              // Smaller top section with colored background
-              Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: widget.categoryColor,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    _buildTopHeader(isCompleted, isOverdue),
-                    const SizedBox(height: 8),
-                    _buildAmountDisplay(),
-                  ],
-                ),
+              TopSection(
+                title: widget.title,
+                category: widget.category,
+                amount: widget.amount,
+                deadline: widget.deadline,
+                categoryColor: widget.categoryColor,
+                isCompleted: isCompleted,
+                isOverdue: isOverdue,
               ),
-              // Bottom white section
-              Padding(
-                padding: const EdgeInsets.all(18),
-                child: Column(
-                  children: [
-                    _buildProgressSection(),
-                    const SizedBox(height: 14),
-                    _buildStatsRow(remaining, isOverdue),
-                  ],
-                ),
+              BottomSection(
+                progress: progress,
+                spent: widget.spent,
+                remaining: remaining,
+                deadline: widget.deadline,
+                isOverdue: isOverdue,
+                categoryColor: widget.categoryColor,
               ),
             ],
           ),
@@ -112,302 +102,487 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
       ),
     );
   }
+}
 
-  Widget _buildTopHeader(bool isCompleted, bool isOverdue) => Row(
-      children: [
-        // Category icon
-        Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.25),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Icon(
-            Icons.directions_car_rounded,
-            size: 22,
-            color: Colors.white,
+// Top Section Widget
+class TopSection extends StatelessWidget {
+  const TopSection({
+    super.key,
+    required this.title,
+    required this.category,
+    required this.amount,
+    required this.deadline,
+    required this.categoryColor,
+    required this.isCompleted,
+    required this.isOverdue,
+  });
+
+  final String title;
+  final String category;
+  final double amount;
+  final String deadline;
+  final Color categoryColor;
+  final bool isCompleted;
+  final bool isOverdue;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: categoryColor,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
           ),
         ),
-        const SizedBox(width: 12),
-        // Title and category
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.title,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                widget.category.toUpperCase(),
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white.withOpacity(0.8),
-                ),
-              ),
-            ],
-          ),
-        ),
-        // Status and menu
-        if (isCompleted || isOverdue)
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.25),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              isCompleted ? Icons.check_rounded : Icons.warning_rounded,
-              size: 20,
-              color: Colors.white,
-            ),
-          ),
-        const SizedBox(width: 8),
-        _buildMenuButton(),
-      ],
-    );
-
-  Widget _buildMenuButton() => Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.25),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: PopupMenuButton<String>(
-        icon:
-            const Icon(Icons.more_vert_rounded, size: 20, color: Colors.white),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
-        offset: const Offset(0, 8),
-        padding: const EdgeInsets.all(6),
-        itemBuilder: (context) => <PopupMenuEntry<String>>[
-          _buildMenuItem(Icons.edit_outlined, 'Edit', 'edit'),
-          _buildMenuItem(Icons.share_outlined, 'Share', 'share'),
-          _buildMenuItem(Icons.archive_outlined, 'Archive', 'archive'),
-          const PopupMenuDivider(),
-          _buildMenuItem(
-            Icons.delete_outline_rounded,
-            'Delete',
-            'delete',
-            isDestructive: true,
-          ),
-        ],
-      ),
-    );
-
-  PopupMenuItem<String> _buildMenuItem(
-    IconData icon,
-    String text,
-    String value, {
-    bool isDestructive = false,
-  }) =>
-      PopupMenuItem<String>(
-        value: value,
-        child: Row(
+        child: Column(
           children: [
-            Icon(
-              icon,
-              size: 20,
-              color: isDestructive
-                  ? const Color(0xFFEF4444)
-                  : const Color(0xFF6B7280),
+            TopHeader(
+              title: title,
+              category: category,
+              isCompleted: isCompleted,
+              isOverdue: isOverdue,
             ),
-            const SizedBox(width: 12),
-            Text(
-              text,
-              style: TextStyle(
-                fontSize: 14,
-                color: isDestructive
-                    ? const Color(0xFFEF4444)
-                    : const Color(0xFF111827),
-                fontWeight: FontWeight.w500,
-              ),
+            const SizedBox(height: 8),
+            AmountDisplay(
+              amount: amount,
+              deadline: deadline,
             ),
           ],
         ),
       );
-
-  Widget _buildAmountDisplay() => Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        const Text(
-          '\$',
-          style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-            height: 1,
-          ),
-        ),
-        const SizedBox(width: 6),
-        Text(
-          '${widget.amount.toInt()}',
-          style: const TextStyle(
-            fontSize: 48,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            height: 1,
-            letterSpacing: -1,
-          ),
-        ),
-        const SizedBox(width: 16),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 6),
-          child: Text(
-            'budget goal',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Colors.white.withOpacity(0.8),
-            ),
-          ),
-        ),
-      ],
-    );
-
-  Widget _buildProgressSection() => Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Progress',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF6B7280),
-              ),
-            ),
-            Row(
-              children: [
-                Text(
-                  '${(widget.progress * 100).toInt()}%',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: widget.categoryColor,
-                  ),
-                ),
-                const SizedBox(width: 6),
-                const Text(
-                  'complete',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF9CA3AF),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: LinearProgressIndicator(
-            value: widget.progress.clamp(0.0, 1.0),
-            minHeight: 10,
-            backgroundColor: const Color(0xFFE5E7EB),
-            valueColor: AlwaysStoppedAnimation<Color>(widget.categoryColor),
-          ),
-        ),
-      ],
-    );
-
-  Widget _buildStatsRow(double remaining, bool isOverdue) => Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: _StatBox(
-            label: 'Spent',
-            value: '\$${widget.spent.toInt()}',
-            icon: Icons.trending_up_rounded,
-            color: widget.categoryColor,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: _StatBox(
-            label: 'Left',
-            value: '\$${remaining.toInt()}',
-            icon: Icons.account_balance_wallet_rounded,
-            color: remaining > 0
-                ? const Color(0xFF10B981)
-                : const Color(0xFFEF4444),
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: _StatBox(
-            label: isOverdue ? 'Overdue' : 'Due',
-            value: isOverdue
-                ? '${widget.overdueDays}d'
-                : widget.deadline.split(' ')[0],
-            icon: Icons.calendar_today_rounded,
-            color:
-                isOverdue ? const Color(0xFFEF4444) : const Color(0xFF3B82F6),
-          ),
-        ),
-      ],
-    );
 }
 
-class _StatBox extends StatelessWidget {
-  const _StatBox({
-    required this.label,
-    required this.value,
-    required this.icon,
-    required this.color,
+// Top Header Widget
+class TopHeader extends StatelessWidget {
+  const TopHeader({
+    super.key,
+    required this.title,
+    required this.category,
+    required this.isCompleted,
+    required this.isOverdue,
   });
 
-  final String label;
-  final String value;
-  final IconData icon;
-  final Color color;
+  final String title;
+  final String category;
+  final bool isCompleted;
+  final bool isOverdue;
 
   @override
-  Widget build(BuildContext context) => Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: color.withOpacity(0.2),
-          width: 1,
-        ),
-      ),
-      child: Column(
+  Widget build(BuildContext context) => Row(
         children: [
-          Icon(icon, size: 18, color: color),
-          const SizedBox(height: 6),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.25),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              Icons.directions_car_rounded,
+              size: 22,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: TitleCategory(title: title, category: category),
+          ),
+          if (isCompleted || isOverdue) StatusIcon(isCompleted: isCompleted),
+          const SizedBox(width: 8),
+          const MenuButton(),
+        ],
+      );
+}
+
+// Title and Category Widget
+class TitleCategory extends StatelessWidget {
+  const TitleCategory({
+    super.key,
+    required this.title,
+    required this.category,
+  });
+
+  final String title;
+  final String category;
+
+  @override
+  Widget build(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Text(
-            value,
-            style: TextStyle(
+            title,
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: color,
+              color: Colors.white,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 4),
           Text(
-            label,
-            style: const TextStyle(
+            category.toUpperCase(),
+            style: TextStyle(
               fontSize: 10,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF6B7280),
+              fontWeight: FontWeight.bold,
+              color: Colors.white.withValues(alpha: 0.8),
             ),
           ),
         ],
-      ),
-    );
+      );
 }
+
+// Status Icon Widget
+class StatusIcon extends StatelessWidget {
+  const StatusIcon({
+    super.key,
+    required this.isCompleted,
+  });
+
+  final bool isCompleted;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.25),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          isCompleted ? Icons.check_rounded : Icons.warning_rounded,
+          size: 20,
+          color: Colors.white,
+        ),
+      );
+}
+
+// Menu Button Widget
+class MenuButton extends StatelessWidget {
+  const MenuButton({super.key});
+
+  @override
+  Widget build(BuildContext context) => DecoratedBox(
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.25),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: PopupMenuButton<String>(
+          icon: const Icon(
+            Icons.more_vert_rounded,
+            size: 20,
+            color: Colors.white,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          offset: const Offset(0, 8),
+          padding: const EdgeInsets.all(6),
+          itemBuilder: (context) => [
+            MenuItemWidget(
+              icon: Icons.edit_outlined,
+              text: 'Edit',
+              value: 'edit',
+            ),
+            MenuItemWidget(
+              icon: Icons.share_outlined,
+              text: 'Share',
+              value: 'share',
+            ),
+            MenuItemWidget(
+              icon: Icons.archive_outlined,
+              text: 'Archive',
+              value: 'archive',
+            ),
+            const PopupMenuDivider(),
+            MenuItemWidget(
+              icon: Icons.delete_outline_rounded,
+              text: 'Delete',
+              value: 'delete',
+              isDestructive: true,
+            ),
+          ],
+        ),
+      );
+}
+
+// Menu Item Widget
+class MenuItemWidget extends PopupMenuItem<String> {
+  MenuItemWidget({
+    super.key,
+    required IconData icon,
+    required String text,
+    required String value,
+    bool isDestructive = false,
+  }) : super(
+          value: value,
+          child: _MenuItemContent(
+            icon: icon,
+            text: text,
+            isDestructive: isDestructive,
+          ),
+        );
+}
+
+class _MenuItemContent extends StatelessWidget {
+  const _MenuItemContent({
+    required this.icon,
+    required this.text,
+    required this.isDestructive,
+  });
+
+  final IconData icon;
+  final String text;
+  final bool isDestructive;
+
+  @override
+  Widget build(BuildContext context) => Row(
+        children: [
+          Icon(
+            icon,
+            size: 20,
+            color: isDestructive
+                ? const Color(0xFFEF4444)
+                : const Color(0xFF6B7280),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 14,
+              color: isDestructive
+                  ? const Color(0xFFEF4444)
+                  : const Color(0xFF111827),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      );
+}
+
+// Amount Display Widget
+class AmountDisplay extends StatelessWidget {
+  const AmountDisplay({
+    super.key,
+    required this.amount,
+    required this.deadline,
+  });
+
+  final double amount;
+  final String deadline;
+
+  String _calculateDaysStatus() {
+    if (deadline.isEmpty) return '';
+
+    try {
+      final DateTime dueDate;
+      if (deadline.contains('-')) {
+        if (deadline.contains('T')) {
+          dueDate = DateTime.parse(deadline);
+        } else {
+          final parts = deadline.split(' ');
+          if (parts.isNotEmpty) {
+            dueDate = DateTime.parse(parts[0]);
+          } else {
+            return deadline.split(' ')[0];
+          }
+        }
+      } else {
+        return deadline.split(' ')[0];
+      }
+
+      final today = DateTime.now();
+      final todayDate = DateTime(today.year, today.month, today.day);
+      final dueDateOnly = DateTime(dueDate.year, dueDate.month, dueDate.day);
+      final diffDays = dueDateOnly.difference(todayDate).inDays;
+
+      if (diffDays > 1) {
+        return '$diffDays days left';
+      } else if (diffDays == 1) {
+        return '1 day left';
+      } else if (diffDays == 0) {
+        return 'Due today';
+      } else {
+        final absDiff = diffDays.abs();
+        return 'Overdue by $absDiff day${absDiff > 1 ? 's' : ''}';
+      }
+    } on Exception catch (_) {
+      return deadline.split(' ')[0];
+    }
+  }
+
+  bool _isOverdue() {
+    if (deadline.isEmpty) return false;
+
+    try {
+      final DateTime dueDate;
+      if (deadline.contains('-')) {
+        if (deadline.contains('T')) {
+          dueDate = DateTime.parse(deadline);
+        } else {
+          final parts = deadline.split(' ');
+          if (parts.isNotEmpty) {
+            dueDate = DateTime.parse(parts[0]);
+          } else {
+            return false;
+          }
+        }
+      } else {
+        return false;
+      }
+
+      final today = DateTime.now();
+      final todayDate = DateTime(today.year, today.month, today.day);
+      final dueDateOnly = DateTime(dueDate.year, dueDate.month, dueDate.day);
+
+      return dueDateOnly.isBefore(todayDate);
+    } on Exception catch (_) {
+      return false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          const Text(
+            r'$',
+            style: TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+              height: 1,
+            ),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            '${amount.toInt()}',
+            style: const TextStyle(
+              fontSize: 48,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              height: 1,
+              letterSpacing: -1,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 6),
+            child: Text(
+              _calculateDaysStatus(),
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: _isOverdue()
+                    ? const Color(0xFFDC2626)
+                    : const Color(0xFF64748B),
+              ),
+            ),
+          ),
+        ],
+      );
+}
+
+// Bottom Section Widget
+class BottomSection extends StatelessWidget {
+  const BottomSection({
+    super.key,
+    required this.progress,
+    required this.spent,
+    required this.remaining,
+    required this.deadline,
+    required this.isOverdue,
+    required this.categoryColor,
+  });
+
+  final double progress;
+  final double spent;
+  final double remaining;
+  final String deadline;
+  final bool isOverdue;
+  final Color categoryColor;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          children: [
+            ProgressSection(
+              progress: progress,
+              categoryColor: categoryColor,
+            ),
+            const SizedBox(height: 14),
+            StatsRow(
+              spent: spent,
+              remaining: remaining,
+              deadline: deadline,
+              isOverdue: isOverdue,
+              categoryColor: categoryColor,
+            ),
+          ],
+        ),
+      );
+}
+
+// Progress Section Widget
+class ProgressSection extends StatelessWidget {
+  const ProgressSection({
+    super.key,
+    required this.progress,
+    required this.categoryColor,
+  });
+
+  final double progress;
+  final Color categoryColor;
+
+  @override
+  Widget build(BuildContext context) => Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Progress',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF6B7280),
+                ),
+              ),
+              Row(
+                children: [
+                  Text(
+                    '${(progress * 100).toInt()}%',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: categoryColor,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  const Text(
+                    'complete',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF9CA3AF),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: LinearProgressIndicator(
+              value: progress.clamp(0.0, 1.0),
+              minHeight: 10,
+              backgroundColor: const Color(0xFFE5E7EB),
+              valueColor: AlwaysStoppedAnimation<Color>(categoryColor),
+            ),
+          ),
+        ],
+      );
+}
+
+

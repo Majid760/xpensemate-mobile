@@ -149,6 +149,7 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
                           category: budgetGoal.category,
                           amount: budgetGoal.amount,
                           spent: budgetGoal.currentSpending,
+                          status: budgetGoal.status,
                           deadline: budgetGoal.date.toString(),
                           overdueDays: 0, // You might want to calculate this
                           categoryColor: const Color(0xFF6366F1),

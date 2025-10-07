@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:xpensemate/core/theme/colors/app_colors.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/stats_row.dart';
 
 class BudgetGoalCard extends StatefulWidget {
@@ -12,6 +14,7 @@ class BudgetGoalCard extends StatefulWidget {
     required this.spent,
     required this.deadline,
     required this.overdueDays,
+    required this.status,
     required this.categoryColor,
   });
 
@@ -21,6 +24,7 @@ class BudgetGoalCard extends StatefulWidget {
   final double spent;
   final String deadline;
   final int overdueDays;
+  final String status;
   final Color categoryColor;
 
   @override
@@ -31,10 +35,12 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
+  late String _status;
 
   @override
   void initState() {
     super.initState();
+    _status = widget.status;
     _controller = AnimationController(
       duration: const Duration(milliseconds: 150),
       vsync: this,
@@ -86,6 +92,7 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
                 deadline: widget.deadline,
                 categoryColor: widget.categoryColor,
                 isCompleted: isCompleted,
+                status: _status,
                 isOverdue: isOverdue,
               ),
               BottomSection(
@@ -94,7 +101,13 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
                 remaining: remaining,
                 deadline: widget.deadline,
                 isOverdue: isOverdue,
+                status: _status,
                 categoryColor: widget.categoryColor,
+                onStatusChange: (String value) {
+                  setState(() {
+                    _status = value;
+                  });
+                },
               ),
             ],
           ),
@@ -115,6 +128,7 @@ class TopSection extends StatelessWidget {
     required this.categoryColor,
     required this.isCompleted,
     required this.isOverdue,
+    required this.status,
   });
 
   final String title;
@@ -124,6 +138,7 @@ class TopSection extends StatelessWidget {
   final Color categoryColor;
   final bool isCompleted;
   final bool isOverdue;
+  final String status;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -147,6 +162,7 @@ class TopSection extends StatelessWidget {
             AmountDisplay(
               amount: amount,
               deadline: deadline,
+              status: status,
             ),
           ],
         ),
@@ -171,23 +187,13 @@ class TopHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.25),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              Icons.directions_car_rounded,
-              size: 22,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(width: 12),
+          if (isCompleted) ...[
+            StatusIcon(isCompleted: isCompleted),
+            const SizedBox(width: 12),
+          ],
           Expanded(
             child: TitleCategory(title: title, category: category),
           ),
-          if (isCompleted || isOverdue) StatusIcon(isCompleted: isCompleted),
           const SizedBox(width: 8),
           const MenuButton(),
         ],
@@ -365,10 +371,12 @@ class AmountDisplay extends StatelessWidget {
     super.key,
     required this.amount,
     required this.deadline,
+    required this.status,
   });
 
   final double amount;
   final String deadline;
+  final String status;
 
   String _calculateDaysStatus() {
     if (deadline.isEmpty) return '';
@@ -472,7 +480,7 @@ class AmountDisplay extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: _isOverdue()
+                color: status == "active" && _isOverdue()
                     ? const Color(0xFFDC2626)
                     : const Color(0xFF64748B),
               ),
@@ -491,7 +499,9 @@ class BottomSection extends StatelessWidget {
     required this.remaining,
     required this.deadline,
     required this.isOverdue,
+    required this.status,
     required this.categoryColor,
+    this.onStatusChange,
   });
 
   final double progress;
@@ -500,6 +510,9 @@ class BottomSection extends StatelessWidget {
   final String deadline;
   final bool isOverdue;
   final Color categoryColor;
+  final String status;
+  // onChange of status method
+  final void Function(String)? onStatusChange;
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -509,6 +522,8 @@ class BottomSection extends StatelessWidget {
             ProgressSection(
               progress: progress,
               categoryColor: categoryColor,
+              status: status,
+              onStatusChange: onStatusChange,
             ),
             const SizedBox(height: 14),
             StatsRow(
@@ -524,15 +539,49 @@ class BottomSection extends StatelessWidget {
 }
 
 // Progress Section Widget
-class ProgressSection extends StatelessWidget {
+class ProgressSection extends StatefulWidget {
   const ProgressSection({
     super.key,
     required this.progress,
+    required this.status,
     required this.categoryColor,
+    this.onStatusChange,
   });
 
   final double progress;
   final Color categoryColor;
+  final String status;
+  final void Function(String)? onStatusChange;
+
+  @override
+  State<ProgressSection> createState() => _ProgressSectionState();
+}
+
+class _ProgressSectionState extends State<ProgressSection> {
+  late String _status = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _status = widget.status;
+  }
+
+  Color _getStatusColor(String status, BuildContext context) {
+    switch (status) {
+      case 'active':
+        return context.theme.colorScheme.primary;
+      case 'achieved':
+        return AppColors.success;
+      case 'failed':
+        return AppColors.error;
+      case 'terminated':
+        return AppColors.onSurfaceVariant;
+      case 'other':
+        return AppColors.warning;
+      default:
+        return const Color(0xFF6B7280);
+    }
+  }
 
   @override
   Widget build(BuildContext context) => Column(
@@ -549,24 +598,96 @@ class ProgressSection extends StatelessWidget {
                 ),
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '${(progress * 100).toInt()}%',
+                    '${(widget.progress * 100).toInt()}%',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: categoryColor,
+                      color: widget.categoryColor,
                     ),
                   ),
                   const SizedBox(width: 6),
-                  const Text(
-                    'complete',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xFF9CA3AF),
+                  PopupMenuButton<String>(
+                    padding: EdgeInsets.zero,
+                    icon: Container(
+                      padding: const EdgeInsets.fromLTRB(6, 6, 12, 6),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: _getStatusColor(_status, context),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.arrow_drop_down,
+                            size: 18,
+                            color: _getStatusColor(_status, context),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            _status,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: _getStatusColor(_status, context),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    offset: const Offset(0, 8),
+                    initialValue: _status,
+                    onSelected: (value) {
+                      widget.onStatusChange?.call(value);
+                      setState(() {
+                        _status = value;
+                      });
+                    },
+                    itemBuilder: (context) => [
+                      MenuItemWidget(
+                        icon: Icons.local_activity,
+                        text: 'Active',
+                        value: 'active',
+                      ),
+                      MenuItemWidget(
+                        icon: Icons.star,
+                        text: 'Achieved',
+                        value: 'achieved',
+                      ),
+                      MenuItemWidget(
+                        icon: Icons.sms_failed,
+                        text: 'Failed',
+                        value: 'failed',
+                      ),
+                      MenuItemWidget(
+                        icon: Icons.terminal,
+                        text: 'Terminated',
+                        value: 'terminated',
+                        // isDestructive: true,
+                      ),
+                      MenuItemWidget(
+                        icon: Icons.more_horiz,
+                        text: 'Other',
+                        value: 'other',
+                        // isDestructive: true,
+                      ),
+                    ],
                   ),
+
+                  // const Text(
+                  //   'complete',
+                  //   style: TextStyle(
+                  //     fontSize: 14,
+                  //     fontWeight: FontWeight.w500,
+                  //     color: Color(0xFF9CA3AF),
+                  //   ),
+                  // ),
                 ],
               ),
             ],
@@ -575,14 +696,12 @@ class ProgressSection extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: LinearProgressIndicator(
-              value: progress.clamp(0.0, 1.0),
+              value: widget.progress.clamp(0.0, 1.0),
               minHeight: 10,
               backgroundColor: const Color(0xFFE5E7EB),
-              valueColor: AlwaysStoppedAnimation<Color>(categoryColor),
+              valueColor: AlwaysStoppedAnimation<Color>(widget.categoryColor),
             ),
           ),
         ],
       );
 }
-
-

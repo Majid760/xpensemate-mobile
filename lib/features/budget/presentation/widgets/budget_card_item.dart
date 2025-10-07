@@ -3,30 +3,18 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
+import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/stats_row.dart';
 
 class BudgetGoalCard extends StatefulWidget {
   const BudgetGoalCard({
     super.key,
-    required this.title,
-    required this.category,
-    required this.amount,
-    required this.spent,
-    required this.deadline,
-    required this.overdueDays,
-    required this.status,
-    required this.categoryColor,
+    required this.budgetGoal,
     this.onStatusChange,
   });
 
-  final String title;
-  final String category;
-  final double amount;
-  final double spent;
-  final String deadline;
-  final int overdueDays;
-  final String status;
-  final Color categoryColor;
+  final BudgetGoalEntity budgetGoal;
   final void Function(String)? onStatusChange;
 
   @override
@@ -38,11 +26,13 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late String _status;
+  late BudgetGoalEntity _budgetGoal;
 
   @override
   void initState() {
     super.initState();
-    _status = widget.status;
+    _budgetGoal = widget.budgetGoal;
+    _status = _budgetGoal.status;
     _controller = AnimationController(
       duration: const Duration(milliseconds: 150),
       vsync: this,
@@ -50,6 +40,19 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
     _scaleAnimation = Tween<double>(begin: 1, end: 0.97).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
+  }
+
+  void _updateStatus(
+      String value, BudgetGoalEntity budgetGoal, BuildContext context) {
+    if (value.isNotEmpty && value != _status) {
+      widget.onStatusChange?.call(value);
+      context.budgetCubit.updateBudgetGoal(
+        budgetGoal.copyWith(status: value),
+      );
+      setState(() {
+        _status = value;
+      });
+    }
   }
 
   @override
@@ -60,10 +63,10 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
 
   @override
   Widget build(BuildContext context) {
-    final progress =
-        widget.amount > 0 ? math.min(widget.spent / widget.amount, 1.0) : 0.0;
-    final remaining = widget.amount - widget.spent;
-    final isOverdue = widget.overdueDays > 0;
+    final progress = _budgetGoal.amount > 0
+        ? math.min(_budgetGoal.currentSpending / _budgetGoal.amount, 1.0)
+        : 0.0;
+    final remaining = _budgetGoal.amount - _budgetGoal.currentSpending;
     final isCompleted = progress >= 1.0;
 
     return GestureDetector(
@@ -88,29 +91,25 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
           child: Column(
             children: [
               TopSection(
-                title: widget.title,
-                category: widget.category,
-                amount: widget.amount,
-                deadline: widget.deadline,
-                categoryColor: widget.categoryColor,
+                title: _budgetGoal.name,
+                category: _budgetGoal.category,
+                amount: _budgetGoal.amount,
+                deadline: _budgetGoal.date.toString(),
+                categoryColor: context.primaryColor,
                 isCompleted: isCompleted,
                 status: _status,
-                isOverdue: isOverdue,
+                isOverdue: false,
               ),
               BottomSection(
                 progress: progress,
-                spent: widget.spent,
+                spent: _budgetGoal.currentSpending,
                 remaining: remaining,
-                deadline: widget.deadline,
-                isOverdue: isOverdue,
+                deadline: _budgetGoal.date.toString(),
+                isOverdue: false,
                 status: _status,
-                categoryColor: widget.categoryColor,
-                onStatusChange: (String value) {
-                  widget.onStatusChange?.call(value);
-                  setState(() {
-                    _status = value;
-                  });
-                },
+                categoryColor: context.primaryColor,
+                onStatusChange: (String value) =>
+                    _updateStatus(value, _budgetGoal, context),
               ),
             ],
           ),

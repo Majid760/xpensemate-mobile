@@ -34,7 +34,10 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
                   context.read<BudgetCubit>().retryPaginationRequest(),
             );
           }
-          if (state.message != null && state.message!.isNotEmpty) {
+          if (state.message != null &&
+              state.message!.isNotEmpty &&
+              (state.state == BudgetStates.loaded ||
+                  state.state == BudgetStates.error)) {
             AppSnackBar.show(
               context: context,
               message: state.message!,
@@ -148,20 +151,7 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12),
                         child: BudgetGoalCard(
-                          title: budgetGoal.name,
-                          category: budgetGoal.category,
-                          amount: budgetGoal.amount,
-                          spent: budgetGoal.currentSpending,
-                          status: budgetGoal.status,
-                          deadline: budgetGoal.date.toString(),
-                          overdueDays: 0, // You might want to calculate this
-                          categoryColor: const Color(0xFF6366F1),
-                          onStatusChange: (value) {
-                            if (value.isNotEmpty) {
-                              context.budgetCubit.updateBudgetGoal(
-                                  budgetGoal.copyWith(status: value));
-                            }
-                          },
+                          budgetGoal: budgetGoal,
                         ),
                       );
                     },

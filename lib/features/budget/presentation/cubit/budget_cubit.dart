@@ -90,6 +90,7 @@ class BudgetCubit extends Cubit<BudgetState> {
     emit(
       state.copyWith(
         state: BudgetStates.loaded,
+        message: '',
         budgetGoals: BudgetGoalsListModel(
           budgetGoals: List.from(_cache),
           total: data.total,

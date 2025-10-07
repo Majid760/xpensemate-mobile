@@ -13,18 +13,18 @@ class BudgetCubit extends Cubit<BudgetState> {
   ) : super(const BudgetState()) {
     getBudgetGoals();
   }
+
   final GetBudgetsGoalsUseCase _getBudgetGoalsUseCase;
   final CreateBudgetGoalUseCase _createBudgetGoalUseCase;
   final UpdateBudgetGoalUseCase _updateBudgetGoalUseCase;
   final DeleteBudgetGoalUseCase _deleteBudgetGoalUseCase;
   final GetBudgetGoalsStatsUseCase _budgetGoalsStatsUseCase;
 
-  // Pagination state management
-  final List<BudgetGoalEntity> _allBudgetGoals = [];
-  int _currentPage = 1;
-  bool _hasReachedMax = false;
-  bool _isLoadingMore = false;
-  int _defaultLimit = 10;
+  final List<BudgetGoalEntity> _cache = [];
+  int _page = 1;
+  int _limit = 10;
+  bool _hasMore = true;
+  bool _loading = false;
 
   Future<void> getBudgetGoals({
     int page = 1,
@@ -32,22 +32,16 @@ class BudgetCubit extends Cubit<BudgetState> {
     bool refresh = false,
     bool loadMore = false,
   }) async {
-    try {
-      // Prevent multiple concurrent requests for pagination
-      if (_isLoadingMore && loadMore) return;
-      if (_hasReachedMax && loadMore) return;
+    if (_loading && loadMore || !_hasMore && loadMore) return;
 
-      // Handle refresh - reset pagination state
-      if (refresh || page == 1) {
-        _resetPaginationState();
-        emit(
-          state.copyWith(
-            state: BudgetStates.loading,
-          ),
-        );
+    try {
+      final isInitial = refresh || page == 1;
+
+      if (isInitial) {
+        _resetState();
+        emit(state.copyWith(state: BudgetStates.loading));
       } else if (loadMore) {
-        // Loading more items
-        _isLoadingMore = true;
+        _loading = true;
         emit(
           state.copyWith(
             state: BudgetStates.loadingMore,
@@ -55,158 +49,99 @@ class BudgetCubit extends Cubit<BudgetState> {
           ),
         );
       } else if (state.budgetGoals == null) {
-        // Initial load
         emit(state.copyWith(state: BudgetStates.loading));
       }
 
-      _currentPage = page;
-      _defaultLimit = limit;
+      _page = page;
+      _limit = limit;
 
       final result = await _getBudgetGoalsUseCase.call(
-        GetBudgetGoalsParams(
-          page: page,
-          limit: limit,
-        ),
+        GetBudgetGoalsParams(page: page, limit: limit),
       );
 
       result.fold(
-        (failure) =>
-            _handleBudgetLoadFailure(failure.toString(), page, loadMore),
-        (budgetGoals) => _handleBudgetLoadSuccess(
-          budgetGoals,
-          page,
-          refresh || page == 1,
-        ),
+        (failure) => _emitError(failure.toString(), isInitial),
+        (data) => _emitSuccess(data, isInitial),
       );
-    } on Exception catch (e, stackTrace) {
-      _handleBudgetLoadFailure(
-        'Unexpected error: $e',
-        page,
-        loadMore,
-        stackTrace,
-      );
+    } on Exception catch (e, stack) {
+      _emitError('Unexpected error: $e', refresh || page == 1, stack);
     } finally {
-      _isLoadingMore = false;
+      _loading = false;
     }
   }
 
-  /// Handle successful budget loading with pagination logic
-  void _handleBudgetLoadSuccess(
-    BudgetGoalsListEntity budgetGoalsList,
-    int page,
-    bool isFirstPageOrRefresh,
-  ) {
-    final newBudgetGoals = budgetGoalsList.budgetGoals;
-
-    if (isFirstPageOrRefresh) {
-      // First page or refresh - replace all budget goals
-      _allBudgetGoals.clear();
-      _allBudgetGoals.addAll(newBudgetGoals);
+  void _emitSuccess(BudgetGoalsListEntity data, bool isInitial) {
+    if (isInitial) {
+      _cache
+        ..clear()
+        ..addAll(data.budgetGoals);
     } else {
-      // Subsequent pages - append new budget goals, avoiding duplicates
-      final uniqueNewBudgetGoals = newBudgetGoals.where(
-        (newBudgetGoal) =>
-            !_allBudgetGoals.any((existing) => existing.id == newBudgetGoal.id),
+      _cache.addAll(
+        data.budgetGoals.where((n) => !_cache.any((e) => e.id == n.id)),
       );
-      _allBudgetGoals.addAll(uniqueNewBudgetGoals);
     }
 
-    // Determine if we've reached the maximum
-    _hasReachedMax = _currentPage >= budgetGoalsList.totalPages ||
-        newBudgetGoals.isEmpty ||
-        newBudgetGoals.length < _defaultLimit;
-
-    // Create updated budget goals list entity with all loaded budget goals
-    final updatedBudgetGoalsList = BudgetGoalsListEntity(
-      budgetGoals: List.from(_allBudgetGoals),
-      total: budgetGoalsList.total,
-      page: _currentPage,
-      totalPages: budgetGoalsList.totalPages,
-    );
+    _hasMore = _page < data.totalPages &&
+        data.budgetGoals.isNotEmpty &&
+        data.budgetGoals.length >= _limit;
 
     emit(
       state.copyWith(
         state: BudgetStates.loaded,
-        budgetGoals: updatedBudgetGoalsList,
-        currentPage: _currentPage,
-        hasReachedMax: _hasReachedMax,
+        budgetGoals: BudgetGoalsListEntity(
+          budgetGoals: List.from(_cache),
+          total: data.total,
+          page: _page,
+          totalPages: data.totalPages,
+        ),
+        currentPage: _page,
+        hasReachedMax: !_hasMore,
         isLoadingMore: false,
       ),
     );
   }
 
-  /// Handle budget loading failure with appropriate error states
-  void _handleBudgetLoadFailure(
-    String errorMessage,
-    int page,
-    bool isLoadMore, [
-    StackTrace? stackTrace,
-  ]) {
-    if (page == 1 || !isLoadMore) {
-      // First page error - show main error state
-      emit(
-        state.copyWith(
-          state: BudgetStates.error,
-          errorMessage: errorMessage,
-          stackTrace: stackTrace,
-          isLoadingMore: false,
-        ),
-      );
-    } else {
-      // Pagination error - keep existing data, show pagination error
-      emit(
-        state.copyWith(
-          state: BudgetStates.loaded,
-          paginationError: errorMessage,
-          isLoadingMore: false,
-        ),
-      );
-    }
+  void _emitError(String error, bool isInitial, [StackTrace? stack]) {
+    emit(
+      isInitial
+          ? state.copyWith(
+              state: BudgetStates.error,
+              errorMessage: error,
+              stackTrace: stack,
+              isLoadingMore: false,
+            )
+          : state.copyWith(
+              state: BudgetStates.loaded,
+              paginationError: error,
+              isLoadingMore: false,
+            ),
+    );
   }
 
-  /// Load next page for infinite scroll
+  void _resetState() {
+    _cache.clear();
+    _page = 1;
+    _hasMore = true;
+    _loading = false;
+  }
+
   Future<void> loadNextPage() async {
-    if (_hasReachedMax || _isLoadingMore) return;
-
-    await getBudgetGoals(
-      page: _currentPage + 1,
-      limit: _defaultLimit,
-      loadMore: true,
-    );
+    if (!_hasMore || _loading) return;
+    await getBudgetGoals(page: _page + 1, limit: _limit, loadMore: true);
   }
 
-  /// Refresh budget goals (reload from first page)
   Future<void> refreshBudgetGoals({int limit = 10}) async {
-    await getBudgetGoals(
-      limit: limit,
-      refresh: true,
-    );
+    await getBudgetGoals(limit: limit, refresh: true);
   }
 
-  /// Check if should load more items (for infinite scroll trigger)
-  bool shouldLoadMore(int currentIndex, {int threshold = 5}) {
-    if (_hasReachedMax || _isLoadingMore) return false;
+  bool shouldLoadMore(int index, {int threshold = 5}) => !_hasMore || _loading
+      ? false
+      : index >= _cache.length - threshold && _cache.isNotEmpty;
 
-    final totalLoaded = _allBudgetGoals.length;
-    return currentIndex >= totalLoaded - threshold && totalLoaded > 0;
+  void checkAndLoadMore(int index, {int threshold = 5}) {
+    if (shouldLoadMore(index, threshold: threshold)) loadNextPage();
   }
 
-  /// Trigger load more if conditions are met
-  void checkAndLoadMore(int currentIndex, {int threshold = 5}) {
-    if (shouldLoadMore(currentIndex, threshold: threshold)) {
-      loadNextPage();
-    }
-  }
-
-  /// Reset pagination state
-  void _resetPaginationState() {
-    _allBudgetGoals.clear();
-    _currentPage = 1;
-    _hasReachedMax = false;
-    _isLoadingMore = false;
-  }
-
-  /// Retry last failed pagination request
   void retryPaginationRequest() {
     if (state.paginationError != null) {
       loadNextPage();
@@ -215,11 +150,9 @@ class BudgetCubit extends Cubit<BudgetState> {
     }
   }
 
-  // Getters for pagination state
-  bool get hasReachedMax => _hasReachedMax;
-  bool get isLoadingMore => _isLoadingMore;
-  int get currentPage => _currentPage;
-  int get totalItemsLoaded => _allBudgetGoals.length;
-  List<BudgetGoalEntity> get allLoadedBudgetGoals =>
-      List.unmodifiable(_allBudgetGoals);
+  bool get hasReachedMax => !_hasMore;
+  bool get isLoadingMore => _loading;
+  int get currentPage => _page;
+  int get totalItemsLoaded => _cache.length;
+  List<BudgetGoalEntity> get allLoadedBudgetGoals => List.unmodifiable(_cache);
 }

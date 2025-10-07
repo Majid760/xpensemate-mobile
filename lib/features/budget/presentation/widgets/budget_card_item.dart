@@ -448,6 +448,14 @@ class AmountDisplay extends StatelessWidget {
     }
   }
 
+  // Format amount with k for values >= 1000
+  String _formatAmount(double amount) {
+    if (amount >= 10000) {
+      return '${(amount / 1000).toStringAsFixed(1)}k';
+    }
+    return amount.toInt().toString();
+  }
+
   @override
   Widget build(BuildContext context) => Row(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -463,7 +471,7 @@ class AmountDisplay extends StatelessWidget {
           ),
           const SizedBox(width: 6),
           Text(
-            '${amount.toInt()}',
+            _formatAmount(amount), // Use formatted amount
             style: const TextStyle(
               fontSize: 48,
               fontWeight: FontWeight.bold,

@@ -47,6 +47,59 @@ class StatsRow extends StatelessWidget {
     }
   }
 
+  // Format amount with k for values >= 1000
+  String _formatAmount(double amount) {
+    if (amount >= 10000) {
+      return '${(amount / 1000).toStringAsFixed(1)}k';
+    }
+    return amount.toInt().toString();
+  }
+
+  // Format date to show only last two digits of year
+  String _formatDate(String dateStr) {
+    if (dateStr.isEmpty) return '';
+
+    try {
+      final DateTime dueDate;
+      if (dateStr.contains('-')) {
+        if (dateStr.contains('T')) {
+          dueDate = DateTime.parse(dateStr);
+        } else {
+          final parts = dateStr.split(' ');
+          if (parts.isNotEmpty) {
+            dueDate = DateTime.parse(parts[0]);
+          } else {
+            return dateStr.split(' ')[0];
+          }
+        }
+      } else {
+        return dateStr;
+      }
+
+      // Format as MM/dd/yy
+      final year = dueDate.year.toString().substring(2); // Last two digits
+      return '${dueDate.month.toString().padLeft(2, '0')}/${dueDate.day.toString().padLeft(2, '0')}/$year';
+    } on Exception catch (_) {
+      // If parsing fails, try to extract the date part and format it
+      try {
+        final parts = dateStr.split(' ');
+        if (parts.isNotEmpty) {
+          final datePart = parts[0];
+          if (datePart.contains('-')) {
+            final dateParts = datePart.split('-');
+            if (dateParts.length >= 3) {
+              final year = dateParts[0].substring(2); // Last two digits of year
+              return '${dateParts[1]}/${dateParts[2]}/$year';
+            }
+          }
+        }
+      } catch (_) {
+        // If all else fails, return original string
+      }
+      return dateStr.split(' ')[0];
+    }
+  }
+
   @override
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.all(16),
@@ -70,7 +123,7 @@ class StatsRow extends StatelessWidget {
               child: ModernStat(
                 icon: Icons.trending_up_rounded,
                 label: 'Spent',
-                value: '\$${spent.toInt()}',
+                value: '\$${_formatAmount(spent)}', // Use formatted amount
                 iconColor: categoryColor,
               ),
             ),
@@ -83,7 +136,7 @@ class StatsRow extends StatelessWidget {
               child: ModernStat(
                 icon: Icons.account_balance_wallet_rounded,
                 label: 'Left',
-                value: '\$${remaining.toInt()}',
+                value: '\$${_formatAmount(remaining)}', // Use formatted amount
                 iconColor: remaining > 0
                     ? const Color(0xFF10B981)
                     : const Color(0xFFEF4444),
@@ -98,7 +151,7 @@ class StatsRow extends StatelessWidget {
               child: ModernStat(
                 icon: Icons.calendar_today_rounded,
                 label: 'Due',
-                value: deadline,
+                value: _formatDate(deadline), // Use formatted date
                 iconColor: _isOverdue()
                     ? const Color(0xFFEF4444)
                     : const Color(0xFF3B82F6),

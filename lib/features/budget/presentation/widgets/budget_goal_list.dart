@@ -34,6 +34,15 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
                   context.read<BudgetCubit>().retryPaginationRequest(),
             );
           }
+          if (state.message != null && state.message!.isNotEmpty) {
+            AppSnackBar.show(
+              context: context,
+              message: state.message!,
+              type: state.state == BudgetStates.error
+                  ? SnackBarType.error
+                  : SnackBarType.success,
+            );
+          }
         },
         builder: (context, state) {
           // Initial loading state
@@ -61,7 +70,7 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      state.errorMessage ?? 'An error occurred',
+                      state.message ?? 'An error occurred',
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: Theme.of(context).colorScheme.error,
@@ -135,13 +144,7 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
                             threshold: widget.scrollThreshold,
                           );
                       final budgetGoal = budgetGoals[index];
-                      if (index == 1) {
-                        print('this is one=> ${budgetGoal.toString()}');
-                        print('this is PROFRESS=> ${budgetGoal.progress}');
-                        print(
-                            'this is speinding=> ${budgetGoal.currentSpending}');
-                        print('this is overdeu=> ${budgetGoal.detail}');
-                      }
+
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12),
                         child: BudgetGoalCard(
@@ -153,6 +156,12 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
                           deadline: budgetGoal.date.toString(),
                           overdueDays: 0, // You might want to calculate this
                           categoryColor: const Color(0xFF6366F1),
+                          onStatusChange: (value) {
+                            if (value.isNotEmpty) {
+                              context.budgetCubit.updateBudgetGoal(
+                                  budgetGoal.copyWith(status: value));
+                            }
+                          },
                         ),
                       );
                     },

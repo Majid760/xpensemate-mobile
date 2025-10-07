@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:xpensemate/features/budget/data/models/budget_goal_model.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 import 'package:xpensemate/features/budget/domain/usecases/usecase_export.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_state.dart';
@@ -88,7 +90,7 @@ class BudgetCubit extends Cubit<BudgetState> {
     emit(
       state.copyWith(
         state: BudgetStates.loaded,
-        budgetGoals: BudgetGoalsListEntity(
+        budgetGoals: BudgetGoalsListModel(
           budgetGoals: List.from(_cache),
           total: data.total,
           page: _page,
@@ -106,7 +108,7 @@ class BudgetCubit extends Cubit<BudgetState> {
       isInitial
           ? state.copyWith(
               state: BudgetStates.error,
-              errorMessage: error,
+              message: error,
               stackTrace: stack,
               isLoadingMore: false,
             )
@@ -155,4 +157,144 @@ class BudgetCubit extends Cubit<BudgetState> {
   int get currentPage => _page;
   int get totalItemsLoaded => _cache.length;
   List<BudgetGoalEntity> get allLoadedBudgetGoals => List.unmodifiable(_cache);
+
+// create budget goal
+  Future<void> createBudgetGoal(BudgetGoalEntity goal) async {
+    try {
+      emit(state.copyWith(state: BudgetStates.loading));
+
+      final result = await _createBudgetGoalUseCase
+          .call(CreateBudgetGoalParams(budgetGoal: goal));
+
+      result.fold(
+        (failure) => emit(
+          state.copyWith(
+            state: BudgetStates.error,
+            message: failure.toString(),
+          ),
+        ),
+        (createdGoal) {
+          _cache.insert(0, createdGoal);
+          _emitUpdatedState('Budget goal created successfully');
+        },
+      );
+    } on Exception catch (e, stack) {
+      emit(
+        state.copyWith(
+          state: BudgetStates.error,
+          message: 'Failed to create: $e',
+          stackTrace: stack,
+        ),
+      );
+    }
+  }
+
+// Update Budget Goal
+  Future<void> updateBudgetGoal(BudgetGoalEntity goal) async {
+    final index = _cache.indexWhere((e) => e.id == goal.id);
+    if (index == -1) {
+      emit(
+        state.copyWith(
+          state: BudgetStates.error,
+          message: 'Budget goal not found',
+        ),
+      );
+      return;
+    }
+    final previous = _cache[index];
+    try {
+      _cache[index] = goal;
+      _emitUpdatedState('');
+      final result = await _updateBudgetGoalUseCase
+          .call(UpdateBudgetGoalParams(budgetGoal: goal));
+      result.fold(
+        (failure) {
+          _cache[index] = previous;
+          emit(
+            state.copyWith(
+              state: BudgetStates.error,
+              message: failure.toString(),
+            ),
+          );
+        },
+        (updated) {
+          _cache[index] = updated;
+          _emitUpdatedState('Budget goal updated successfully');
+        },
+      );
+    } on Exception catch (e, stack) {
+      _cache[index] = previous;
+      emit(
+        state.copyWith(
+          state: BudgetStates.error,
+          message: 'Failed to update: $e',
+          stackTrace: stack,
+        ),
+      );
+    }
+  }
+
+// delete budget goal
+  Future<void> deleteBudgetGoal(String id) async {
+    final index = _cache.indexWhere((e) => e.id == id);
+    if (index == -1) {
+      emit(
+        state.copyWith(
+          state: BudgetStates.error,
+          message: 'Budget goal not found',
+        ),
+      );
+      return;
+    }
+    final removed = _cache.removeAt(index);
+    _emitUpdatedState('');
+    try {
+      final result = await _deleteBudgetGoalUseCase.call(
+        DeleteBudgetGoalParams(id: id),
+      );
+      result.fold(
+        (failure) {
+          _cache.insert(index, removed);
+          emit(
+            state.copyWith(
+              state: BudgetStates.error,
+              message: failure.toString(),
+            ),
+          );
+        },
+        (_) => _emitUpdatedState('Budget goal deleted successfully'),
+      );
+    } on Exception catch (e, stack) {
+      _cache.insert(index, removed);
+      emit(
+        state.copyWith(
+          state: BudgetStates.error,
+          message: 'Failed to delete: $e',
+          stackTrace: stack,
+        ),
+      );
+    }
+  }
+
+  void _emitUpdatedState([String? message]) {
+    final current = state.budgetGoals;
+    emit(
+      state.copyWith(
+        state: BudgetStates.loaded,
+        budgetGoals: current != null
+            ? BudgetGoalsListModel(
+                budgetGoals: List.from(_cache),
+                total: _cache.length,
+                page: current.page,
+                totalPages: current.totalPages,
+              )
+            : null,
+        message: message,
+      ),
+    );
+  }
+}
+
+extension ExpenseCubitX on BuildContext {
+  BudgetCubit get budgetCubit => read<BudgetCubit>();
 }

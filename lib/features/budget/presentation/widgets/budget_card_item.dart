@@ -16,6 +16,7 @@ class BudgetGoalCard extends StatefulWidget {
     required this.overdueDays,
     required this.status,
     required this.categoryColor,
+    this.onStatusChange,
   });
 
   final String title;
@@ -26,6 +27,7 @@ class BudgetGoalCard extends StatefulWidget {
   final int overdueDays;
   final String status;
   final Color categoryColor;
+  final void Function(String)? onStatusChange;
 
   @override
   State<BudgetGoalCard> createState() => _BudgetGoalCardState();
@@ -104,6 +106,7 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
                 status: _status,
                 categoryColor: widget.categoryColor,
                 onStatusChange: (String value) {
+                  widget.onStatusChange?.call(value);
                   setState(() {
                     _status = value;
                   });
@@ -480,20 +483,22 @@ class AmountDisplay extends StatelessWidget {
               letterSpacing: -1,
             ),
           ),
-          const SizedBox(width: 16),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 6),
-            child: Text(
-              _calculateDaysStatus(),
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: status == "active" && _isOverdue()
-                    ? const Color(0xFFDC2626)
-                    : const Color(0xFF64748B),
+          if (status == "active") ...[
+            const SizedBox(width: 16),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 6),
+              child: Text(
+                _calculateDaysStatus(),
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: status == "active" && _isOverdue()
+                      ? const Color(0xFFDC2626)
+                      : const Color(0xFF64748B),
+                ),
               ),
             ),
-          ),
+          ],
         ],
       );
 }

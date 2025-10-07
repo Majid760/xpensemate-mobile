@@ -74,9 +74,9 @@ class NetworkConfigs {
   // Get a single budget goal by ID
   static const String getBudgetGoalById = '/budget-goal/:id';
   // Update a budget goal
-  static const String updateBudgetGoal = '/budget-goal/:id';
+  static const String updateBudgetGoal = '/budget-goal/';
 // Delete a budget goal
-  static const String deleteBudgetGoal = '/budget-goal/:id';
+  static const String deleteBudgetGoal = '/budget-goal/';
 // Get a budget goal's progress
   static const String getBudgetGoalProgress = '/budget-goal/:id/progress';
   // Get goal stats by period

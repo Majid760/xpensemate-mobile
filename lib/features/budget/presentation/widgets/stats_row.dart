@@ -49,7 +49,7 @@ class StatsRow extends StatelessWidget {
 
   // Format amount with k for values >= 1000
   String _formatAmount(double amount) {
-    if (amount >= 10000) {
+    if (amount >= 10000 || amount <= -10000) {
       return '${(amount / 1000).toStringAsFixed(1)}k';
     }
     return amount.toInt().toString();
@@ -93,7 +93,7 @@ class StatsRow extends StatelessWidget {
             }
           }
         }
-      } catch (_) {
+      } on Exception catch (_) {
         // If all else fails, return original string
       }
       return dateStr.split(' ')[0];
@@ -123,7 +123,7 @@ class StatsRow extends StatelessWidget {
               child: ModernStat(
                 icon: Icons.trending_up_rounded,
                 label: 'Spent',
-                value: '\$${_formatAmount(spent)}', // Use formatted amount
+                value: '${_formatAmount(spent)} \$', // Use formatted amount
                 iconColor: categoryColor,
               ),
             ),
@@ -136,7 +136,7 @@ class StatsRow extends StatelessWidget {
               child: ModernStat(
                 icon: Icons.account_balance_wallet_rounded,
                 label: 'Left',
-                value: '\$${_formatAmount(remaining)}', // Use formatted amount
+                value: '${_formatAmount(remaining)} \$', // Use formatted amount
                 iconColor: remaining > 0
                     ? const Color(0xFF10B981)
                     : const Color(0xFFEF4444),

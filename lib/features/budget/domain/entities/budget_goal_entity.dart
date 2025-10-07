@@ -35,6 +35,43 @@ class BudgetGoalEntity extends Equatable {
   final double remainingBalance;
   final double currentSpending;
 
+  // copywith
+
+  BudgetGoalEntity copyWith({
+    String? id,
+    String? userId,
+    String? name,
+    double? amount,
+    DateTime? date,
+    String? category,
+    String? detail,
+    String? status,
+    String? priority,
+    int? progress,
+    bool? isDeleted,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    double? remainingBalance,
+    double? currentSpending,
+  }) =>
+      BudgetGoalEntity(
+        currentSpending: currentSpending ?? this.currentSpending,
+        priority: priority ?? this.priority,
+        progress: progress ?? this.progress,
+        isDeleted: isDeleted ?? this.isDeleted,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+        remainingBalance: remainingBalance ?? this.remainingBalance,
+        id: id ?? this.id,
+        userId: userId ?? this.userId,
+        name: name ?? this.name,
+        amount: amount ?? this.amount,
+        date: date ?? this.date,
+        category: category ?? this.category,
+        detail: detail ?? this.detail,
+        status: status ?? this.status,
+      );
+
   @override
   List<Object?> get props => [
         id,
@@ -67,6 +104,20 @@ class BudgetGoalsListEntity extends Equatable {
   final int total;
   final int page;
   final int totalPages;
+
+  // copywith
+  BudgetGoalsListEntity copyWith({
+    List<BudgetGoalEntity>? budgetGoals,
+    int? total,
+    int? page,
+    int? totalPages,
+  }) =>
+      BudgetGoalsListEntity(
+        budgetGoals: budgetGoals ?? this.budgetGoals,
+        total: total ?? this.total,
+        page: page ?? this.page,
+        totalPages: totalPages ?? this.totalPages,
+      );
 
   @override
   List<Object?> get props => [

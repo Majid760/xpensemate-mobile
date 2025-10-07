@@ -58,7 +58,7 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
     BudgetGoalEntity budgetGoal,
   ) =>
       _networkClient.put(
-        '${NetworkConfigs.budgetGoals}/${budgetGoal.id}',
+        '${NetworkConfigs.updateBudgetGoal}/${budgetGoal.id}',
         data: budgetGoal is BudgetGoalModel
             ? budgetGoal.toJson()
             : BudgetGoalModel.fromEntity(budgetGoal).toJson(),
@@ -68,7 +68,7 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
   @override
   Future<Either<Failure, bool>> deleteBudgetGoal(String budgetGoalId) async =>
       _networkClient.delete(
-        '${NetworkConfigs.budgetGoals}/$budgetGoalId',
+        '${NetworkConfigs.deleteBudgetGoal}/$budgetGoalId',
         fromJson: (json) => json['data'] as bool? ?? true,
       );
 

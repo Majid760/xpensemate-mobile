@@ -39,6 +39,46 @@ class BudgetExpenseEntity extends Equatable {
   final DateTime updatedAt;
   final RecurringExpenseEntity recurring;
 
+  //copywith
+  BudgetExpenseEntity copyWith({
+    String? id,
+    String? userId,
+    String? name,
+    double? amount,
+    String? budgetGoalId,
+    DateTime? date,
+    String? time,
+    String? location,
+    String? categoryId,
+    String? category,
+    String? detail,
+    String? paymentMethod,
+    List<String>? attachments,
+    bool? isDeleted,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    RecurringExpenseEntity? recurring,
+  }) =>
+      BudgetExpenseEntity(
+        id: id ?? this.id,
+        userId: userId ?? this.userId,
+        name: name ?? this.name,
+        amount: amount ?? this.amount,
+        budgetGoalId: budgetGoalId ?? this.budgetGoalId,
+        date: date ?? this.date,
+        time: time ?? this.time,
+        location: location ?? this.location,
+        categoryId: categoryId ?? this.categoryId,
+        category: category ?? this.category,
+        detail: detail ?? this.detail,
+        paymentMethod: paymentMethod ?? this.paymentMethod,
+        attachments: attachments ?? this.attachments,
+        isDeleted: isDeleted ?? this.isDeleted,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+        recurring: recurring ?? this.recurring,
+      );
+
   @override
   List<Object?> get props => [
         id,
@@ -87,6 +127,19 @@ class BudgetExpensesListEntity extends Equatable {
   final int page;
   final int totalPages;
 
+  //copywith
+  BudgetExpensesListEntity copyWith({
+    List<BudgetExpenseEntity>? expenses,
+    int? total,
+    int? page,
+    int? totalPages,
+  }) =>
+      BudgetExpensesListEntity(
+        expenses: expenses ?? this.expenses,
+        total: total ?? this.total,
+        page: page ?? this.page,
+        totalPages: totalPages ?? this.totalPages,
+      );
   @override
   List<Object?> get props => [
         expenses,

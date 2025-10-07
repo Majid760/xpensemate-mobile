@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:xpensemate/features/budget/data/models/budget_goal_model.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 
 enum BudgetStates {
@@ -13,7 +14,7 @@ class BudgetState extends Equatable {
   const BudgetState({
     this.state = BudgetStates.initial,
     this.budgetGoals,
-    this.errorMessage,
+    this.message,
     this.stackTrace,
     this.currentPage,
     this.hasReachedMax = false,
@@ -23,7 +24,7 @@ class BudgetState extends Equatable {
 
   final BudgetStates state;
   final BudgetGoalsListEntity? budgetGoals;
-  final String? errorMessage;
+  final String? message;
   final StackTrace? stackTrace;
 
   // Pagination-specific properties
@@ -35,7 +36,7 @@ class BudgetState extends Equatable {
   BudgetState copyWith({
     BudgetStates? state,
     BudgetGoalsListEntity? budgetGoals,
-    String? errorMessage,
+    String? message,
     StackTrace? stackTrace,
     int? currentPage,
     bool? hasReachedMax,
@@ -45,7 +46,7 @@ class BudgetState extends Equatable {
       BudgetState(
         state: state ?? this.state,
         budgetGoals: budgetGoals ?? this.budgetGoals,
-        errorMessage: errorMessage ?? this.errorMessage,
+        message: message ?? this.message,
         stackTrace: stackTrace ?? this.stackTrace,
         currentPage: currentPage ?? this.currentPage,
         hasReachedMax: hasReachedMax ?? this.hasReachedMax,
@@ -57,7 +58,7 @@ class BudgetState extends Equatable {
   List<Object?> get props => [
         state,
         budgetGoals,
-        errorMessage,
+        message,
         stackTrace,
         currentPage,
         hasReachedMax,
@@ -68,7 +69,8 @@ class BudgetState extends Equatable {
   // Helper getters for UI logic
   bool get isInitialLoading =>
       state == BudgetStates.loading && budgetGoals == null;
-  bool get hasData => budgetGoals != null && budgetGoals!.budgetGoals.isNotEmpty;
+  bool get hasData =>
+      budgetGoals != null && budgetGoals!.budgetGoals.isNotEmpty;
   bool get hasError => state == BudgetStates.error && budgetGoals == null;
   bool get hasPaginationError => paginationError != null;
   bool get canLoadMore => !hasReachedMax && !isLoadingMore && hasData;

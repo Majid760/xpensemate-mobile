@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:xpensemate/core/widget/app_button.dart';
-import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
-import 'package:xpensemate/features/budget/presentation/cubit/budget_state.dart';
-import 'package:xpensemate/features/budget/presentation/widgets/budget_card_item.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/budget_goal_list.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/insight_card_section.dart';
 
@@ -12,9 +8,9 @@ class BudgetPage extends StatelessWidget {
   const BudgetPage({super.key});
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        backgroundColor: const Color(0xFFF8F9FE),
-        body: const BudgetPageBody(),
+  Widget build(BuildContext context) => const Scaffold(
+        backgroundColor: Color(0xFFF8F9FE),
+        body: BudgetPageBody(),
       );
 }
 

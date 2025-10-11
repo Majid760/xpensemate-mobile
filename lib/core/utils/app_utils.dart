@@ -652,17 +652,18 @@ class AppUtils {
   }
 
   static void _showURLErrorDialog(BuildContext context, String message) {
-
-      AppCustomDialogs.showSingleAction(
+    AppCustomDialogs.showSingleAction(
       context: context,
       title: context.l10n.errorWhileOpeningUrl,
       message: message,
       actionText: context.l10n.proceed,
-      onAction: () {
-      },
+      onAction: () {},
     );
-  
   }
+
+  /// disable the text field
+  static void unFocus() =>
+      WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
 }
 
 // ============ ENUMS ============

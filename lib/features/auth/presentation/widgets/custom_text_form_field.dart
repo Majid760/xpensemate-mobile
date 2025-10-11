@@ -23,7 +23,7 @@ class ReactiveAppField extends StatefulWidget {
   const ReactiveAppField({
     super.key,
     required this.formControlName,
-    required this.labelText,
+    this.labelText,
     this.fieldType = FieldType.text,
     this.hintText,
     this.suffixIcon,
@@ -66,7 +66,7 @@ class ReactiveAppField extends StatefulWidget {
   });
 
   final String formControlName;
-  final String labelText;
+  final String? labelText;
   final FieldType fieldType;
   final String? hintText;
   final Widget? suffixIcon;
@@ -145,13 +145,15 @@ class _ReactiveAppFieldState extends State<ReactiveAppField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          widget.labelText,
-          style: theme.textTheme.labelLarge?.copyWith(
-            color: colorScheme.onSurfaceVariant,
+        if (widget.labelText != null) ...[
+          Text(
+            widget.labelText!,
+            style: theme.textTheme.labelLarge?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
+          const SizedBox(height: 8),
+        ],
         DecoratedBox(
           decoration: BoxDecoration(
             color: context.colorScheme.surfaceContainer.withValues(alpha: 0.7),

@@ -3,8 +3,10 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
+import 'package:xpensemate/features/budget/presentation/widgets/budget_expenses.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/stats_row.dart';
 
 class BudgetGoalCard extends StatefulWidget {
@@ -285,11 +287,32 @@ class MenuButton extends StatelessWidget {
           ),
           offset: const Offset(0, 8),
           padding: const EdgeInsets.all(6),
+          onSelected: (value) {
+            if (value == 'edit') {
+            } else if (value == 'expenses') {
+              AppBottomSheet.showScrollable(
+                context: context,
+                title: 'Expenses',
+                config: BottomSheetConfig(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  blurSigma: 5,
+                  barrierColor:
+                      context.theme.primaryColor.withValues(alpha: 0.4),
+                ),
+                child: const ExpenseScreen(),
+              );
+            }
+          },
           itemBuilder: (context) => [
             MenuItemWidget(
               icon: Icons.edit_outlined,
               text: 'Edit',
               value: 'edit',
+            ),
+            MenuItemWidget(
+              icon: Icons.edit_outlined,
+              text: 'Expenses',
+              value: 'expenses',
             ),
             MenuItemWidget(
               icon: Icons.share_outlined,

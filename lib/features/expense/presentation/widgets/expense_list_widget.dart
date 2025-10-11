@@ -42,18 +42,22 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget>
     _scaleAnimation = Tween<double>(
       begin: 1,
       end: 1.2,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ),);
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOut,
+      ),
+    );
 
     _bounceAnimation = Tween<double>(
       begin: 0,
       end: -8,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.elasticOut,
-    ),);
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.elasticOut,
+      ),
+    );
   }
 
   @override

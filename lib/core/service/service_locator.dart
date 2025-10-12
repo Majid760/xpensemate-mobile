@@ -19,8 +19,11 @@ import 'package:xpensemate/features/budget/data/datasources/budget_remote_data_s
 import 'package:xpensemate/features/budget/data/datasources/budget_remote_data_source_impl.dart';
 import 'package:xpensemate/features/budget/data/repositories/budget_repository_impl.dart';
 import 'package:xpensemate/features/budget/domain/repositories/budget_repository.dart';
+import 'package:xpensemate/features/budget/domain/usecases/get_budget_expenses_usecase.dart';
+import 'package:xpensemate/features/budget/domain/usecases/get_budget_specific_expenses_usecase.dart';
 import 'package:xpensemate/features/budget/domain/usecases/usecase_export.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
+import 'package:xpensemate/features/budget/presentation/cubit/budget_expense_cubit.dart';
 import 'package:xpensemate/features/dashboard/data/datasources/dashboard_remote_data_source.dart';
 import 'package:xpensemate/features/dashboard/data/repositories/dashboard_repository_impl.dart';
 import 'package:xpensemate/features/dashboard/domain/repositories/dashboard_repository.dart';
@@ -167,6 +170,8 @@ Future<void> initLocator() async {
     sl.registerLazySingleton(() => GetBudgetGoalsByStatusUseCase(sl()));
     sl.registerLazySingleton(() => GetBudgetGoalsStatsUseCase(sl()));
     sl.registerLazySingleton(() => UpdateBudgetGoalUseCase(sl()));
+    sl.registerLazySingleton(() => GetBudgetExpensesUseCase(sl()));
+    sl.registerLazySingleton(() => GetBudgetSpecificExpensesUseCase(sl()));
 
     // ---------- Presentation Layer ----------
     sl.registerFactory(() => AuthCubit(sl()));
@@ -176,6 +181,7 @@ Future<void> initLocator() async {
     );
     sl.registerFactory(() => ExpenseCubit(sl(), sl(), sl(), sl(), sl(), sl()));
     sl.registerFactory(() => BudgetCubit(sl(), sl(), sl(), sl(), sl()));
+    sl.registerFactory(() => BudgetExpensesCubit(sl()));
 
     AppLogger.i('Service locator initialized successfully');
   } on Exception catch (e) {
@@ -213,4 +219,5 @@ extension ServiceLocatorExtension on GetIt {
   HomeCubit get homeCubit => this<HomeCubit>();
   ExpenseCubit get expenseCubit => this<ExpenseCubit>();
   BudgetCubit get budgetCubit => this<BudgetCubit>();
+  BudgetExpensesCubit get budgetExpensesCubit => this<BudgetExpensesCubit>();
 }

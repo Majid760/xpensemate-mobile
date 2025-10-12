@@ -3,9 +3,10 @@ import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/core/network/network_configs.dart';
 import 'package:xpensemate/core/network/network_contracts.dart';
 import 'package:xpensemate/features/budget/data/datasources/budget_remote_data_source.dart';
-import 'package:xpensemate/features/budget/data/models/budget_expense_model.dart';
 import 'package:xpensemate/features/budget/data/models/budget_goal_model.dart';
+import 'package:xpensemate/features/budget/data/models/budget_specific_expense_model.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
+import 'package:xpensemate/features/budget/domain/entities/budget_specific_expense_entity.dart';
 
 class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
   BudgetRemoteDataSourceImpl(this._networkClient);
@@ -73,11 +74,11 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
       );
 
   @override
-  Future<Either<Failure, BudgetExpensesListModel>>
+  Future<Either<Failure, BudgetSpecificExpensesListEntity>>
       getExpensesForSpecificBudgetGoal(String budgetGoalId) =>
           _networkClient.get(
             '${NetworkConfigs.getAllExpensesOfBudgetGoal}/$budgetGoalId/expenses',
-            fromJson: BudgetExpensesListModel.fromJson,
+            fromJson: BudgetSpecificExpensesListModel.fromJson,
           );
 
   @override

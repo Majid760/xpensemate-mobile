@@ -154,15 +154,17 @@ class BudgetExpensesListModel extends BudgetExpensesListEntity {
   });
 
   factory BudgetExpensesListModel.fromJson(Map<String, dynamic> json) {
-    final data = json['data'] as Map<String, dynamic>? ?? {};
+    // Handle both direct data format and wrapped data format
+    final data = (json['data'] as Map<String, dynamic>?) ?? json;
 
     return BudgetExpensesListModel(
       expenses: (data['expenses'] as List? ?? [])
           .map((e) => BudgetExpenseModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      total: data['total'] as int? ?? 0,
-      page: data['page'] as int? ?? 1,
-      totalPages: data['totalPages'] as int? ?? 1,
+      total:
+          (data['total'] as int?) ?? (data['expenses'] as List? ?? []).length,
+      page: (data['page'] as int?) ?? 1,
+      totalPages: (data['totalPages'] as int?) ?? 1,
     );
   }
 

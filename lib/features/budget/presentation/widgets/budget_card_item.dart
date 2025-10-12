@@ -6,7 +6,7 @@ import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
-import 'package:xpensemate/features/budget/presentation/widgets/budget_expenses.dart';
+import 'package:xpensemate/features/budget/presentation/pages/budget_expenses_page.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/stats_row.dart';
 
 class BudgetGoalCard extends StatefulWidget {
@@ -101,6 +101,7 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
                 isCompleted: isCompleted,
                 status: _status,
                 isOverdue: false,
+                budgetGoalEntity: _budgetGoal,
               ),
               BottomSection(
                 progress: progress,
@@ -133,6 +134,7 @@ class TopSection extends StatelessWidget {
     required this.isCompleted,
     required this.isOverdue,
     required this.status,
+    required this.budgetGoalEntity,
   });
 
   final String title;
@@ -143,6 +145,7 @@ class TopSection extends StatelessWidget {
   final bool isCompleted;
   final bool isOverdue;
   final String status;
+  final BudgetGoalEntity budgetGoalEntity;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -161,6 +164,7 @@ class TopSection extends StatelessWidget {
               category: category,
               isCompleted: isCompleted,
               isOverdue: isOverdue,
+              budgetGoalEntity: budgetGoalEntity,
             ),
             const SizedBox(height: 8),
             AmountDisplay(
@@ -181,12 +185,14 @@ class TopHeader extends StatelessWidget {
     required this.category,
     required this.isCompleted,
     required this.isOverdue,
+    required this.budgetGoalEntity,
   });
 
   final String title;
   final String category;
   final bool isCompleted;
   final bool isOverdue;
+  final BudgetGoalEntity budgetGoalEntity;
 
   @override
   Widget build(BuildContext context) => Row(
@@ -199,7 +205,7 @@ class TopHeader extends StatelessWidget {
             child: TitleCategory(title: title, category: category),
           ),
           const SizedBox(width: 8),
-          const MenuButton(),
+          MenuButton(budgetGoalEntity: budgetGoalEntity),
         ],
       );
 }
@@ -268,7 +274,8 @@ class StatusIcon extends StatelessWidget {
 
 // Menu Button Widget
 class MenuButton extends StatelessWidget {
-  const MenuButton({super.key});
+  const MenuButton({super.key, required this.budgetGoalEntity});
+  final BudgetGoalEntity budgetGoalEntity;
 
   @override
   Widget build(BuildContext context) => DecoratedBox(
@@ -290,7 +297,7 @@ class MenuButton extends StatelessWidget {
           onSelected: (value) {
             if (value == 'edit') {
             } else if (value == 'expenses') {
-              AppBottomSheet.showScrollable(
+              AppBottomSheet.showScrollable<void>(
                 context: context,
                 title: 'Expenses',
                 config: BottomSheetConfig(
@@ -299,7 +306,7 @@ class MenuButton extends StatelessWidget {
                   barrierColor:
                       context.theme.primaryColor.withValues(alpha: 0.4),
                 ),
-                child: const ExpenseScreen(),
+                child: ExpenseScreen(budgetGoal: budgetGoalEntity),
               );
             }
           },

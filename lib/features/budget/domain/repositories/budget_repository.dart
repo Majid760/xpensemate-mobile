@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/features/budget/data/models/budget_expense_model.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
+import 'package:xpensemate/features/budget/domain/entities/budget_specific_expense_entity.dart';
 
 abstract class BudgetRepository {
   /// Fetches budget goals with optional pagination and filters
@@ -30,6 +31,6 @@ abstract class BudgetRepository {
   /// Deletes a budget goal
   Future<Either<Failure, bool>> deleteBudgetGoal(String id);
 
-  Future<Either<Failure, BudgetExpensesListModel>>
+  Future<Either<Failure, BudgetSpecificExpensesListEntity>>
       getExpensesForSpecificBudgetGoal(String budgetGoalId);
 }

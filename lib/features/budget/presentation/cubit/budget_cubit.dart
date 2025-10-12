@@ -137,9 +137,8 @@ class BudgetCubit extends Cubit<BudgetState> {
     await getBudgetGoals(limit: limit, refresh: true);
   }
 
-  bool shouldLoadMore(int index, {int threshold = 5}) => !_hasMore || _loading
-      ? false
-      : index >= _cache.length - threshold && _cache.isNotEmpty;
+  bool shouldLoadMore(int index, {int threshold = 5}) =>
+      _hasMore && !_loading && index >= _cache.length - threshold && _cache.isNotEmpty;
 
   void checkAndLoadMore(int index, {int threshold = 5}) {
     if (shouldLoadMore(index, threshold: threshold)) loadNextPage();

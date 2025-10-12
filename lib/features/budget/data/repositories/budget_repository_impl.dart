@@ -3,6 +3,7 @@ import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/features/budget/data/datasources/budget_remote_data_source.dart';
 import 'package:xpensemate/features/budget/data/models/budget_expense_model.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
+import 'package:xpensemate/features/budget/domain/entities/budget_specific_expense_entity.dart';
 import 'package:xpensemate/features/budget/domain/repositories/budget_repository.dart';
 
 class BudgetRepositoryImpl implements BudgetRepository {
@@ -49,10 +50,8 @@ class BudgetRepositoryImpl implements BudgetRepository {
       remoteDataSource.deleteBudgetGoal(budgetGoalId);
 
   @override
-  Future<Either<Failure, BudgetExpensesListModel>>
-      getExpensesForSpecificBudgetGoal(String budgetGoalId) {
-    return remoteDataSource.getExpensesForSpecificBudgetGoal(budgetGoalId);
-  }
+  Future<Either<Failure, BudgetSpecificExpensesListEntity>>
+      getExpensesForSpecificBudgetGoal(String budgetGoalId) => remoteDataSource.getExpensesForSpecificBudgetGoal(budgetGoalId);
 
   @override
   Future<Either<Failure, BudgetGoalEntity>> getBudgetGoal(String id) {

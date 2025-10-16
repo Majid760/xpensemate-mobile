@@ -75,9 +75,9 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
   int _calculateSelectedIndex(BuildContext context) {
     final loc = GoRouterState.of(context).matchedLocation;
     print('Location 1234: $loc');
-    if (loc.startsWith('/home/budget')) return 2;
+    if (loc.startsWith('/home/budget')) return 3;
     if (loc.startsWith('/home/expense')) return 1;
-    if (loc.startsWith('/home/payment')) return 3;
+    if (loc.startsWith('/home/payment')) return 2;
     if (loc.startsWith('/profile')) return 4;
     // Default to dashboard for /home and /home/dashboard
     if (loc == '/home' || loc.startsWith('/home/dashboard')) return 0;

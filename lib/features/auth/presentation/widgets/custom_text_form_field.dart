@@ -40,6 +40,7 @@ class ReactiveAppField extends StatefulWidget {
     this.filled = false,
     this.fillColor,
     this.border,
+    this.radius,
     this.contentPadding,
     this.isDense = true,
     this.helperText,
@@ -83,6 +84,7 @@ class ReactiveAppField extends StatefulWidget {
   final bool filled;
   final Color? fillColor;
   final InputBorder? border;
+  final BorderRadius? radius;
   final EdgeInsetsGeometry? contentPadding;
   final bool isDense;
   final String? helperText;
@@ -652,7 +654,7 @@ class _ReactiveAppFieldState extends State<ReactiveAppField> {
         ),
         border: widget.border ??
             OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: widget.radius ?? BorderRadius.circular(12),
               borderSide: BorderSide(
                 color: context.colorScheme.outline.withValues(alpha: 0.2),
                 width: 1.5,
@@ -660,27 +662,27 @@ class _ReactiveAppFieldState extends State<ReactiveAppField> {
             ),
         enabledBorder: widget.border ??
             OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: widget.radius ?? BorderRadius.circular(12),
               borderSide: BorderSide(
                 color: context.colorScheme.outline.withValues(alpha: 0.2),
                 width: 1.5,
               ),
             ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: widget.radius ?? BorderRadius.circular(12),
           borderSide: BorderSide(
             color: context.colorScheme.outline.withValues(alpha: 0.8),
             width: 2,
           ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: widget.radius ?? BorderRadius.circular(12),
           borderSide: BorderSide(
             color: colorScheme.error,
           ),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: widget.radius ?? BorderRadius.circular(12),
           borderSide: BorderSide(
             color: colorScheme.error,
             width: 2,

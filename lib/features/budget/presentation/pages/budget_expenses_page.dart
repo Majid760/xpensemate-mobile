@@ -562,8 +562,9 @@ class _SearchAndFilterBarState extends State<SearchAndFilterBar>
               Expanded(
                 child: ReactiveForm(
                   formGroup: _form,
-                  child: const ReactiveAppField(
+                  child: ReactiveAppField(
                     formControlName: 'search',
+                    radius: BorderRadius.circular(36),
                   ),
                 ),
               ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/budget_goal_list.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/insight_card_section.dart';
@@ -51,7 +53,7 @@ class _BudgetPageContentState extends State<BudgetPageContent>
   @override
   Widget build(BuildContext context) => RefreshIndicator(
         onRefresh: () async => _loadBudgetData(),
-        color: Theme.of(context).primaryColor,
+        color: context.primaryColor,
         child: CustomScrollView(
           controller: _scrollController,
           physics: const BouncingScrollPhysics(
@@ -60,26 +62,25 @@ class _BudgetPageContentState extends State<BudgetPageContent>
           slivers: [
             const BudgetAppBar(),
             SliverPadding(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(context.md),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
                   const ExpandableStatsCard(),
-                  const SizedBox(height: 24),
-                  const SectionHeader(title: 'Budget Goals'),
-                  const SizedBox(height: 12),
+                  SizedBox(height: context.xl),
+                  SectionHeader(title: context.l10n.budget),
+                  SizedBox(height: context.sm),
                 ]),
               ),
             ),
             BudgetGoalsListWidget(scrollController: _scrollController),
             // Bottom padding for FAB
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 100),
+            SliverToBoxAdapter(
+              child: SizedBox(height: context.xl * 3),
             ),
           ],
         ),
       );
 }
-
 
 class BudgetAppBar extends StatelessWidget {
   const BudgetAppBar({super.key});
@@ -88,11 +89,10 @@ class BudgetAppBar extends StatelessWidget {
   Widget build(BuildContext context) => SliverAppBar(
         expandedHeight: 120,
         pinned: true,
-        // backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         elevation: 0,
         flexibleSpace: FlexibleSpaceBar(
-          titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
+          titlePadding: EdgeInsets.only(left: context.md, bottom: context.md),
           title: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,26 +100,28 @@ class BudgetAppBar extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: EdgeInsets.all(context.sm),
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                      gradient: LinearGradient(
+                        colors: [
+                          context.colorScheme.primary,
+                          context.colorScheme.secondary,
+                        ],
                       ),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.bar_chart_rounded,
-                      color: Colors.white,
+                      color: context.colorScheme.onPrimary,
                       size: 20,
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  const Text(
-                    'Budget Insights',
-                    style: TextStyle(
-                      fontSize: 20,
+                  SizedBox(width: context.sm),
+                  Text(
+                    context.l10n.budget,
+                    style: context.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF1F2937),
+                      color: context.colorScheme.onSurface,
                     ),
                   ),
                 ],
@@ -129,20 +131,32 @@ class BudgetAppBar extends StatelessWidget {
         ),
         actions: [
           Container(
-            margin: const EdgeInsets.only(right: 12),
+            margin: EdgeInsets.only(right: context.sm),
             decoration: BoxDecoration(
-              color: const Color(0xFFF3F4F6),
+              color: context.colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(12),
             ),
             child: PopupMenuButton<String>(
-              icon: const Icon(Icons.tune_rounded, color: Color(0xFF6B7280)),
+              icon: Icon(
+                Icons.tune_rounded,
+                color: context.colorScheme.onSurfaceVariant,
+              ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
               itemBuilder: (context) => [
-                const PopupMenuItem(value: 'weekly', child: Text('Weekly')),
-                const PopupMenuItem(value: 'monthly', child: Text('Monthly')),
-                const PopupMenuItem(value: 'yearly', child: Text('Yearly')),
+                PopupMenuItem(
+                  value: 'weekly',
+                  child: Text(context.l10n.weeklyInsights),
+                ),
+                PopupMenuItem(
+                  value: 'monthly',
+                  child: Text(context.l10n.thisMonth),
+                ),
+                PopupMenuItem(
+                  value: 'yearly',
+                  child: Text(context.l10n.dailySpendingPattern),
+                ),
               ],
             ),
           ),
@@ -160,18 +174,23 @@ class SectionHeader extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 18,
+            style: context.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: Color(0xFF1F2937),
+              color: context.colorScheme.onSurface,
             ),
           ),
           TextButton.icon(
             onPressed: () {},
-            icon: const Icon(Icons.filter_list_rounded, size: 18),
-            label: const Text('Filter'),
+            icon: Icon(
+              Icons.filter_list_rounded,
+              size: 18,
+              color: context.colorScheme.primary,
+            ),
+            label: Text(
+              context.l10n.searchPlaceholder,
+            ), // Using searchPlaceholder as a generic filter text
             style: TextButton.styleFrom(
-              foregroundColor: const Color(0xFF6366F1),
+              foregroundColor: context.colorScheme.primary,
             ),
           ),
         ],

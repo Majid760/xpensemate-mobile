@@ -513,6 +513,42 @@ abstract class AppLocalizations {
   /// **'Resource not found.'**
   String get errorNotFound;
 
+  /// No description provided for @budgetGoalsLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get budgetGoalsLoading;
+
+  /// No description provided for @budgetGoalsRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get budgetGoalsRetry;
+
+  /// No description provided for @budgetGoalsError.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred'**
+  String get budgetGoalsError;
+
+  /// No description provided for @budgetGoalsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No budget goals yet'**
+  String get budgetGoalsEmptyTitle;
+
+  /// No description provided for @budgetGoalsEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your first budget goal to get started'**
+  String get budgetGoalsEmptySubtitle;
+
+  /// No description provided for @budgetGoalsAllLoaded.
+  ///
+  /// In en, this message translates to:
+  /// **'All budget goals loaded'**
+  String get budgetGoalsAllLoaded;
+
   /// No description provided for @saveSuccess.
   ///
   /// In en, this message translates to:
@@ -1256,6 +1292,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'budget'**
   String get budget;
+
+  /// Expenses label
+  ///
+  /// In en, this message translates to:
+  /// **'expenses'**
+  String get expenses;
+
+  /// Archive button label
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get archive;
+
+  /// Share button label
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share;
 
   /// Label for cumulative values in charts
   ///

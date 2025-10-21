@@ -1,10 +1,17 @@
 // Search and Filter Bar with shadow
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:xpensemate/features/auth/presentation/widgets/custom_text_form_field.dart';
+import 'package:xpensemate/features/budget/presentation/cubit/budget_expense_cubit.dart';
 
 class SearchAndFilterBar extends StatefulWidget {
-  const SearchAndFilterBar({super.key});
+  const SearchAndFilterBar({
+    super.key,
+    this.onFilterToggle,
+  });
+
+  final Function(bool)? onFilterToggle;
 
   @override
   State<SearchAndFilterBar> createState() => _SearchAndFilterBarState();
@@ -44,6 +51,13 @@ class _SearchAndFilterBarState extends State<SearchAndFilterBar>
         curve: Curves.easeInOut,
       ),
     );
+
+    // Listen to form changes for search
+    _form.control('search').valueChanges.listen((value) {
+      if (context.mounted) {
+        context.budgetExpensesCubit.updateSearchQuery(value as String? ?? '');
+      }
+    });
   }
 
   @override
@@ -62,10 +76,14 @@ class _SearchAndFilterBarState extends State<SearchAndFilterBar>
         _animationController.reverse();
       }
     });
+
+    // Notify parent about filter state change
+    widget.onFilterToggle?.call(_isFilterVisible);
   }
 
   @override
   Widget build(BuildContext context) => Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [
@@ -75,6 +93,7 @@ class _SearchAndFilterBarState extends State<SearchAndFilterBar>
                   child: ReactiveAppField(
                     formControlName: 'search',
                     radius: BorderRadius.circular(36),
+                    fieldType: FieldType.search,
                   ),
                 ),
               ),
@@ -120,7 +139,12 @@ class _SearchAndFilterBarState extends State<SearchAndFilterBar>
               opacity: _fadeAnimation,
               child: Container(
                 margin: const EdgeInsets.only(top: 16),
-                child: const PaymentMethodFilter(),
+                child: PaymentMethodFilter(onFilterChanged: (method) {
+                  if (context.mounted) {
+                    context.budgetExpensesCubit
+                        .updatePaymentMethodFilter(method);
+                  }
+                }),
               ),
             ),
           ),
@@ -130,7 +154,9 @@ class _SearchAndFilterBarState extends State<SearchAndFilterBar>
 
 // Payment Method Filter
 class PaymentMethodFilter extends StatefulWidget {
-  const PaymentMethodFilter({super.key});
+  const PaymentMethodFilter({super.key, this.onFilterChanged});
+
+  final Function(String)? onFilterChanged;
 
   @override
   State<PaymentMethodFilter> createState() => _PaymentMethodFilterState();
@@ -142,6 +168,7 @@ class _PaymentMethodFilterState extends State<PaymentMethodFilter> {
   void _selectFilter(String filter) {
     setState(() {
       selected = filter;
+      widget.onFilterChanged?.call(filter);
     });
   }
 

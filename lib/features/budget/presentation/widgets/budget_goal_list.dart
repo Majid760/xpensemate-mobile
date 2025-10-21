@@ -5,6 +5,7 @@ import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_state.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/budget_card_item.dart';
+import 'package:xpensemate/l10n/app_localizations.dart';
 
 class BudgetGoalsListWidget extends StatefulWidget {
   const BudgetGoalsListWidget({
@@ -24,12 +25,14 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
   @override
   Widget build(BuildContext context) => BlocConsumer<BudgetCubit, BudgetState>(
         listener: (context, state) {
+          final localizations = AppLocalizations.of(context);
           // Handle pagination errors with snackbar
           if (state.hasPaginationError && state.hasData) {
             AppSnackBar.show(
               context: context,
-              message: state.paginationError ?? '',
-              actionLabel: 'Retry',
+              message: state.paginationError ??
+                  (localizations?.budgetGoalsError ?? 'An error occurred'),
+              actionLabel: localizations?.budgetGoalsRetry ?? 'Retry',
               onActionPressed: () =>
                   context.read<BudgetCubit>().retryPaginationRequest(),
             );
@@ -48,6 +51,7 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
           }
         },
         builder: (context, state) {
+          final localizations = AppLocalizations.of(context);
           // Initial loading state
           if (state.isInitialLoading) {
             return const SliverToBoxAdapter(
@@ -73,7 +77,9 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      state.message ?? 'An error occurred',
+                      state.message ??
+                          (localizations?.budgetGoalsError ??
+                              'An error occurred'),
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: Theme.of(context).colorScheme.error,
@@ -81,7 +87,7 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
                     ),
                     const SizedBox(height: 12),
                     AppButton.icon(
-                      text: 'Retry',
+                      text: localizations?.budgetGoalsRetry ?? 'Retry',
                       onPressed: () =>
                           context.read<BudgetCubit>().refreshBudgetGoals(),
                       leadingIcon: const Icon(Icons.refresh, size: 18),
@@ -94,34 +100,36 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
 
           // No data state
           if (!state.hasData) {
-            return const SliverToBoxAdapter(
+            return SliverToBoxAdapter(
               child: Center(
                 child: Padding(
-                  padding: EdgeInsets.all(32),
+                  padding: const EdgeInsets.all(32),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
                         Icons.bar_chart_rounded,
                         size: 64,
-                        color: Color(0xFF9CA3AF),
+                        color: Theme.of(context).colorScheme.outline,
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       Text(
-                        'No budget goals yet',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF6B7280),
-                        ),
+                        localizations?.budgetGoalsEmptyTitle ??
+                            'No budget goals yet',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                              fontWeight: FontWeight.w500,
+                            ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text(
-                        'Create your first budget goal to get started',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFF9CA3AF),
-                        ),
+                        localizations?.budgetGoalsEmptySubtitle ??
+                            'Create your first budget goal to get started',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant,
+                            ),
                       ),
                     ],
                   ),
@@ -162,9 +170,9 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
 
               // Loading more indicator
               if (state.isLoadingMore)
-                const SliverToBoxAdapter(
+                SliverToBoxAdapter(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                     child: Center(
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -174,15 +182,22 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
                             height: 20,
                             child: CircularProgressIndicator.adaptive(
                               strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Theme.of(context).colorScheme.primary,
+                              ),
                             ),
                           ),
-                          SizedBox(width: 12),
+                          const SizedBox(width: 12),
                           Text(
-                            'Loading...',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Color(0xFF6B7280),
-                            ),
+                            localizations?.budgetGoalsLoading ?? 'Loading...',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant,
+                                ),
                           ),
                         ],
                       ),
@@ -205,7 +220,9 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          state.paginationError ?? 'An error occurred',
+                          state.paginationError ??
+                              (localizations?.budgetGoalsError ??
+                                  'An error occurred'),
                           textAlign: TextAlign.center,
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -218,13 +235,14 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
                               .read<BudgetCubit>()
                               .retryPaginationRequest(),
                           icon: const Icon(Icons.refresh, size: 18),
-                          label: const Text('Retry'),
+                          label:
+                              Text(localizations?.budgetGoalsRetry ?? 'Retry'),
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 8,
                             ),
-                            textStyle: const TextStyle(fontSize: 14),
+                            textStyle: Theme.of(context).textTheme.labelLarge,
                           ),
                         ),
                       ],
@@ -249,25 +267,33 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
                               vertical: 8,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF3F4F6),
+                              color:
+                                  Theme.of(context).colorScheme.surfaceContainerHighest,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            child: const Row(
+                            child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
                                   Icons.check_circle_outline,
                                   size: 16,
-                                  color: Color(0xFF6B7280),
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant,
                                 ),
-                                SizedBox(width: 8),
+                                const SizedBox(width: 8),
                                 Text(
-                                  'All budget goals loaded',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Color(0xFF6B7280),
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                                  localizations?.budgetGoalsAllLoaded ??
+                                      'All budget goals loaded',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelSmall
+                                      ?.copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurfaceVariant,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                 ),
                               ],
                             ),

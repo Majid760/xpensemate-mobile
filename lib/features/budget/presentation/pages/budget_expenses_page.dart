@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/theme/app_spacing.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_expense_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_expense_state.dart';
@@ -16,6 +20,8 @@ class ExpenseScreen extends StatefulWidget {
 }
 
 class _ExpenseScreenState extends State<ExpenseScreen> {
+  bool _isFilterExpanded = false;
+
   @override
   void initState() {
     super.initState();
@@ -25,14 +31,25 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
     }
   }
 
+  void _toggleFilter(bool isExpanded) {
+    setState(() {
+      _isFilterExpanded = isExpanded;
+    });
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: Colors.grey[50],
-        body: BlocBuilder<BudgetExpensesCubit, BudgetExpensesState>(
+        backgroundColor: context.colorScheme.surface,
+        body: BlocConsumer<BudgetExpensesCubit, BudgetExpensesState>(
+          listener: (context, state) {
+            if (state.hasError && state.message != null) {
+              AppSnackBar.show(context: context, message: state.message!);
+            }
+          },
           builder: (context, state) {
             // Show loading indicator when initially loading
             if (state.isInitialLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator.adaptive());
             }
 
             // Show error message if there's an error and no data
@@ -41,13 +58,13 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Error: ${state.message}'),
+                    Text('${context.l10n.errorGeneric}: ${state.message}'),
                     ElevatedButton(
                       onPressed: () {
                         context.budgetExpensesCubit
                             .getBudgetSpecificExpenses(widget.budgetGoal.id);
                       },
-                      child: const Text('Retry'),
+                      child: Text(context.l10n.retry),
                     ),
                   ],
                 ),
@@ -56,55 +73,64 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
 
             // Show data if available
             final expenses = state.budgetGoals?.expenses ?? [];
+            final budgetGoal = widget.budgetGoal;
 
             return CustomScrollView(
               physics: const BouncingScrollPhysics(),
               slivers: [
                 // Animated Header (scrollable)
                 SliverToBoxAdapter(
-                  child: const AnimatedExpenseHeader(
-                    category: 'fun and entertainment Expenses',
-                    budgetGoal: 'funn',
-                    totalSpent: 262,
-                    average: 87.33,
-                    transactions: 3,
+                  child: AnimatedExpenseHeader(
+                    category: '${budgetGoal.name} Expenses',
+                    budgetGoal: budgetGoal.name,
+                    totalSpent: budgetGoal.currentSpending,
+                    average: expenses.isNotEmpty
+                        ? budgetGoal.currentSpending / expenses.length
+                        : 0,
+                    transactions: expenses.length,
                   ),
                 ),
-                const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: AppSpacing.md),
+                ),
 
-                // Sticky Search and Filter Bar
+                // Sticky Search and Filter Bar with expandable dropdown
                 SliverPersistentHeader(
                   pinned: true,
-                  floating: true,
-                  delegate: SearchBarDelegate(
-                    minHeight: 90.0,
-                    maxHeight: 120.0,
+                  delegate: ExpandableSearchBarDelegate(
+                    minHeight: 70,
+                    maxHeight: _isFilterExpanded ? 180.0 : 70.0,
                     child: Container(
-                      color: Colors.grey[50],
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                      alignment: Alignment.center,
-                      child: const SearchAndFilterBar(),
+                      color: context.colorScheme.surface,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: SearchAndFilterBar(
+                        onFilterToggle: _toggleFilter,
+                      ),
                     ),
                   ),
                 ),
 
-                const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: AppSpacing.md),
+                ),
 
                 // Budget Progress
                 SliverToBoxAdapter(
-                  child: const AnimatedWidget(
+                  child: AnimatedWidget(
                     delay: 200,
                     child: BudgetProgressBar(
-                      category: 'funn',
-                      subtitle: '(fun and entertainment)',
-                      budget: 1243,
-                      spent: 262,
-                      remaining: 981,
+                      category: budgetGoal.name,
+                      subtitle: '(${budgetGoal.category})',
+                      budget: budgetGoal.amount,
+                      spent: budgetGoal.currentSpending,
+                      remaining: budgetGoal.remainingBalance,
                     ),
                   ),
                 ),
 
-                const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: AppSpacing.md),
+                ),
 
                 // Expense List
                 SliverPadding(
@@ -135,12 +161,15 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                 if (state.isLoadingMore)
                   const SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Center(child: CircularProgressIndicator()),
+                      padding: EdgeInsets.all(AppSpacing.md),
+                      child:
+                          Center(child: CircularProgressIndicator.adaptive()),
                     ),
                   ),
 
-                const SliverToBoxAdapter(child: SizedBox(height: 20)),
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: AppSpacing.lg),
+                ),
               ],
             );
           },
@@ -148,9 +177,9 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
       );
 }
 
-// Custom delegate for the sticky search bar
-class SearchBarDelegate extends SliverPersistentHeaderDelegate {
-  SearchBarDelegate({
+// Custom delegate for expandable sticky search bar
+class ExpandableSearchBarDelegate extends SliverPersistentHeaderDelegate {
+  ExpandableSearchBarDelegate({
     required this.minHeight,
     required this.maxHeight,
     required this.child,
@@ -168,18 +197,20 @@ class SearchBarDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      height: maxHeight,
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    final currentExtent = maxHeight - shrinkOffset;
+    return SizedBox(
+      height: currentExtent,
       child: child,
     );
   }
 
   @override
-  bool shouldRebuild(covariant SearchBarDelegate oldDelegate) {
-    return maxHeight != oldDelegate.maxHeight ||
-        minHeight != oldDelegate.minHeight;
-  }
+  bool shouldRebuild(covariant ExpandableSearchBarDelegate oldDelegate) =>
+      maxHeight != oldDelegate.maxHeight || minHeight != oldDelegate.minHeight;
 }
 
 // Animated Widget Wrapper with fade and slide animation
@@ -259,17 +290,19 @@ class BudgetProgressBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final progress = spent / budget;
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: colorScheme.outlineVariant),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: colorScheme.secondaryFixed.withValues(alpha: 0.06),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -283,43 +316,41 @@ class BudgetProgressBar extends StatelessWidget {
             children: [
               RichText(
                 text: TextSpan(
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color: colorScheme.onSurface,
                   ),
                   children: [
                     TextSpan(text: category),
                     TextSpan(
                       text: '  $subtitle',
-                      style: TextStyle(
-                        fontSize: 14,
+                      style: textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.normal,
-                        color: Colors.grey[600],
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.sm),
               Wrap(
-                spacing: 12,
+                spacing: AppSpacing.sm,
                 runSpacing: 8,
                 children: [
-                  _BudgetLabel('Budget', budget, Colors.grey[600]!),
-                  _BudgetLabel('Spent', spent, Colors.grey[600]!),
+                  _BudgetLabel('Budget', budget, colorScheme.onSurfaceVariant),
+                  _BudgetLabel('Spent', spent, colorScheme.onSurfaceVariant),
                   _BudgetLabel('Remaining', remaining, Colors.green),
                 ],
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.md),
           DecoratedBox(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF6C63FF).withOpacity(0.2),
+                  color: colorScheme.secondary.withValues(alpha: 0.2),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -329,9 +360,8 @@ class BudgetProgressBar extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               child: LinearProgressIndicator(
                 value: progress,
-                backgroundColor: Colors.grey[200],
-                valueColor:
-                    const AlwaysStoppedAnimation<Color>(Color(0xFF6C63FF)),
+                backgroundColor: colorScheme.surfaceContainerHighest,
+                valueColor: AlwaysStoppedAnimation<Color>(context.primaryColor),
                 minHeight: 10,
               ),
             ),
@@ -355,16 +385,14 @@ class _BudgetLabel extends StatelessWidget {
         children: [
           Text(
             label,
-            style: TextStyle(
-              fontSize: 11,
-              color: Colors.grey[500],
+            style: context.textTheme.bodySmall?.copyWith(
+              color: context.colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.w500,
             ),
           ),
           Text(
             '\$${amount.toStringAsFixed(2)}',
-            style: TextStyle(
-              fontSize: 13,
+            style: context.textTheme.bodyMedium?.copyWith(
               color: color,
               fontWeight: FontWeight.w600,
             ),

@@ -219,6 +219,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorNotFound => 'Resource not found.';
 
   @override
+  String get budgetGoalsLoading => 'Loading...';
+
+  @override
+  String get budgetGoalsRetry => 'Retry';
+
+  @override
+  String get budgetGoalsError => 'An error occurred';
+
+  @override
+  String get budgetGoalsEmptyTitle => 'No budget goals yet';
+
+  @override
+  String get budgetGoalsEmptySubtitle => 'Create your first budget goal to get started';
+
+  @override
+  String get budgetGoalsAllLoaded => 'All budget goals loaded';
+
+  @override
   String get saveSuccess => 'Saved successfully!';
 
   @override
@@ -611,6 +629,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get budget => 'budget';
+
+  @override
+  String get expenses => 'expenses';
+
+  @override
+  String get archive => 'Archive';
+
+  @override
+  String get share => 'Share';
 
   @override
   String get cumulative => 'cumulative';

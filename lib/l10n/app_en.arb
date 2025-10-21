@@ -39,6 +39,9 @@
   "expenseUpdatedFailed": "Expense failed to update!",
   "expenseCreatedFailed": "Expense failed to create!",
   
+  "@@expense_section": "Expense related strings",
+  "currencySymbol": "$",
+  
   "or": "Or",
   
   "@@authentication_section": "Authentication and user account strings",
@@ -111,6 +114,14 @@
   "errorTimeout": "Request timeout. Please try again.",
   "errorNotFound": "Resource not found.",
   
+  "@@budget_section": "Budget related strings",
+  "budgetGoalsLoading": "Loading...",
+  "budgetGoalsRetry": "Retry",
+  "budgetGoalsError": "An error occurred",
+  "budgetGoalsEmptyTitle": "No budget goals yet",
+  "budgetGoalsEmptySubtitle": "Create your first budget goal to get started",
+  "budgetGoalsAllLoaded": "All budget goals loaded",
+  
   "@@success_messages_section": "Success feedback messages",
   "saveSuccess": "Saved successfully!",
   "deleteSuccess": "Deleted successfully!",
@@ -177,6 +188,9 @@
   "languageChanged": "Language changed successfully",
 
   "totalSpent": "Total Spent",
+  "average": "Average",
+  "transactions": "Transactions",
+  "budgetGoalLabel": "Budget Goal: {amount}",
   "thisMonth": "This Month",
   "categories": "Categories",
 
@@ -407,12 +421,22 @@
     "description": "Message when no trend data is available"
   },
   "of12": "of",
-  "@of": {
-    "description": "Preposition used in budget context like 'of $2,342 budget'"
-  },
+
   "budget": "budget",
   "@budget": {
     "description": "Budget label"
+  },
+  "expenses": "expenses",
+  "@expenses": {
+    "description": "Expenses label"
+  },
+  "archive": "Archive",
+  "@archive": {
+    "description": "Archive button label"
+  },
+  "share": "Share",
+  "@share": {
+    "description": "Share button label"
   },
   "cumulative": "cumulative",
   "@cumulative": {
@@ -518,7 +542,6 @@
   "sat": "Sat",
   "sun": "Sun",
 
-  "@@expense_form_section": "Expense form related strings",
   "description": "Description",
   "@description": {
     "description": "Expense description label"

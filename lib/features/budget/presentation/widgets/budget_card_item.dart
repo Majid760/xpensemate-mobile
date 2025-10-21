@@ -1,7 +1,9 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/colors/app_colors.dart';
+import 'package:xpensemate/core/theme/theme_constant.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
@@ -45,7 +47,10 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
   }
 
   void _updateStatus(
-      String value, BudgetGoalEntity budgetGoal, BuildContext context) {
+    String value,
+    BudgetGoalEntity budgetGoal,
+    BuildContext context,
+  ) {
     if (value.isNotEmpty && value != _status) {
       widget.onStatusChange?.call(value);
       context.budgetCubit.updateBudgetGoal(
@@ -80,11 +85,11 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
         scale: _scaleAnimation,
         child: DecoratedBox(
           decoration: BoxDecoration(
-            color: const Color(0xFFFAFAFA),
-            borderRadius: BorderRadius.circular(20),
+            color: context.colorScheme.surface,
+            borderRadius: BorderRadius.circular(ThemeConstants.radiusXLarge),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.06),
+                color: context.colorScheme.shadow.withValues(alpha: 0.06),
                 blurRadius: 20,
                 offset: const Offset(0, 4),
               ),
@@ -149,12 +154,12 @@ class TopSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(14),
+        padding: EdgeInsets.all(context.md),
         decoration: BoxDecoration(
           color: categoryColor,
           borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
+            topLeft: Radius.circular(ThemeConstants.radiusXLarge),
+            topRight: Radius.circular(ThemeConstants.radiusXLarge),
           ),
         ),
         child: Column(
@@ -166,7 +171,7 @@ class TopSection extends StatelessWidget {
               isOverdue: isOverdue,
               budgetGoalEntity: budgetGoalEntity,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: context.sm),
             AmountDisplay(
               amount: amount,
               deadline: deadline,
@@ -199,12 +204,12 @@ class TopHeader extends StatelessWidget {
         children: [
           if (isCompleted) ...[
             StatusIcon(isCompleted: isCompleted),
-            const SizedBox(width: 12),
+            SizedBox(width: context.sm),
           ],
           Expanded(
             child: TitleCategory(title: title, category: category),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: context.sm),
           MenuButton(budgetGoalEntity: budgetGoalEntity),
         ],
       );
@@ -227,21 +232,19 @@ class TitleCategory extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 18,
+            style: context.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: context.colorScheme.onPrimary,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: context.xs),
           Text(
             category.toUpperCase(),
-            style: TextStyle(
-              fontSize: 10,
+            style: context.textTheme.labelMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: Colors.white.withValues(alpha: 0.8),
+              color: context.colorScheme.onPrimary.withValues(alpha: 0.8),
             ),
           ),
         ],
@@ -259,15 +262,15 @@ class StatusIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(8),
+        padding: EdgeInsets.all(context.sm),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.25),
+          color: context.colorScheme.onPrimary.withValues(alpha: 0.25),
           shape: BoxShape.circle,
         ),
         child: Icon(
           isCompleted ? Icons.check_rounded : Icons.warning_rounded,
           size: 20,
-          color: Colors.white,
+          color: context.colorScheme.onPrimary,
         ),
       );
 }
@@ -280,28 +283,28 @@ class MenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => DecoratedBox(
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.25),
+          color: context.colorScheme.onPrimary.withValues(alpha: 0.25),
           borderRadius: BorderRadius.circular(10),
         ),
         child: PopupMenuButton<String>(
-          icon: const Icon(
+          icon: Icon(
             Icons.more_vert_rounded,
             size: 20,
-            color: Colors.white,
+            color: context.colorScheme.onPrimary,
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
           offset: const Offset(0, 8),
-          padding: const EdgeInsets.all(6),
+          padding: EdgeInsets.all(context.xs),
           onSelected: (value) {
             if (value == 'edit') {
             } else if (value == 'expenses') {
               AppBottomSheet.showScrollable<void>(
                 context: context,
-                title: 'Expenses',
+                title: context.l10n.budget,
                 config: BottomSheetConfig(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  padding: EdgeInsets.symmetric(horizontal: context.sm),
                   blurSigma: 5,
                   barrierColor:
                       context.theme.primaryColor.withValues(alpha: 0.4),
@@ -313,28 +316,30 @@ class MenuButton extends StatelessWidget {
           itemBuilder: (context) => [
             MenuItemWidget(
               icon: Icons.edit_outlined,
-              text: 'Edit',
+              text: context.l10n.edit,
               value: 'edit',
             ),
             MenuItemWidget(
               icon: Icons.edit_outlined,
-              text: 'Expenses',
+              text: context.l10n.budget,
               value: 'expenses',
             ),
             MenuItemWidget(
               icon: Icons.share_outlined,
-              text: 'Share',
+              text: context.l10n
+                  .share, // Using hardcoded string as no localization available
               value: 'share',
             ),
             MenuItemWidget(
               icon: Icons.archive_outlined,
-              text: 'Archive',
+              text: context.l10n
+                  .archive, // Using hardcoded string as no localization available
               value: 'archive',
             ),
             const PopupMenuDivider(),
             MenuItemWidget(
               icon: Icons.delete_outline_rounded,
-              text: 'Delete',
+              text: context.l10n.delete,
               value: 'delete',
               isDestructive: true,
             ),
@@ -379,17 +384,16 @@ class _MenuItemContent extends StatelessWidget {
             icon,
             size: 20,
             color: isDestructive
-                ? const Color(0xFFEF4444)
-                : const Color(0xFF6B7280),
+                ? context.colorScheme.error
+                : context.colorScheme.onSurfaceVariant,
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: context.sm),
           Text(
             text,
-            style: TextStyle(
-              fontSize: 14,
+            style: context.textTheme.bodyMedium?.copyWith(
               color: isDestructive
-                  ? const Color(0xFFEF4444)
-                  : const Color(0xFF111827),
+                  ? context.colorScheme.error
+                  : context.colorScheme.onSurface,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -410,7 +414,7 @@ class AmountDisplay extends StatelessWidget {
   final String deadline;
   final String status;
 
-  String _calculateDaysStatus() {
+  String _calculateDaysStatus(BuildContext context) {
     if (deadline.isEmpty) return '';
 
     try {
@@ -436,14 +440,17 @@ class AmountDisplay extends StatelessWidget {
       final diffDays = dueDateOnly.difference(todayDate).inDays;
 
       if (diffDays > 1) {
-        return '$diffDays days left';
+        return '$diffDays days left'; // Using hardcoded string as no localization available
       } else if (diffDays == 1) {
-        return '1 day left';
+        return '1 day left'; // Using hardcoded string as no localization available
       } else if (diffDays == 0) {
-        return 'Due today';
+        return 'Due today'; // Using hardcoded string as no localization available
       } else {
         final absDiff = diffDays.abs();
-        return 'Overdue by $absDiff day${absDiff > 1 ? 's' : ''}';
+        final dayText = absDiff > 1
+            ? 'days'
+            : 'day'; // Using hardcoded string as no localization available
+        return 'Overdue by $absDiff $dayText'; // Using hardcoded string as no localization available
       }
     } on Exception catch (_) {
       return deadline.split(' ')[0];
@@ -492,38 +499,35 @@ class AmountDisplay extends StatelessWidget {
   Widget build(BuildContext context) => Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          const Text(
+          Text(
             r'$',
-            style: TextStyle(
-              fontSize: 32,
+            style: context.textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: Colors.white,
+              color: context.colorScheme.onPrimary,
               height: 1,
             ),
           ),
-          const SizedBox(width: 6),
+          SizedBox(width: context.xs),
           Text(
             _formatAmount(amount), // Use formatted amount
-            style: const TextStyle(
-              fontSize: 48,
+            style: context.textTheme.displaySmall?.copyWith(
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: context.colorScheme.onPrimary,
               height: 1,
               letterSpacing: -1,
             ),
           ),
           if (status == "active") ...[
-            const SizedBox(width: 16),
+            SizedBox(width: context.md),
             Padding(
-              padding: const EdgeInsets.only(bottom: 6),
+              padding: EdgeInsets.only(bottom: context.xs),
               child: Text(
-                _calculateDaysStatus(),
-                style: TextStyle(
-                  fontSize: 14,
+                _calculateDaysStatus(context),
+                style: context.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w500,
                   color: status == "active" && _isOverdue()
-                      ? const Color(0xFFDC2626)
-                      : const Color(0xFF64748B),
+                      ? context.colorScheme.error
+                      : context.colorScheme.onPrimary.withValues(alpha: 0.8),
                 ),
               ),
             ),
@@ -558,7 +562,7 @@ class BottomSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.all(18),
+        padding: EdgeInsets.all(context.lg),
         child: Column(
           children: [
             ProgressSection(
@@ -567,7 +571,7 @@ class BottomSection extends StatelessWidget {
               status: status,
               onStatusChange: onStatusChange,
             ),
-            const SizedBox(height: 14),
+            SizedBox(height: context.md),
             StatsRow(
               spent: spent,
               remaining: remaining,
@@ -621,7 +625,7 @@ class _ProgressSectionState extends State<ProgressSection> {
       case 'other':
         return AppColors.warning;
       default:
-        return const Color(0xFF6B7280);
+        return context.colorScheme.onSurfaceVariant;
     }
   }
 
@@ -631,12 +635,11 @@ class _ProgressSectionState extends State<ProgressSection> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Progress',
-                style: TextStyle(
-                  fontSize: 14,
+              Text(
+                context.l10n.budgetProgress,
+                style: context.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF6B7280),
+                  color: context.colorScheme.onSurfaceVariant,
                 ),
               ),
               Row(
@@ -644,17 +647,21 @@ class _ProgressSectionState extends State<ProgressSection> {
                 children: [
                   Text(
                     '${(widget.progress * 100).toInt()}%',
-                    style: TextStyle(
-                      fontSize: 20,
+                    style: context.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: widget.categoryColor,
                     ),
                   ),
-                  const SizedBox(width: 6),
+                  SizedBox(width: context.xs),
                   PopupMenuButton<String>(
                     padding: EdgeInsets.zero,
                     icon: Container(
-                      padding: const EdgeInsets.fromLTRB(6, 6, 12, 6),
+                      padding: EdgeInsets.fromLTRB(
+                        context.xs,
+                        context.xs,
+                        context.md,
+                        context.xs,
+                      ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
@@ -668,11 +675,10 @@ class _ProgressSectionState extends State<ProgressSection> {
                             size: 18,
                             color: _getStatusColor(_status, context),
                           ),
-                          const SizedBox(width: 6),
+                          SizedBox(width: context.xs),
                           Text(
                             _status,
-                            style: TextStyle(
-                              fontSize: 14,
+                            style: context.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w600,
                               color: _getStatusColor(_status, context),
                             ),
@@ -694,53 +700,48 @@ class _ProgressSectionState extends State<ProgressSection> {
                     itemBuilder: (context) => [
                       MenuItemWidget(
                         icon: Icons.local_activity,
-                        text: 'Active',
+                        text:
+                            'Active', // Using hardcoded string as no localization available
                         value: 'active',
                       ),
                       MenuItemWidget(
                         icon: Icons.star,
-                        text: 'Achieved',
+                        text:
+                            'Achieved', // Using hardcoded string as no localization available
                         value: 'achieved',
                       ),
                       MenuItemWidget(
                         icon: Icons.sms_failed,
-                        text: 'Failed',
+                        text:
+                            'Failed', // Using hardcoded string as no localization available
                         value: 'failed',
                       ),
                       MenuItemWidget(
                         icon: Icons.terminal,
-                        text: 'Terminated',
+                        text:
+                            'Terminated', // Using hardcoded string as no localization available
                         value: 'terminated',
                         // isDestructive: true,
                       ),
                       MenuItemWidget(
                         icon: Icons.more_horiz,
-                        text: 'Other',
+                        text: context.l10n.other,
                         value: 'other',
                         // isDestructive: true,
                       ),
                     ],
                   ),
-
-                  // const Text(
-                  //   'complete',
-                  //   style: TextStyle(
-                  //     fontSize: 14,
-                  //     fontWeight: FontWeight.w500,
-                  //     color: Color(0xFF9CA3AF),
-                  //   ),
-                  // ),
                 ],
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: context.sm),
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: LinearProgressIndicator(
               value: widget.progress.clamp(0.0, 1.0),
               minHeight: 10,
-              backgroundColor: const Color(0xFFE5E7EB),
+              backgroundColor: context.colorScheme.surfaceContainerHighest,
               valueColor: AlwaysStoppedAnimation<Color>(widget.categoryColor),
             ),
           ),

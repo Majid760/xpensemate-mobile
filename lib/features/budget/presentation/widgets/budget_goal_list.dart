@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
+import 'package:xpensemate/core/widget/error_state_widget.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_state.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/budget_card_item.dart';
@@ -65,35 +67,9 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
           }
           if (state.hasError) {
             return SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.error_outline,
-                      color: Theme.of(context).colorScheme.error,
-                      size: 32,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      state.message ??
-                          (localizations?.budgetGoalsError ??
-                              'An error occurred'),
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.error,
-                          ),
-                    ),
-                    const SizedBox(height: 12),
-                    AppButton.icon(
-                      text: localizations?.budgetGoalsRetry ?? 'Retry',
-                      onPressed: () =>
-                          context.read<BudgetCubit>().refreshBudgetGoals(),
-                      leadingIcon: const Icon(Icons.refresh, size: 18),
-                    ),
-                  ],
-                ),
+              child: ErrorStateSectionWidget(
+                errorMsg: state.message,
+                onRetry: () => context.read<BudgetCubit>().refreshBudgetGoals(),
               ),
             );
           }
@@ -108,28 +84,28 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
-                        Icons.bar_chart_rounded,
+                        Icons.receipt_long,
                         size: 64,
                         color: Theme.of(context).colorScheme.outline,
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        localizations?.budgetGoalsEmptyTitle ??
-                            'No budget goals yet',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface,
-                              fontWeight: FontWeight.w500,
-                            ),
+                        context.l10n.noDataAvailable,
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant,
+                                ),
                       ),
                       const SizedBox(height: 8),
-                      Text(
-                        localizations?.budgetGoalsEmptySubtitle ??
-                            'Create your first budget goal to get started',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant,
-                            ),
+                      const SizedBox(height: 16),
+                      AppButton.icon(
+                        onPressed: () {
+                          context.read<BudgetCubit>().refreshBudgetGoals();
+                        },
+                        leadingIcon: const Icon(Icons.refresh),
+                        text: context.l10n.tryAgain,
                       ),
                     ],
                   ),
@@ -267,8 +243,9 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
                               vertical: 8,
                             ),
                             decoration: BoxDecoration(
-                              color:
-                                  Theme.of(context).colorScheme.surfaceContainerHighest,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Row(

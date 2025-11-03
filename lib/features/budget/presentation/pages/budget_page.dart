@@ -87,47 +87,12 @@ class BudgetAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SliverAppBar(
-        expandedHeight: 120,
+        expandedHeight: 60,
         pinned: true,
         automaticallyImplyLeading: false,
         elevation: 0,
         flexibleSpace: FlexibleSpaceBar(
           titlePadding: EdgeInsets.only(left: context.md, bottom: context.md),
-          title: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(context.sm),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          context.colorScheme.primary,
-                          context.colorScheme.secondary,
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      Icons.bar_chart_rounded,
-                      color: context.colorScheme.onPrimary,
-                      size: 20,
-                    ),
-                  ),
-                  SizedBox(width: context.sm),
-                  Text(
-                    context.l10n.budget,
-                    style: context.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: context.colorScheme.onSurface,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
         ),
         actions: [
           Container(
@@ -172,26 +137,22 @@ class SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            title,
-            style: context.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: context.colorScheme.onSurface,
-            ),
-          ),
-          TextButton.icon(
-            onPressed: () {},
-            icon: Icon(
-              Icons.filter_list_rounded,
-              size: 18,
-              color: context.colorScheme.primary,
-            ),
-            label: Text(
-              context.l10n.searchPlaceholder,
-            ), // Using searchPlaceholder as a generic filter text
-            style: TextButton.styleFrom(
-              foregroundColor: context.colorScheme.primary,
-            ),
+          Row(
+            children: [
+              Icon(
+                Icons.receipt_long_rounded,
+                color: Theme.of(context).primaryColor,
+                size: 24,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+              ),
+            ],
           ),
         ],
       );

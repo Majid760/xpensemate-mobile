@@ -4,6 +4,7 @@ import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
+import 'package:xpensemate/core/widget/error_state_widget.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_expense_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_expense_state.dart';
@@ -58,13 +59,13 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('${context.l10n.errorGeneric}: ${state.message}'),
-                    ElevatedButton(
-                      onPressed: () {
+                    ErrorStateSectionWidget(
+                      errorMsg:
+                          '${context.l10n.errorGeneric}: ${state.message}',
+                      onRetry: () {
                         context.budgetExpensesCubit
                             .getBudgetSpecificExpenses(widget.budgetGoal.id);
                       },
-                      child: Text(context.l10n.retry),
                     ),
                   ],
                 ),
@@ -80,14 +81,24 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
               slivers: [
                 // Animated Header (scrollable)
                 SliverToBoxAdapter(
-                  child: AnimatedExpenseHeader(
-                    category: '${budgetGoal.name} Expenses',
-                    budgetGoal: budgetGoal.name,
-                    totalSpent: budgetGoal.currentSpending,
-                    average: expenses.isNotEmpty
-                        ? budgetGoal.currentSpending / expenses.length
-                        : 0,
-                    transactions: expenses.length,
+                  child: Builder(
+                    builder: (context) {
+                      // Calculate filtered expenses total and average
+                      final filteredExpensesTotal = expenses.fold<double>(
+                        0,
+                        (sum, expense) => sum + expense.amount,
+                      );
+
+                      return AnimatedExpenseHeader(
+                        category: '${budgetGoal.name} Expenses',
+                        budgetGoal: budgetGoal.name,
+                        totalSpent: filteredExpensesTotal,
+                        average: expenses.isNotEmpty
+                            ? filteredExpensesTotal / expenses.length
+                            : 0,
+                        transactions: expenses.length,
+                      );
+                    },
                   ),
                 ),
                 const SliverToBoxAdapter(
@@ -118,12 +129,23 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                 SliverToBoxAdapter(
                   child: AnimatedWidget(
                     delay: 200,
-                    child: BudgetProgressBar(
-                      category: budgetGoal.name,
-                      subtitle: '(${budgetGoal.category})',
-                      budget: budgetGoal.amount,
-                      spent: budgetGoal.currentSpending,
-                      remaining: budgetGoal.remainingBalance,
+                    child: Builder(
+                      builder: (context) {
+                        // Calculate filtered expenses total
+                        final filteredExpensesTotal = expenses.fold<double>(
+                          0,
+                          (sum, expense) => sum + expense.amount,
+                        );
+
+                        return BudgetProgressBar(
+                          category: budgetGoal.name,
+                          subtitle:
+                              '(${budgetGoal.category})${expenses.length < (state.budgetGoals?.expenses ?? []).length ? ' • Filtered' : ''}',
+                          budget: budgetGoal.amount,
+                          spent: filteredExpensesTotal,
+                          remaining: budgetGoal.amount - filteredExpensesTotal,
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -156,6 +178,42 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                     ),
                   ),
                 ),
+
+                // Show message when no expenses match the filter
+                if (expenses.isEmpty &&
+                    (state.budgetGoals?.expenses ?? []).isNotEmpty)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppSpacing.md),
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.search_off,
+                              size: 48,
+                              color: context.colorScheme.outline,
+                            ),
+                            const SizedBox(height: AppSpacing.sm),
+                            Text(
+                              'No expenses match the selected filter',
+                              style: context.textTheme.bodyLarge?.copyWith(
+                                color: context.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                            const SizedBox(height: AppSpacing.sm),
+                            Text(
+                              'Try selecting a different payment method or clearing the filter',
+                              style: context.textTheme.bodyMedium?.copyWith(
+                                color: context.colorScheme.onSurfaceVariant,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
 
                 // Loading indicator at bottom
                 if (state.isLoadingMore)

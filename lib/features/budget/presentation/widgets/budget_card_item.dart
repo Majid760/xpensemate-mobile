@@ -321,7 +321,7 @@ class MenuButton extends StatelessWidget {
             ),
             MenuItemWidget(
               icon: Icons.edit_outlined,
-              text: context.l10n.budget,
+              text: context.l10n.expense,
               value: 'expenses',
             ),
             MenuItemWidget(

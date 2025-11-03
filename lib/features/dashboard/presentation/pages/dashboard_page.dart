@@ -228,6 +228,7 @@ class _DashboardPageState extends State<DashboardPage>
                                 onRetry: _loadDashboardData,
                               ),
                             ),
+                            // Active Budget Section
 
                             if (state.state != DashboardStates.error) ...[
                               SizedBox(height: context.lg),
@@ -241,7 +242,8 @@ class _DashboardPageState extends State<DashboardPage>
                                   ),
                                 ),
                               if (state.budgetGoals != null)
-                                SizedBox(height: context.lg),
+                                if (state.budgetGoals != null)
+                                  SizedBox(height: context.lg),
 
                               // Product Analytics Section
                               KeyedSubtree(

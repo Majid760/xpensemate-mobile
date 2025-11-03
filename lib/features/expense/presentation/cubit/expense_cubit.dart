@@ -163,7 +163,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
       emit(
         state.copyWith(
           state: ExpenseStates.error,
-          errorMessage: errorMessage,
+          message: errorMessage,
           stackTrace: stackTrace,
           isLoadingMore: false,
         ),
@@ -228,7 +228,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
       (failure) => emit(
         state.copyWith(
           state: ExpenseStates.error,
-          errorMessage: failure.message,
+          message: failure.message,
         ),
       ),
       (expenseStats) => emit(
@@ -279,7 +279,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
         emit(
           state.copyWith(
             state: ExpenseStates.error,
-            errorMessage: failures.first,
+            message: failures.first,
           ),
         );
       } else {
@@ -306,7 +306,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
       emit(
         state.copyWith(
           state: ExpenseStates.error,
-          errorMessage: 'An unexpected error occurred: $e',
+          message: 'An unexpected error occurred: $e',
           stackTrace: s,
         ),
       );
@@ -337,7 +337,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
       emit(
         state.copyWith(
           state: ExpenseStates.error,
-          errorMessage: failure.message,
+          message: failure.message,
           expenses: originalExpenses,
         ),
       );
@@ -350,9 +350,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
 
   /// Create expense with optimistic updates
   Future<void> createExpense({required ExpenseEntity expense}) async {
-    // Optimistic update - add to beginning of both cache and state
     _allExpenses.insert(0, expense);
-
     final updatedPagination = ExpensePaginationEntity(
       page: state.expenses?.page ?? 1,
       totalPages: state.expenses?.totalPages ?? 1,
@@ -360,7 +358,12 @@ class ExpenseCubit extends Cubit<ExpenseState> {
       total: (state.expenses?.total ?? 0) + 1,
     );
 
-    emit(state.copyWith(expenses: updatedPagination));
+    emit(
+      state.copyWith(
+        expenses: updatedPagination,
+        message: "Expense added successfully",
+      ),
+    );
 
     // Make the API call
     final result = await _createExpenseUseCase(
@@ -379,7 +382,8 @@ class ExpenseCubit extends Cubit<ExpenseState> {
         emit(
           state.copyWith(
             state: ExpenseStates.error,
-            errorMessage: failure.message,
+            message: failure.message,
+            stackTrace: failure.stackTrace,
             expenses: rollbackPagination,
           ),
         );
@@ -390,7 +394,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
           _allExpenses[index] = expense;
         }
         unawaited(_recalculateExpenseStats());
-        emit(state.copyWith(state: ExpenseStates.loaded));
+        emit(state.copyWith(state: ExpenseStates.loaded, message: ''));
       },
     );
   }
@@ -420,7 +424,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
         emit(
           state.copyWith(
             state: ExpenseStates.error,
-            errorMessage: failure.message,
+            message: failure.message,
             expenses: originalExpenses,
           ),
         );
@@ -466,7 +470,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
       (failure) => emit(
         state.copyWith(
           state: ExpenseStates.error,
-          errorMessage: failure.message,
+          message: failure.message,
         ),
       ),
       (success) => emit(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/widget/app_button.dart';
 import 'package:xpensemate/core/widget/error_state_widget.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
 import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
@@ -102,7 +103,7 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget>
 
   Widget _buildInitialError(ExpenseState state) => SliverToBoxAdapter(
         child: ErrorStateSectionWidget(
-          errorMsg: state.errorMessage,
+          errorMsg: state.message,
           onRetry: () => _expenseCubit.refreshExpenses(),
         ),
       );
@@ -127,11 +128,13 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget>
                       ),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  context.l10n.emptyListMessage,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                const SizedBox(height: 16),
+                AppButton.icon(
+                  onPressed: () {
+                    _expenseCubit.refreshExpenses();
+                  },
+                  leadingIcon: const Icon(Icons.refresh),
+                  text: context.l10n.tryAgain,
                 ),
               ],
             ),
@@ -196,93 +199,6 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget>
                 ),
               ),
             ],
-          ),
-        ),
-      );
-
-  Widget _buildScrollToTopButton() {
-    // Start animation when button is built
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _startAnimation();
-    });
-
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 24),
-        child: Align(
-          alignment: Alignment.bottomRight,
-          child: AnimatedBuilder(
-            animation: _animationController,
-            builder: (context, child) => Transform.translate(
-              offset: Offset(0, _bounceAnimation.value),
-              child: Transform.scale(
-                scale: _scaleAnimation.value,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .primary
-                            .withValues(alpha: 0.3),
-                        blurRadius: 8,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  ),
-                  child: FloatingActionButton(
-                    onPressed: _scrollToTop,
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                    child: const Icon(Icons.keyboard_arrow_up, size: 24),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEndOfListIndicator() => SliverToBoxAdapter(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24),
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color:
-                        Theme.of(context).colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.check_circle_outline,
-                        size: 16,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        context.l10n.expenseLoaded,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
           ),
         ),
       );
@@ -363,14 +279,6 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget>
               // Pagination error indicator
               if (state.hasPaginationError && !state.isLoadingMore)
                 _buildPaginationError(state),
-
-              // Scroll to top button when reached end
-              if (state.hasReachedMax &&
-                  !state.hasPaginationError &&
-                  expenses.isNotEmpty) ...[
-                _buildEndOfListIndicator(),
-                _buildScrollToTopButton(),
-              ],
             ],
           );
         },

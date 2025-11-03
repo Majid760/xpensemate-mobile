@@ -14,7 +14,7 @@ class ExpenseState extends Equatable {
     this.expenses,
     this.expenseStats,
     this.budgets,
-    this.errorMessage,
+    this.message,
     this.stackTrace,
     this.currentPage,
     this.hasReachedMax = false,
@@ -26,7 +26,7 @@ class ExpenseState extends Equatable {
   final ExpensePaginationEntity? expenses;
   final ExpenseStatsEntity? expenseStats;
   final BudgetsListEntity? budgets;
-  final String? errorMessage;
+  final String? message;
   final StackTrace? stackTrace;
 
   // Pagination-specific properties
@@ -40,7 +40,7 @@ class ExpenseState extends Equatable {
     ExpensePaginationEntity? expenses,
     ExpenseStatsEntity? expenseStats,
     BudgetsListEntity? budgets,
-    String? errorMessage,
+    String? message,
     StackTrace? stackTrace,
     int? currentPage,
     bool? hasReachedMax,
@@ -52,7 +52,7 @@ class ExpenseState extends Equatable {
         expenses: expenses ?? this.expenses,
         expenseStats: expenseStats ?? this.expenseStats,
         budgets: budgets ?? this.budgets,
-        errorMessage: errorMessage ?? this.errorMessage,
+        message: message ?? this.message,
         stackTrace: stackTrace ?? this.stackTrace,
         currentPage: currentPage ?? this.currentPage,
         hasReachedMax: hasReachedMax ?? this.hasReachedMax,
@@ -66,7 +66,7 @@ class ExpenseState extends Equatable {
         expenses,
         expenseStats,
         budgets,
-        errorMessage,
+        message,
         stackTrace,
         currentPage,
         hasReachedMax,

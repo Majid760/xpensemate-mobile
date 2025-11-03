@@ -67,16 +67,7 @@ class _ExpensePageContentState extends State<ExpensePageContent>
       child: ExpenseFormWidget(
         expense: entity,
         onSave: (expense) {
-          context.expenseCubit.updateExpense(expense: expense).then((value) {
-            if (context.mounted) {
-              AppSnackBar.show(
-                context: context,
-                message: 'Expense updated successfully',
-                type: SnackBarType.success,
-              );
-              Navigator.pop(context);
-            }
-          });
+          context.expenseCubit.updateExpense(expense: expense);
         },
       ),
     );
@@ -87,11 +78,11 @@ class _ExpensePageContentState extends State<ExpensePageContent>
       BlocConsumer<ExpenseCubit, ExpenseState>(
         listener: (context, state) {
           if (state.state == ExpenseStates.error &&
-              state.errorMessage != null &&
-              state.errorMessage!.isNotEmpty) {
+              state.message != null &&
+              state.message!.isNotEmpty) {
             AppSnackBar.show(
               context: context,
-              message: state.errorMessage ?? "",
+              message: state.message ?? "",
               type: SnackBarType.error,
             );
           }
@@ -161,17 +152,11 @@ void addExpense(BuildContext context) {
       barrierColor: Colors.transparent,
     ),
     child: ExpenseFormWidget(
-      onSave: (expense) {
-        Navigator.of(context).pop();
-        context.expenseCubit.createExpense(expense: expense).then((value) {
-          if (context.mounted) {
-            AppSnackBar.show(
-              context: context,
-              message: 'Expense added successfully',
-              type: SnackBarType.success,
-            );
-          }
-        });
+      onSave: (expense) async {
+        await context.expenseCubit.createExpense(expense: expense);
+        if (context.mounted) {
+          Navigator.of(context).pop();
+        }
       },
       onCancel: () => Navigator.of(context).pop(),
     ),

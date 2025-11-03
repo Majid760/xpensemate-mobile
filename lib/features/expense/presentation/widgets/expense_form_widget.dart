@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
@@ -349,8 +351,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
       final expense = ExpenseEntity(
         id: widget.expense?.id ??
             DateTime.now().millisecondsSinceEpoch.toString(),
-        userId: widget.expense?.userId ??
-            'current_user_id', // This would come from auth in real app
+        userId: widget.expense?.userId ?? sl.authService.currentUser!.id,
         name: (_form.control('name').value as String?)?.trim() ?? '',
         amount: amount,
         budgetGoalId:
@@ -382,7 +383,6 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
 
   List<DropdownMenuItem<String>> _buildCategoryDropdownItems() {
     final items = <DropdownMenuItem<String>>[];
-    final l10n = context.l10n;
     final colorScheme = Theme.of(context).colorScheme;
 
     // Add "Add Custom Category" option at the top
@@ -446,9 +446,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
 
   List<DropdownMenuItem<String>> _buildBudgetDropdownItems() {
     final items = <DropdownMenuItem<String>>[];
-    final l10n = context.l10n;
     final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
 
     // Add "No Budget" option
     items.add(
@@ -514,7 +512,6 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
   }
 
   List<DropdownMenuItem<String>> _buildPaymentMethodDropdownItems() {
-    final l10n = context.l10n;
     final colorScheme = Theme.of(context).colorScheme;
 
     return _paymentMethods
@@ -630,6 +627,10 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
                                   .withValues(alpha: 0.6),
                             ),
                             textInputAction: TextInputAction.next,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d*\.?\d*$')),
+                            ],
                             validationMessages: {
                               'required': (error) => l10n.fieldRequired,
                               'pattern': (error) => l10n.invalidAmount,

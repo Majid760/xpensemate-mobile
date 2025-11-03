@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
-import 'package:xpensemate/core/widget/error_state_widget.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/product_weekly_analytics_entity.dart';
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/product_analytics_bar_chart.dart';
@@ -98,44 +97,67 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
   Widget build(BuildContext context) =>
       BlocBuilder<DashboardCubit, DashboardState>(
         builder: (context, state) => Container(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(context.md),
           decoration: BoxDecoration(
             color: context.colorScheme.surface,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: context.colorScheme.outline.withValues(alpha: 0.1),
             ),
             boxShadow: [
               BoxShadow(
-                color: context.colorScheme.shadow.withValues(alpha: 0.1),
-                blurRadius: 10,
+                color: context.colorScheme.shadow.withValues(alpha: 0.08),
+                blurRadius: 20,
+                offset: const Offset(0, 4),
+              ),
+              BoxShadow(
+                color: context.colorScheme.primary.withValues(alpha: 0.02),
+                blurRadius: 8,
+                spreadRadius: 1,
                 offset: const Offset(0, 2),
               ),
             ],
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(context),
-              if (state.state == DashboardStates.loading)
-                _buildLoadingState(context)
-              else if (state.state == DashboardStates.error)
-                ErrorStateSectionWidget(
-                  errorMsg: state.errorMessage,
-                  onRetry: () {
-                    context.read<DashboardCubit>().loadProductAnalytics();
-                  },
-                )
-              else if (state.productAnalytics != null &&
-                  _isValidAnalyticsData(state.productAnalytics))
-                _buildAnalyticsContent(context, state.productAnalytics!)
-              else
-                ErrorStateSectionWidget(
-                  errorMsg: context.l10n.noDataAvailable,
-                  onRetry: () =>
-                      context.read<DashboardCubit>().loadProductAnalytics(),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: context.colorScheme.surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: context.colorScheme.outline.withValues(alpha: 0.1),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: context.colorScheme.shadow.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
                 ),
-            ],
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(context),
+                if (state.state == DashboardStates.loading)
+                  _buildLoadingState(context)
+                // else if (state.state == DashboardStates.error)
+                //   ErrorStateSectionWidget(
+                //     errorMsg: state.errorMessage,
+                //     onRetry: () {
+                //       context.read<DashboardCubit>().loadProductAnalytics();
+                //     },
+                //   )
+                // else if (state.productAnalytics != null &&
+                //     _isValidAnalyticsData(state.productAnalytics))
+                else
+                  _buildAnalyticsContent(context, state.productAnalytics!)
+                // else
+                //   ErrorStateSectionWidget(
+                //     errorMsg: context.l10n.noDataAvailable,
+                //     onRetry: () =>
+                //         context.read<DashboardCubit>().loadProductAnalytics(),
+                //   ),
+              ],
+            ),
           ),
         ),
       );
@@ -166,29 +188,21 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
             });
           }
 
-          return Padding(
+          return Container(
             padding: EdgeInsets.all(context.md),
             child: Row(
               children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: context.primaryColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    Icons.analytics_outlined,
-                    color: context.primaryColor,
-                    size: 18,
-                  ),
+                Icon(
+                  Icons.analytics_outlined,
+                  color: context.primaryColor,
+                  size: 18,
                 ),
                 SizedBox(width: context.sm),
                 Expanded(
                   child: Text(
-                    context.l10n.dashboard,
-                    style: context.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
+                    context.l10n.productAnalytic,
+                    style: context.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
                       color: context.colorScheme.onSurface,
                     ),
                   ),
@@ -215,19 +229,6 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
           // Chart section with targeted rebuild
           const _ChartSection(),
           SizedBox(height: context.md),
-
-          // Weekly Summary section
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: context.md),
-            child: Text(
-              context.l10n.weeklyInsights,
-              style: context.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: context.colorScheme.onSurface,
-              ),
-            ),
-          ),
-          SizedBox(height: context.sm),
 
           // Summary cards - mobile layout only
           WeeklySummaryHorizontalCards(productAnalytics: analytics),

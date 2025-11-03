@@ -38,7 +38,7 @@ class WeeklyFinancialOverviewWidget extends StatelessWidget {
           ],
         ),
         child: Padding(
-          padding: EdgeInsets.all(context.lg),
+          padding: EdgeInsets.all(context.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

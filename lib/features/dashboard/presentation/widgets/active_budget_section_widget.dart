@@ -17,7 +17,7 @@ class ActiveBudgetSectionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: EdgeInsets.all(context.lg),
+        padding: EdgeInsets.all(context.md),
         decoration: BoxDecoration(
           color: context.colorScheme.surface,
           borderRadius: BorderRadius.circular(20),
@@ -38,24 +38,41 @@ class ActiveBudgetSectionWidget extends StatelessWidget {
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            SectionHeaderWidget(
-              title: context.l10n.activeBudgets,
-              icon: Icons.account_balance_wallet_outlined,
-              action: AppButton.textButton(
-                text: context.l10n.seeDetail,
-                textColor: context.primaryColor,
-                onPressed: context.goToDashboard,
-              ),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: context.md),
+          decoration: BoxDecoration(
+            color: context.colorScheme.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: context.colorScheme.outline.withValues(alpha: 0.1),
             ),
-            SizedBox(height: context.lg),
+            boxShadow: [
+              BoxShadow(
+                color: context.colorScheme.shadow.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              SectionHeaderWidget(
+                title: context.l10n.activeBudgets,
+                icon: Icons.account_balance_wallet_outlined,
+                action: AppButton.textButton(
+                  text: context.l10n.seeDetail,
+                  textColor: context.primaryColor,
+                  onPressed: context.goToDashboard,
+                ),
+              ),
+              SizedBox(height: context.lg),
 
-            // Budget List
-            _BudgetList(budgetGoals: budgetGoals),
-          ],
+              // Budget List
+              _BudgetList(budgetGoals: budgetGoals),
+            ],
+          ),
         ),
       );
 }
@@ -103,7 +120,7 @@ class _EmptyState extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.savings_outlined,
+              Icons.bubble_chart,
               size: 32,
               color: context.colorScheme.onSurfaceVariant,
             ),

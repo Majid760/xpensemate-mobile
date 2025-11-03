@@ -7,6 +7,7 @@ import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/route/utils/router_extension.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
+import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/utils/assset_path.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
 import 'package:xpensemate/core/widget/app_image.dart';
@@ -44,8 +45,6 @@ class _LoginPageState extends State<LoginPage> {
         ],
       ),
     });
-
-   
   }
 
   @override
@@ -55,11 +54,10 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _submitForm() async {
-   
     // Mark all fields as touched to trigger validation display
     _form.markAllAsTouched();
     // Check if form is valid
-    if (!_form.valid)return;
+    if (!_form.valid) return;
 
     // Form is valid, proceed with login
     await context.read<AuthCubit>().loginWithEmail(
@@ -78,7 +76,9 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
-          if (state.state == AuthStates.error) {
+          if (state.state == AuthStates.error &&
+              state.errorMessage != null &&
+              state.errorMessage!.isNotEmpty) {
             AppLogger.e(state.stackTrace.toString());
 
             AppSnackBar.show(
@@ -178,7 +178,7 @@ class _LoginPageState extends State<LoginPage> {
                           // Sign In Button
                           AppButton.primary(
                             text: l10n.login.toUpperCase(),
-                            onPressed: _submitForm,
+                            onPressed: () => AppUtils.throttle(_submitForm),
                             textColor: colorScheme.onPrimary,
                             isLoading: state.state == AuthStates.loading,
                           ),
@@ -194,8 +194,9 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                               Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.md,
+                                ),
                                 child: Text(
                                   l10n.or,
                                   style: textTheme.bodySmall?.copyWith(

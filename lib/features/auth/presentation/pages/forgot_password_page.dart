@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
+import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/utils/assset_path.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
 import 'package:xpensemate/core/widget/app_image.dart';
@@ -65,7 +66,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       ),
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
-          if (state.state == AuthStates.error) {
+          if (state.state == AuthStates.error &&
+              state.errorMessage != null &&
+              state.errorMessage!.isNotEmpty) {
             AppSnackBar.show(
               context: context,
               message: state.errorMessage ?? l10n.errorGeneric,
@@ -76,7 +79,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               context: context,
               message: l10n.resetPasswordSuccess,
               type: SnackBarType.success,
-              duration: const Duration(seconds: 4),
             );
             final currentContext = context;
             Future.delayed(const Duration(seconds: 2), () {

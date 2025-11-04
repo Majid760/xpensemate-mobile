@@ -8,11 +8,11 @@ import 'package:xpensemate/core/network/interceptors/logging_interceptor.dart';
 import 'package:xpensemate/core/network/network_configs.dart';
 import 'package:xpensemate/core/network/network_contracts.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
-import 'package:xpensemate/features/auth/data/datasources/auth_local_storage.dart';
+import 'package:xpensemate/features/auth/data/services/auth_service.dart';
 
 final class NetworkClientImp implements NetworkClient {
   NetworkClientImp({
-    required AuthLocalDataSource tokenStorage,
+    required AuthService authService,
   }) : _dio = Dio(
           BaseOptions(
             baseUrl: NetworkConfigs.baseUrl,
@@ -26,7 +26,7 @@ final class NetworkClientImp implements NetworkClient {
         )..interceptors.addAll([
             LoggingInterceptor(),
             // RetryInterceptor(retries: NetworkConfigs.maxRetries),
-            AuthInterceptor(tokenStorage),
+            AuthInterceptor(authService),
           ]);
 
   final Dio _dio;
@@ -156,12 +156,12 @@ final class NetworkClientImp implements NetworkClient {
         return Left(_handleApiError(apiResponse));
       }
     } on DioException catch (e) {
-      // Try to parse structured error response first
       if (e.response?.data != null &&
           e.response?.data is Map<String, dynamic>) {
         try {
           final responseData = e.response!.data as Map<String, dynamic>;
           final apiResponse = ApiResponse<dynamic>.fromJson(responseData, null);
+
           if (apiResponse.message.isNotEmpty) {
             return Left(_handleApiError(apiResponse));
           }

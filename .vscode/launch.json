@@ -20,6 +20,12 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
+        },
+        {
+            "name": "Flutter (lib/features/budget/presentation/widgets/expense_stats_header.dart)",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/features/budget/presentation/widgets/expense_stats_header.dart"
         }
     ]
 }

@@ -7,8 +7,9 @@ final class RetryInterceptor extends Interceptor {
   final int retries;
 
   @override
-  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
-    final  count = err.requestOptions.extra['retryCount'] as int? ?? 0;
+  Future<void> onError(
+      DioException err, ErrorInterceptorHandler handler) async {
+    final count = err.requestOptions.extra['retryCount'] as int? ?? 0;
     if ((count < retries) &&
         (err.type == DioExceptionType.connectionTimeout ||
             err.type == DioExceptionType.receiveTimeout ||

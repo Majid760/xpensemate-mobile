@@ -12,6 +12,7 @@ import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/features/auth/data/datasources/auth_local_storage.dart';
 import 'package:xpensemate/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:xpensemate/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:xpensemate/features/auth/data/services/auth_service.dart';
 import 'package:xpensemate/features/auth/domain/repositories/auth_repository.dart';
 import 'package:xpensemate/features/auth/domain/usecases/cases_export.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
@@ -72,11 +73,6 @@ Future<void> initLocator() async {
     final sharedPrefs = await SharedPreferences.getInstance();
     sl.registerSingleton<SharedPreferences>(sharedPrefs);
 
-    // Permission Service
-    sl.registerLazySingleton<PermissionService>(
-      PermissionService.new,
-    );
-
     // ---------- Network Connectivity ----------
     sl.registerLazySingleton<NetworkInfoService>(
       () => NetworkInfoServiceImpl(
@@ -84,6 +80,10 @@ Future<void> initLocator() async {
       ),
     );
 
+    // Permission Service
+    sl.registerLazySingleton<PermissionService>(
+      PermissionService.new,
+    );
     // ---------- Secure Storage Service ----------
     sl.registerLazySingleton<IStorageService>(
       () => SecureStorageService.instance,
@@ -94,11 +94,22 @@ Future<void> initLocator() async {
       () => AuthLocalDataSourceImpl(sl()),
     );
 
+    // auth service
+    sl.registerLazySingleton<AuthService>(
+      () => AuthService(localDataSource: sl()),
+    );
+
     // ---------- Network Client ----------
     sl.registerLazySingleton<NetworkClient>(
       () => NetworkClientImp(
-        tokenStorage: sl(),
+        authService: sl(),
       ),
+    );
+
+    // ---------- Presentation Layer ----------
+    // Register AuthCubit as a lazy singleton
+    sl.registerLazySingleton<AuthCubit>(
+      () => AuthCubit(),
     );
 
     // ---------- Data sources ----------
@@ -126,6 +137,7 @@ Future<void> initLocator() async {
         sl(), // AuthLocalDataSource if  need for caching caching
       ),
     );
+
     sl.registerLazySingleton<ProfileRepository>(
       () => ProfileRepositoryImpl(sl()),
     );
@@ -174,7 +186,6 @@ Future<void> initLocator() async {
     sl.registerLazySingleton(() => GetBudgetSpecificExpensesUseCase(sl()));
 
     // ---------- Presentation Layer ----------
-    sl.registerFactory(() => AuthCubit(sl()));
     sl.registerFactory(() => ProfileCubit(sl()));
     sl.registerFactory(
       () => DashboardCubit(sl(), sl(), sl()),
@@ -210,6 +221,7 @@ extension ServiceLocatorExtension on GetIt {
   /// Quick access to other commonly used services
   NetworkInfoService get networkInfo => this<NetworkInfoService>();
   IStorageService get storage => this<IStorageService>();
+  AuthLocalDataSource get authLocalDataSource => this<AuthLocalDataSource>();
   SharedPreferences get sharedPrefs => this<SharedPreferences>();
 
   /// Quick access to Presentation Cubits
@@ -220,4 +232,6 @@ extension ServiceLocatorExtension on GetIt {
   ExpenseCubit get expenseCubit => this<ExpenseCubit>();
   BudgetCubit get budgetCubit => this<BudgetCubit>();
   BudgetExpensesCubit get budgetExpensesCubit => this<BudgetExpensesCubit>();
+  // services
+  AuthService get authService => this<AuthService>();
 }

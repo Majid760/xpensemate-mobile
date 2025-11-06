@@ -29,6 +29,10 @@ void main() async {
       );
       // Initialize services locator/dependency injection
       await initLocator();
+
+      // Initialize auth cubit after service locator is ready
+      await sl<AuthCubit>().initializeAuth();
+
       runApp(const MyApp());
     },
     (error, stack) {
@@ -54,7 +58,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) => MultiBlocProvider(
         providers: [
           BlocProvider<AuthCubit>(
-            create: (context) => sl.authCubit..checkAuthStatus(),
+            create: (context) => sl.authCubit,
             lazy: false,
           ),
           BlocProvider<ProfileCubit>(

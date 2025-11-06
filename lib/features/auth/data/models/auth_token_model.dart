@@ -19,15 +19,17 @@ class AuthTokenModel extends Equatable {
   factory AuthTokenModel.fromJson(Map<String, dynamic> jsonData) {
     try {
       var json = jsonData;
-      if(jsonData.containsKey('data')){
-        json = jsonData['data'] as Map<String, dynamic>;  
+      if (jsonData.containsKey('data')) {
+        json = jsonData['data'] as Map<String, dynamic>;
       }
+      // it may be a token or access_token
       return AuthTokenModel(
-        accessToken: json['token'] as String? ??
-            (throw ArgumentError('token is required')),
-        refreshToken: json['refreshToken'] as String? ??
-            json['refresh_token'] as String? ??
-            json['refresh'] as String?,
+        accessToken: (json['token'] ?? json['access_token']) as String? ??
+            (throw ArgumentError('token or access_token is required')),
+        refreshToken:
+            (json['refreshToken'] ?? json['refresh_token']) as String? ??
+                json['refresh_token'] as String? ??
+                json['refresh'] as String?,
         expiresIn: json['expiresIn'] is String
             ? int.tryParse(json['expiresIn'] as String) ?? 3600
             : 3600,

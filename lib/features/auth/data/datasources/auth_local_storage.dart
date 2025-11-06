@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/error/failures.dart';
@@ -10,18 +11,20 @@ import 'package:xpensemate/features/auth/domain/entities/user.dart';
 
 abstract class AuthLocalDataSource {
   // Token Management
-  Future<Either<Failure, void>> storeTokens(AuthTokenModel tokens);
-  Future<Either<Failure, AuthTokenModel?>> getStoredTokens();
-  Future<Either<Failure, String?>> getAccessToken();
-  Future<Either<Failure, String?>> getRefreshToken();
-  Future<Either<Failure, void>> updateAccessToken(String newToken);
-  Future<Either<Failure, void>> clearTokens();
-  Future<Either<Failure, bool>> hasValidTokens();
+  Future<void> storeTokens(AuthTokenModel tokens);
+  Future<AuthTokenModel?> getStoredTokens();
+  Future<String?> getAccessToken();
+  Future<void> saveAccessToken(String token);
+  Future<void> saveRefreshToken(String token);
+  Future<String?> getRefreshToken();
+  Future<void> updateAccessToken(String newToken);
+  Future<void> clearTokens();
+  Future<bool> hasValidTokens();
 
   // User Data Management
-  Future<Either<Failure, void>> storeUser(UserEntity user);
-  Future<Either<Failure, UserEntity?>> getStoredUser();
-  Future<Either<Failure, void>> clearUser();
+  Future<void> storeUser(UserEntity user);
+  Future<UserEntity?> getStoredUser();
+  Future<void> clearUser();
 }
 
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
@@ -29,181 +32,172 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   final IStorageService _storageService;
 
   // TOKEN MANAGEMENT
-
   @override
-  Future<Either<Failure, void>> storeTokens(AuthTokenModel tokens) async {
+  Future<void> storeTokens(AuthTokenModel tokens) async {
     try {
-      await _storageService.save(
-        StorageKeys.accessTokenKey,
+      await _storageService.write(
+        StorageKeys.accessToken,
         tokens.accessToken,
       );
 
       if (tokens.refreshToken != null) {
-        await _storageService.save(
-          StorageKeys.refreshTokenKey,
+        await _storageService.write(
+          StorageKeys.refreshToken,
           tokens.refreshToken!,
         );
         logI('refresh token saved locally successfully!');
       }
 
       // Store token expiration info
-      final expirationTime =
-          DateTime.now().add(Duration(seconds: tokens.expiresIn));
-      await _storageService.save(
-        'token_expiration',
+      final expirationTime = DateTime.now().add(Duration(seconds: tokens.expiresIn));
+      await _storageService.write(
+        StorageKeys.tokenExpiration,
         expirationTime.toIso8601String(),
       );
 
       // Store complete token object as JSON for backup
       final tokenJson = json.encode(tokens.toJson());
-      await _storageService.save('auth_tokens', tokenJson);
+      await _storageService.write(StorageKeys.authTokens, tokenJson);
       logI('yes user tokens saved locally successfully!');
-
-      // Debug: List all stored keys
-      await _storageService.debugListAllKeys();
-
-      return const Right(null);
-    } on Exception catch (e) {
-      return Left(LocalDataFailure(message: 'Failed to store tokens: $e'));
+    } on Exception catch (_) {
+      rethrow;
     }
   }
 
   @override
-  Future<Either<Failure, String?>> getAccessToken() async {
+  Future<String?> getAccessToken() async {
     try {
-      final token = await _storageService.get(StorageKeys.accessTokenKey);
-      return Right(token);
-    } on Exception catch (e) {
-      return Left(LocalDataFailure(message: 'Failed to get access token: $e'));
+      final token = await _storageService.read(StorageKeys.accessToken);
+      return token;
+    } on Exception catch (_) {
+      rethrow;
     }
   }
 
   @override
-  Future<Either<Failure, String?>> getRefreshToken() async {
+  Future<void> saveAccessToken(String token) async {
     try {
-      final token = await _storageService.get(StorageKeys.refreshTokenKey);
-      await _storageService.debugListAllKeys();
-      return Right(token);
+      await _storageService.write(StorageKeys.accessToken, token);
+    } on Exception catch (_) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<String?> getRefreshToken() async {
+    try {
+      final token = await _storageService.read(StorageKeys.refreshToken);
+      return token;
     } on Exception catch (e) {
       logE('Exception getting refresh token: $e');
-      return Left(LocalDataFailure(message: 'Failed to get refresh token: $e'));
+      rethrow;
     }
   }
 
   @override
-  Future<Either<Failure, AuthTokenModel?>> getStoredTokens() async {
+  Future<void> saveRefreshToken(String token) async {
     try {
-      final tokenJson = await _storageService.get('auth_tokens');
-      if (tokenJson == null || tokenJson.isEmpty) {
-        return const Right(null);
-      }
+      await _storageService.write(StorageKeys.refreshToken, token);
+    } on Exception catch (_) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<AuthTokenModel?> getStoredTokens() async {
+    try {
+      final tokenJson = await _storageService.read(StorageKeys.authTokens);
+      if (tokenJson == null) return null;
       final tokenMap = json.decode(tokenJson) as Map<String, dynamic>;
       final tokens = AuthTokenModel.fromJson(tokenMap);
-      return Right(tokens);
-    } on Exception catch (e) {
-      return Left(LocalDataFailure(message: 'Failed to get stored tokens: $e'));
+      return tokens;
+    } on Exception catch (_) {
+      rethrow;
     }
   }
 
   @override
-  Future<Either<Failure, void>> updateAccessToken(String newToken) async {
+  Future<void> updateAccessToken(String newToken) async {
     try {
-      await _storageService.save(StorageKeys.accessTokenKey, newToken);
+      await _storageService.write(StorageKeys.accessToken, newToken);
 
       // Update token expiration (assuming 1 hour default)
       final expirationTime = DateTime.now().add(const Duration(hours: 1));
-      await _storageService.save(
+      await _storageService.write(
         'token_expiration',
         expirationTime.toIso8601String(),
       );
-
-      return const Right(null);
-    } on Exception catch (e) {
-      return Left(
-        LocalDataFailure(message: 'Failed to update access token: $e'),
-      );
+      return;
+    } on Exception catch (_) {
+      rethrow;
     }
   }
 
   @override
-  Future<Either<Failure, void>> clearTokens() async {
+  Future<void> clearTokens() async {
     try {
       await Future.wait([
-        _storageService.remove(StorageKeys.accessTokenKey),
-        _storageService.remove(StorageKeys.refreshTokenKey),
-        _storageService.remove('auth_tokens'),
-        _storageService.remove('token_expiration'),
+        _storageService.delete(StorageKeys.accessToken),
+        _storageService.delete(StorageKeys.refreshToken),
+        _storageService.delete(StorageKeys.authTokens),
+        _storageService.delete(StorageKeys.tokenExpiration),
       ]);
       logI('tokens cleared successfully!');
-      return const Right(null);
-    } on Exception catch (e) {
-      return Left(LocalDataFailure(message: 'Failed to clear tokens: $e'));
+    } on Exception catch (_) {
+      rethrow;
     }
   }
 
   @override
-  Future<Either<Failure, bool>> hasValidTokens() async {
+  Future<bool> hasValidTokens() async {
     try {
-      final accessToken = await _storageService.get(StorageKeys.accessTokenKey);
-      if (accessToken == null || accessToken.isEmpty) {
-        return const Right(false);
-      }
+      final accessToken = await _storageService.read(StorageKeys.accessToken);
+      if (accessToken == null || accessToken.isEmpty) return false;
 
       // Check if token is expired
-      final expirationString = await _storageService.get('token_expiration');
+      final expirationString = await _storageService.read('token_expiration');
       if (expirationString != null) {
         final expirationTime = DateTime.parse(expirationString);
-        if (DateTime.now().isAfter(expirationTime)) {
-          return const Right(false); // Token is expired
-        }
+        if (DateTime.now().isAfter(expirationTime)) return false;
       }
 
-      return const Right(true);
-    } on Exception catch (e) {
-      return Left(
-        LocalDataFailure(message: 'Failed to check token validity: $e'),
-      );
+      return true;
+    } on Exception catch (_) {
+      return false;
     }
   }
 
   // ========== USER DATA MANAGEMENT ==========
 
   @override
-  Future<Either<Failure, void>> storeUser(UserEntity user) async {
+  Future<void> storeUser(UserEntity user) async {
     try {
       // Store complete user object as JSON
-      final userJson = json
-          .encode(user is UserModel ? user.toJson() : user.toModel.toJson());
-      await _storageService.save(StorageKeys.userData, userJson);
-      return const Right(null);
-    } on Exception catch (e) {
-      return Left(LocalDataFailure(message: 'Failed to store user: $e'));
+      final userJson = json.encode(user is UserModel ? user.toJson() : user.toModel.toJson());
+      await _storageService.write(StorageKeys.userData, userJson);
+    } on Exception catch (_) {
+      rethrow;
     }
   }
 
   @override
-  Future<Either<Failure, UserEntity?>> getStoredUser() async {
+  Future<UserEntity?> getStoredUser() async {
     try {
-      final userJson = await _storageService.get(StorageKeys.userData);
-      if (userJson == null || userJson.isEmpty) {
-        return const Right(null);
-      }
+      final userJson = await _storageService.read(StorageKeys.userData);
+      if (userJson == null || userJson.isEmpty) return null;
 
       final userMap = json.decode(userJson) as Map<String, dynamic>;
       final user = UserModel.fromJson(userMap).toEntity();
-      return Right(user);
-    } on Exception catch (e) {
-      return Left(LocalDataFailure(message: 'Failed to get stored user: $e'));
+      return user;
+    } on Exception catch (_) {
+      rethrow;
     }
   }
 
   @override
   Future<Either<Failure, void>> clearUser() async {
     try {
-      debugPrint(' clear user ===>>> ');
-      print('yes enter 1');
-
-      await _storageService.remove(StorageKeys.userData);
+      await _storageService.delete(StorageKeys.userData);
       return const Right(null);
     } on Exception catch (e) {
       debugPrint('❌ error deleting user , error => $e');

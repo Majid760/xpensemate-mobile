@@ -19,19 +19,14 @@ final class AuthInterceptor extends QueuedInterceptor {
   ) async {
     try {
       var accessToken = _authService.token;
+      logI("this is accesss token before checking empty ${accessToken.substring(0, 6)}");
       if (accessToken.isEmpty) {
-        await _authService.getTokenFromStorage();
+        logI("error access token is empty, fetching from storage");
+        await _authService.getAccessToken();
         if (_authService.token.isNotEmpty) {
           accessToken = _authService.token;
         } else {
           AppLogger.e('getAccessToken from storageg failed');
-          return handler.reject(
-            DioException(
-              requestOptions: options,
-              type: DioExceptionType.connectionError,
-              error: 'Token is empty, please login again',
-            ),
-          );
         }
       }
       options.headers['Authorization'] = 'Bearer $accessToken';
@@ -56,56 +51,41 @@ final class AuthInterceptor extends QueuedInterceptor {
       if (err.response?.statusCode != 401 && err.response?.statusCode != 403) {
         return handler.next(err);
       }
-
       AppLogger.i(
         'Token expired or invalid (status ${err.response?.statusCode}), attempting to refresh...',
       );
-
       // Get the refresh token
       final refreshToken = _authService.userRefreshToken;
+      logI("refreshed token in storage => ${refreshToken.substring(0, 6)}");
+
       if (refreshToken.isEmpty) {
         AppLogger.e('No refresh token available');
-        return handler.next(err);
       }
-
       // Attempt to refresh the token
       try {
         final dio = Dio(BaseOptions(baseUrl: NetworkConfigs.baseUrl));
-        final response = await dio.post(
+        final response = await dio.post<dynamic>(
           NetworkConfigs.refreshToken,
-          data: {'refresh': refreshToken},
+          data: {'refreshToken': refreshToken},
         );
+        logI('RefreshToken response => : ${response.statusMessage} and status => ${response.statusCode}');
 
         if (response.statusCode == 200 && response.data != null) {
-          print("token respne is ${response.data}");
           // Parse the new token
-          final newToken =
-              AuthTokenModel.fromJson(response.data as Map<String, dynamic>);
-
+          final newToken = AuthTokenModel.fromJson(response.data as Map<String, dynamic>);
           // Save the new token using AuthService
           await _authService.saveTokenToStorage(newToken);
-
-          AppLogger.i('Token refreshed successfully');
-
+          logI('Token refreshed successfully');
           // Update the request with the new token and retry
           final newOptions = err.requestOptions.copyWith();
-          newOptions.headers['Authorization'] =
-              'Bearer ${newToken.accessToken}';
+          newOptions.headers['Authorization'] = 'Bearer ${newToken.accessToken}';
           return handler.resolve(await dio.fetch(newOptions));
         } else {
-          AppLogger.e('Failed to refresh token: ${response.statusMessage}');
+          logI('Failed to refresh token: ${response.statusMessage} and status => ${response.statusCode}');
         }
       } on Exception catch (refreshError) {
         AppLogger.e('Error refreshing token: $refreshError');
       }
-
-      AppLogger.i(
-        'Token refresh failed, clearing tokens...',
-      );
-
-      // Clear all tokens when refresh fails
-      await _authService.clearAllTokens();
-
       return handler.next(err);
     } on Exception catch (e) {
       AppLogger.e('Error in auth interceptor: $e');

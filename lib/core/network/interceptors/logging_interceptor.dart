@@ -16,7 +16,8 @@ final class LoggingInterceptor extends Interceptor {
   }
 
   @override
-  void onResponse(Response<dynamic> response, ResponseInterceptorHandler handler) {
+  void onResponse(
+      Response<dynamic> response, ResponseInterceptorHandler handler) {
     debugPrint('✅ ${response.statusCode} ${response.requestOptions.uri}');
     super.onResponse(response, handler);
   }

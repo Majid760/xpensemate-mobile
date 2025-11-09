@@ -16,10 +16,7 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
     required ExpenseEntity expense,
   }) =>
       remoteDataSource.createExpense(expense: expense).then(
-            (value) => value.fold(
-              Left.new,
-              Right.new,
-            ),
+            (value) => value.fold(Left.new, Right.new),
           );
 
   @override

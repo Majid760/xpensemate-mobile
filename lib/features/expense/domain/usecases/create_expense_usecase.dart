@@ -12,9 +12,7 @@ class CreateExpensesUseCase implements UseCase<bool, CreateExpensesParams> {
   Future<Either<Failure, bool>> call(
     CreateExpensesParams params,
   ) async =>
-      repository.createExpense(
-        expense: params.expenseEntity,
-      );
+      repository.createExpense(expense: params.expenseEntity);
 }
 
 class CreateExpensesParams {

@@ -10,6 +10,7 @@ import 'package:xpensemate/features/auth/data/datasources/auth_local_storage.dar
 
 import 'package:xpensemate/features/auth/data/models/auth_token_model.dart';
 import 'package:xpensemate/features/auth/data/models/user_model.dart';
+import 'package:xpensemate/features/auth/data/services/auth_service.dart';
 
 abstract class AuthRemoteDataSource {
   Future<Either<Failure, UserModel>> signInWithEmailAndPassword({
@@ -23,8 +24,9 @@ abstract class AuthRemoteDataSource {
     required String lastName,
   });
 
-  Future<Either<Failure, UserModel>> signInWithGoogle(
-      {required String credential});
+  Future<Either<Failure, UserModel>> signInWithGoogle({
+    required String credential,
+  });
 
   Future<Either<Failure, UserModel>> signInWithApple();
 
@@ -41,9 +43,12 @@ abstract class AuthRemoteDataSource {
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  AuthRemoteDataSourceImpl(this._client, this._localDataSource);
+  AuthRemoteDataSourceImpl(
+    this._client,
+    this._authService,
+  );
   final NetworkClient _client;
-  final AuthLocalDataSource _localDataSource;
+  final AuthService _authService;
 
   /// Sign in with email and password
   @override
@@ -64,8 +69,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         },
         (json) async {
           final (user, token) = await compute(_parseUserFromJson, json);
-          unawaited(_localDataSource.storeTokens(token));
-          unawaited(_localDataSource.storeUser(user));
+          unawaited(_authService.saveTokenToStorage(token));
+          unawaited(_authService.saveUserToStorage(user));
           return Right(user);
         },
       );
@@ -76,12 +81,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   /// Sign in with Google
   @override
-  Future<Either<Failure, UserModel>> signInWithGoogle(
-      {required String credential,}) => _client.post(NetworkConfigs.loginWithGoogle,
+  Future<Either<Failure, UserModel>> signInWithGoogle({
+    required String credential,
+  }) =>
+      _client.post(
+        NetworkConfigs.loginWithGoogle,
         data: {
           "credential": credential,
         },
-        fromJson: UserModel.fromJson,);
+        fromJson: UserModel.fromJson,
+      );
 
   /// Sign in with Apple
   @override
@@ -145,8 +154,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         fromJson: UserModel.fromJson,
       ); // Returns Either<Failure, UserModel?>
 
-      final localUserFuture = _localDataSource.getStoredUser();
-
       // Convert both to the same type for Future.any
       final remoteConverted = remoteUserFuture.then(
         (either) => either.fold<Either<Failure, UserModel>>(
@@ -155,32 +162,49 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         ),
       );
 
-      final localConverted = localUserFuture.then(
-        (either) => either.fold<Either<Failure, UserModel>>(
-          Left.new,
-          (userEntity) => userEntity != null
-              ? Right(userEntity.toModel) // Convert UserEntity to UserModel
-              : const Left(LocalDataFailure(message: 'Local user is null')),
-        ),
-      );
+      final userEntity = await _authService.fetchUserFromStorage();
+      final localConverted = userEntity == null
+          ? const Right<Failure, UserModel?>(null)
+              as Future<Either<Failure, UserModel>>
+          : Future.value(
+              Right<Failure, UserModel>(
+                UserModel.fromEntity(userEntity),
+              ),
+            );
 
-      final firstResult = await Future.any([remoteConverted, localConverted]);
+      final firstResult = await Future.any<Either<Failure, UserModel>>(
+        [remoteConverted, localConverted],
+      );
       // If first result is successful, return it
-      if (firstResult.isRight()) {
+      final isFirstResultRight = firstResult.fold(
+        (_) => false,
+        (_) => true,
+      );
+      if (isFirstResultRight) {
         return firstResult;
       }
 
       // If first result failed, wait for both and return the successful one
-      final results = await Future.wait([
-        remoteConverted.catchError((_) =>
-            const Left(ServerFailure(message: 'Remote fetching failed'))),
-        localConverted.catchError((_) => const Left(
-            LocalDataFailure(message: 'Local data fetching failed'))),
+      final results = await Future.wait<Either<Failure, UserModel>>([
+        remoteConverted.catchError(
+          (_) => const Left<Failure, UserModel>(
+            ServerFailure(message: 'Remote fetching failed'),
+          ),
+        ),
+        localConverted.catchError(
+          (_) => const Left<Failure, UserModel>(
+            LocalDataFailure(message: 'Local data fetching failed'),
+          ),
+        ),
       ]);
 
       // Find the first successful result
       for (final result in results) {
-        if (result.isRight()) {
+        final isResultRight = result.fold(
+          (_) => false,
+          (_) => true,
+        );
+        if (isResultRight) {
           return result;
         }
       }
@@ -203,11 +227,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   /// Logout
   @override
   Future<Either<Failure, void>> logout() async {
-    final result = await Future.wait([
-      _localDataSource.clearUser(),
-      _localDataSource.clearTokens(),
-    ]);
-    return result.first;
+    try {
+      final results = await Future.wait([
+        _authService.clearUserData(),
+        Future(() async {
+          await _authService.clearUserData();
+          return const Right<Failure, void>(null);
+        }),
+      ]);
+      return results.first as Either<Failure, void>;
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
   }
   // return _client.post(NetworkConfigs.logout);
 }

@@ -1,50 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:xpensemate/core/route/utils/route_constants.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/usecase/usecase.dart';
-import 'package:xpensemate/features/auth/data/datasources/auth_local_storage.dart';
 import 'package:xpensemate/features/auth/domain/entities/user.dart';
 import 'package:xpensemate/features/auth/domain/usecases/cases_export.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
-  AuthCubit(this._authLocalDataSource) : super(const AuthState()) {
-    _initializeAuth();
+  AuthCubit() : super(const AuthState()) {
+    // Don't initialize auth immediately, let it be initialized when needed
   }
 
-  final AuthLocalDataSource _authLocalDataSource;
-
-  Future<void> _initializeAuth() async {
-    emit(state.copyWith(state: AuthStates.loading));
-    final userResult = await _authLocalDataSource.getStoredUser();
-    userResult.fold(
-      (failure) {
-        emit(
-          state.copyWith(
-            state: AuthStates.error,
-            isAuthenticated: false,
-            errorMessage: 'Failed to retrieve user data',
-          ),
-        );
-      },
-      (userModel) {
-        if (userModel != null) {
-          emit(
-            state.copyWith(
-              state: AuthStates.loaded,
-              isAuthenticated: true,
-              user: userModel,
-            ),
-          );
-        } else {
-          emit(
-            state.copyWith(
-              state: AuthStates.loaded,
-              isAuthenticated: false,
-            ),
-          );
-        }
-      },
+  /// Initialize auth - should be called during app startup
+  Future<void> initializeAuth() async {
+    // Ensure AuthService is initialized first
+    if (!sl.authService.isInitialized) {
+      await sl.authService.initializeService();
+    }
+    
+    emit(
+      state.copyWith(
+        state: AuthStates.loaded,
+        isAuthenticated: sl.authService.isAuthenticated,
+        user: sl.authService.currentUser,
+      ),
     );
   }
 
@@ -53,10 +34,9 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
     required String email,
     required String password,
   }) async {
-    emit(state.copyWith(state: AuthStates.loading));
+    emit(state.copyWith(state: AuthStates.loading, errorMessage: ''));
     final loginUseCase = sl<SignInWithEmailUseCase>();
-    final result = await loginUseCase
-        .call(SignInWithEmailUseCaseParams(email: email, password: password));
+    final result = await loginUseCase.call(SignInWithEmailUseCaseParams(email: email, password: password));
     result.fold(
       (failure) => emit(
         state.copyWith(
@@ -69,7 +49,7 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
         state.copyWith(
           state: AuthStates.loaded,
           isAuthenticated: true,
-          user: user.toModel,
+          user: user,
         ),
       ),
     );
@@ -105,10 +85,9 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
 
   /// forgot password
   Future<void> forgotPassword({required String email}) async {
-    emit(state.copyWith(state: AuthStates.loading));
+    emit(state.copyWith(state: AuthStates.loading, errorMessage: ''));
     final forgotPasswordUseCase = sl<ForgotPasswordUseCase>();
-    final result = await forgotPasswordUseCase
-        .call(ForgotPasswordUseCaseParams(email: email));
+    final result = await forgotPasswordUseCase.call(ForgotPasswordUseCaseParams(email: email));
     result.fold(
       (failure) => emit(
         state.copyWith(
@@ -124,8 +103,7 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
   Future<void> sendVerificationEmail({required String email}) async {
     emit(state.copyWith(state: AuthStates.loading));
     final sendVerificationEmailUseCase = sl<SendVerificationEmailUseCase>();
-    final result = await sendVerificationEmailUseCase
-        .call(SendVerificationEmailUseCaseParams(email: email));
+    final result = await sendVerificationEmailUseCase.call(SendVerificationEmailUseCaseParams(email: email));
     result.fold(
       (failure) => emit(
         state.copyWith(
@@ -138,28 +116,29 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
   }
 
   // isAuthenticated
-  bool isAuthenticated() =>
-      (state.user != null) && (state.isAuthenticated == true);
+  bool isAuthenticated() => (state.user != null) && (state.isAuthenticated == true);
 
   // sign out
-  Future<void> signOut() async {
+  Future<void> signOut({String? error}) async {
     emit(state.copyWith(state: AuthStates.loading));
     final signOutUseCase = sl<SignOutUseCase>();
     final result = await signOutUseCase.call(const NoParams());
     result.fold(
-      (failure) => emit(
+        (failure) => emit(
+              state.copyWith(
+                state: AuthStates.error,
+                errorMessage: failure.message,
+                isAuthenticated: false,
+              ),
+            ), (user) {
+      emit(
         state.copyWith(
-          state: AuthStates.error,
-          errorMessage: failure.message,
+          state: AuthStates.loaded,
+          errorMessage: error,
           isAuthenticated: false,
         ),
-      ),
-      (user) {
-        emit(
-        state.copyWith(state: AuthStates.loaded, isAuthenticated: false),
       );
-      }
-    );
+    });
   }
 
   /// check auth status
@@ -172,15 +151,24 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
   }
   // getter of user
 
-  UserEntity? get user => state.user; 
+  UserEntity? get user => state.user;
   void updateUser(UserEntity user) {
     emit(state.copyWith(user: user));
-    _authLocalDataSource.storeUser(user);
+    sl.authService.updateUserInStorage(user);
   }
+
   void setIsAuthenticated({required bool isAuthenticated}) => emit(state.copyWith(isAuthenticated: isAuthenticated));
 }
 
 // add ssome nice extensions to get the controller in ui/widget
 extension AuthCubitExtension on BuildContext {
   AuthCubit get authCubit => read<AuthCubit>();
+
+  /// Navigate to login page
+  void navigateToLogin() {
+    goRouter.go(RouteConstants.login);
+  }
+
+  /// Get GoRouter instance
+  GoRouter get goRouter => GoRouter.of(this);
 }

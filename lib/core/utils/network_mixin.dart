@@ -3,7 +3,6 @@ import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/core/network/network_info.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 
-
 mixin NetworkCheckMixin<F extends Failure> {
   NetworkInfoService get networkInfo;
 
@@ -11,9 +10,9 @@ mixin NetworkCheckMixin<F extends Failure> {
     Future<Either<F, R>> Function() callback,
   ) async {
     if (!networkInfo.isConnect) {
-      logE("No internet connection! 123");
+      logE("No internet connection!");
       return left(const NetworkFailure() as F);
     }
-    return  callback();
+    return callback();
   }
 }

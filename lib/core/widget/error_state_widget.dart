@@ -18,7 +18,6 @@ class ErrorStateSectionWidget extends StatelessWidget {
         height: 400,
         alignment: Alignment.center,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.error_outline_rounded,

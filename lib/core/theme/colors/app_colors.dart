@@ -38,7 +38,7 @@ abstract class AppColors {
 
   // Outline
   static const Color outline = Color(0xFF6366F1);
-  static const Color outlineVariant = Color.fromARGB(255, 165, 97, 233);
+  static const Color outlineVariant = Color.fromARGB(255, 176, 159, 192);
 
   // Additional semantic colors
   static const Color success =

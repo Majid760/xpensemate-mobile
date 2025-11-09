@@ -17,6 +17,7 @@ class AppUtils {
   static final Map<String, Timer> _debounceTimers = {};
 
   /// Debounces function calls with optional key for multiple debouncers
+  /// The debounce function is used to delay the execution of a callback function:
   static void debounce(
     VoidCallback callback, {
     Duration delay = const Duration(milliseconds: 500),
@@ -36,9 +37,10 @@ class AppUtils {
   static final Map<String, DateTime> _lastExecuted = {};
 
   /// Throttles function calls - prevents rapid successive calls
+  /// The throttle function limits how frequently a function can be called:
   static void throttle(
     VoidCallback callback, {
-    Duration delay = const Duration(milliseconds: 1000),
+    Duration delay = const Duration(milliseconds: 1500),
     String key = 'default',
   }) {
     final now = DateTime.now();

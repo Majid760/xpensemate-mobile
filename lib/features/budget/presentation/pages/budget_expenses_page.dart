@@ -74,17 +74,19 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
 
             // Show data if available
             final expenses = state.budgetGoals?.expenses ?? [];
+            final originalExpenses = state.originalBudgetGoals?.expenses ?? [];
             final budgetGoal = widget.budgetGoal;
 
             return CustomScrollView(
               physics: const BouncingScrollPhysics(),
               slivers: [
-                // Animated Header (scrollable)
+                // Animated Header (scrollable) - now shows stats based on original unfiltered data
                 SliverToBoxAdapter(
                   child: Builder(
                     builder: (context) {
-                      // Calculate filtered expenses total and average
-                      final filteredExpensesTotal = expenses.fold<double>(
+                      // Calculate stats based on original unfiltered expenses
+                      final originalExpensesTotal =
+                          originalExpenses.fold<double>(
                         0,
                         (sum, expense) => sum + expense.amount,
                       );
@@ -92,11 +94,11 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                       return AnimatedExpenseHeader(
                         category: '${budgetGoal.name} Expenses',
                         budgetGoal: budgetGoal.name,
-                        totalSpent: filteredExpensesTotal,
-                        average: expenses.isNotEmpty
-                            ? filteredExpensesTotal / expenses.length
+                        totalSpent: originalExpensesTotal,
+                        average: originalExpenses.isNotEmpty
+                            ? originalExpensesTotal / originalExpenses.length
                             : 0,
-                        transactions: expenses.length,
+                        transactions: originalExpenses.length,
                       );
                     },
                   ),
@@ -125,14 +127,15 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                   child: SizedBox(height: AppSpacing.md),
                 ),
 
-                // Budget Progress
+                // Budget Progress - now shows stats based on original unfiltered data with filtered indication
                 SliverToBoxAdapter(
                   child: AnimatedWidget(
                     delay: 200,
                     child: Builder(
                       builder: (context) {
-                        // Calculate filtered expenses total
-                        final filteredExpensesTotal = expenses.fold<double>(
+                        // Calculate stats based on original unfiltered expenses
+                        final originalExpensesTotal =
+                            originalExpenses.fold<double>(
                           0,
                           (sum, expense) => sum + expense.amount,
                         );
@@ -140,10 +143,10 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                         return BudgetProgressBar(
                           category: budgetGoal.name,
                           subtitle:
-                              '(${budgetGoal.category})${expenses.length < (state.budgetGoals?.expenses ?? []).length ? ' • Filtered' : ''}',
+                              '(${budgetGoal.category})${expenses.length < originalExpenses.length ? ' • Filtered' : ''}',
                           budget: budgetGoal.amount,
-                          spent: filteredExpensesTotal,
-                          remaining: budgetGoal.amount - filteredExpensesTotal,
+                          spent: originalExpensesTotal,
+                          remaining: budgetGoal.amount - originalExpensesTotal,
                         );
                       },
                     ),
@@ -154,7 +157,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                   child: SizedBox(height: AppSpacing.md),
                 ),
 
-                // Expense List
+                // Expense List - shows filtered expenses
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   sliver: SliverList(
@@ -181,7 +184,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
 
                 // Show message when no expenses match the filter
                 if (expenses.isEmpty &&
-                    (state.budgetGoals?.expenses ?? []).isNotEmpty)
+                    (state.originalBudgetGoals?.expenses ?? []).isNotEmpty)
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.all(AppSpacing.md),
@@ -417,7 +420,7 @@ class BudgetProgressBar extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: LinearProgressIndicator(
-                value: progress,
+                value: progress.clamp(0.0, 1.0), // Clamp value between 0 and 1
                 backgroundColor: colorScheme.surfaceContainerHighest,
                 valueColor: AlwaysStoppedAnimation<Color>(context.primaryColor),
                 minHeight: 10,

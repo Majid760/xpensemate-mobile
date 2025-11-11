@@ -13,6 +13,7 @@ class BudgetExpensesState extends Equatable {
   const BudgetExpensesState({
     this.state = BudgetExpensesStates.initial,
     this.budgetGoals,
+    this.originalBudgetGoals,
     this.message,
     this.stackTrace,
     this.currentPage,
@@ -22,7 +23,8 @@ class BudgetExpensesState extends Equatable {
   });
 
   final BudgetExpensesStates state;
-  final BudgetSpecificExpensesListEntity? budgetGoals;
+  final BudgetSpecificExpensesListEntity? budgetGoals; // Filtered expenses
+  final BudgetSpecificExpensesListEntity? originalBudgetGoals; // Original unfiltered expenses
   final String? message;
   final StackTrace? stackTrace;
 
@@ -35,6 +37,7 @@ class BudgetExpensesState extends Equatable {
   BudgetExpensesState copyWith({
     BudgetExpensesStates? state,
     BudgetSpecificExpensesListEntity? budgetGoals,
+    BudgetSpecificExpensesListEntity? originalBudgetGoals,
     String? message,
     StackTrace? stackTrace,
     int? currentPage,
@@ -45,6 +48,7 @@ class BudgetExpensesState extends Equatable {
       BudgetExpensesState(
         state: state ?? this.state,
         budgetGoals: budgetGoals ?? this.budgetGoals,
+        originalBudgetGoals: originalBudgetGoals ?? this.originalBudgetGoals,
         message: message ?? this.message,
         stackTrace: stackTrace ?? this.stackTrace,
         currentPage: currentPage ?? this.currentPage,
@@ -57,6 +61,7 @@ class BudgetExpensesState extends Equatable {
   List<Object?> get props => [
         state,
         budgetGoals,
+        originalBudgetGoals,
         message,
         stackTrace,
         currentPage,

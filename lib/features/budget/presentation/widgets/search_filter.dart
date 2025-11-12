@@ -20,8 +20,6 @@ class _SearchAndFilterBarState extends State<SearchAndFilterBar>
     with SingleTickerProviderStateMixin {
   bool _isFilterVisible = false;
   late AnimationController _animationController;
-  late Animation<double> _heightAnimation;
-  late Animation<double> _fadeAnimation;
   late final FormGroup _form;
 
   @override
@@ -39,12 +37,7 @@ class _SearchAndFilterBarState extends State<SearchAndFilterBar>
       vsync: this,
     );
 
-    _heightAnimation = CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
+    Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _animationController,
         curve: Curves.easeInOut,
@@ -73,6 +66,10 @@ class _SearchAndFilterBarState extends State<SearchAndFilterBar>
         _animationController.forward();
       } else {
         _animationController.reverse();
+        // Reset payment method filter to 'all' when switching back to search view
+        if (context.mounted) {
+          context.budgetExpensesCubit.updatePaymentMethodFilter('all');
+        }
       }
     });
 
@@ -81,74 +78,120 @@ class _SearchAndFilterBarState extends State<SearchAndFilterBar>
   }
 
   @override
-  Widget build(BuildContext context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
+  Widget build(BuildContext context) => LayoutBuilder(
+        builder: (context, constraints) => SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: ReactiveForm(
-                  formGroup: _form,
-                  child: ReactiveAppField(
-                    formControlName: 'search',
-                    radius: BorderRadius.circular(36),
-                    fieldType: FieldType.search,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              GestureDetector(
-                onTap: _toggleFilter,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  padding: const EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    color: _isFilterVisible
-                        ? const Color(0xFF6C63FF)
-                        : Colors.grey[200]!,
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: _isFilterVisible
-                          ? const Color(0xFF6C63FF)
-                          : Colors.grey[200]!,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: _isFilterVisible
-                            ? const Color(0xFF6C63FF).withOpacity(0.3)
-                            : Colors.black.withOpacity(0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
+              // Show either search bar or filter options based on _isFilterVisible state
+              if (!_isFilterVisible) ...[
+                Row(
+                  children: [
+                    Expanded(
+                      child: ReactiveForm(
+                        formGroup: _form,
+                        child: ReactiveAppField(
+                          formControlName: 'search',
+                          radius: BorderRadius.circular(36),
+                          fieldType: FieldType.search,
+                        ),
                       ),
-                    ],
-                  ),
-                  child: Icon(
-                    Icons.filter_list,
-                    color: _isFilterVisible ? Colors.white : Colors.grey[600],
-                    size: 20,
-                  ),
+                    ),
+                    const SizedBox(width: 12),
+                    GestureDetector(
+                      onTap: _toggleFilter,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        padding: const EdgeInsets.all(15),
+                        decoration: BoxDecoration(
+                          color: _isFilterVisible
+                              ? const Color(0xFF6C63FF)
+                              : Colors.grey[200]!,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: _isFilterVisible
+                                ? const Color(0xFF6C63FF)
+                                : Colors.grey[200]!,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: _isFilterVisible
+                                  ? const Color(0xFF6C63FF).withOpacity(0.3)
+                                  : Colors.black.withOpacity(0.05),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.filter_list,
+                          color: _isFilterVisible
+                              ? Colors.white
+                              : Colors.grey[600],
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-          SizeTransition(
-            sizeFactor: _heightAnimation,
-            axisAlignment: -1,
-            child: FadeTransition(
-              opacity: _fadeAnimation,
-              child: Container(
-                margin: const EdgeInsets.only(top: 16),
-                child: PaymentMethodFilter(onFilterChanged: (method) {
+              ] else ...[
+                // Show filter options when filter is active
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Filter by Payment Method',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: _toggleFilter,
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF6C63FF),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                PaymentMethodFilter(onFilterChanged: (method) {
                   if (context.mounted) {
+                    // Convert display names to database format
+                    final dbFormat = _convertToDatabaseFormat(method);
                     context.budgetExpensesCubit
-                        .updatePaymentMethodFilter(method);
+                        .updatePaymentMethodFilter(dbFormat);
                   }
                 }),
-              ),
-            ),
+              ],
+            ],
           ),
-        ],
+        ),
       );
+
+  // Convert display names to database format
+  String _convertToDatabaseFormat(String displayName) {
+    switch (displayName) {
+      case 'Cash':
+        return 'cash';
+      case 'Credit Card':
+        return 'credit_card';
+      case 'Debit Card':
+        return 'debit_card';
+      default:
+        return 'all'; // For 'All' option
+    }
+  }
 }
 
 // Payment Method Filter
@@ -172,35 +215,39 @@ class _PaymentMethodFilterState extends State<PaymentMethodFilter> {
   }
 
   @override
-  Widget build(BuildContext context) => SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: [
-            FilterChip(
-              label: 'All',
-              isSelected: selected == 'All',
-              onTap: () => _selectFilter('All'),
-            ),
-            const SizedBox(width: 8),
-            FilterChip(
-              label: 'Cash',
-              isSelected: selected == 'Cash',
-              onTap: () => _selectFilter('Cash'),
-            ),
-            const SizedBox(width: 8),
-            FilterChip(
-              label: 'Credit Card',
-              isSelected: selected == 'Credit Card',
-              onTap: () => _selectFilter('Credit Card'),
-            ),
-            const SizedBox(width: 8),
-            FilterChip(
-              label: 'Debit Card',
-              isSelected: selected == 'Debit Card',
-              onTap: () => _selectFilter('Debit Card'),
-            ),
-            const SizedBox(width: 8),
-          ],
+  Widget build(BuildContext context) => SizedBox(
+        height: 40, // Fixed height to prevent overflow
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FilterChip(
+                label: 'All',
+                isSelected: selected == 'All',
+                onTap: () => _selectFilter('All'),
+              ),
+              const SizedBox(width: 8),
+              FilterChip(
+                label: 'Cash',
+                isSelected: selected == 'Cash',
+                onTap: () => _selectFilter('Cash'),
+              ),
+              const SizedBox(width: 8),
+              FilterChip(
+                label: 'Credit Card',
+                isSelected: selected == 'Credit Card',
+                onTap: () => _selectFilter('Credit Card'),
+              ),
+              const SizedBox(width: 8),
+              FilterChip(
+                label: 'Debit Card',
+                isSelected: selected == 'Debit Card',
+                onTap: () => _selectFilter('Debit Card'),
+              ),
+              const SizedBox(width: 8),
+            ],
+          ),
         ),
       );
 }

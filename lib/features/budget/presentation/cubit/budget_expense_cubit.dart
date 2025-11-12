@@ -13,7 +13,7 @@ class BudgetExpensesCubit extends Cubit<BudgetExpensesState> {
 
   // Filter parameters
   String _searchQuery = '';
-  String _paymentMethodFilter = 'All';
+  String _paymentMethodFilter = 'all'; // Changed default to 'all' to match database format
 
   // get budget specific expenses
   Future<void> getBudgetSpecificExpenses(
@@ -28,8 +28,8 @@ class BudgetExpensesCubit extends Cubit<BudgetExpensesState> {
     if (state.budgetGoals == null) {
       emit(state.copyWith(state: BudgetExpensesStates.loading));
     }
-    final result =
-        await _getBudgetSpecificExpensesUseCase.call(GetBudgetSpecificExpensesUseCaseParams(budgetId: budgetId));
+    final result = await _getBudgetSpecificExpensesUseCase
+        .call(GetBudgetSpecificExpensesUseCaseParams(budgetId: budgetId));
     result.fold(
       (failure) => emit(
         state.copyWith(
@@ -40,11 +40,12 @@ class BudgetExpensesCubit extends Cubit<BudgetExpensesState> {
       (expenses) {
         // Store original expenses
         final originalExpensesList = expenses;
-        
+
         // Apply filters to expenses
         print('Applying filters: searchQuery=${expenses.expenses.length}');
         final filteredExpenses = _applyFilters(expenses.expenses);
-        final filteredExpensesList = expenses.copyWith(expenses: filteredExpenses);
+        final filteredExpensesList =
+            expenses.copyWith(expenses: filteredExpenses);
 
         emit(
           state.copyWith(
@@ -58,19 +59,22 @@ class BudgetExpensesCubit extends Cubit<BudgetExpensesState> {
   }
 
   // Apply search and filter logic
-  List<BudgetSpecificExpensesEntity> _applyFilters(List<BudgetSpecificExpensesEntity> expenses) {
+  List<BudgetSpecificExpensesEntity> _applyFilters(
+      List<BudgetSpecificExpensesEntity> expenses) {
     var filtered = expenses;
 
     // Apply search filter
     if (_searchQuery.isNotEmpty) {
       filtered = filtered.where((expense) {
-        return expense.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+        return expense.name
+                .toLowerCase()
+                .contains(_searchQuery.toLowerCase()) ||
             expense.detail.toLowerCase().contains(_searchQuery.toLowerCase());
       }).toList();
     }
 
     // Apply payment method filter
-    if (_paymentMethodFilter != 'All') {
+    if (_paymentMethodFilter != 'all') { // Changed from 'All' to 'all'
       filtered = filtered.where((expense) {
         return expense.paymentMethod == _paymentMethodFilter;
       }).toList();
@@ -85,8 +89,10 @@ class BudgetExpensesCubit extends Cubit<BudgetExpensesState> {
     // For now, we'll just update the state and re-apply filters
     _searchQuery = query;
     if (state.originalBudgetGoals != null) {
-      final filteredExpenses = _applyFilters(state.originalBudgetGoals!.expenses);
-      final filteredExpensesList = state.originalBudgetGoals!.copyWith(expenses: filteredExpenses);
+      final filteredExpenses =
+          _applyFilters(state.originalBudgetGoals!.expenses);
+      final filteredExpensesList =
+          state.originalBudgetGoals!.copyWith(expenses: filteredExpenses);
       emit(state.copyWith(budgetGoals: filteredExpensesList));
     }
   }
@@ -95,8 +101,10 @@ class BudgetExpensesCubit extends Cubit<BudgetExpensesState> {
   void updatePaymentMethodFilter(String method) {
     _paymentMethodFilter = method;
     if (state.originalBudgetGoals != null) {
-      final filteredExpenses = _applyFilters(state.originalBudgetGoals!.expenses);
-      final filteredExpensesList = state.originalBudgetGoals!.copyWith(expenses: filteredExpenses);
+      final filteredExpenses =
+          _applyFilters(state.originalBudgetGoals!.expenses);
+      final filteredExpensesList =
+          state.originalBudgetGoals!.copyWith(expenses: filteredExpenses);
       emit(state.copyWith(budgetGoals: filteredExpensesList));
     }
   }

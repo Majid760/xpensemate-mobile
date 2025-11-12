@@ -84,6 +84,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expenseCreatedFailed => 'Expense failed to create!';
 
   @override
+  String get currencySymbol => '\$';
+
+  @override
   String get or => 'Or';
 
   @override
@@ -311,6 +314,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get totalSpent => 'Total Spent';
+
+  @override
+  String get average => 'Average';
+
+  @override
+  String get transactions => 'Transactions';
+
+  @override
+  String budgetGoalLabel(Object amount) {
+    return 'Budget Goal: $amount';
+  }
 
   @override
   String get thisMonth => 'This Month';
@@ -628,10 +642,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get of12 => 'of';
 
   @override
-  String get budget => 'budget';
+  String get budget => 'Budget';
 
   @override
   String get expenses => 'expenses';
+
+  @override
+  String get expense => 'Expenses';
 
   @override
   String get archive => 'Archive';
@@ -770,4 +787,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get invalidAmount => 'Please enter a valid amount';
+
+  @override
+  String get productAnalytic => 'Product Analytics';
+
+  @override
+  String get fieldTooShort => 'Description is too short (2-100 characters)';
+
+  @override
+  String get fieldTooLong => 'This field is too long (maximum 100 characters)';
 }

@@ -422,12 +422,19 @@
   },
   "of12": "of",
 
-  "budget": "budget",
+  "budget": "Budget",
   "@budget": {
+    "description": "Budget label"
+  },
+    "@budget": {
     "description": "Budget label"
   },
   "expenses": "expenses",
   "@expenses": {
+    "description": "Expenses label"
+  },
+  "expense":"Expenses",
+  "@expense": {
     "description": "Expenses label"
   },
   "archive": "Archive",
@@ -577,5 +584,15 @@
   "invalidAmount": "Please enter a valid amount",
   "@invalidAmount": {
     "description": "Invalid amount error message"
+  },
+  "productAnalytic" : "Product Analytics",
+  "@productAnalytic": {
+    "description": "Product Analytics"
+  },
+
+  "fieldTooShort": "This field is too short (minimum 2 characters)",
+  "fieldTooLong": "This field is too long (maximum 100 characters)",
+  "@textField min and max error messages_section":{
+    "description": "TextField min and max length error messages"
   }
 }

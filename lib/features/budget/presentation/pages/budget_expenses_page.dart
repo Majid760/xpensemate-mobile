@@ -99,22 +99,25 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                             ? originalExpensesTotal / originalExpenses.length
                             : 0,
                         transactions: originalExpenses.length,
+                        budgetAmount: budgetGoal.amount, // New parameter
+                        remaining: budgetGoal.amount -
+                            originalExpensesTotal, // New parameter
                       );
                     },
                   ),
                 ),
                 const SliverToBoxAdapter(
-                  child: SizedBox(height: AppSpacing.md),
+                  child: SizedBox(height: AppSpacing.xs),
                 ),
 
                 // Sticky Search and Filter Bar with expandable dropdown
                 SliverPersistentHeader(
                   pinned: true,
                   delegate: ExpandableSearchBarDelegate(
-                    minHeight: 70,
-                    maxHeight: _isFilterExpanded ? 180.0 : 70.0,
+                    minHeight: 100,
+                    maxHeight:
+                        100, // Increased height to accommodate filter content
                     child: Container(
-                      color: context.colorScheme.surface,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: SearchAndFilterBar(
                         onFilterToggle: _toggleFilter,
@@ -124,37 +127,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                 ),
 
                 const SliverToBoxAdapter(
-                  child: SizedBox(height: AppSpacing.md),
-                ),
-
-                // Budget Progress - now shows stats based on original unfiltered data with filtered indication
-                SliverToBoxAdapter(
-                  child: AnimatedWidget(
-                    delay: 200,
-                    child: Builder(
-                      builder: (context) {
-                        // Calculate stats based on original unfiltered expenses
-                        final originalExpensesTotal =
-                            originalExpenses.fold<double>(
-                          0,
-                          (sum, expense) => sum + expense.amount,
-                        );
-
-                        return BudgetProgressBar(
-                          category: budgetGoal.name,
-                          subtitle:
-                              '(${budgetGoal.category})${expenses.length < originalExpenses.length ? ' • Filtered' : ''}',
-                          budget: budgetGoal.amount,
-                          spent: originalExpensesTotal,
-                          remaining: budgetGoal.amount - originalExpensesTotal,
-                        );
-                      },
-                    ),
-                  ),
-                ),
-
-                const SliverToBoxAdapter(
-                  child: SizedBox(height: AppSpacing.md),
+                  child: SizedBox(height: AppSpacing.xs),
                 ),
 
                 // Expense List - shows filtered expenses
@@ -262,9 +235,8 @@ class ExpandableSearchBarDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    final currentExtent = maxHeight - shrinkOffset;
     return SizedBox(
-      height: currentExtent,
+      height: maxHeight,
       child: child,
     );
   }

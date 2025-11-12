@@ -243,6 +243,12 @@ abstract class AppLocalizations {
   /// **'Expense failed to create!'**
   String get expenseCreatedFailed;
 
+  /// No description provided for @currencySymbol.
+  ///
+  /// In en, this message translates to:
+  /// **'\$'**
+  String get currencySymbol;
+
   /// No description provided for @or.
   ///
   /// In en, this message translates to:
@@ -668,6 +674,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Total Spent'**
   String get totalSpent;
+
+  /// No description provided for @average.
+  ///
+  /// In en, this message translates to:
+  /// **'Average'**
+  String get average;
+
+  /// No description provided for @transactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions'**
+  String get transactions;
+
+  /// No description provided for @budgetGoalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget Goal: {amount}'**
+  String budgetGoalLabel(Object amount);
 
   /// No description provided for @thisMonth.
   ///
@@ -1290,7 +1314,7 @@ abstract class AppLocalizations {
   /// Budget label
   ///
   /// In en, this message translates to:
-  /// **'budget'**
+  /// **'Budget'**
   String get budget;
 
   /// Expenses label
@@ -1298,6 +1322,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'expenses'**
   String get expenses;
+
+  /// Expenses label
+  ///
+  /// In en, this message translates to:
+  /// **'Expenses'**
+  String get expense;
 
   /// Archive button label
   ///
@@ -1574,6 +1604,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please enter a valid amount'**
   String get invalidAmount;
+
+  /// Product Analytics
+  ///
+  /// In en, this message translates to:
+  /// **'Product Analytics'**
+  String get productAnalytic;
+
+  /// No description provided for @fieldTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Description is too short (2-100 characters)'**
+  String get fieldTooShort;
+
+  /// No description provided for @fieldTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'This field is too long (maximum 100 characters)'**
+  String get fieldTooLong;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

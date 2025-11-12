@@ -24,7 +24,8 @@ class BudgetExpensesState extends Equatable {
 
   final BudgetExpensesStates state;
   final BudgetSpecificExpensesListEntity? budgetGoals; // Filtered expenses
-  final BudgetSpecificExpensesListEntity? originalBudgetGoals; // Original unfiltered expenses
+  final BudgetSpecificExpensesListEntity?
+      originalBudgetGoals; // Original unfiltered expenses
   final String? message;
   final StackTrace? stackTrace;
 

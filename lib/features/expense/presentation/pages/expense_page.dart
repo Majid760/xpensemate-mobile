@@ -34,8 +34,7 @@ class ExpensePageContent extends StatefulWidget {
   State<ExpensePageContent> createState() => _ExpensePageContentState();
 }
 
-class _ExpensePageContentState extends State<ExpensePageContent>
-    with TickerProviderStateMixin {
+class _ExpensePageContentState extends State<ExpensePageContent> with TickerProviderStateMixin {
   late ScrollController _scrollController;
 
   @override
@@ -74,16 +73,13 @@ class _ExpensePageContentState extends State<ExpensePageContent>
   }
 
   @override
-  Widget build(BuildContext context) =>
-      BlocConsumer<ExpenseCubit, ExpenseState>(
+  Widget build(BuildContext context) => BlocConsumer<ExpenseCubit, ExpenseState>(
         listener: (context, state) {
-          if (state.state == ExpenseStates.error &&
-              state.message != null &&
-              state.message!.isNotEmpty) {
+          if (state.message != null && state.message!.isNotEmpty) {
             AppSnackBar.show(
               context: context,
               message: state.message ?? "",
-              type: SnackBarType.error,
+              type: state.state == ExpenseStates.error ? SnackBarType.error : SnackBarType.success,
             );
           }
         },
@@ -126,8 +122,7 @@ class _ExpensePageContentState extends State<ExpensePageContent>
                 value: ["weekly", "monthly", "yearly"],
                 onChanged: (period) {
                   if (period != null) {
-                    context.expenseCubit
-                        .loadExpenseStats(period: period.toLowerCase());
+                    context.expenseCubit.loadExpenseStats(period: period.toLowerCase());
                   }
                 },
               ),

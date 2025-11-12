@@ -84,7 +84,8 @@ class ProfileCubit extends Cubit<ProfileState> {
           ),
         );
       }, (user) {
-        emit(state.copyWith(user: user, isUpdating: false, message:'updated'));
+        emit(state.copyWith(user: user, isUpdating: false, message: 'updated'));
+        // after update at in server side we need to update user in local storage
         _authCubit.updateUser(user);
       });
     } on Exception catch (e) {
@@ -107,13 +108,14 @@ class ProfileCubit extends Cubit<ProfileState> {
     result.fold(
       (failure) => uploadedUrl,
       (url) {
-        if (url != null && url.isNotEmpty)uploadedUrl=url;
+        if (url != null && url.isNotEmpty) uploadedUrl = url;
       },
     );
-    return uploadedUrl; 
+    return uploadedUrl;
   }
 
-  void setImageFile(File? file) => emit(state.copyWith(imageFile: file,message: ''));
+  void setImageFile(File? file) =>
+      emit(state.copyWith(imageFile: file, message: ''));
 
   /// Get user display name (fallback to email if no full name)
   String get displayName {

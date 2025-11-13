@@ -21,6 +21,7 @@ import 'package:xpensemate/features/budget/data/datasources/budget_remote_data_s
 import 'package:xpensemate/features/budget/data/repositories/budget_repository_impl.dart';
 import 'package:xpensemate/features/budget/domain/repositories/budget_repository.dart';
 import 'package:xpensemate/features/budget/domain/usecases/get_budget_expenses_usecase.dart';
+import 'package:xpensemate/features/budget/domain/usecases/get_budget_goals_by_period_usecase.dart';
 import 'package:xpensemate/features/budget/domain/usecases/get_budget_specific_expenses_usecase.dart';
 import 'package:xpensemate/features/budget/domain/usecases/usecase_export.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
@@ -109,7 +110,7 @@ Future<void> initLocator() async {
     // ---------- Presentation Layer ----------
     // Register AuthCubit as a lazy singleton
     sl.registerLazySingleton<AuthCubit>(
-      () => AuthCubit(),
+      AuthCubit.new,
     );
 
     // ---------- Data sources ----------
@@ -184,6 +185,7 @@ Future<void> initLocator() async {
     sl.registerLazySingleton(() => UpdateBudgetGoalUseCase(sl()));
     sl.registerLazySingleton(() => GetBudgetExpensesUseCase(sl()));
     sl.registerLazySingleton(() => GetBudgetSpecificExpensesUseCase(sl()));
+    sl.registerLazySingleton(() => GetBudgetGoalsByPeriodUseCase(sl()));
 
     // ---------- Presentation Layer ----------
     sl.registerFactory(() => ProfileCubit(sl()));

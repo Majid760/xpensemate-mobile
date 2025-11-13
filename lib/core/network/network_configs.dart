@@ -82,6 +82,8 @@ class NetworkConfigs {
   static const String getAllExpensesOfBudgetGoal = '/budget-goal/';
   // budgets endpoints
   static const String budgets = '/budget-goals/status';
+  // budgets by period endpoint
+  static const String budgetsByPeriod = '/budget-by-period/';
 
   // ------------------------------------------------------------------
   //  Static Pages URLs

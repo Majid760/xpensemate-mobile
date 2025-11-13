@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:xpensemate/core/error/failures.dart';
-import 'package:xpensemate/features/budget/data/models/budget_expense_model.dart';
 import 'package:xpensemate/features/budget/data/models/budget_goal_model.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
+import 'package:xpensemate/features/budget/domain/entities/budget_goals_insight_entity.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_specific_expense_entity.dart';
 
 abstract class BudgetRemoteDataSource {
@@ -32,8 +32,13 @@ abstract class BudgetRemoteDataSource {
     String budgetGoalId,
   );
 
-  Future<Either<Failure, BudgetSpecificExpensesListEntity>>
-      getExpensesForSpecificBudgetGoal(
+  Future<Either<Failure, BudgetSpecificExpensesListEntity>> getExpensesForSpecificBudgetGoal(
     String budgetGoalId,
   );
+
+  Future<Either<Failure, BudgetGoalsInsightEntity>> getBudgetGoalsByPeriod(
+    String period, {
+    DateTime? startDate,
+    DateTime? endDate,
+  });
 }

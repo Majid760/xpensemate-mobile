@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/features/budget/domain/entities/budget_goals_insight_entity.dart';
 
 class ExpandableStatsCard extends StatefulWidget {
-  const ExpandableStatsCard({super.key});
+  const ExpandableStatsCard({super.key, this.budgetGoalsInsight});
+  final BudgetGoalsInsightEntity? budgetGoalsInsight;
 
   @override
   State<ExpandableStatsCard> createState() => _ExpandableStatsCardState();
 }
 
-class _ExpandableStatsCardState extends State<ExpandableStatsCard>
-    with SingleTickerProviderStateMixin {
+class _ExpandableStatsCardState extends State<ExpandableStatsCard> with SingleTickerProviderStateMixin {
   bool isExpanded = false;
   late AnimationController _animationController;
   late Animation<double> _expandAnimation;
@@ -57,7 +59,7 @@ class _ExpandableStatsCardState extends State<ExpandableStatsCard>
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF6366F1).withOpacity(0.3),
+              color: const Color(0xFF6366F1).withValues(alpha: 0.3),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
@@ -107,7 +109,7 @@ class _ExpandableStatsCardState extends State<ExpandableStatsCard>
                           child: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: const Icon(
@@ -120,7 +122,7 @@ class _ExpandableStatsCardState extends State<ExpandableStatsCard>
                       ],
                     ),
                     const SizedBox(height: 20),
-                    const QuickStatsRow(),
+                    QuickStatsRow(budgetGoalsInsight: widget.budgetGoalsInsight),
                     SizeTransition(
                       sizeFactor: _expandAnimation,
                       axisAlignment: -1,
@@ -132,15 +134,15 @@ class _ExpandableStatsCardState extends State<ExpandableStatsCard>
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  Colors.white.withOpacity(0),
-                                  Colors.white.withOpacity(0.3),
-                                  Colors.white.withOpacity(0),
+                                  Colors.white.withValues(alpha: 0),
+                                  Colors.white.withValues(alpha: 0.3),
+                                  Colors.white.withValues(alpha: 0),
                                 ],
                               ),
                             ),
                           ),
                           const SizedBox(height: 20),
-                          const DetailedStatsGrid(),
+                          DetailedStatsGrid(budgetGoalsInsight: widget.budgetGoalsInsight),
                         ],
                       ),
                     ),
@@ -154,7 +156,8 @@ class _ExpandableStatsCardState extends State<ExpandableStatsCard>
 }
 
 class DetailedStatsGrid extends StatelessWidget {
-  const DetailedStatsGrid({super.key});
+  const DetailedStatsGrid({super.key, this.budgetGoalsInsight});
+  final BudgetGoalsInsightEntity? budgetGoalsInsight;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -162,30 +165,23 @@ class DetailedStatsGrid extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: _DetailedStatCard(
+                child: StatsCard(
                   icon: Icons.cancel_outlined,
-                  value: '1',
+                  value:
+                      '${budgetGoalsInsight?.failedGoals.length ?? 0}/${budgetGoalsInsight?.terminatedGoals.length ?? 0}',
                   label: 'Failed/Terminated',
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.white.withOpacity(0.15),
-                      Colors.white.withOpacity(0.05),
-                    ],
-                  ),
+                  subtitle: 'Goals not completed',
+                  color: context.theme.primaryColor,
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: _DetailedStatCard(
+                child: StatsCard(
                   icon: Icons.attach_money_rounded,
-                  value: '\$4,207',
+                  value: '\$${budgetGoalsInsight?.totalBudgeted.toStringAsFixed(1) ?? '0.0'}',
                   label: 'Total Budgeted',
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.white.withOpacity(0.15),
-                      Colors.white.withOpacity(0.05),
-                    ],
-                  ),
+                  subtitle: 'Total amount allocated for active goals',
+                  color: context.theme.primaryColor,
                 ),
               ),
             ],
@@ -194,116 +190,343 @@ class DetailedStatsGrid extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: _DetailedStatCard(
+                child: StatsCard(
                   icon: Icons.analytics_outlined,
-                  value: '0%',
+                  value: '${budgetGoalsInsight?.avgProgress.toStringAsFixed(1) ?? '0.0'}%',
                   label: 'Avg. Progress',
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.white.withOpacity(0.15),
-                      Colors.white.withOpacity(0.05),
-                    ],
-                  ),
+                  subtitle: 'Average progress across all goals',
+                  color: context.theme.primaryColor,
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: _DetailedStatCard(
+                child: StatsCard(
                   icon: Icons.event_outlined,
-                  value: 'Jul 15',
-                  label: 'Next Deadline',
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.white.withOpacity(0.15),
-                      Colors.white.withOpacity(0.05),
-                    ],
-                  ),
+                  value: budgetGoalsInsight?.closestDeadlineDate ?? 'No deadlines',
+                  label: 'Closest Deadline',
+                  subtitle: 'Next upcoming deadline',
+                  color: context.theme.primaryColor,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          _DetailedStatCard(
-            icon: Icons.warning_amber_rounded,
-            value: '5',
+          StatsCard(
+            icon: Icons.schedule_rounded,
+            value: '${budgetGoalsInsight?.overdueGoals.length ?? 0}',
             label: 'Overdue Goals',
-            gradient: LinearGradient(
-              colors: [
-                Colors.white.withOpacity(0.15),
-                Colors.white.withOpacity(0.05),
-              ],
-            ),
-            isFullWidth: true,
-          ),
+            subtitle: 'Goals past their deadline',
+            color: context.theme.primaryColor,
+          )
+          // _DetailedStatCard(
+          //   icon: Icons.warning_amber_rounded,
+          //   value: '${budgetGoalsInsight?.overdueGoals.length ?? 0}',
+          //   label: 'Overdue Goals',
+          //
+          //   gradient: LinearGradient(
+          //     colors: [
+          //       Colors.white.withValues(alpha: 0.15),
+          //       Colors.white.withValues(alpha: 0.05),
+          //     ],
+          //   ),
+          //   isFullWidth: true,
+          // ),
         ],
       );
 }
 
-
-
-class _DetailedStatCard extends StatelessWidget {
-  const _DetailedStatCard({
+class StatsCard extends StatefulWidget {
+  const StatsCard({
+    super.key,
     required this.icon,
-    required this.value,
     required this.label,
-    required this.gradient,
-    this.isFullWidth = false,
+    required this.value,
+    required this.color,
+    this.subtitle,
+    this.textColor,
+    this.loading = false,
+    this.clickable = false,
+    this.onClick,
   });
+
   final IconData icon;
-  final String value;
   final String label;
-  final Gradient gradient;
-  final bool isFullWidth;
+  final String value;
+  final Color color;
+  final String? subtitle;
+  final Color? textColor;
+  final bool loading;
+  final bool clickable;
+  final VoidCallback? onClick;
 
   @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: gradient,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: Colors.white.withOpacity(0.2),
+  State<StatsCard> createState() => _StatsCardState();
+}
+
+class _StatsCardState extends State<StatsCard> with SingleTickerProviderStateMixin {
+  bool _isHovered = false;
+  bool _isPressed = false;
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _translateAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.95).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+    _translateAnimation = Tween<double>(begin: 0, end: -2).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _handleHoverEnter(PointerEvent event) {
+    setState(() => _isHovered = true);
+    if (!_isPressed) {
+      _controller.forward();
+    }
+  }
+
+  void _handleHoverExit(PointerEvent event) {
+    setState(() => _isHovered = false);
+    if (!_isPressed) {
+      _controller.reverse();
+    }
+  }
+
+  void _handleTapDown(TapDownDetails details) {
+    if (widget.clickable) {
+      setState(() => _isPressed = true);
+      _controller.reverse();
+    }
+  }
+
+  void _handleTapUp(TapUpDetails details) {
+    if (widget.clickable) {
+      setState(() => _isPressed = false);
+      if (_isHovered) {
+        _controller.forward();
+      }
+      widget.onClick?.call();
+    }
+  }
+
+  void _handleTapCancel() {
+    if (widget.clickable) {
+      setState(() => _isPressed = false);
+      if (_isHovered) {
+        _controller.forward();
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => MouseRegion(
+        onEnter: _handleHoverEnter,
+        onExit: _handleHoverExit,
+        cursor: widget.clickable ? SystemMouseCursors.click : SystemMouseCursors.basic,
+        child: GestureDetector(
+          onTapDown: _handleTapDown,
+          onTapUp: _handleTapUp,
+          onTapCancel: _handleTapCancel,
+          child: AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) => Transform.translate(
+              offset: Offset(0, _isHovered && !_isPressed ? _translateAnimation.value : 0),
+              child: Transform.scale(
+                scale: _isPressed && widget.clickable ? _scaleAnimation.value : 1.0,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200, // slate-50/50
+                    border: Border.all(
+                      color: _isHovered
+                          ? widget.color.withValues(alpha: 1)
+                          : const Color(0xFFE2E8F0).withValues(alpha: 0.5), // slate-200/50
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: _isHovered
+                        ? [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.1),
+                              blurRadius: 20,
+                              offset: const Offset(0, 4),
+                            ),
+                          ]
+                        : [],
+                  ),
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Icon and Label Row
+                          Row(
+                            children: [
+                              // Icon Container
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF1F5F9), // slate-100
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Icon(
+                                  widget.icon,
+                                  size: 20,
+                                  color: widget.color,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              // Label
+                              Expanded(
+                                child: Text(
+                                  widget.label.toUpperCase(),
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFF64748B), // slate-500
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          // Value
+                          if (widget.loading)
+                            Container(
+                              width: 48,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE2E8F0), // slate-200
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: _PulsingShimmer(),
+                            )
+                          else
+                            Text(
+                              widget.value,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w800,
+                                color: widget.textColor ?? const Color(0xFF0F172A), // slate-900
+                                letterSpacing: -0.5,
+                                height: 1.2,
+                              ),
+                            ),
+                          // Subtitle
+                          if (widget.subtitle != null) ...[
+                            const SizedBox(height: 4),
+                            _ExpandableText(
+                              text: widget.subtitle!,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xFF94A3B8), // slate-400
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icon, color: Colors.white, size: 20),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    value,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Colors.white.withOpacity(0.8),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
         ),
       );
 }
 
+// Shimmer animation for loading state
+class _PulsingShimmer extends StatefulWidget {
+  @override
+  State<_PulsingShimmer> createState() => _PulsingShimmerState();
+}
+
+class _PulsingShimmerState extends State<_PulsingShimmer> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    )..repeat(reverse: true);
+    _animation = Tween<double>(begin: 0.5, end: 1).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+        animation: _animation,
+        builder: (context, child) => Opacity(
+          opacity: _animation.value,
+          child: child,
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFFE2E8F0),
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+      );
+}
+
+// Expandable text widget that shows full text when clicked
+class _ExpandableText extends StatefulWidget {
+  const _ExpandableText({
+    required this.text,
+    required this.style,
+  });
+
+  final String text;
+  final TextStyle style;
+
+  @override
+  State<_ExpandableText> createState() => _ExpandableTextState();
+}
+
+class _ExpandableTextState extends State<_ExpandableText> {
+  bool _isExpanded = false;
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: () {
+          setState(() {
+            _isExpanded = !_isExpanded;
+          });
+        },
+        child: Text(
+          widget.text,
+          maxLines: _isExpanded ? null : 1,
+          overflow: _isExpanded ? null : TextOverflow.ellipsis,
+          style: widget.style,
+        ),
+      );
+}
 
 class _QuickStatItem extends StatelessWidget {
   const _QuickStatItem({
@@ -343,7 +566,7 @@ class _QuickStatItem extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
             ),
             textAlign: TextAlign.center,
           ),
@@ -351,9 +574,9 @@ class _QuickStatItem extends StatelessWidget {
       );
 }
 
-
 class QuickStatsRow extends StatelessWidget {
-  const QuickStatsRow({super.key});
+  const QuickStatsRow({super.key, this.budgetGoalsInsight});
+  final BudgetGoalsInsightEntity? budgetGoalsInsight;
 
   @override
   Widget build(BuildContext context) => Row(
@@ -361,38 +584,37 @@ class QuickStatsRow extends StatelessWidget {
           Expanded(
             child: _QuickStatItem(
               icon: Icons.emoji_events_outlined,
-              value: '10',
+              value: budgetGoalsInsight?.totalGoals.toString() ?? '0',
               label: 'Total Goals',
-              iconBg: Colors.white.withOpacity(0.2),
+              iconBg: Colors.white.withValues(alpha: 0.2),
             ),
           ),
           Container(
             width: 1,
             height: 40,
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha: 0.2),
           ),
           Expanded(
             child: _QuickStatItem(
               icon: Icons.trending_up_rounded,
-              value: '5',
+              value: budgetGoalsInsight?.activeGoals.length.toString() ?? '0',
               label: 'Active',
-              iconBg: Colors.white.withOpacity(0.2),
+              iconBg: Colors.white.withValues(alpha: 0.2),
             ),
           ),
           Container(
             width: 1,
             height: 40,
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha: 0.2),
           ),
           Expanded(
             child: _QuickStatItem(
               icon: Icons.check_circle_outline,
-              value: '4',
+              value: budgetGoalsInsight?.achievedGoals.length.toString() ?? '0',
               label: 'Achieved',
-              iconBg: Colors.white.withOpacity(0.2),
+              iconBg: Colors.white.withValues(alpha: 0.2),
             ),
           ),
         ],
       );
 }
-

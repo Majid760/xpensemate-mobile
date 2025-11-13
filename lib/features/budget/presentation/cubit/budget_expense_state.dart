@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_specific_expense_entity.dart';
 
 enum BudgetExpensesStates {
@@ -14,6 +15,7 @@ class BudgetExpensesState extends Equatable {
     this.state = BudgetExpensesStates.initial,
     this.budgetGoals,
     this.originalBudgetGoals,
+    this.budgetGoalsList,
     this.message,
     this.stackTrace,
     this.currentPage,
@@ -24,8 +26,11 @@ class BudgetExpensesState extends Equatable {
 
   final BudgetExpensesStates state;
   final BudgetSpecificExpensesListEntity? budgetGoals; // Filtered expenses
-  final BudgetSpecificExpensesListEntity?
-      originalBudgetGoals; // Original unfiltered expenses
+  final BudgetSpecificExpensesListEntity? originalBudgetGoals;
+
+  // Original unfiltered expenses
+
+  final BudgetGoalsListEntity? budgetGoalsList;
   final String? message;
   final StackTrace? stackTrace;
 
@@ -38,6 +43,7 @@ class BudgetExpensesState extends Equatable {
   BudgetExpensesState copyWith({
     BudgetExpensesStates? state,
     BudgetSpecificExpensesListEntity? budgetGoals,
+    BudgetGoalsListEntity? budgetGoalsList,
     BudgetSpecificExpensesListEntity? originalBudgetGoals,
     String? message,
     StackTrace? stackTrace,
@@ -49,6 +55,7 @@ class BudgetExpensesState extends Equatable {
       BudgetExpensesState(
         state: state ?? this.state,
         budgetGoals: budgetGoals ?? this.budgetGoals,
+        budgetGoalsList: budgetGoalsList ?? this.budgetGoalsList,
         originalBudgetGoals: originalBudgetGoals ?? this.originalBudgetGoals,
         message: message ?? this.message,
         stackTrace: stackTrace ?? this.stackTrace,
@@ -62,6 +69,7 @@ class BudgetExpensesState extends Equatable {
   List<Object?> get props => [
         state,
         budgetGoals,
+        budgetGoalsList,
         originalBudgetGoals,
         message,
         stackTrace,

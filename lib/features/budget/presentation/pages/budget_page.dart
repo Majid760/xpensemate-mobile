@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
+import 'package:xpensemate/features/budget/presentation/cubit/budget_state.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/budget_goal_list.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/insight_card_section.dart';
 
@@ -47,37 +48,41 @@ class _BudgetPageContentState extends State<BudgetPageContent>
   }
 
   void _loadBudgetData() {
-    context.read<BudgetCubit>().refreshBudgetGoals();
+    Future.wait([
+      context.budgetCubit.refreshBudgetGoals(),
+      context.budgetCubit.getBudgetGoalsInsights(period: 'monthly'),
+    ]);
   }
 
   @override
-  Widget build(BuildContext context) => RefreshIndicator(
-        onRefresh: () async => _loadBudgetData(),
-        color: context.primaryColor,
-        child: CustomScrollView(
-          controller: _scrollController,
-          physics: const BouncingScrollPhysics(
-            parent: AlwaysScrollableScrollPhysics(),
-          ),
-          slivers: [
-            const BudgetAppBar(),
-            SliverPadding(
-              padding: EdgeInsets.all(context.md),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate([
-                  const ExpandableStatsCard(),
-                  SizedBox(height: context.xl),
-                  SectionHeader(title: context.l10n.budget),
-                  SizedBox(height: context.sm),
-                ]),
+  Widget build(BuildContext context) => BlocConsumer<BudgetCubit, BudgetState>(
+        listener: (context, state) {},
+        builder: (context, state) => RefreshIndicator(
+          onRefresh: () async => _loadBudgetData(),
+          color: context.primaryColor,
+          child: CustomScrollView(
+            controller: _scrollController,
+            physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics()),
+            slivers: [
+              const BudgetAppBar(),
+              SliverPadding(
+                padding: EdgeInsets.all(context.md),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    ExpandableStatsCard(
+                        budgetGoalsInsight: state.budgetGoalsInsight),
+                    SizedBox(height: context.xl),
+                    SectionHeader(title: context.l10n.budget),
+                    SizedBox(height: context.sm),
+                  ]),
+                ),
               ),
-            ),
-            BudgetGoalsListWidget(scrollController: _scrollController),
-            // Bottom padding for FAB
-            SliverToBoxAdapter(
-              child: SizedBox(height: context.xl * 3),
-            ),
-          ],
+              BudgetGoalsListWidget(scrollController: _scrollController),
+              // Bottom padding for FAB
+              SliverToBoxAdapter(child: SizedBox(height: context.xl * 3)),
+            ],
+          ),
         ),
       );
 }
@@ -96,7 +101,7 @@ class BudgetAppBar extends StatelessWidget {
         ),
         actions: [
           Container(
-            margin: EdgeInsets.only(right: context.sm),
+            margin: EdgeInsets.only(right: context.md),
             decoration: BoxDecoration(
               color: context.colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(12),

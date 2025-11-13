@@ -4,8 +4,10 @@ import 'package:xpensemate/core/network/network_configs.dart';
 import 'package:xpensemate/core/network/network_contracts.dart';
 import 'package:xpensemate/features/budget/data/datasources/budget_remote_data_source.dart';
 import 'package:xpensemate/features/budget/data/models/budget_goal_model.dart';
+import 'package:xpensemate/features/budget/data/models/budget_goals_insight_model.dart';
 import 'package:xpensemate/features/budget/data/models/budget_specific_expense_model.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
+import 'package:xpensemate/features/budget/domain/entities/budget_goals_insight_entity.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_specific_expense_entity.dart';
 
 class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
@@ -94,4 +96,20 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
   ) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<Either<Failure, BudgetGoalsInsightEntity>> getBudgetGoalsByPeriod(
+    String period, {
+    DateTime? startDate,
+    DateTime? endDate,
+  }) =>
+      _networkClient.get(
+        NetworkConfigs.budgetsByPeriod,
+        data: {
+          'period': period,
+          if (startDate != null) 'start_date': startDate.toIso8601String(),
+          if (endDate != null) 'end_date': endDate.toIso8601String(),
+        },
+        fromJson: BudgetGoalsInsightModel.fromJson,
+      );
 }

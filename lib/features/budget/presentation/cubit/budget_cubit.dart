@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/features/budget/data/models/budget_goal_model.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
+import 'package:xpensemate/features/budget/domain/usecases/get_budget_goals_by_period_usecase.dart';
 import 'package:xpensemate/features/budget/domain/usecases/usecase_export.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_state.dart';
 
@@ -11,16 +13,17 @@ class BudgetCubit extends Cubit<BudgetState> {
     this._createBudgetGoalUseCase,
     this._updateBudgetGoalUseCase,
     this._deleteBudgetGoalUseCase,
-    this._budgetGoalsStatsUseCase,
+    this._getBudgetGoalsByPeriodUseCase,
   ) : super(const BudgetState()) {
     getBudgetGoals();
+    getBudgetGoalsInsights(period: 'monthly');
   }
 
   final GetBudgetsGoalsUseCase _getBudgetGoalsUseCase;
   final CreateBudgetGoalUseCase _createBudgetGoalUseCase;
   final UpdateBudgetGoalUseCase _updateBudgetGoalUseCase;
   final DeleteBudgetGoalUseCase _deleteBudgetGoalUseCase;
-  final GetBudgetGoalsStatsUseCase _budgetGoalsStatsUseCase;
+  final GetBudgetGoalsByPeriodUseCase _getBudgetGoalsByPeriodUseCase;
 
   final List<BudgetGoalEntity> _cache = [];
   int _page = 1;
@@ -83,9 +86,7 @@ class BudgetCubit extends Cubit<BudgetState> {
       );
     }
 
-    _hasMore = _page < data.totalPages &&
-        data.budgetGoals.isNotEmpty &&
-        data.budgetGoals.length >= _limit;
+    _hasMore = _page < data.totalPages && data.budgetGoals.isNotEmpty && data.budgetGoals.length >= _limit;
 
     emit(
       state.copyWith(
@@ -163,8 +164,7 @@ class BudgetCubit extends Cubit<BudgetState> {
     try {
       emit(state.copyWith(state: BudgetStates.loading));
 
-      final result = await _createBudgetGoalUseCase
-          .call(CreateBudgetGoalParams(budgetGoal: goal));
+      final result = await _createBudgetGoalUseCase.call(CreateBudgetGoalParams(budgetGoal: goal));
 
       result.fold(
         (failure) => emit(
@@ -205,8 +205,7 @@ class BudgetCubit extends Cubit<BudgetState> {
     try {
       _cache[index] = goal;
       _emitUpdatedState('');
-      final result = await _updateBudgetGoalUseCase
-          .call(UpdateBudgetGoalParams(budgetGoal: goal));
+      final result = await _updateBudgetGoalUseCase.call(UpdateBudgetGoalParams(budgetGoal: goal));
       result.fold(
         (failure) {
           _cache[index] = previous;
@@ -292,6 +291,55 @@ class BudgetCubit extends Cubit<BudgetState> {
         message: message,
       ),
     );
+  }
+
+  Future<void> getBudgetGoalsInsights({
+    required String period,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    try {
+      emit(state.copyWith(state: BudgetStates.loading));
+      final result = await _getBudgetGoalsByPeriodUseCase.call(
+        GetBudgetGoalsByPeriodParams(
+          period: period,
+          startDate: startDate,
+          endDate: endDate,
+        ),
+      );
+      result.fold((failure) {
+        logE('failure in getting budget goals insights: $failure');
+        emit(
+          state.copyWith(
+            state: BudgetStates.error,
+            message: failure.toString(),
+          ),
+        );
+      }, (budgetGoals) {
+        logI('this is active goals ${budgetGoals.activeGoals.length}');
+        logI('this is failed goals ${budgetGoals.failedGoals.length}');
+        logI('this is achieved goals ${budgetGoals.achievedGoals.length}');
+        logI('this is total goals ${budgetGoals.totalGoals}');
+        logI('this is avgProggress goals ${budgetGoals.avgProgress}');
+        logI('this is closeed goals ${budgetGoals.closestGoals.length}');
+        logI('this is overdeue goals ${budgetGoals.overdueGoals.length}');
+        logI('this is budgget goals ${budgetGoals.totalBudgeted}');
+
+        emit(
+          state.copyWith(
+            state: BudgetStates.loaded,
+            budgetGoalsInsight: budgetGoals,
+          ),
+        );
+      });
+    } on Exception catch (e) {
+      emit(
+        state.copyWith(
+          state: BudgetStates.error,
+          message: 'Failed to get budget goals insights: $e',
+        ),
+      );
+    }
   }
 }
 

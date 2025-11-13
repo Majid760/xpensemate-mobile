@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/features/budget/data/datasources/budget_remote_data_source.dart';
-import 'package:xpensemate/features/budget/data/models/budget_expense_model.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
+import 'package:xpensemate/features/budget/domain/entities/budget_goals_insight_entity.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_specific_expense_entity.dart';
 import 'package:xpensemate/features/budget/domain/repositories/budget_repository.dart';
 
@@ -51,10 +51,23 @@ class BudgetRepositoryImpl implements BudgetRepository {
 
   @override
   Future<Either<Failure, BudgetSpecificExpensesListEntity>>
-      getExpensesForSpecificBudgetGoal(String budgetGoalId) => remoteDataSource.getExpensesForSpecificBudgetGoal(budgetGoalId);
+      getExpensesForSpecificBudgetGoal(String budgetGoalId) =>
+          remoteDataSource.getExpensesForSpecificBudgetGoal(budgetGoalId);
 
   @override
   Future<Either<Failure, BudgetGoalEntity>> getBudgetGoal(String id) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<Either<Failure, BudgetGoalsInsightEntity>> getBudgetGoalsByPeriod({
+    required String period,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) =>
+      remoteDataSource.getBudgetGoalsByPeriod(
+        period,
+        startDate: startDate,
+        endDate: endDate,
+      );
 }

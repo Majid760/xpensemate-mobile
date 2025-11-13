@@ -102,6 +102,24 @@ extension LocalizationContext on BuildContext {
   String get vsLastWeek => l10n.vsLastWeek;
   String get available => l10n.available;
   String get spentThisWeek => l10n.spentThisWeek;
+
+  // Budget Insights
+  String get overview => l10n.overview;
+  String get budgetStatistics => l10n.budgetStatistics;
+  String get totalGoals => l10n.totalGoals;
+  String get active => l10n.active;
+  String get achieved => l10n.achieved;
+  String get failedTerminated => l10n.failedTerminated;
+  String get goalsNotCompleted => l10n.goalsNotCompleted;
+  String get totalBudgeted => l10n.totalBudgeted;
+  String get totalAmountAllocated => l10n.totalAmountAllocated;
+  String get avgProgress => l10n.avgProgress;
+  String get averageProgressGoals => l10n.averageProgressGoals;
+  String get closestDeadline => l10n.closestDeadline;
+  String get nextUpcomingDeadline => l10n.nextUpcomingDeadline;
+  String get overdueGoals => l10n.overdueGoals;
+  String get goalsPastDeadline => l10n.goalsPastDeadline;
+  String get noDeadlines => l10n.noDeadlines;
 }
 
 extension LocalizationHelpers on BuildContext {

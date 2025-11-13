@@ -135,7 +135,10 @@ class BudgetCubit extends Cubit<BudgetState> {
   }
 
   Future<void> refreshBudgetGoals({int limit = 10}) async {
-    await getBudgetGoals(limit: limit, refresh: true);
+    await Future.wait([
+      getBudgetGoals(limit: limit, refresh: true),
+      getBudgetGoalsInsights(period: 'monthly'),
+    ]);
   }
 
   bool shouldLoadMore(int index, {int threshold = 5}) =>

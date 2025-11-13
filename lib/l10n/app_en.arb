@@ -592,7 +592,70 @@
 
   "fieldTooShort": "This field is too short (minimum 2 characters)",
   "fieldTooLong": "This field is too long (maximum 100 characters)",
-  "@textField min and max error messages_section":{
-    "description": "TextField min and max length error messages"
+
+  "@@budget_insights_section": { "description": "Budget insights and statistics strings" },
+  "overview": "Overview",
+  "@overview": {
+    "description": "Title for the budget overview section"
+  },
+  "budgetStatistics": "Budget Statistics",
+  "@budgetStatistics": {
+    "description": "Subtitle for the budget statistics section"
+  },
+  "totalGoals": "Total Goals",
+  "@totalGoals": {
+    "description": "Label for total budget goals count"
+  },
+  "active": "Active",
+  "@active": {
+    "description": "Label for active budget goals count"
+  },
+  "achieved": "Achieved",
+  "@achieved": {
+    "description": "Label for achieved budget goals count"
+  },
+  "failedTerminated": "Failed/Terminated",
+  "@failedTerminated": {
+    "description": "Label for failed and terminated budget goals count"
+  },
+  "goalsNotCompleted": "Goals not completed",
+  "@goalsNotCompleted": {
+    "description": "Subtitle for failed/terminated goals card"
+  },
+  "totalBudgeted": "Total Budgeted",
+  "@totalBudgeted": {
+    "description": "Label for total budgeted amount"
+  },
+  "totalAmountAllocated": "Total amount allocated for active goals",
+  "@totalAmountAllocated": {
+    "description": "Subtitle for total budgeted amount card"
+  },
+  "avgProgress": "Avg. Progress",
+  "@avgProgress": {
+    "description": "Label for average progress percentage"
+  },
+  "averageProgressGoals": "Average progress across all goals",
+  "@averageProgressGoals": {
+    "description": "Subtitle for average progress card"
+  },
+  "closestDeadline": "Closest Deadline",
+  "@closestDeadline": {
+    "description": "Label for closest deadline date"
+  },
+  "nextUpcomingDeadline": "Next upcoming deadline",
+  "@nextUpcomingDeadline": {
+    "description": "Subtitle for closest deadline card"
+  },
+  "overdueGoals": "Overdue Goals",
+  "@overdueGoals": {
+    "description": "Label for overdue goals count"
+  },
+  "goalsPastDeadline": "Goals past their deadline",
+  "@goalsPastDeadline": {
+    "description": "Subtitle for overdue goals card"
+  },
+  "noDeadlines": "No deadlines",
+  "@noDeadlines": {
+    "description": "Text shown when there are no deadlines"
   }
 }

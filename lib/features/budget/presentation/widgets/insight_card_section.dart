@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/theme/app_spacing.dart';
+import 'package:xpensemate/core/theme/colors/app_colors.dart';
+import 'package:xpensemate/core/theme/theme_constant.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goals_insight_entity.dart';
 
@@ -10,7 +14,8 @@ class ExpandableStatsCard extends StatefulWidget {
   State<ExpandableStatsCard> createState() => _ExpandableStatsCardState();
 }
 
-class _ExpandableStatsCardState extends State<ExpandableStatsCard> with SingleTickerProviderStateMixin {
+class _ExpandableStatsCardState extends State<ExpandableStatsCard>
+    with SingleTickerProviderStateMixin {
   bool isExpanded = false;
   late AnimationController _animationController;
   late Animation<double> _expandAnimation;
@@ -52,52 +57,53 @@ class _ExpandableStatsCardState extends State<ExpandableStatsCard> with SingleTi
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF6366F1),
-              Color(0xFF8B5CF6),
+              AppColors.primary,
+              AppColors.tertiary,
             ],
           ),
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(ThemeConstants.radiusXLarge),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF6366F1).withValues(alpha: 0.3),
+              color: AppColors.primary.withValues(alpha: 0.3),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(ThemeConstants.radiusXLarge),
           child: Material(
             color: Colors.transparent,
             child: InkWell(
               onTap: _toggleExpanded,
               child: Padding(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(AppSpacing.lg),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Column(
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Overview',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                              context.overview,
+                              style: (context.textTheme.titleMedium ??
+                                      const TextStyle())
+                                  .copyWith(
                                 color: Colors.white70,
                                 letterSpacing: 0.5,
                               ),
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: AppSpacing.xs),
                             Text(
-                              'Budget Statistics',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
+                              context.budgetStatistics,
+                              style: (context.textTheme.headlineSmall ??
+                                      const TextStyle())
+                                  .copyWith(
                                 color: Colors.white,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ],
@@ -107,28 +113,32 @@ class _ExpandableStatsCardState extends State<ExpandableStatsCard> with SingleTi
                           duration: const Duration(milliseconds: 400),
                           curve: Curves.easeInOutCubic,
                           child: Container(
-                            padding: const EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(AppSpacing.sm),
                             decoration: BoxDecoration(
                               color: Colors.white.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(
+                                ThemeConstants.radiusMedium,
+                              ),
                             ),
                             child: const Icon(
                               Icons.keyboard_arrow_down_rounded,
                               color: Colors.white,
-                              size: 28,
+                              size: AppSpacing.iconLg,
                             ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
-                    QuickStatsRow(budgetGoalsInsight: widget.budgetGoalsInsight),
+                    const SizedBox(height: AppSpacing.lg),
+                    QuickStatsRow(
+                      budgetGoalsInsight: widget.budgetGoalsInsight,
+                    ),
                     SizeTransition(
                       sizeFactor: _expandAnimation,
                       axisAlignment: -1,
                       child: Column(
                         children: [
-                          const SizedBox(height: 20),
+                          const SizedBox(height: AppSpacing.lg),
                           Container(
                             height: 1,
                             decoration: BoxDecoration(
@@ -141,8 +151,10 @@ class _ExpandableStatsCardState extends State<ExpandableStatsCard> with SingleTi
                               ),
                             ),
                           ),
-                          const SizedBox(height: 20),
-                          DetailedStatsGrid(budgetGoalsInsight: widget.budgetGoalsInsight),
+                          const SizedBox(height: AppSpacing.lg),
+                          DetailedStatsGrid(
+                            budgetGoalsInsight: widget.budgetGoalsInsight,
+                          ),
                         ],
                       ),
                     ),
@@ -169,68 +181,58 @@ class DetailedStatsGrid extends StatelessWidget {
                   icon: Icons.cancel_outlined,
                   value:
                       '${budgetGoalsInsight?.failedGoals.length ?? 0}/${budgetGoalsInsight?.terminatedGoals.length ?? 0}',
-                  label: 'Failed/Terminated',
-                  subtitle: 'Goals not completed',
+                  label: context.failedTerminated,
+                  subtitle: context.goalsNotCompleted,
                   color: context.theme.primaryColor,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: StatsCard(
                   icon: Icons.attach_money_rounded,
-                  value: '\$${budgetGoalsInsight?.totalBudgeted.toStringAsFixed(1) ?? '0.0'}',
-                  label: 'Total Budgeted',
-                  subtitle: 'Total amount allocated for active goals',
+                  value:
+                      '\$${budgetGoalsInsight?.totalBudgeted.toStringAsFixed(1) ?? '0.0'}',
+                  label: context.totalBudgeted,
+                  subtitle: context.totalAmountAllocated,
                   color: context.theme.primaryColor,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.sm),
           Row(
             children: [
               Expanded(
                 child: StatsCard(
                   icon: Icons.analytics_outlined,
-                  value: '${budgetGoalsInsight?.avgProgress.toStringAsFixed(1) ?? '0.0'}%',
-                  label: 'Avg. Progress',
-                  subtitle: 'Average progress across all goals',
+                  value:
+                      '${budgetGoalsInsight?.avgProgress.toStringAsFixed(1) ?? '0.0'}%',
+                  label: context.avgProgress,
+                  subtitle: context.averageProgressGoals,
                   color: context.theme.primaryColor,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: StatsCard(
                   icon: Icons.event_outlined,
-                  value: budgetGoalsInsight?.closestDeadlineDate ?? 'No deadlines',
-                  label: 'Closest Deadline',
-                  subtitle: 'Next upcoming deadline',
+                  value: budgetGoalsInsight?.closestDeadlineDate ??
+                      context.noDeadlines,
+                  label: context.closestDeadline,
+                  subtitle: context.nextUpcomingDeadline,
                   color: context.theme.primaryColor,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.sm),
           StatsCard(
             icon: Icons.schedule_rounded,
             value: '${budgetGoalsInsight?.overdueGoals.length ?? 0}',
-            label: 'Overdue Goals',
-            subtitle: 'Goals past their deadline',
+            label: context.overdueGoals,
+            subtitle: context.goalsPastDeadline,
             color: context.theme.primaryColor,
-          )
-          // _DetailedStatCard(
-          //   icon: Icons.warning_amber_rounded,
-          //   value: '${budgetGoalsInsight?.overdueGoals.length ?? 0}',
-          //   label: 'Overdue Goals',
-          //
-          //   gradient: LinearGradient(
-          //     colors: [
-          //       Colors.white.withValues(alpha: 0.15),
-          //       Colors.white.withValues(alpha: 0.05),
-          //     ],
-          //   ),
-          //   isFullWidth: true,
-          // ),
+          ),
         ],
       );
 }
@@ -263,7 +265,8 @@ class StatsCard extends StatefulWidget {
   State<StatsCard> createState() => _StatsCardState();
 }
 
-class _StatsCardState extends State<StatsCard> with SingleTickerProviderStateMixin {
+class _StatsCardState extends State<StatsCard>
+    with SingleTickerProviderStateMixin {
   bool _isHovered = false;
   bool _isPressed = false;
   late AnimationController _controller;
@@ -335,7 +338,9 @@ class _StatsCardState extends State<StatsCard> with SingleTickerProviderStateMix
   Widget build(BuildContext context) => MouseRegion(
         onEnter: _handleHoverEnter,
         onExit: _handleHoverExit,
-        cursor: widget.clickable ? SystemMouseCursors.click : SystemMouseCursors.basic,
+        cursor: widget.clickable
+            ? SystemMouseCursors.click
+            : SystemMouseCursors.basic,
         child: GestureDetector(
           onTapDown: _handleTapDown,
           onTapUp: _handleTapUp,
@@ -343,21 +348,30 @@ class _StatsCardState extends State<StatsCard> with SingleTickerProviderStateMix
           child: AnimatedBuilder(
             animation: _controller,
             builder: (context, child) => Transform.translate(
-              offset: Offset(0, _isHovered && !_isPressed ? _translateAnimation.value : 0),
+              offset: Offset(
+                0,
+                _isHovered && !_isPressed ? _translateAnimation.value : 0,
+              ),
               child: Transform.scale(
-                scale: _isPressed && widget.clickable ? _scaleAnimation.value : 1.0,
+                scale: _isPressed && widget.clickable
+                    ? _scaleAnimation.value
+                    : 1.0,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.sm,
+                    vertical: AppSpacing.md,
+                  ),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade200, // slate-50/50
+                    color: Theme.of(context).colorScheme.surface,
                     border: Border.all(
                       color: _isHovered
                           ? widget.color.withValues(alpha: 1)
-                          : const Color(0xFFE2E8F0).withValues(alpha: 0.5), // slate-200/50
+                          : Theme.of(context).colorScheme.outlineVariant,
                     ),
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius:
+                        BorderRadius.circular(ThemeConstants.radiusLarge),
                     boxShadow: _isHovered
                         ? [
                             BoxShadow(
@@ -380,40 +394,48 @@ class _StatsCardState extends State<StatsCard> with SingleTickerProviderStateMix
                             children: [
                               // Icon Container
                               Container(
-                                padding: const EdgeInsets.all(8),
+                                padding: const EdgeInsets.all(AppSpacing.sm),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFF1F5F9), // slate-100
-                                  borderRadius: BorderRadius.circular(12),
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .surfaceContainer,
+                                  borderRadius: BorderRadius.circular(
+                                    ThemeConstants.radiusMedium,
+                                  ),
                                 ),
                                 child: Icon(
                                   widget.icon,
-                                  size: 20,
+                                  size: AppSpacing.iconMd,
                                   color: widget.color,
                                 ),
                               ),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: AppSpacing.sm),
                               // Label
                               Expanded(
                                 child: Text(
                                   widget.label.toUpperCase(),
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xFF64748B), // slate-500
+                                  style: (context.textTheme.labelMedium ??
+                                          const TextStyle())
+                                      .copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
                                     letterSpacing: 0.5,
                                   ),
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: AppSpacing.sm),
                           // Value
                           if (widget.loading)
                             Container(
                               width: 48,
                               height: 20,
                               decoration: BoxDecoration(
-                                color: const Color(0xFFE2E8F0), // slate-200
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .outlineVariant,
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: _PulsingShimmer(),
@@ -421,23 +443,27 @@ class _StatsCardState extends State<StatsCard> with SingleTickerProviderStateMix
                           else
                             Text(
                               widget.value,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w800,
-                                color: widget.textColor ?? const Color(0xFF0F172A), // slate-900
+                              style: (context.textTheme.headlineSmall ??
+                                      const TextStyle())
+                                  .copyWith(
+                                color: widget.textColor ??
+                                    Theme.of(context).colorScheme.onSurface,
+                                fontWeight: FontWeight.bold,
                                 letterSpacing: -0.5,
                                 height: 1.2,
                               ),
                             ),
                           // Subtitle
                           if (widget.subtitle != null) ...[
-                            const SizedBox(height: 4),
+                            const SizedBox(height: AppSpacing.xs),
                             _ExpandableText(
                               text: widget.subtitle!,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF94A3B8), // slate-400
+                              style: (context.textTheme.bodySmall ??
+                                      const TextStyle())
+                                  .copyWith(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
                               ),
                             ),
                           ],
@@ -459,7 +485,8 @@ class _PulsingShimmer extends StatefulWidget {
   State<_PulsingShimmer> createState() => _PulsingShimmerState();
 }
 
-class _PulsingShimmerState extends State<_PulsingShimmer> with SingleTickerProviderStateMixin {
+class _PulsingShimmerState extends State<_PulsingShimmer>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -488,7 +515,7 @@ class _PulsingShimmerState extends State<_PulsingShimmer> with SingleTickerProvi
         ),
         child: Container(
           decoration: BoxDecoration(
-            color: const Color(0xFFE2E8F0),
+            color: Theme.of(context).colorScheme.outlineVariant,
             borderRadius: BorderRadius.circular(4),
           ),
         ),
@@ -544,28 +571,26 @@ class _QuickStatItem extends StatelessWidget {
   Widget build(BuildContext context) => Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(AppSpacing.sm1),
             decoration: BoxDecoration(
               color: iconBg,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(ThemeConstants.radiusMedium),
             ),
-            child: Icon(icon, color: Colors.white, size: 24),
+            child: Icon(icon, color: Colors.white, size: AppSpacing.iconLg),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
+            style:
+                (context.textTheme.headlineSmall ?? const TextStyle()).copyWith(
               color: Colors.white,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: AppSpacing.xs),
           Text(
             label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
+            style: (context.textTheme.bodySmall ?? const TextStyle()).copyWith(
               color: Colors.white.withValues(alpha: 0.8),
             ),
             textAlign: TextAlign.center,
@@ -585,7 +610,7 @@ class QuickStatsRow extends StatelessWidget {
             child: _QuickStatItem(
               icon: Icons.emoji_events_outlined,
               value: budgetGoalsInsight?.totalGoals.toString() ?? '0',
-              label: 'Total Goals',
+              label: context.totalGoals,
               iconBg: Colors.white.withValues(alpha: 0.2),
             ),
           ),
@@ -598,7 +623,7 @@ class QuickStatsRow extends StatelessWidget {
             child: _QuickStatItem(
               icon: Icons.trending_up_rounded,
               value: budgetGoalsInsight?.activeGoals.length.toString() ?? '0',
-              label: 'Active',
+              label: context.active,
               iconBg: Colors.white.withValues(alpha: 0.2),
             ),
           ),
@@ -611,7 +636,7 @@ class QuickStatsRow extends StatelessWidget {
             child: _QuickStatItem(
               icon: Icons.check_circle_outline,
               value: budgetGoalsInsight?.achievedGoals.length.toString() ?? '0',
-              label: 'Achieved',
+              label: context.achieved,
               iconBg: Colors.white.withValues(alpha: 0.2),
             ),
           ),

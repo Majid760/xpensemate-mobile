@@ -792,8 +792,56 @@ class AppLocalizationsEn extends AppLocalizations {
   String get productAnalytic => 'Product Analytics';
 
   @override
-  String get fieldTooShort => 'Description is too short (2-100 characters)';
+  String get fieldTooShort => 'This field is too short (minimum 2 characters)';
 
   @override
   String get fieldTooLong => 'This field is too long (maximum 100 characters)';
+
+  @override
+  String get overview => 'Overview';
+
+  @override
+  String get budgetStatistics => 'Budget Statistics';
+
+  @override
+  String get totalGoals => 'Total Goals';
+
+  @override
+  String get active => 'Active';
+
+  @override
+  String get achieved => 'Achieved';
+
+  @override
+  String get failedTerminated => 'Failed/Terminated';
+
+  @override
+  String get goalsNotCompleted => 'Goals not completed';
+
+  @override
+  String get totalBudgeted => 'Total Budgeted';
+
+  @override
+  String get totalAmountAllocated => 'Total amount allocated for active goals';
+
+  @override
+  String get avgProgress => 'Avg. Progress';
+
+  @override
+  String get averageProgressGoals => 'Average progress across all goals';
+
+  @override
+  String get closestDeadline => 'Closest Deadline';
+
+  @override
+  String get nextUpcomingDeadline => 'Next upcoming deadline';
+
+  @override
+  String get overdueGoals => 'Overdue Goals';
+
+  @override
+  String get goalsPastDeadline => 'Goals past their deadline';
+
+  @override
+  String get noDeadlines => 'No deadlines';
 }

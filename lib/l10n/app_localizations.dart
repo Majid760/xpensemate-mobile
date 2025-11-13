@@ -1614,7 +1614,7 @@ abstract class AppLocalizations {
   /// No description provided for @fieldTooShort.
   ///
   /// In en, this message translates to:
-  /// **'Description is too short (2-100 characters)'**
+  /// **'This field is too short (minimum 2 characters)'**
   String get fieldTooShort;
 
   /// No description provided for @fieldTooLong.
@@ -1622,6 +1622,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This field is too long (maximum 100 characters)'**
   String get fieldTooLong;
+
+  /// Title for the budget overview section
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get overview;
+
+  /// Subtitle for the budget statistics section
+  ///
+  /// In en, this message translates to:
+  /// **'Budget Statistics'**
+  String get budgetStatistics;
+
+  /// Label for total budget goals count
+  ///
+  /// In en, this message translates to:
+  /// **'Total Goals'**
+  String get totalGoals;
+
+  /// Label for active budget goals count
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get active;
+
+  /// Label for achieved budget goals count
+  ///
+  /// In en, this message translates to:
+  /// **'Achieved'**
+  String get achieved;
+
+  /// Label for failed and terminated budget goals count
+  ///
+  /// In en, this message translates to:
+  /// **'Failed/Terminated'**
+  String get failedTerminated;
+
+  /// Subtitle for failed/terminated goals card
+  ///
+  /// In en, this message translates to:
+  /// **'Goals not completed'**
+  String get goalsNotCompleted;
+
+  /// Label for total budgeted amount
+  ///
+  /// In en, this message translates to:
+  /// **'Total Budgeted'**
+  String get totalBudgeted;
+
+  /// Subtitle for total budgeted amount card
+  ///
+  /// In en, this message translates to:
+  /// **'Total amount allocated for active goals'**
+  String get totalAmountAllocated;
+
+  /// Label for average progress percentage
+  ///
+  /// In en, this message translates to:
+  /// **'Avg. Progress'**
+  String get avgProgress;
+
+  /// Subtitle for average progress card
+  ///
+  /// In en, this message translates to:
+  /// **'Average progress across all goals'**
+  String get averageProgressGoals;
+
+  /// Label for closest deadline date
+  ///
+  /// In en, this message translates to:
+  /// **'Closest Deadline'**
+  String get closestDeadline;
+
+  /// Subtitle for closest deadline card
+  ///
+  /// In en, this message translates to:
+  /// **'Next upcoming deadline'**
+  String get nextUpcomingDeadline;
+
+  /// Label for overdue goals count
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue Goals'**
+  String get overdueGoals;
+
+  /// Subtitle for overdue goals card
+  ///
+  /// In en, this message translates to:
+  /// **'Goals past their deadline'**
+  String get goalsPastDeadline;
+
+  /// Text shown when there are no deadlines
+  ///
+  /// In en, this message translates to:
+  /// **'No deadlines'**
+  String get noDeadlines;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

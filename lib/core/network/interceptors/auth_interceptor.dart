@@ -19,10 +19,11 @@ final class AuthInterceptor extends QueuedInterceptor {
   ) async {
     try {
       var accessToken = _authService.token;
-      logI("this is accesss token before checking empty ${accessToken.substring(0, 6)}");
+      logI(
+          "this is accesss token before checking => ${accessToken.isNotEmpty ? accessToken.substring(0, 6) : 'empty'}");
       if (accessToken.isEmpty) {
         logI("error access token is empty, fetching from storage");
-        await _authService.getAccessToken();
+        scheduleMicrotask(_authService.getAccessToken);
         if (_authService.token.isNotEmpty) {
           accessToken = _authService.token;
         } else {
@@ -56,11 +57,10 @@ final class AuthInterceptor extends QueuedInterceptor {
       );
       // Get the refresh token
       final refreshToken = _authService.userRefreshToken;
-      logI("refreshed token in storage => ${refreshToken.substring(0, 6)}");
+      logI("refreshed token in storage => ${refreshToken.isNotEmpty ? refreshToken.substring(0, 6) : 'empty'}");
 
-      if (refreshToken.isEmpty) {
-        AppLogger.e('No refresh token available');
-      }
+      if (refreshToken.isEmpty) AppLogger.e('No refresh token available');
+
       // Attempt to refresh the token
       try {
         final dio = Dio(BaseOptions(baseUrl: NetworkConfigs.baseUrl));
@@ -74,7 +74,7 @@ final class AuthInterceptor extends QueuedInterceptor {
           // Parse the new token
           final newToken = AuthTokenModel.fromJson(response.data as Map<String, dynamic>);
           // Save the new token using AuthService
-          await _authService.saveTokenToStorage(newToken);
+          scheduleMicrotask(() => _authService.saveTokenToStorage(newToken));
           logI('Token refreshed successfully');
           // Update the request with the new token and retry
           final newOptions = err.requestOptions.copyWith();

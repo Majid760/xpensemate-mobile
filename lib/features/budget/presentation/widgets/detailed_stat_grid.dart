@@ -30,8 +30,7 @@ class DetailedStatsGrid extends StatelessWidget {
             Expanded(
               child: StatsCard(
                 icon: Icons.attach_money_rounded,
-                value:
-                    '\$${budgetGoalsInsight?.totalBudgeted.toStringAsFixed(1) ?? '0.0'}',
+                value: '\$${budgetGoalsInsight?.totalBudgeted.toStringAsFixed(1) ?? '0.0'}',
                 label: localizations.totalBudgeted,
                 subtitle: localizations.totalAmountAllocated,
                 color: context.theme.primaryColor,
@@ -45,8 +44,7 @@ class DetailedStatsGrid extends StatelessWidget {
             Expanded(
               child: StatsCard(
                 icon: Icons.analytics_outlined,
-                value:
-                    '${budgetGoalsInsight?.avgProgress.toStringAsFixed(1) ?? '0.0'}%',
+                value: '${budgetGoalsInsight?.avgProgress.toStringAsFixed(1) ?? '0.0'}%',
                 label: localizations.avgProgress,
                 subtitle: localizations.averageProgressGoals,
                 color: context.theme.primaryColor,
@@ -56,8 +54,7 @@ class DetailedStatsGrid extends StatelessWidget {
             Expanded(
               child: StatsCard(
                 icon: Icons.event_outlined,
-                value: budgetGoalsInsight?.closestDeadlineDate ??
-                    localizations.noDeadlines,
+                value: budgetGoalsInsight?.closestDeadlineDate ?? localizations.noDeadlines,
                 label: localizations.closestDeadline,
                 subtitle: localizations.nextUpcomingDeadline,
                 color: context.theme.primaryColor,
@@ -106,8 +103,7 @@ class StatsCard extends StatefulWidget {
   State<StatsCard> createState() => _StatsCardState();
 }
 
-class _StatsCardState extends State<StatsCard>
-    with SingleTickerProviderStateMixin {
+class _StatsCardState extends State<StatsCard> with SingleTickerProviderStateMixin {
   bool _isHovered = false;
   bool _isPressed = false;
   late AnimationController _controller;
@@ -179,9 +175,7 @@ class _StatsCardState extends State<StatsCard>
   Widget build(BuildContext context) => MouseRegion(
         onEnter: _handleHoverEnter,
         onExit: _handleHoverExit,
-        cursor: widget.clickable
-            ? SystemMouseCursors.click
-            : SystemMouseCursors.basic,
+        cursor: widget.clickable ? SystemMouseCursors.click : SystemMouseCursors.basic,
         child: GestureDetector(
           onTapDown: _handleTapDown,
           onTapUp: _handleTapUp,
@@ -194,9 +188,7 @@ class _StatsCardState extends State<StatsCard>
                 _isHovered && !_isPressed ? _translateAnimation.value : 0,
               ),
               child: Transform.scale(
-                scale: _isPressed && widget.clickable
-                    ? _scaleAnimation.value
-                    : 1.0,
+                scale: _isPressed && widget.clickable ? _scaleAnimation.value : 1.0,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
@@ -207,12 +199,10 @@ class _StatsCardState extends State<StatsCard>
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
                     border: Border.all(
-                      color: _isHovered
-                          ? widget.color.withValues(alpha: 1)
-                          : Theme.of(context).colorScheme.outlineVariant,
+                      color:
+                          _isHovered ? widget.color.withValues(alpha: 1) : Theme.of(context).colorScheme.outlineVariant,
                     ),
-                    borderRadius:
-                        BorderRadius.circular(ThemeConstants.radiusLarge),
+                    borderRadius: BorderRadius.circular(ThemeConstants.radiusLarge),
                     boxShadow: _isHovered
                         ? [
                             BoxShadow(
@@ -237,9 +227,7 @@ class _StatsCardState extends State<StatsCard>
                               Container(
                                 padding: const EdgeInsets.all(AppSpacing.sm),
                                 decoration: BoxDecoration(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .surfaceContainer,
+                                  color: Theme.of(context).colorScheme.inversePrimary,
                                   borderRadius: BorderRadius.circular(
                                     ThemeConstants.radiusMedium,
                                   ),
@@ -255,12 +243,8 @@ class _StatsCardState extends State<StatsCard>
                               Expanded(
                                 child: Text(
                                   widget.label.toUpperCase(),
-                                  style: (context.textTheme.labelMedium ??
-                                          const TextStyle())
-                                      .copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
+                                  style: (context.textTheme.labelMedium ?? const TextStyle()).copyWith(
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                                     letterSpacing: 0.5,
                                   ),
                                 ),
@@ -274,23 +258,18 @@ class _StatsCardState extends State<StatsCard>
                               width: 48,
                               height: 20,
                               decoration: BoxDecoration(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .outlineVariant,
+                                color: Theme.of(context).colorScheme.outlineVariant,
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: _PulsingShimmer(),
                             )
                           else
                             Padding(
-                              padding: const EdgeInsets.only(left: 8),
+                              padding: const EdgeInsets.only(left: 12),
                               child: Text(
                                 widget.value,
-                                style: (context.textTheme.labelLarge ??
-                                        const TextStyle())
-                                    .copyWith(
-                                  color: widget.textColor ??
-                                      Theme.of(context).colorScheme.onSurface,
+                                style: (context.textTheme.labelSmall ?? const TextStyle()).copyWith(
+                                  color: widget.textColor ?? Theme.of(context).colorScheme.onSurface,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: -0.5,
                                   height: 1.2,
@@ -301,15 +280,11 @@ class _StatsCardState extends State<StatsCard>
                           if (widget.subtitle != null) ...[
                             const SizedBox(height: AppSpacing.xs),
                             Padding(
-                              padding: const EdgeInsets.only(left: 8),
+                              padding: const EdgeInsets.only(left: 12),
                               child: _ExpandableText(
                                 text: widget.subtitle!,
-                                style: (context.textTheme.bodySmall ??
-                                        const TextStyle())
-                                    .copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurfaceVariant,
+                                style: (context.textTheme.bodySmall ?? const TextStyle()).copyWith(
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                                 ),
                               ),
                             ),
@@ -332,8 +307,7 @@ class _PulsingShimmer extends StatefulWidget {
   State<_PulsingShimmer> createState() => _PulsingShimmerState();
 }
 
-class _PulsingShimmerState extends State<_PulsingShimmer>
-    with SingleTickerProviderStateMixin {
+class _PulsingShimmerState extends State<_PulsingShimmer> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 

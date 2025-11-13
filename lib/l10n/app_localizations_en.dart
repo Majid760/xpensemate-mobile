@@ -609,10 +609,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get totalExpenses => 'Total Expenses';
 
   @override
+  String get dailySpendingPattern => 'Daily Spending Pattern';
+
+  @override
   String get thisWeek => 'this week';
 
   @override
-  String get dailySpendingPattern => 'Daily Spending Pattern';
+  String get monthlyInsight => 'Monthly Insight';
+
+  @override
+  String get quarterInsight => 'Quarterly Insight';
+
+  @override
+  String get yearlyInsight => 'Yearly Insight';
 
   @override
   String get spendingTrend => 'Spending Trend';

@@ -1245,17 +1245,35 @@ abstract class AppLocalizations {
   /// **'Total Expenses'**
   String get totalExpenses;
 
+  /// Title for daily spending bar chart
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Spending Pattern'**
+  String get dailySpendingPattern;
+
   /// Time period label for current week
   ///
   /// In en, this message translates to:
   /// **'this week'**
   String get thisWeek;
 
-  /// Title for daily spending bar chart
+  /// Title for monthly insight section
   ///
   /// In en, this message translates to:
-  /// **'Daily Spending Pattern'**
-  String get dailySpendingPattern;
+  /// **'Monthly Insight'**
+  String get monthlyInsight;
+
+  /// Title for quarterly insight section
+  ///
+  /// In en, this message translates to:
+  /// **'Quarterly Insight'**
+  String get quarterInsight;
+
+  /// Title for yearly insight section
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly Insight'**
+  String get yearlyInsight;
 
   /// Title for spending trend line chart
   ///

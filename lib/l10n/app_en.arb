@@ -380,13 +380,25 @@
   "@totalExpenses": {
     "description": "Label for total expenses"
   },
+  "dailySpendingPattern": "Daily Spending Pattern",
+  "@dailySpendingPattern": {
+    "description": "Title for daily spending bar chart"
+  },
   "thisWeek": "this week",
   "@thisWeek": {
     "description": "Time period label for current week"
   },
-  "dailySpendingPattern": "Daily Spending Pattern",
-  "@dailySpendingPattern": {
-    "description": "Title for daily spending bar chart"
+  "monthlyInsight": "Monthly Insight",
+  "@monthlyInsight": {
+    "description": "Title for monthly insight section"
+  },
+  "quarterInsight": "Quarterly Insight",
+  "@quarterInsight": {
+    "description": "Title for quarterly insight section"
+  },
+  "yearlyInsight": "Yearly Insight",
+  "@yearlyInsight": {
+    "description": "Title for yearly insight section"
   },
   "spendingTrend": "Spending Trend",
   "@spendingTrend": {

@@ -63,15 +63,19 @@ class _BudgetPageContentState extends State<BudgetPageContent>
           child: CustomScrollView(
             controller: _scrollController,
             physics: const BouncingScrollPhysics(
-                parent: AlwaysScrollableScrollPhysics()),
+              parent: AlwaysScrollableScrollPhysics(),
+            ),
             slivers: [
-              const BudgetAppBar(),
+              BudgetAppBar(
+                onChanged: (value) => context.budgetCubit.getBudgetGoalsInsights(period: value),
+              ),
               SliverPadding(
                 padding: EdgeInsets.all(context.md),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
                     ExpandableStatsCard(
-                        budgetGoalsInsight: state.budgetGoalsInsight),
+                      budgetGoalsInsight: state.budgetGoalsInsight,
+                    ),
                     SizedBox(height: context.xl),
                     SectionHeader(title: context.l10n.budget),
                     SizedBox(height: context.sm),
@@ -88,7 +92,9 @@ class _BudgetPageContentState extends State<BudgetPageContent>
 }
 
 class BudgetAppBar extends StatelessWidget {
-  const BudgetAppBar({super.key});
+  const BudgetAppBar({super.key, this.onChanged});
+
+  final ValueChanged<String>? onChanged;
 
   @override
   Widget build(BuildContext context) => SliverAppBar(
@@ -107,6 +113,7 @@ class BudgetAppBar extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: PopupMenuButton<String>(
+              onSelected: onChanged,
               icon: Icon(
                 Icons.tune_rounded,
                 color: context.colorScheme.onSurfaceVariant,
@@ -121,11 +128,15 @@ class BudgetAppBar extends StatelessWidget {
                 ),
                 PopupMenuItem(
                   value: 'monthly',
-                  child: Text(context.l10n.thisMonth),
+                  child: Text(context.l10n.monthlyInsight),
+                ),
+                PopupMenuItem(
+                  value: 'quarterly',
+                  child: Text(context.l10n.quarterInsight),
                 ),
                 PopupMenuItem(
                   value: 'yearly',
-                  child: Text(context.l10n.dailySpendingPattern),
+                  child: Text(context.l10n.yearlyInsight),
                 ),
               ],
             ),

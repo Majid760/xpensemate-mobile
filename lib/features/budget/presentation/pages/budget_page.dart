@@ -31,8 +31,7 @@ class BudgetPageContent extends StatefulWidget {
   State<BudgetPageContent> createState() => _BudgetPageContentState();
 }
 
-class _BudgetPageContentState extends State<BudgetPageContent>
-    with TickerProviderStateMixin {
+class _BudgetPageContentState extends State<BudgetPageContent> with TickerProviderStateMixin {
   late ScrollController _scrollController;
 
   @override
@@ -109,14 +108,14 @@ class BudgetAppBar extends StatelessWidget {
           Container(
             margin: EdgeInsets.only(right: context.md),
             decoration: BoxDecoration(
-              color: context.colorScheme.surfaceContainerHighest,
+              color: context.colorScheme.primary,
               borderRadius: BorderRadius.circular(12),
             ),
             child: PopupMenuButton<String>(
               onSelected: onChanged,
               icon: Icon(
                 Icons.tune_rounded,
-                color: context.colorScheme.onSurfaceVariant,
+                color: context.colorScheme.onPrimary,
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),

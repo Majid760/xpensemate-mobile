@@ -187,8 +187,7 @@ class _ReactiveAppFieldState extends State<ReactiveAppField> {
     }
   }
 
-  bool get _shouldObscureText =>
-      widget.fieldType == FieldType.password && _obscureText;
+  bool get _shouldObscureText => widget.fieldType == FieldType.password && _obscureText;
 
   TextInputType _getKeyboardType() {
     switch (widget.fieldType) {
@@ -358,8 +357,7 @@ class _ReactiveAppFieldState extends State<ReactiveAppField> {
     }
   }
 
-  Widget _buildPhoneField(ThemeData theme, ColorScheme colorScheme) =>
-      ReactivePhoneFormField<PhoneNumber>(
+  Widget _buildPhoneField(ThemeData theme, ColorScheme colorScheme) => ReactivePhoneFormField<PhoneNumber>(
         formControlName: widget.formControlName,
         decoration: _getInputDecoration(theme, colorScheme).copyWith(
           // Slightly reduce left padding for better alignment with selector
@@ -432,21 +430,17 @@ class _ReactiveAppFieldState extends State<ReactiveAppField> {
               (String value) => DropdownMenuItem<String>(
                 value: value,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Row(
                     children: [
                       Icon(
-                        genderOptionsWithIcons[value]?['icon'] as IconData? ??
-                            Icons.circle,
+                        genderOptionsWithIcons[value]?['icon'] as IconData? ?? Icons.circle,
                         size: 20,
                         color: colorScheme.primary,
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        genderOptionsWithIcons[value]?['displayName']
-                                as String? ??
-                            value,
+                        genderOptionsWithIcons[value]?['displayName'] as String? ?? value,
                         style: theme.textTheme.bodyLarge?.copyWith(
                           color: colorScheme.onSurface,
                         ),
@@ -495,8 +489,7 @@ class _ReactiveAppFieldState extends State<ReactiveAppField> {
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
           ),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           suffixIcon: Container(
             padding: const EdgeInsets.only(right: 12),
             child: Icon(
@@ -531,24 +524,16 @@ class _ReactiveAppFieldState extends State<ReactiveAppField> {
                 child: Row(
                   children: [
                     // Get the icon from the original item
-                    if (item.value != null &&
-                        genderOptionsWithIcons.containsKey(item.value))
+                    if (item.value != null && genderOptionsWithIcons.containsKey(item.value))
                       Icon(
-                        genderOptionsWithIcons[item.value!]?['icon']
-                                as IconData? ??
-                            Icons.circle,
+                        genderOptionsWithIcons[item.value!]?['icon'] as IconData? ?? Icons.circle,
                         size: 20,
                         color: colorScheme.primary,
                       ),
-                    if (item.value != null &&
-                        genderOptionsWithIcons.containsKey(item.value))
-                      const SizedBox(width: 12),
+                    if (item.value != null && genderOptionsWithIcons.containsKey(item.value)) const SizedBox(width: 12),
                     Text(
-                      item.value != null &&
-                              genderOptionsWithIcons.containsKey(item.value)
-                          ? (genderOptionsWithIcons[item.value!]?['displayName']
-                                  as String? ??
-                              item.value!)
+                      item.value != null && genderOptionsWithIcons.containsKey(item.value)
+                          ? (genderOptionsWithIcons[item.value!]?['displayName'] as String? ?? item.value!)
                           : item.value ?? '',
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: colorScheme.onSurface,
@@ -564,11 +549,9 @@ class _ReactiveAppFieldState extends State<ReactiveAppField> {
     );
   }
 
-  Widget _buildImagePickerField(ThemeData theme, ColorScheme colorScheme) =>
-      ReactiveImagePicker(
+  Widget _buildImagePickerField(ThemeData theme, ColorScheme colorScheme) => ReactiveImagePicker(
         formControlName: widget.formControlName,
-        decoration: widget.imagePickerDecoration ??
-            _getImagePickerDecoration(theme, colorScheme),
+        decoration: widget.imagePickerDecoration ?? _getImagePickerDecoration(theme, colorScheme),
         inputBuilder: (onPressed) => Container(
           width: double.infinity,
           padding: const EdgeInsets.all(16),
@@ -609,8 +592,7 @@ class _ReactiveAppFieldState extends State<ReactiveAppField> {
         // onChanged: widget.onImageChanged,
       );
 
-  Widget _buildTextField(ThemeData theme, ColorScheme colorScheme) =>
-      ReactiveTextField<String>(
+  Widget _buildTextField(ThemeData theme, ColorScheme colorScheme) => ReactiveTextField<String>(
         formControlName: widget.formControlName,
         obscureText: _shouldObscureText,
         keyboardType: _getKeyboardType(),
@@ -646,8 +628,7 @@ class _ReactiveAppFieldState extends State<ReactiveAppField> {
         suffixIcon: _getSuffixIcon(),
         prefixIcon: _getPrefixIcon(),
         filled: widget.filled,
-        fillColor: widget.fillColor ??
-            colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+        fillColor: widget.fillColor ?? colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
         prefixIconConstraints: const BoxConstraints(
           minWidth: 44,
           minHeight: 48,
@@ -688,8 +669,7 @@ class _ReactiveAppFieldState extends State<ReactiveAppField> {
             width: 2,
           ),
         ),
-        contentPadding: widget.contentPadding ??
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        contentPadding: widget.contentPadding ?? const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         isDense: widget.isDense,
         helperText: widget.helperText,
         counterText: widget.showCounter ? null : '',

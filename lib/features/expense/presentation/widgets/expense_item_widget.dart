@@ -150,33 +150,6 @@ class _ExpenseListItemState extends State<ExpenseListItem>
     widget.onDelete?.call(widget.expense.id);
   }
 
-  void _addExpense(ExpenseEntity entity, BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    AppBottomSheet.show<ExpenseEntity>(
-      context: context,
-      title: entity.id.isEmpty ? context.l10n.add : context.l10n.edit,
-      config: BottomSheetConfig(
-        minHeight: screenHeight * 0.8,
-        maxHeight: screenHeight * 0.95,
-        padding: EdgeInsets.zero,
-        blurSigma: 5,
-        barrierColor: Colors.transparent,
-      ),
-      child: ExpenseFormWidget(
-        expense: entity.id.isEmpty ? null : entity,
-        onSave: (updatedEntity) {
-          if (entity.id.isEmpty) {
-            context.expenseCubit.createExpense(expense: updatedEntity);
-          } else {
-            context.expenseCubit.updateExpense(expense: updatedEntity);
-          }
-          Navigator.of(context).pop();
-        },
-        onCancel: () => Navigator.of(context).pop(),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
         animation:

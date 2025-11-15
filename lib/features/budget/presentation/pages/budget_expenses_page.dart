@@ -234,12 +234,11 @@ class ExpandableSearchBarDelegate extends SliverPersistentHeaderDelegate {
     BuildContext context,
     double shrinkOffset,
     bool overlapsContent,
-  ) {
-    return SizedBox(
-      height: maxHeight,
-      child: child,
-    );
-  }
+  ) =>
+      SizedBox(
+        height: maxHeight,
+        child: child,
+      );
 
   @override
   bool shouldRebuild(covariant ExpandableSearchBarDelegate oldDelegate) =>

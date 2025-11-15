@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_state.dart';
+import 'package:xpensemate/features/budget/presentation/pages/budget_form_page.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/budget_goal_list.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/insight_card_section.dart';
+import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 
 class BudgetPage extends StatelessWidget {
   const BudgetPage({super.key});
@@ -31,7 +34,8 @@ class BudgetPageContent extends StatefulWidget {
   State<BudgetPageContent> createState() => _BudgetPageContentState();
 }
 
-class _BudgetPageContentState extends State<BudgetPageContent> with TickerProviderStateMixin {
+class _BudgetPageContentState extends State<BudgetPageContent>
+    with TickerProviderStateMixin {
   late ScrollController _scrollController;
 
   @override
@@ -53,6 +57,24 @@ class _BudgetPageContentState extends State<BudgetPageContent> with TickerProvid
     ]);
   }
 
+  void _editBudget(BudgetGoalEntity? budget, BuildContext context) {
+    AppBottomSheet.show<void>(
+      context: context,
+      title: "Edit Budget",
+      config: const BottomSheetConfig(
+        padding: EdgeInsets.symmetric(horizontal: 8),
+        blurSigma: 5,
+        barrierColor: Colors.transparent,
+      ),
+      child: BudgetFormPage(
+        budget: budget,
+        onSave: (goal) {
+          context.budgetCubit.updateBudgetGoal(goal);
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) => BlocConsumer<BudgetCubit, BudgetState>(
         listener: (context, state) {},
@@ -66,7 +88,8 @@ class _BudgetPageContentState extends State<BudgetPageContent> with TickerProvid
             ),
             slivers: [
               BudgetAppBar(
-                onChanged: (value) => context.budgetCubit.getBudgetGoalsInsights(period: value),
+                onChanged: (value) =>
+                    context.budgetCubit.getBudgetGoalsInsights(period: value),
               ),
               SliverPadding(
                 padding: EdgeInsets.all(context.md),
@@ -171,4 +194,30 @@ class SectionHeader extends StatelessWidget {
           ),
         ],
       );
+}
+
+// This function can be called from other pages or components
+// to trigger the add budget action
+void addBudget(BuildContext context) {
+  final screenHeight = MediaQuery.of(context).size.height;
+  AppBottomSheet.show<void>(
+    context: context,
+    title: 'Add Budget',
+    config: BottomSheetConfig(
+      minHeight: screenHeight * 0.8,
+      maxHeight: screenHeight * 0.95,
+      padding: EdgeInsets.zero,
+      blurSigma: 5,
+      barrierColor: Colors.transparent,
+    ),
+    child: BudgetFormPage(
+      onSave: (goal) async {
+        await context.budgetCubit.createBudgetGoal(goal);
+        if (context.mounted) {
+          Navigator.of(context).pop();
+        }
+      },
+      onCancel: () => Navigator.of(context).pop(),
+    ),
+  );
 }

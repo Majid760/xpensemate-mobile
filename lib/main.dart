@@ -94,8 +94,7 @@ class MyApp extends StatelessWidget {
                 debugShowCheckedModeBanner: false,
                 // themeMode: ThemeMode.system, // Follows system setting
                 // Localization configuration
-                routerConfig:
-                    AppRouter(authCubit, RouteGuards(authCubit)).router,
+                routerConfig: AppRouter(authCubit, RouteGuards(authCubit)).router,
                 localizationsDelegates: const [
                   AppLocalizations.delegate,
                   GlobalMaterialLocalizations.delegate,

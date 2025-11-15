@@ -6,7 +6,7 @@ import 'package:xpensemate/core/route/utils/router_extension.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 
 // Define a typedef for the custom FAB action
-typedef FabActionCallback = void Function();
+typedef FabActionCallback = void Function(int index);
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key, required this.child, this.customFabAction});
@@ -29,8 +29,7 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
     vsync: this,
   );
 
-  late final Animation<double> _fabAnimation =
-      Tween<double>(begin: 0, end: 1).animate(
+  late final Animation<double> _fabAnimation = Tween<double>(begin: 0, end: 1).animate(
     CurvedAnimation(parent: _fabAnimationController, curve: Curves.easeOut),
   );
 
@@ -86,7 +85,17 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
   void _onFabTap() {
     // If custom action is provided, use it instead of default behavior
     if (widget.customFabAction != null) {
-      widget.customFabAction!();
+      print('Custom FAB action triggered');
+      // find out which action to trigger based on current route
+      if (GoRouterState.of(context).matchedLocation.startsWith('/home/expense')) {
+        widget.customFabAction!(1);
+        return;
+      } else if (GoRouterState.of(context).matchedLocation.startsWith('/home/budget')) {
+        print('Custom FAB action for budget triggered');
+        widget.customFabAction!(3);
+        return;
+      }
+      widget.customFabAction!(0);
       return;
     }
 
@@ -101,7 +110,7 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
         _toggleFab();
       } else {
         // Execute custom action directly
-        widget.customFabAction!();
+        widget.customFabAction!(index);
       }
       return;
     }
@@ -111,9 +120,7 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
 
     final current = _calculateSelectedIndex(context);
     if (current != index) {
-      _animationController
-          .forward()
-          .then((_) => _animationController.reverse());
+      _animationController.forward().then((_) => _animationController.reverse());
 
       // Navigate to the correct route based on the tab index
       print('Index 2323: $index');
@@ -144,9 +151,7 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
     // Only toggle if no custom action is provided
     if (widget.customFabAction == null) {
       setState(() => _isFabExpanded = !_isFabExpanded);
-      _isFabExpanded
-          ? _fabAnimationController.forward()
-          : _fabAnimationController.reverse();
+      _isFabExpanded ? _fabAnimationController.forward() : _fabAnimationController.reverse();
     }
   }
 
@@ -217,20 +222,15 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
                           Icon(
                             item.icon,
                             size: 24,
-                            color: selected
-                                ? const Color(0xFF6366F1)
-                                : Colors.grey.shade600,
+                            color: selected ? const Color(0xFF6366F1) : Colors.grey.shade600,
                           ),
                           const SizedBox(height: 2),
                           Text(
                             item.label,
                             style: TextStyle(
                               fontSize: 10,
-                              fontWeight:
-                                  selected ? FontWeight.w600 : FontWeight.w500,
-                              color: selected
-                                  ? const Color(0xFF6366F1)
-                                  : Colors.grey.shade600,
+                              fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                              color: selected ? const Color(0xFF6366F1) : Colors.grey.shade600,
                             ),
                           ),
                         ],
@@ -267,8 +267,7 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color:
-                                const Color(0xFF6366F1).withValues(alpha: 0.35),
+                            color: const Color(0xFF6366F1).withValues(alpha: 0.35),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),

@@ -704,13 +704,15 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
                                     const SizedBox(height: AppSpacing.xs),
                                     DecoratedBox(
                                       decoration: BoxDecoration(
-                                        color: colorScheme.surfaceContainer.withValues(alpha: 0.7),
-                                        borderRadius: BorderRadius.circular(
-                                          AppSpacing.lg,
+                                        color: context.colorScheme.surfaceContainer.withValues(alpha: 0.7),
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: context.colorScheme.outline.withValues(alpha: 0.2),
+                                          width: 1.5,
                                         ),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: colorScheme.primary.withValues(alpha: 0.1),
+                                            color: context.colorScheme.primary.withValues(alpha: 0.1),
                                             blurRadius: 8,
                                             offset: const Offset(0, 2),
                                           ),
@@ -722,12 +724,20 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
                                           return InkWell(
                                             onTap: _selectDate,
                                             borderRadius: BorderRadius.circular(
-                                              AppSpacing.lg,
+                                              12,
                                             ),
                                             child: Container(
                                               padding: const EdgeInsets.symmetric(
                                                 horizontal: AppSpacing.md,
                                                 vertical: AppSpacing.md,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: context.colorScheme.surfaceContainer.withValues(alpha: 0.7),
+                                                borderRadius: BorderRadius.circular(12),
+                                                border: Border.all(
+                                                  color: context.colorScheme.outline.withValues(alpha: 0.2),
+                                                  width: 1.5,
+                                                ),
                                               ),
                                               child: Row(
                                                 children: [
@@ -771,13 +781,15 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
                                     const SizedBox(height: AppSpacing.xs),
                                     DecoratedBox(
                                       decoration: BoxDecoration(
-                                        color: colorScheme.surfaceContainer.withValues(alpha: 0.7),
-                                        borderRadius: BorderRadius.circular(
-                                          AppSpacing.lg,
+                                        color: context.colorScheme.surfaceContainer.withValues(alpha: 0.7),
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: context.colorScheme.outline.withValues(alpha: 0.2),
+                                          width: 1.5,
                                         ),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: colorScheme.primary.withValues(alpha: 0.1),
+                                            color: context.colorScheme.primary.withValues(alpha: 0.1),
                                             blurRadius: 8,
                                             offset: const Offset(0, 2),
                                           ),
@@ -788,10 +800,15 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
                                           final time = formModel.control('time').value as String?;
                                           return InkWell(
                                             onTap: _selectTime,
-                                            borderRadius: BorderRadius.circular(
-                                              AppSpacing.lg,
-                                            ),
                                             child: Container(
+                                              decoration: BoxDecoration(
+                                                color: context.colorScheme.surfaceContainer.withValues(alpha: 0.7),
+                                                borderRadius: BorderRadius.circular(12),
+                                                border: Border.all(
+                                                  color: context.colorScheme.outline.withValues(alpha: 0.2),
+                                                  width: 1.5,
+                                                ),
+                                              ),
                                               padding: const EdgeInsets.symmetric(
                                                 horizontal: AppSpacing.md,
                                                 vertical: AppSpacing.md,

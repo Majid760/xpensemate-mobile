@@ -136,6 +136,9 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
                         padding: const EdgeInsets.only(bottom: 12),
                         child: BudgetGoalCard(
                           budgetGoal: budgetGoal,
+                          onEdit: (goal){
+                            
+                          },
                         ),
                       );
                     },

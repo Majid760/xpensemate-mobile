@@ -6,6 +6,8 @@ import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_constant.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
+import 'package:xpensemate/core/widget/app_dismissible_widget.dart';
+import 'package:xpensemate/core/widget/app_custom_dialog.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/pages/budget_expenses_page.dart';
@@ -16,10 +18,12 @@ class BudgetGoalCard extends StatefulWidget {
     super.key,
     required this.budgetGoal,
     this.onStatusChange,
+    this.onEdit,
   });
 
   final BudgetGoalEntity budgetGoal;
   final void Function(String)? onStatusChange;
+  final void Function(BudgetGoalEntity)? onEdit;
 
   @override
   State<BudgetGoalCard> createState() => _BudgetGoalCardState();
@@ -62,10 +66,34 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
     }
   }
 
+  void _updateBudgetGoal(BudgetGoalEntity goal) {
+    widget.onEdit?.call(widget.budgetGoal);
+    // call the cubit function or drigger the the bottomsheet
+  }
+
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  Future<bool?> _showDeleteConfirmation(BuildContext context) async {
+    bool? confirmResult;
+
+    await AppCustomDialogs.showDelete(
+      context: context,
+      title: context.l10n.delete,
+      message: '${context.l10n.confirmDelete}\n\n${context.l10n.deleteWarning}',
+      onConfirm: () => confirmResult = true,
+      onCancel: () => confirmResult = false,
+    );
+
+    return confirmResult;
+  }
+
+  void _handleDelete() {
+    // Call the delete function from the cubit
+    context.budgetCubit.deleteBudgetGoal(_budgetGoal.id);
   }
 
   @override
@@ -76,50 +104,61 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
     final remaining = _budgetGoal.amount - _budgetGoal.currentSpending;
     final isCompleted = progress >= 1.0;
 
-    return GestureDetector(
-      onTapDown: (_) => _controller.forward(),
-      onTapUp: (_) => _controller.reverse(),
-      onTapCancel: () => _controller.reverse(),
-      onTap: () {},
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: context.colorScheme.surface,
-            borderRadius: BorderRadius.circular(ThemeConstants.radiusXLarge),
-            boxShadow: [
-              BoxShadow(
-                color: context.colorScheme.shadow.withValues(alpha: 0.06),
-                blurRadius: 20,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              TopSection(
-                title: _budgetGoal.name,
-                category: _budgetGoal.category,
-                amount: _budgetGoal.amount,
-                deadline: _budgetGoal.date.toString(),
-                categoryColor: context.primaryColor,
-                isCompleted: isCompleted,
-                status: _status,
-                isOverdue: false,
-                budgetGoalEntity: _budgetGoal,
-              ),
-              BottomSection(
-                progress: progress,
-                spent: _budgetGoal.currentSpending,
-                remaining: remaining,
-                deadline: _budgetGoal.date.toString(),
-                isOverdue: false,
-                status: _status,
-                categoryColor: context.primaryColor,
-                onStatusChange: (String value) =>
-                    _updateStatus(value, _budgetGoal, context),
-              ),
-            ],
+    return AppDismissible(
+      objectKey: 'budget_${_budgetGoal.id}',
+      onDeleteConfirm: () async {
+        final result = await _showDeleteConfirmation(context);
+        if (result ?? false) {
+          _handleDelete();
+        }
+        return result ?? false;
+      },
+      onEdit: () => _updateBudgetGoal(widget.budgetGoal),
+      child: GestureDetector(
+        onTapDown: (_) => _controller.forward(),
+        onTapUp: (_) => _controller.reverse(),
+        onTapCancel: () => _controller.reverse(),
+        onTap: () {},
+        child: ScaleTransition(
+          scale: _scaleAnimation,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: context.colorScheme.surface,
+              borderRadius: BorderRadius.circular(ThemeConstants.radiusXLarge),
+              boxShadow: [
+                BoxShadow(
+                  color: context.colorScheme.shadow.withValues(alpha: 0.06),
+                  blurRadius: 20,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                TopSection(
+                  title: _budgetGoal.name,
+                  category: _budgetGoal.category,
+                  amount: _budgetGoal.amount,
+                  deadline: _budgetGoal.date.toString(),
+                  categoryColor: context.primaryColor,
+                  isCompleted: isCompleted,
+                  status: _status,
+                  isOverdue: false,
+                  budgetGoalEntity: _budgetGoal,
+                ),
+                BottomSection(
+                  progress: progress,
+                  spent: _budgetGoal.currentSpending,
+                  remaining: remaining,
+                  deadline: _budgetGoal.date.toString(),
+                  isOverdue: false,
+                  status: _status,
+                  categoryColor: context.primaryColor,
+                  onStatusChange: (String value) =>
+                      _updateStatus(value, _budgetGoal, context),
+                ),
+              ],
+            ),
           ),
         ),
       ),

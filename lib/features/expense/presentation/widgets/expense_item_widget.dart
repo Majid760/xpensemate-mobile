@@ -3,11 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
-import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
 import 'package:xpensemate/core/widget/app_custom_dialog.dart';
+import 'package:xpensemate/core/widget/app_dismissible_widget.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
-import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
-import 'package:xpensemate/features/expense/presentation/widgets/expense_form_widget.dart';
 import 'package:xpensemate/l10n/app_localizations.dart';
 
 // Main ExpenseListItem Widget with smooth entrance animations
@@ -31,8 +29,7 @@ class ExpenseListItem extends StatefulWidget {
   State<ExpenseListItem> createState() => _ExpenseListItemState();
 }
 
-class _ExpenseListItemState extends State<ExpenseListItem>
-    with TickerProviderStateMixin {
+class _ExpenseListItemState extends State<ExpenseListItem> with TickerProviderStateMixin {
   // Smooth entrance animation controller
   late AnimationController _entranceController;
   late Animation<double> _slideAnimation;
@@ -70,8 +67,7 @@ class _ExpenseListItemState extends State<ExpenseListItem>
     // Gentle scale animation
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween(begin: 1.05, end: 1.0)
-            .chain(CurveTween(curve: Curves.easeOutCubic)),
+        tween: Tween(begin: 1.05, end: 1.0).chain(CurveTween(curve: Curves.easeOutCubic)),
         weight: 100,
       ),
     ]).animate(_entranceController);
@@ -152,12 +148,10 @@ class _ExpenseListItemState extends State<ExpenseListItem>
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
-        animation:
-            Listenable.merge([_entranceController, _interactionController]),
+        animation: Listenable.merge([_entranceController, _interactionController]),
         builder: (context, child) => Transform.translate(
           // Smooth entrance slide up from 50px below
-          offset: Offset(0, 50 * (1 - _slideAnimation.value)) +
-              _translateAnimation.value,
+          offset: Offset(0, 50 * (1 - _slideAnimation.value)) + _translateAnimation.value,
           child: Transform.scale(
             // Combine entrance scale with interaction scale
             scale: _scaleAnimation.value * _interactionScaleAnimation.value,
@@ -167,8 +161,8 @@ class _ExpenseListItemState extends State<ExpenseListItem>
                 margin: EdgeInsets.only(
                   bottom: widget.isLast ? 0 : 12,
                 ),
-                child: ExpenseDismissible(
-                  expense: widget.expense,
+                child: AppDismissible(
+                  objectKey: 'expense_${widget.expense.id}',
                   onDeleteConfirm: () async {
                     final result = await _showDeleteConfirmation(context);
                     if (result ?? false) {
@@ -192,128 +186,6 @@ class _ExpenseListItemState extends State<ExpenseListItem>
               ),
             ),
           ),
-        ),
-      );
-}
-
-// Dismissible Wrapper Widget with fade-out effect
-class ExpenseDismissible extends StatefulWidget {
-  const ExpenseDismissible({
-    super.key,
-    required this.expense,
-    required this.child,
-    required this.onDeleteConfirm,
-    required this.onEdit,
-  });
-
-  final ExpenseEntity expense;
-  final Widget child;
-  final Future<bool> Function() onDeleteConfirm;
-  final VoidCallback onEdit;
-
-  @override
-  State<ExpenseDismissible> createState() => _ExpenseDismissibleState();
-}
-
-class _ExpenseDismissibleState extends State<ExpenseDismissible> {
-  bool _isDismissed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    if (_isDismissed) {
-      return const SizedBox.shrink();
-    }
-
-    return Dismissible(
-      key: Key('dismissible_${widget.expense.id}'),
-      background: DismissBackground(
-        alignment: Alignment.centerLeft,
-        color: context.colorScheme.error,
-        icon: Icons.delete,
-        label: context.l10n.delete,
-      ),
-      secondaryBackground: DismissBackground(
-        alignment: Alignment.centerRight,
-        color: context.colorScheme.primary,
-        icon: Icons.edit,
-        label: context.l10n.edit,
-      ),
-      confirmDismiss: (direction) async {
-        await HapticFeedback.mediumImpact();
-        if (direction == DismissDirection.startToEnd) {
-          final result = await widget.onDeleteConfirm();
-          if (result == true) {
-            setState(() {
-              _isDismissed = true;
-            });
-          }
-          return result;
-        } else if (direction == DismissDirection.endToStart) {
-          widget.onEdit();
-          return false; // Don't actually dismiss for edit
-        }
-        return false;
-      },
-      onDismissed: (direction) {
-        // This handler is required to properly remove the widget from the tree
-        if (direction == DismissDirection.startToEnd) {
-          setState(() {
-            _isDismissed = true;
-          });
-        }
-      },
-      dismissThresholds: const {
-        DismissDirection.startToEnd: 0.4,
-        DismissDirection.endToStart: 0.4,
-      },
-      child: widget.child,
-    );
-  }
-}
-
-// Static Dismiss Background Widget
-class DismissBackground extends StatelessWidget {
-  const DismissBackground({
-    super.key,
-    required this.alignment,
-    required this.color,
-    required this.icon,
-    required this.label,
-  });
-
-  final Alignment alignment;
-  final Color color;
-  final IconData icon;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) => Container(
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        alignment: alignment,
-        padding: EdgeInsets.only(
-          left: alignment == Alignment.centerLeft ? 20 : 0,
-          right: alignment == Alignment.centerRight ? 20 : 0,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              color: Colors.white,
-              size: 30,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: context.textTheme.bodySmall?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
         ),
       );
 }
@@ -473,9 +345,7 @@ class ExpenseHeaderRow extends StatelessWidget {
             CurrencyFormatter.format(expense.amount),
             style: context.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: expense.amount < 0
-                  ? context.colorScheme.error
-                  : context.colorScheme.primary,
+              color: expense.amount < 0 ? context.colorScheme.error : context.colorScheme.primary,
             ),
           ),
         ],
@@ -598,14 +468,12 @@ class ExpenseRecurringIndicator extends StatelessWidget {
             decoration: BoxDecoration(
               color: context.colorScheme.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(6),
-              border: Border.all(
-                  color: context.colorScheme.primary.withValues(alpha: 0.3)),
+              border: Border.all(color: context.colorScheme.primary.withValues(alpha: 0.3)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.autorenew,
-                    size: 12, color: context.colorScheme.primary),
+                Icon(Icons.autorenew, size: 12, color: context.colorScheme.primary),
                 const SizedBox(width: 4),
                 Text(
                   expense.recurring.frequency,
@@ -682,23 +550,19 @@ class ExpenseStatusIndicator extends StatelessWidget {
             ),
           ),
           // Show budget goal indicator at the bottom if expense is linked to a budget goal
-          if (expense.budgetGoalId != null &&
-              expense.budgetGoalId!.isNotEmpty) ...[
+          if (expense.budgetGoalId != null && expense.budgetGoalId!.isNotEmpty) ...[
             const SizedBox(height: 4),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: context.colorScheme.tertiary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(6),
-                border: Border.all(
-                    color:
-                        context.colorScheme.secondary.withValues(alpha: 0.3)),
+                border: Border.all(color: context.colorScheme.secondary.withValues(alpha: 0.3)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.account_balance_outlined,
-                      size: 12, color: context.colorScheme.secondary),
+                  Icon(Icons.account_balance_outlined, size: 12, color: context.colorScheme.secondary),
                   const SizedBox(width: 4),
                   Text(
                     context.l10n.budget, // Using localization

@@ -10,7 +10,7 @@ import 'package:xpensemate/core/route/utils/main_shell.dart';
 import 'package:xpensemate/core/route/utils/route_constants.dart';
 import 'package:xpensemate/core/route/utils/router_middleware_guard.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
-import 'package:xpensemate/features/budget/presentation/pages/budget_page.dart';
+import 'package:xpensemate/features/budget/presentation/widgets/budget_goal_list.dart';
 import 'package:xpensemate/features/expense/presentation/pages/expense_page.dart';
 
 class AppRouter {

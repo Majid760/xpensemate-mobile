@@ -29,7 +29,6 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget>
     with SingleTickerProviderStateMixin {
   late ExpenseCubit _expenseCubit;
   late AnimationController _animationController;
-  late Animation<double> _scaleAnimation;
   late Animation<double> _bounceAnimation;
 
   @override
@@ -40,15 +39,6 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget>
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 1,
-      end: 1.2,
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
-    );
 
     _bounceAnimation = Tween<double>(
       begin: 0,
@@ -71,20 +61,6 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget>
   void didChangeDependencies() {
     super.didChangeDependencies();
     _expenseCubit = context.read<ExpenseCubit>();
-  }
-
-  void _scrollToTop() {
-    if (widget.scrollController != null) {
-      widget.scrollController!.animateTo(
-        0,
-        duration: const Duration(milliseconds: 800),
-        curve: Curves.easeInOut,
-      );
-    }
-  }
-
-  void _startAnimation() {
-    _animationController.repeat(reverse: true);
   }
 
   void _stopAnimation() {

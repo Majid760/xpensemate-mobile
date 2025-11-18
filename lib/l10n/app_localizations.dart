@@ -1650,8 +1650,14 @@ abstract class AppLocalizations {
   /// Subtitle for the budget statistics section
   ///
   /// In en, this message translates to:
-  /// **'Budget Statistics'**
+  /// **'Insight'**
   String get budgetStatistics;
+
+  /// Subtitle for the budget statistics section with period
+  ///
+  /// In en, this message translates to:
+  /// **' Statistics'**
+  String periodBudgetStatistics(String period);
 
   /// Label for total budget goals count
   ///

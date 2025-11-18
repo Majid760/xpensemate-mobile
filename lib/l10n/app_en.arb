@@ -610,9 +610,19 @@
   "@overview": {
     "description": "Title for the budget overview section"
   },
-  "budgetStatistics": "Budget Statistics",
+  "budgetStatistics": "Insight",
   "@budgetStatistics": {
     "description": "Subtitle for the budget statistics section"
+  },
+  "periodBudgetStatistics": " Statistics",
+  "@periodBudgetStatistics": {
+    "description": "Subtitle for the budget statistics section with period",
+    "placeholders": {
+      "period": {
+        "type": "String",
+        "example": "Monthly"
+      }
+    }
   },
   "totalGoals": "Total Goals",
   "@totalGoals": {

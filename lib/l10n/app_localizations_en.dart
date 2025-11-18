@@ -810,7 +810,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get overview => 'Overview';
 
   @override
-  String get budgetStatistics => 'Budget Statistics';
+  String get budgetStatistics => 'Insight';
+
+  @override
+  String periodBudgetStatistics(String period) {
+    return ' Statistics';
+  }
 
   @override
   String get totalGoals => 'Total Goals';

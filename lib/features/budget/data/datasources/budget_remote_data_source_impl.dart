@@ -49,10 +49,8 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
     BudgetGoalEntity budgetGoal,
   ) async =>
       _networkClient.post(
-        NetworkConfigs.budgetGoals,
-        data: budgetGoal is BudgetGoalModel
-            ? budgetGoal.toJson()
-            : BudgetGoalModel.fromEntity(budgetGoal).toJson(),
+        NetworkConfigs.createBudget,
+        data: budgetGoal is BudgetGoalModel ? budgetGoal.toJson() : BudgetGoalModel.fromEntity(budgetGoal).toJson(),
         fromJson: BudgetGoalModel.fromJson,
       );
 
@@ -62,26 +60,22 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
   ) =>
       _networkClient.put(
         '${NetworkConfigs.updateBudgetGoal}/${budgetGoal.id}',
-        data: budgetGoal is BudgetGoalModel
-            ? budgetGoal.toJson()
-            : BudgetGoalModel.fromEntity(budgetGoal).toJson(),
+        data: budgetGoal is BudgetGoalModel ? budgetGoal.toJson() : BudgetGoalModel.fromEntity(budgetGoal).toJson(),
         fromJson: BudgetGoalModel.fromJson,
       );
 
   @override
-  Future<Either<Failure, bool>> deleteBudgetGoal(String budgetGoalId) async =>
-      _networkClient.delete(
+  Future<Either<Failure, bool>> deleteBudgetGoal(String budgetGoalId) async => _networkClient.delete(
         '${NetworkConfigs.deleteBudgetGoal}/$budgetGoalId',
         fromJson: (json) => json['data'] as bool? ?? true,
       );
 
   @override
-  Future<Either<Failure, BudgetSpecificExpensesListEntity>>
-      getExpensesForSpecificBudgetGoal(String budgetGoalId) =>
-          _networkClient.get(
-            '${NetworkConfigs.getAllExpensesOfBudgetGoal}/$budgetGoalId/expenses',
-            fromJson: BudgetSpecificExpensesListModel.fromJson,
-          );
+  Future<Either<Failure, BudgetSpecificExpensesListEntity>> getExpensesForSpecificBudgetGoal(String budgetGoalId) =>
+      _networkClient.get(
+        '${NetworkConfigs.getAllExpensesOfBudgetGoal}/$budgetGoalId/expenses',
+        fromJson: BudgetSpecificExpensesListModel.fromJson,
+      );
 
   @override
   Future<Either<Failure, BudgetGoalsListModel>> getBudgetGoalByStatus(

@@ -8,7 +8,6 @@ import 'package:xpensemate/features/budget/presentation/cubit/budget_state.dart'
 import 'package:xpensemate/features/budget/presentation/pages/budget_form_page.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/budget_goal_list.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/insight_card_section.dart';
-import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 
 class BudgetPage extends StatelessWidget {
   const BudgetPage({super.key});
@@ -34,8 +33,7 @@ class BudgetPageContent extends StatefulWidget {
   State<BudgetPageContent> createState() => _BudgetPageContentState();
 }
 
-class _BudgetPageContentState extends State<BudgetPageContent>
-    with TickerProviderStateMixin {
+class _BudgetPageContentState extends State<BudgetPageContent> with TickerProviderStateMixin {
   late ScrollController _scrollController;
 
   @override
@@ -57,24 +55,6 @@ class _BudgetPageContentState extends State<BudgetPageContent>
     ]);
   }
 
-  void _editBudget(BudgetGoalEntity? budget, BuildContext context) {
-    AppBottomSheet.show<void>(
-      context: context,
-      title: "Edit Budget",
-      config: const BottomSheetConfig(
-        padding: EdgeInsets.symmetric(horizontal: 8),
-        blurSigma: 5,
-        barrierColor: Colors.transparent,
-      ),
-      child: BudgetFormPage(
-        budget: budget,
-        onSave: (goal) {
-          context.budgetCubit.updateBudgetGoal(goal);
-        },
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) => BlocConsumer<BudgetCubit, BudgetState>(
         listener: (context, state) {},
@@ -88,8 +68,8 @@ class _BudgetPageContentState extends State<BudgetPageContent>
             ),
             slivers: [
               BudgetAppBar(
-                onChanged: (value) =>
-                    context.budgetCubit.getBudgetGoalsInsights(period: value),
+                defaultPeriod: state.defaultPeriod,
+                onChanged: (value) => context.budgetCubit.getBudgetGoalsInsights(period: value),
               ),
               SliverPadding(
                 padding: EdgeInsets.all(context.md),
@@ -97,6 +77,7 @@ class _BudgetPageContentState extends State<BudgetPageContent>
                   delegate: SliverChildListDelegate([
                     ExpandableStatsCard(
                       budgetGoalsInsight: state.budgetGoalsInsight,
+                      period: state.defaultPeriod,
                     ),
                     SizedBox(height: context.xl),
                     SectionHeader(title: context.l10n.budget),
@@ -114,9 +95,10 @@ class _BudgetPageContentState extends State<BudgetPageContent>
 }
 
 class BudgetAppBar extends StatelessWidget {
-  const BudgetAppBar({super.key, this.onChanged});
+  const BudgetAppBar({super.key, this.onChanged, required this.defaultPeriod});
 
   final ValueChanged<String>? onChanged;
+  final String defaultPeriod;
 
   @override
   Widget build(BuildContext context) => SliverAppBar(
@@ -136,6 +118,7 @@ class BudgetAppBar extends StatelessWidget {
             ),
             child: PopupMenuButton<String>(
               onSelected: onChanged,
+              initialValue: defaultPeriod,
               icon: Icon(
                 Icons.tune_rounded,
                 color: context.colorScheme.onPrimary,

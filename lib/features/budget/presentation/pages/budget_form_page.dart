@@ -30,8 +30,7 @@ class BudgetFormPage extends StatefulWidget {
   State<BudgetFormPage> createState() => _BudgetFormPageState();
 }
 
-class _BudgetFormPageState extends State<BudgetFormPage>
-    with TickerProviderStateMixin {
+class _BudgetFormPageState extends State<BudgetFormPage> with TickerProviderStateMixin {
   late final FormGroup _form;
   late final AnimationController _fadeController;
   late final AnimationController _slideController;
@@ -61,7 +60,7 @@ class _BudgetFormPageState extends State<BudgetFormPage>
     'achieved',
     'failed',
     'terminated',
-    'other'
+    'other',
   ];
 
   // Icons for categories
@@ -173,8 +172,7 @@ class _BudgetFormPageState extends State<BudgetFormPage>
     if (widget.budget != null) {
       _populateFormFromBudget(widget.budget!);
     } else {
-      _form.control('date').value =
-          DateTime.now().add(const Duration(days: 30));
+      _form.control('date').value = DateTime.now().add(const Duration(days: 30));
       _form.control('priority').value = 'High';
       _form.control('status').value = 'active';
     }
@@ -192,10 +190,66 @@ class _BudgetFormPageState extends State<BudgetFormPage>
     _form.control('name').value = budget.name;
     _form.control('amount').value = budget.amount.toStringAsFixed(2);
     _form.control('date').value = budget.date;
-    _form.control('category').value = budget.category;
-    _form.control('priority').value = budget.priority;
-    _form.control('status').value = budget.status;
     _form.control('detail').value = budget.detail;
+
+    // Handle priority value with proper normalization
+    final priority = budget.priority;
+    if (priority != null) {
+      // Normalize the priority to match our predefined options
+      String normalizedPriority = priority;
+
+      for (final predefined in _priorityOptions) {
+        if (predefined.toLowerCase() == priority.toLowerCase()) {
+          normalizedPriority = predefined; // Use the properly cased predefined option
+          break;
+        }
+      }
+
+      _form.control('priority').value = normalizedPriority;
+    }
+
+    // Handle status value with proper normalization
+    final status = budget.status;
+    if (status != null) {
+      // Normalize the status to match our predefined options
+      String normalizedStatus = status;
+
+      for (final predefined in _statusOptions) {
+        if (predefined.toLowerCase() == status.toLowerCase()) {
+          normalizedStatus = predefined; // Use the properly cased predefined option
+          break;
+        }
+      }
+
+      _form.control('status').value = normalizedStatus;
+    }
+
+    // Handle category value with proper normalization
+    final category = budget.category;
+    if (category != null) {
+      // Normalize the category to match our predefined categories
+      // Find a case-insensitive match with predefined categories
+      String normalizedCategory = category;
+
+      for (final predefined in _predefinedCategories) {
+        if (predefined.toLowerCase() == category.toLowerCase()) {
+          normalizedCategory = predefined; // Use the properly cased predefined category
+          break;
+        }
+      }
+
+      _form.control('category').value = normalizedCategory;
+
+      // If it's a custom category (not in predefined list), enable custom mode
+      final isPredefined =
+          _predefinedCategories.any((predefined) => predefined.toLowerCase() == normalizedCategory.toLowerCase());
+
+      if (!isPredefined) {
+        setState(() {
+          _isCustomCategoryMode = true;
+        });
+      }
+    }
   }
 
   Future<void> _submitForm() async {
@@ -210,15 +264,12 @@ class _BudgetFormPageState extends State<BudgetFormPage>
         return;
       }
 
-      final amountString =
-          (_form.control('amount').value as String?)?.trim() ?? '0';
+      final amountString = (_form.control('amount').value as String?)?.trim() ?? '0';
       final amount = double.tryParse(amountString);
 
       if (amount == null || amount <= 0) {
         if (!_form.control('amount').hasError('pattern')) {
-          _form
-              .control('amount')
-              .setErrors({'pattern': 'Please enter a valid amount'});
+          _form.control('amount').setErrors({'pattern': 'Please enter a valid amount'});
         }
         return;
       }
@@ -243,17 +294,15 @@ class _BudgetFormPageState extends State<BudgetFormPage>
       }
 
       final budget = BudgetGoalEntity(
-        id: widget.budget?.id ??
-            DateTime.now().millisecondsSinceEpoch.toString(),
+        id: widget.budget?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
         userId: widget.budget?.userId ?? sl.authService.currentUser!.id,
         name: (_form.control('name').value as String?)?.trim() ?? '',
         amount: amount,
-        date: _form.control('date').value as DateTime? ??
-            DateTime.now().add(const Duration(days: 30)),
+        date: _form.control('date').value as DateTime? ?? DateTime.now().add(const Duration(days: 30)),
         category: categoryValue, // Use the determined category value
         detail: (_form.control('detail').value as String?)?.trim() ?? '',
-        status: _form.control('status').value as String? ?? 'active',
-        priority: _form.control('priority').value as String? ?? 'Medium',
+        status: (_form.control('status').value as String? ?? 'active').toLowerCase(),
+        priority: (_form.control('priority').value as String? ?? 'Medium').toLowerCase(),
         progress: widget.budget?.progress ?? 0,
         isDeleted: widget.budget?.isDeleted ?? false,
         createdAt: widget.budget?.createdAt ?? DateTime.now(),
@@ -269,8 +318,7 @@ class _BudgetFormPageState extends State<BudgetFormPage>
   }
 
   Future<void> _selectDate() async {
-    final currentDate = _form.control('date').value as DateTime? ??
-        DateTime.now().add(const Duration(days: 30));
+    final currentDate = _form.control('date').value as DateTime? ?? DateTime.now().add(const Duration(days: 30));
 
     final picked = await showDatePicker(
       context: context,
@@ -299,11 +347,13 @@ class _BudgetFormPageState extends State<BudgetFormPage>
     // Add the predefined categories
     options.addAll(
       _predefinedCategories
-          .map((cat) => DropdownOption(
-                value: cat,
-                label: cat,
-                icon: _categoryIcons[cat],
-              ))
+          .map(
+            (cat) => DropdownOption(
+              value: cat,
+              label: cat,
+              icon: _categoryIcons[cat],
+            ),
+          )
           .toList(),
     );
 
@@ -384,48 +434,50 @@ class _BudgetFormPageState extends State<BudgetFormPage>
                 ),
                 borderRadius: BorderRadius.circular(12),
                 dropdownColor: colorScheme.surface,
-                elevation: 8,
                 menuMaxHeight: 300,
                 style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
-                selectedItemBuilder: (BuildContext context) {
-                  return options.map((option) {
-                    if (option.icon != null) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                        child: Row(
-                          children: [
-                            Icon(
-                              option.icon,
-                              color: colorScheme.primary,
-                              size: 18,
-                            ),
-                            const SizedBox(width: AppSpacing.sm),
-                            Expanded(
-                              child: Text(
-                                option.label,
-                                style: textTheme.bodyMedium?.copyWith(
-                                  color: colorScheme.onSurface,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    } else {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                        child: Text(
-                          option.label,
-                          style: textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.onSurface,
+                // Add a safety check for the value
+                selectedItemBuilder: (BuildContext context) => options.map((option) {
+                  if (option.icon != null) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md,
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            option.icon,
+                            color: colorScheme.primary,
+                            size: 18,
                           ),
+                          const SizedBox(width: AppSpacing.sm),
+                          Expanded(
+                            child: Text(
+                              option.label,
+                              style: textTheme.bodyMedium?.copyWith(
+                                color: colorScheme.onSurface,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  } else {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md,
+                      ),
+                      child: Text(
+                        option.label,
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurface,
                         ),
-                      );
-                    }
-                  }).toList();
-                },
+                      ),
+                    );
+                  }
+                }).toList(),
                 items: options.map((option) {
                   // Special handling for the "Add Custom Category" option
                   if (option.value == 'ADD_CUSTOM_CATEGORY') {
@@ -448,7 +500,7 @@ class _BudgetFormPageState extends State<BudgetFormPage>
                       ),
                     );
                   }
-                  
+
                   return DropdownMenuItem<String>(
                     value: option.value,
                     child: Container(
@@ -575,106 +627,101 @@ class _BudgetFormPageState extends State<BudgetFormPage>
       builder: (context, formModel, child) {
         final control = formModel.control(formControlName);
         final value = control.value as String?;
-        final hasError =
-            control.hasError('required') && control.touched == true;
+        final hasError = control.hasError('required') && control.touched == true;
 
-        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(
-            label,
-            style: textTheme.labelLarge?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color: colorScheme.surfaceContainer.withValues(alpha: 0.7),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: hasError
-                    ? colorScheme.error
-                    : colorScheme.outline.withValues(alpha: 0.2),
-                width: 1.5,
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: textTheme.labelLarge?.copyWith(
+                color: colorScheme.onSurfaceVariant,
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: colorScheme.primary.withValues(alpha: 0.08),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
             ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: value,
-                isExpanded: true,
-                hint: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.arrow_drop_down_circle_outlined,
-                        color:
-                            colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-                        size: 18,
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                      Text(
-                        hint,
-                        style: textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.onSurfaceVariant
-                              .withValues(alpha: 0.7),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                icon: Padding(
-                  padding: const EdgeInsets.only(right: AppSpacing.sm),
-                  child: Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    color: colorScheme.onSurfaceVariant,
-                    size: 20,
-                  ),
-                ),
+            const SizedBox(height: AppSpacing.xs),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainer.withValues(alpha: 0.7),
                 borderRadius: BorderRadius.circular(12),
-                dropdownColor: colorScheme.surface,
-                elevation: 8,
-                menuMaxHeight: 300,
-                style: textTheme.bodyMedium
-                    ?.copyWith(color: colorScheme.onSurface),
-                selectedItemBuilder: (BuildContext context) =>
-                    options.map((option) {
-                  return Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                border: Border.all(
+                  color: hasError ? colorScheme.error : colorScheme.outline.withValues(alpha: 0.2),
+                  width: 1.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: colorScheme.primary.withValues(alpha: 0.08),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: value,
+                  isExpanded: true,
+                  hint: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                     child: Row(
                       children: [
-                        if (option.icon != null) ...[
-                          Icon(
-                            option.icon,
-                            color: option.color ?? colorScheme.primary,
-                            size: 18,
-                          ),
-                          const SizedBox(width: AppSpacing.sm),
-                        ],
-                        Expanded(
-                          child: Text(
-                            option.label,
-                            style: textTheme.bodyMedium?.copyWith(
-                              color: colorScheme.onSurface,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            overflow: TextOverflow.ellipsis,
+                        Icon(
+                          Icons.arrow_drop_down_circle_outlined,
+                          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                          size: 18,
+                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                        Text(
+                          hint,
+                          style: textTheme.bodyMedium?.copyWith(
+                            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                           ),
                         ),
                       ],
                     ),
-                  );
-                }).toList(),
-                items: options
-                    .map((option) => DropdownMenuItem<String>(
+                  ),
+                  icon: Padding(
+                    padding: const EdgeInsets.only(right: AppSpacing.sm),
+                    child: Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: colorScheme.onSurfaceVariant,
+                      size: 20,
+                    ),
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  dropdownColor: colorScheme.surface,
+                  menuMaxHeight: 300,
+                  style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
+                  selectedItemBuilder: (BuildContext context) => options
+                      .map(
+                        (option) => Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                          child: Row(
+                            children: [
+                              if (option.icon != null) ...[
+                                Icon(
+                                  option.icon,
+                                  color: option.color ?? colorScheme.primary,
+                                  size: 18,
+                                ),
+                                const SizedBox(width: AppSpacing.sm),
+                              ],
+                              Expanded(
+                                child: Text(
+                                  option.label,
+                                  style: textTheme.bodyMedium?.copyWith(
+                                    color: colorScheme.onSurface,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                      .toList(),
+                  items: options
+                      .map(
+                        (option) => DropdownMenuItem<String>(
                           value: option.value,
                           child: Container(
                             padding: const EdgeInsets.symmetric(
@@ -689,8 +736,7 @@ class _BudgetFormPageState extends State<BudgetFormPage>
                                 Container(
                                   padding: const EdgeInsets.all(6),
                                   decoration: BoxDecoration(
-                                    color: (option.color ?? colorScheme.primary)
-                                        .withValues(alpha: 0.1),
+                                    color: (option.color ?? colorScheme.primary).withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Icon(
@@ -711,29 +757,30 @@ class _BudgetFormPageState extends State<BudgetFormPage>
                               ],
                             ),
                           ),
-                        ))
-                    .toList(),
-                onChanged: (newValue) {
-                  control.value = newValue;
-                  control.markAsTouched();
-                },
-              ),
-            ),
-          ),
-          if (hasError) ...[
-            const SizedBox(height: AppSpacing.xs),
-            Padding(
-              padding: const EdgeInsets.only(left: AppSpacing.md),
-              child: Text(
-                validationMessages['required']?.call(control.errors) ??
-                    'This field is required',
-                style: textTheme.bodySmall?.copyWith(
-                  color: colorScheme.error,
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (newValue) {
+                    control.value = newValue;
+                    control.markAsTouched();
+                  },
                 ),
               ),
             ),
+            if (hasError) ...[
+              const SizedBox(height: AppSpacing.xs),
+              Padding(
+                padding: const EdgeInsets.only(left: AppSpacing.md),
+                child: Text(
+                  validationMessages['required']?.call(control.errors) ?? 'This field is required',
+                  style: textTheme.bodySmall?.copyWith(
+                    color: colorScheme.error,
+                  ),
+                ),
+              ),
+            ],
           ],
-        ]);
+        );
       },
     );
   }
@@ -768,8 +815,7 @@ class _BudgetFormPageState extends State<BudgetFormPage>
                           hintText: l10n.description,
                           prefixIcon: Icon(
                             Icons.description_outlined,
-                            color: colorScheme.onSurfaceVariant
-                                .withValues(alpha: 0.6),
+                            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                           ),
                           textInputAction: TextInputAction.next,
                           validationMessages: {
@@ -788,21 +834,20 @@ class _BudgetFormPageState extends State<BudgetFormPage>
                           fieldType: FieldType.number,
                           prefixIcon: Icon(
                             Icons.attach_money_outlined,
-                            color: colorScheme.onSurfaceVariant
-                                .withValues(alpha: 0.6),
+                            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                           ),
                           textInputAction: TextInputAction.next,
                           inputFormatters: [
                             FilteringTextInputFormatter.allow(
-                                RegExp(r'^\d*\.?\d*$')),
+                              RegExp(r'^\d*\.?\d*$'),
+                            ),
                           ],
                           validationMessages: {
                             'required': (error) => l10n.fieldRequired,
                             'pattern': (error) => l10n.invalidAmount,
                           },
                           showErrors: (control) {
-                            final hasError = control.hasError('required') ||
-                                control.hasError('pattern');
+                            final hasError = control.hasError('required') || control.hasError('pattern');
                             return hasError && control.touched == true;
                           },
                         ),
@@ -821,8 +866,7 @@ class _BudgetFormPageState extends State<BudgetFormPage>
                             const SizedBox(height: AppSpacing.xs),
                             ReactiveFormConsumer(
                               builder: (context, formModel, child) {
-                                final date = formModel.control('date').value
-                                    as DateTime?;
+                                final date = formModel.control('date').value as DateTime?;
                                 return InkWell(
                                   onTap: _selectDate,
                                   borderRadius: BorderRadius.circular(12),
@@ -832,18 +876,15 @@ class _BudgetFormPageState extends State<BudgetFormPage>
                                       vertical: AppSpacing.sm1,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: colorScheme.surfaceContainer
-                                          .withValues(alpha: 0.7),
+                                      color: colorScheme.surfaceContainer.withValues(alpha: 0.7),
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                        color: colorScheme.outline
-                                            .withValues(alpha: 0.2),
+                                        color: colorScheme.outline.withValues(alpha: 0.2),
                                         width: 1.5,
                                       ),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: colorScheme.primary
-                                              .withValues(alpha: 0.08),
+                                          color: colorScheme.primary.withValues(alpha: 0.08),
                                           blurRadius: 8,
                                           offset: const Offset(0, 2),
                                         ),
@@ -854,10 +895,8 @@ class _BudgetFormPageState extends State<BudgetFormPage>
                                         Container(
                                           padding: const EdgeInsets.all(6),
                                           decoration: BoxDecoration(
-                                            color: colorScheme.primary
-                                                .withValues(alpha: 0.1),
-                                            borderRadius:
-                                                BorderRadius.circular(6),
+                                            color: colorScheme.primary.withValues(alpha: 0.1),
+                                            borderRadius: BorderRadius.circular(6),
                                           ),
                                           child: Icon(
                                             Icons.calendar_today_outlined,
@@ -871,22 +910,17 @@ class _BudgetFormPageState extends State<BudgetFormPage>
                                             date != null
                                                 ? '${date.day}/${date.month}/${date.year}'
                                                 : 'Select Target Date',
-                                            style:
-                                                textTheme.bodyMedium?.copyWith(
+                                            style: textTheme.bodyMedium?.copyWith(
                                               color: date != null
                                                   ? colorScheme.onSurface
-                                                  : colorScheme.onSurfaceVariant
-                                                      .withValues(alpha: 0.7),
-                                              fontWeight: date != null
-                                                  ? FontWeight.w500
-                                                  : FontWeight.normal,
+                                                  : colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                                              fontWeight: date != null ? FontWeight.w500 : FontWeight.normal,
                                             ),
                                           ),
                                         ),
                                         Icon(
                                           Icons.arrow_forward_ios_rounded,
-                                          color: colorScheme.onSurfaceVariant
-                                              .withValues(alpha: 0.5),
+                                          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
                                           size: 14,
                                         ),
                                       ],
@@ -950,8 +984,7 @@ class _BudgetFormPageState extends State<BudgetFormPage>
                                     : status == 'failed'
                                         ? l10n.failedTerminated.split('/')[0]
                                         : status == 'terminated'
-                                            ? l10n.failedTerminated
-                                                .split('/')[1]
+                                            ? l10n.failedTerminated.split('/')[1]
                                             : status;
 
                             return DropdownOption(
@@ -975,8 +1008,7 @@ class _BudgetFormPageState extends State<BudgetFormPage>
                           maxLines: 3,
                           prefixIcon: Icon(
                             Icons.notes_outlined,
-                            color: colorScheme.onSurfaceVariant
-                                .withValues(alpha: 0.6),
+                            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                           ),
                           textInputAction: TextInputAction.newline,
                         ),
@@ -1004,8 +1036,7 @@ class _BudgetFormPageState extends State<BudgetFormPage>
                       Expanded(
                         child: AppButton.primary(
                           onPressed: _submitForm,
-                          text: (widget.budget == null ? l10n.add : l10n.save)
-                              .toUpperCase(),
+                          text: (widget.budget == null ? l10n.add : l10n.save).toUpperCase(),
                           textColor: Colors.white,
                         ),
                       ),
@@ -1034,5 +1065,3 @@ class DropdownOption {
     this.color,
   });
 }
-
-

@@ -6,8 +6,8 @@ import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_constant.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
-import 'package:xpensemate/core/widget/app_dismissible_widget.dart';
 import 'package:xpensemate/core/widget/app_custom_dialog.dart';
+import 'package:xpensemate/core/widget/app_dismissible_widget.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/pages/budget_expenses_page.dart';
@@ -19,11 +19,13 @@ class BudgetGoalCard extends StatefulWidget {
     required this.budgetGoal,
     this.onStatusChange,
     this.onEdit,
+    this.onDelete,
   });
 
   final BudgetGoalEntity budgetGoal;
   final void Function(String)? onStatusChange;
   final void Function(BudgetGoalEntity)? onEdit;
+  final void Function(String id)? onDelete;
 
   @override
   State<BudgetGoalCard> createState() => _BudgetGoalCardState();
@@ -92,8 +94,7 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
   }
 
   void _handleDelete() {
-    // Call the delete function from the cubit
-    context.budgetCubit.deleteBudgetGoal(_budgetGoal.id);
+    widget.onDelete?.call(_budgetGoal.id);
   }
 
   @override

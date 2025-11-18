@@ -15,6 +15,7 @@ class BudgetState extends Equatable {
     this.state = BudgetStates.initial,
     this.budgetGoals,
     this.budgetGoalsInsight,
+    this.defaultPeriod = 'monthly',
     this.message,
     this.stackTrace,
     this.currentPage,
@@ -26,6 +27,7 @@ class BudgetState extends Equatable {
   final BudgetStates state;
   final BudgetGoalsListEntity? budgetGoals;
   final BudgetGoalsInsightEntity? budgetGoalsInsight;
+  final String defaultPeriod;
   final String? message;
   final StackTrace? stackTrace;
 
@@ -39,6 +41,7 @@ class BudgetState extends Equatable {
     BudgetStates? state,
     BudgetGoalsListEntity? budgetGoals,
     BudgetGoalsInsightEntity? budgetGoalsInsight,
+    String? defaultPeriod,
     String? message,
     StackTrace? stackTrace,
     int? currentPage,
@@ -50,6 +53,7 @@ class BudgetState extends Equatable {
         state: state ?? this.state,
         budgetGoals: budgetGoals ?? this.budgetGoals,
         budgetGoalsInsight: budgetGoalsInsight ?? this.budgetGoalsInsight,
+        defaultPeriod: defaultPeriod ?? this.defaultPeriod,
         message: message ?? this.message,
         stackTrace: stackTrace ?? this.stackTrace,
         currentPage: currentPage ?? this.currentPage,
@@ -63,6 +67,7 @@ class BudgetState extends Equatable {
         state,
         budgetGoals,
         budgetGoalsInsight,
+        defaultPeriod,
         message,
         stackTrace,
         currentPage,

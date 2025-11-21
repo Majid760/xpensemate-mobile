@@ -6,8 +6,10 @@ import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_state.dart';
 import 'package:xpensemate/features/budget/presentation/pages/budget_form_page.dart';
+import 'package:xpensemate/features/budget/presentation/widgets/budget_appbar.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/budget_goal_list.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/insight_card_section.dart';
+import 'package:xpensemate/features/budget/presentation/widgets/section_header.dart';
 
 class BudgetPage extends StatelessWidget {
   const BudgetPage({super.key});
@@ -80,7 +82,9 @@ class _BudgetPageContentState extends State<BudgetPageContent> with TickerProvid
                       period: state.defaultPeriod,
                     ),
                     SizedBox(height: context.xl),
-                    SectionHeader(title: context.l10n.budget),
+                    SectionHeader(
+                      title: context.l10n.budget,
+                    ),
                     SizedBox(height: context.sm),
                   ]),
                 ),
@@ -91,91 +95,6 @@ class _BudgetPageContentState extends State<BudgetPageContent> with TickerProvid
             ],
           ),
         ),
-      );
-}
-
-class BudgetAppBar extends StatelessWidget {
-  const BudgetAppBar({super.key, this.onChanged, required this.defaultPeriod});
-
-  final ValueChanged<String>? onChanged;
-  final String defaultPeriod;
-
-  @override
-  Widget build(BuildContext context) => SliverAppBar(
-        expandedHeight: 60,
-        pinned: true,
-        automaticallyImplyLeading: false,
-        elevation: 0,
-        flexibleSpace: FlexibleSpaceBar(
-          titlePadding: EdgeInsets.only(left: context.md, bottom: context.md),
-        ),
-        actions: [
-          Container(
-            margin: EdgeInsets.only(right: context.md),
-            decoration: BoxDecoration(
-              color: context.colorScheme.primary,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: PopupMenuButton<String>(
-              onSelected: onChanged,
-              initialValue: defaultPeriod,
-              icon: Icon(
-                Icons.tune_rounded,
-                color: context.colorScheme.onPrimary,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  value: 'weekly',
-                  child: Text(context.l10n.weeklyInsights),
-                ),
-                PopupMenuItem(
-                  value: 'monthly',
-                  child: Text(context.l10n.monthlyInsight),
-                ),
-                PopupMenuItem(
-                  value: 'quarterly',
-                  child: Text(context.l10n.quarterInsight),
-                ),
-                PopupMenuItem(
-                  value: 'yearly',
-                  child: Text(context.l10n.yearlyInsight),
-                ),
-              ],
-            ),
-          ),
-        ],
-      );
-}
-
-class SectionHeader extends StatelessWidget {
-  const SectionHeader({super.key, required this.title});
-  final String title;
-
-  @override
-  Widget build(BuildContext context) => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.receipt_long_rounded,
-                color: Theme.of(context).primaryColor,
-                size: 24,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                title,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-              ),
-            ],
-          ),
-        ],
       );
 }
 

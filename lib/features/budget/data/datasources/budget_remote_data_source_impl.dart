@@ -67,7 +67,11 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
   @override
   Future<Either<Failure, bool>> deleteBudgetGoal(String budgetGoalId) async => _networkClient.delete(
         '${NetworkConfigs.deleteBudgetGoal}/$budgetGoalId',
-        fromJson: (json) => json['data'] as bool? ?? true,
+        fromJson: (json) {
+          print('this is return type $json');
+
+          return json['data'] as bool? ?? true;
+        },
       );
 
   @override

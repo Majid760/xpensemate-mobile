@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/features/budget/data/models/budget_goal_model.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
+import 'package:xpensemate/features/budget/domain/entities/budget_goals_insight_entity.dart';
 import 'package:xpensemate/features/budget/domain/usecases/get_budget_goals_by_period_usecase.dart';
 import 'package:xpensemate/features/budget/domain/usecases/usecase_export.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_state.dart';
@@ -36,7 +38,7 @@ class BudgetCubit extends Cubit<BudgetState> {
     try {
       // Only show global loading for first page
       if (page == 1) {
-        emit(state.copyWith(state: BudgetStates.loading));
+        emit(state.copyWith(state: BudgetStates.loading, message: ''));
       }
 
       final result = await _getBudgetGoalsUseCase.call(
@@ -102,14 +104,26 @@ class BudgetCubit extends Cubit<BudgetState> {
     ]);
   }
 
+  /// Recalculates budget insights based on current goals
+  Future<BudgetGoalsInsightEntity?> _recalculateBudgetInsights({List<BudgetGoalEntity>? goals}) async {
+    try {
+      final recalculatedInsight = await compute(
+        BudgetGoalsInsightEntity.fromGoals,
+        goals ?? state.budgetGoals?.budgetGoals ?? [],
+      );
+      return recalculatedInsight;
+    } on Exception catch (e, stack) {
+      logE('Failed to recalculate budget insights: $e', stack);
+      return null;
+    }
+  }
+
   /// Creates a new budget goal
   Future<void> createBudgetGoal(BudgetGoalEntity goal) async {
     try {
       emit(state.copyWith(state: BudgetStates.loading));
-
       final result = await _createBudgetGoalUseCase.call(CreateBudgetGoalParams(budgetGoal: goal));
-
-      result.fold(
+      await result.fold(
         (failure) {
           emit(
             state.copyWith(
@@ -118,15 +132,20 @@ class BudgetCubit extends Cubit<BudgetState> {
             ),
           );
         },
-        (createdGoal) {
+        (createdGoal) async {
+          // Add to local cache
+          _allBudgetGoals.add(createdGoal);
+
           final updatedGoals = [
             createdGoal,
             ...?state.budgetGoals?.budgetGoals,
           ];
+          final insight = await _recalculateBudgetInsights();
           emit(
             state.copyWith(
               budgetGoals: state.budgetGoals?.copyWith(budgetGoals: updatedGoals),
               state: BudgetStates.loaded,
+              budgetGoalsInsight: insight ?? state.budgetGoalsInsight,
               message: 'Budget goal created successfully',
             ),
           );
@@ -206,6 +225,7 @@ class BudgetCubit extends Cubit<BudgetState> {
             final updatedGoals =
                 state.budgetGoals!.budgetGoals.map((g) => g.id == updatedGoal.id ? updatedGoal : g).toList();
             final updatedListModel = state.budgetGoals!.copyWith(budgetGoals: updatedGoals);
+            _recalculateBudgetInsights();
             emit(
               state.copyWith(
                 state: BudgetStates.loaded,
@@ -221,6 +241,9 @@ class BudgetCubit extends Cubit<BudgetState> {
               ),
             );
           }
+
+          // Recalculate insights after updating a goal
+          _recalculateBudgetInsights();
         },
       );
     } on Exception catch (e, stack) {
@@ -263,15 +286,21 @@ class BudgetCubit extends Cubit<BudgetState> {
           );
         },
         (_) {
+          // Remove from local cache
+          _allBudgetGoals.removeWhere((goal) => goal.id == id);
+
           emit(
             state.copyWith(
               state: BudgetStates.loaded,
+              budgetGoals: state.budgetGoals?.copyWith(
+                budgetGoals: state.budgetGoals!.budgetGoals.where((goal) => goal.id != id).toList(),
+              ),
               message: 'Budget goal deleted successfully',
             ),
           );
 
-          // Refresh the list after deletion
-          refreshBudgetGoals();
+          // Recalculate insights after deleting a goal
+          _recalculateBudgetInsights();
         },
       );
     } on Exception catch (e, stack) {

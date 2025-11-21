@@ -651,7 +651,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get of12 => 'of';
 
   @override
-  String get budget => 'Budget';
+  String get budget => 'Budget Expenses';
 
   @override
   String get expenses => 'expenses';

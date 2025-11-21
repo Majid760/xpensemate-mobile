@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
-import 'package:xpensemate/core/theme/theme_constant.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goals_insight_entity.dart';
+import 'package:xpensemate/features/budget/presentation/widgets/stat_card.dart';
 import 'package:xpensemate/l10n/app_localizations.dart';
 
 class DetailedStatsGrid extends StatelessWidget {
@@ -74,232 +74,232 @@ class DetailedStatsGrid extends StatelessWidget {
     );
   }
 }
-
-class StatsCard extends StatefulWidget {
-  const StatsCard({
-    super.key,
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.color,
-    this.subtitle,
-    this.textColor,
-    this.loading = false,
-    this.clickable = false,
-    this.onClick,
-  });
-
-  final IconData icon;
-  final String label;
-  final String value;
-  final Color color;
-  final String? subtitle;
-  final Color? textColor;
-  final bool loading;
-  final bool clickable;
-  final VoidCallback? onClick;
-
-  @override
-  State<StatsCard> createState() => _StatsCardState();
-}
-
-class _StatsCardState extends State<StatsCard> with SingleTickerProviderStateMixin {
-  bool _isHovered = false;
-  bool _isPressed = false;
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _translateAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _scaleAnimation = Tween<double>(begin: 1, end: 0.95).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-    _translateAnimation = Tween<double>(begin: 0, end: -2).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _handleHoverEnter(PointerEvent event) {
-    setState(() => _isHovered = true);
-    if (!_isPressed) {
-      _controller.forward();
-    }
-  }
-
-  void _handleHoverExit(PointerEvent event) {
-    setState(() => _isHovered = false);
-    if (!_isPressed) {
-      _controller.reverse();
-    }
-  }
-
-  void _handleTapDown(TapDownDetails details) {
-    if (widget.clickable) {
-      setState(() => _isPressed = true);
-      _controller.reverse();
-    }
-  }
-
-  void _handleTapUp(TapUpDetails details) {
-    if (widget.clickable) {
-      setState(() => _isPressed = false);
-      if (_isHovered) {
-        _controller.forward();
-      }
-      widget.onClick?.call();
-    }
-  }
-
-  void _handleTapCancel() {
-    if (widget.clickable) {
-      setState(() => _isPressed = false);
-      if (_isHovered) {
-        _controller.forward();
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) => MouseRegion(
-        onEnter: _handleHoverEnter,
-        onExit: _handleHoverExit,
-        cursor: widget.clickable ? SystemMouseCursors.click : SystemMouseCursors.basic,
-        child: GestureDetector(
-          onTapDown: _handleTapDown,
-          onTapUp: _handleTapUp,
-          onTapCancel: _handleTapCancel,
-          child: AnimatedBuilder(
-            animation: _controller,
-            builder: (context, child) => Transform.translate(
-              offset: Offset(
-                0,
-                _isHovered && !_isPressed ? _translateAnimation.value : 0,
-              ),
-              child: Transform.scale(
-                scale: _isPressed && widget.clickable ? _scaleAnimation.value : 1.0,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.sm,
-                    vertical: AppSpacing.md,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    border: Border.all(
-                      color:
-                          _isHovered ? widget.color.withValues(alpha: 1) : Theme.of(context).colorScheme.outlineVariant,
-                    ),
-                    borderRadius: BorderRadius.circular(ThemeConstants.radiusLarge),
-                    boxShadow: _isHovered
-                        ? [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.1),
-                              blurRadius: 20,
-                              offset: const Offset(0, 4),
-                            ),
-                          ]
-                        : [],
-                  ),
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Icon and Label Row
-                          Row(
-                            children: [
-                              // Icon Container
-                              Container(
-                                padding: const EdgeInsets.all(AppSpacing.sm),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.inversePrimary,
-                                  borderRadius: BorderRadius.circular(
-                                    ThemeConstants.radiusMedium,
-                                  ),
-                                ),
-                                child: Icon(
-                                  widget.icon,
-                                  size: AppSpacing.iconMd,
-                                  color: widget.color,
-                                ),
-                              ),
-                              const SizedBox(width: AppSpacing.sm),
-                              // Label
-                              Expanded(
-                                child: Text(
-                                  widget.label.toUpperCase(),
-                                  style: (context.textTheme.labelMedium ?? const TextStyle()).copyWith(
-                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: AppSpacing.sm),
-                          // Value
-                          if (widget.loading)
-                            Container(
-                              width: 48,
-                              height: 20,
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.outlineVariant,
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: _PulsingShimmer(),
-                            )
-                          else
-                            Padding(
-                              padding: const EdgeInsets.only(left: 12),
-                              child: Text(
-                                widget.value,
-                                style: (context.textTheme.labelSmall ?? const TextStyle()).copyWith(
-                                  color: widget.textColor ?? Theme.of(context).colorScheme.onSurface,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: -0.5,
-                                  height: 1.2,
-                                ),
-                              ),
-                            ),
-                          // Subtitle
-                          if (widget.subtitle != null) ...[
-                            const SizedBox(height: AppSpacing.xs),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 12),
-                              child: _ExpandableText(
-                                text: widget.subtitle!,
-                                style: (context.textTheme.bodySmall ?? const TextStyle()).copyWith(
-                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-}
+//
+// class StatsCard extends StatefulWidget {
+//   const StatsCard({
+//     super.key,
+//     required this.icon,
+//     required this.label,
+//     required this.value,
+//     required this.color,
+//     this.subtitle,
+//     this.textColor,
+//     this.loading = false,
+//     this.clickable = false,
+//     this.onClick,
+//   });
+//
+//   final IconData icon;
+//   final String label;
+//   final String value;
+//   final Color color;
+//   final String? subtitle;
+//   final Color? textColor;
+//   final bool loading;
+//   final bool clickable;
+//   final VoidCallback? onClick;
+//
+//   @override
+//   State<StatsCard> createState() => _StatsCardState();
+// }
+//
+// class _StatsCardState extends State<StatsCard> with SingleTickerProviderStateMixin {
+//   bool _isHovered = false;
+//   bool _isPressed = false;
+//   late AnimationController _controller;
+//   late Animation<double> _scaleAnimation;
+//   late Animation<double> _translateAnimation;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _controller = AnimationController(
+//       duration: const Duration(milliseconds: 300),
+//       vsync: this,
+//     );
+//     _scaleAnimation = Tween<double>(begin: 1, end: 0.95).animate(
+//       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+//     );
+//     _translateAnimation = Tween<double>(begin: 0, end: -2).animate(
+//       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+//     );
+//   }
+//
+//   @override
+//   void dispose() {
+//     _controller.dispose();
+//     super.dispose();
+//   }
+//
+//   void _handleHoverEnter(PointerEvent event) {
+//     setState(() => _isHovered = true);
+//     if (!_isPressed) {
+//       _controller.forward();
+//     }
+//   }
+//
+//   void _handleHoverExit(PointerEvent event) {
+//     setState(() => _isHovered = false);
+//     if (!_isPressed) {
+//       _controller.reverse();
+//     }
+//   }
+//
+//   void _handleTapDown(TapDownDetails details) {
+//     if (widget.clickable) {
+//       setState(() => _isPressed = true);
+//       _controller.reverse();
+//     }
+//   }
+//
+//   void _handleTapUp(TapUpDetails details) {
+//     if (widget.clickable) {
+//       setState(() => _isPressed = false);
+//       if (_isHovered) {
+//         _controller.forward();
+//       }
+//       widget.onClick?.call();
+//     }
+//   }
+//
+//   void _handleTapCancel() {
+//     if (widget.clickable) {
+//       setState(() => _isPressed = false);
+//       if (_isHovered) {
+//         _controller.forward();
+//       }
+//     }
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) => MouseRegion(
+//         onEnter: _handleHoverEnter,
+//         onExit: _handleHoverExit,
+//         cursor: widget.clickable ? SystemMouseCursors.click : SystemMouseCursors.basic,
+//         child: GestureDetector(
+//           onTapDown: _handleTapDown,
+//           onTapUp: _handleTapUp,
+//           onTapCancel: _handleTapCancel,
+//           child: AnimatedBuilder(
+//             animation: _controller,
+//             builder: (context, child) => Transform.translate(
+//               offset: Offset(
+//                 0,
+//                 _isHovered && !_isPressed ? _translateAnimation.value : 0,
+//               ),
+//               child: Transform.scale(
+//                 scale: _isPressed && widget.clickable ? _scaleAnimation.value : 1.0,
+//                 child: AnimatedContainer(
+//                   duration: const Duration(milliseconds: 300),
+//                   curve: Curves.easeInOut,
+//                   padding: const EdgeInsets.symmetric(
+//                     horizontal: AppSpacing.sm,
+//                     vertical: AppSpacing.md,
+//                   ),
+//                   decoration: BoxDecoration(
+//                     color: Theme.of(context).colorScheme.surface,
+//                     border: Border.all(
+//                       color:
+//                           _isHovered ? widget.color.withValues(alpha: 1) : Theme.of(context).colorScheme.outlineVariant,
+//                     ),
+//                     borderRadius: BorderRadius.circular(ThemeConstants.radiusLarge),
+//                     boxShadow: _isHovered
+//                         ? [
+//                             BoxShadow(
+//                               color: Colors.black.withValues(alpha: 0.1),
+//                               blurRadius: 20,
+//                               offset: const Offset(0, 4),
+//                             ),
+//                           ]
+//                         : [],
+//                   ),
+//                   child: Stack(
+//                     clipBehavior: Clip.none,
+//                     children: [
+//                       Column(
+//                         crossAxisAlignment: CrossAxisAlignment.start,
+//                         mainAxisSize: MainAxisSize.min,
+//                         children: [
+//                           // Icon and Label Row
+//                           Row(
+//                             children: [
+//                               // Icon Container
+//                               Container(
+//                                 padding: const EdgeInsets.all(AppSpacing.sm),
+//                                 decoration: BoxDecoration(
+//                                   color: Theme.of(context).colorScheme.inversePrimary,
+//                                   borderRadius: BorderRadius.circular(
+//                                     ThemeConstants.radiusMedium,
+//                                   ),
+//                                 ),
+//                                 child: Icon(
+//                                   widget.icon,
+//                                   size: AppSpacing.iconMd,
+//                                   color: widget.color,
+//                                 ),
+//                               ),
+//                               const SizedBox(width: AppSpacing.sm),
+//                               // Label
+//                               Expanded(
+//                                 child: Text(
+//                                   widget.label.toUpperCase(),
+//                                   style: (context.textTheme.labelMedium ?? const TextStyle()).copyWith(
+//                                     color: Theme.of(context).colorScheme.onSurfaceVariant,
+//                                     letterSpacing: 0.5,
+//                                   ),
+//                                 ),
+//                               ),
+//                             ],
+//                           ),
+//                           const SizedBox(height: AppSpacing.sm),
+//                           // Value
+//                           if (widget.loading)
+//                             Container(
+//                               width: 48,
+//                               height: 20,
+//                               decoration: BoxDecoration(
+//                                 color: Theme.of(context).colorScheme.outlineVariant,
+//                                 borderRadius: BorderRadius.circular(4),
+//                               ),
+//                               child: _PulsingShimmer(),
+//                             )
+//                           else
+//                             Padding(
+//                               padding: const EdgeInsets.only(left: 12),
+//                               child: Text(
+//                                 widget.value,
+//                                 style: (context.textTheme.labelSmall ?? const TextStyle()).copyWith(
+//                                   color: widget.textColor ?? Theme.of(context).colorScheme.onSurface,
+//                                   fontWeight: FontWeight.bold,
+//                                   letterSpacing: -0.5,
+//                                   height: 1.2,
+//                                 ),
+//                               ),
+//                             ),
+//                           // Subtitle
+//                           if (widget.subtitle != null) ...[
+//                             const SizedBox(height: AppSpacing.xs),
+//                             Padding(
+//                               padding: const EdgeInsets.only(left: 12),
+//                               child: _ExpandableText(
+//                                 text: widget.subtitle!,
+//                                 style: (context.textTheme.bodySmall ?? const TextStyle()).copyWith(
+//                                   color: Theme.of(context).colorScheme.onSurfaceVariant,
+//                                 ),
+//                               ),
+//                             ),
+//                           ],
+//                         ],
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//             ),
+//           ),
+//         ),
+//       );
+// }
 
 // Shimmer animation for loading state
 class _PulsingShimmer extends StatefulWidget {

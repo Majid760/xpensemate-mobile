@@ -2,16 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 
 class BudgetGoalsInsightEntity extends Equatable {
-  final int totalGoals;
-  final List<BudgetGoalEntity> activeGoals;
-  final List<BudgetGoalEntity> achievedGoals;
-  final List<BudgetGoalEntity> failedGoals;
-  final List<BudgetGoalEntity> terminatedGoals;
-  final double totalBudgeted;
-  final double avgProgress;
-  final List<BudgetGoalEntity> closestGoals;
-  final List<BudgetGoalEntity> overdueGoals;
-
   const BudgetGoalsInsightEntity({
     this.totalGoals = 0,
     required this.activeGoals,
@@ -63,8 +53,7 @@ class BudgetGoalsInsightEntity extends Equatable {
       closestGoals.add(goal);
 
       // Check for overdue goals (date is before now and not in completed statuses)
-      if (goal.date.isBefore(now) &&
-          !['achieved', 'terminated', 'failed'].contains(goal.status)) {
+      if (goal.date.isBefore(now) && !['achieved', 'terminated', 'failed'].contains(goal.status)) {
         overdueGoals.add(goal);
       }
     }
@@ -87,11 +76,20 @@ class BudgetGoalsInsightEntity extends Equatable {
       overdueGoals: overdueGoals,
     );
   }
+  final int totalGoals;
+  final List<BudgetGoalEntity> activeGoals;
+  final List<BudgetGoalEntity> achievedGoals;
+  final List<BudgetGoalEntity> failedGoals;
+  final List<BudgetGoalEntity> terminatedGoals;
+  final double totalBudgeted;
+  final double avgProgress;
+  final List<BudgetGoalEntity> closestGoals;
+  final List<BudgetGoalEntity> overdueGoals;
 
   // Getter to get the formatted closest deadline date
   String get closestDeadlineDate {
     if (closestGoals.isEmpty) {
-      return 'No deadlines';
+      return 'N/A';
     }
 
     // Get the first goal (earliest date) from the sorted list
@@ -101,20 +99,7 @@ class BudgetGoalsInsightEntity extends Equatable {
 
   // Helper method to format date as "Nov 5, 2025"
   String _formatDate(DateTime date) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec'
-    ];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
     final month = months[date.month - 1];
     final day = date.day;

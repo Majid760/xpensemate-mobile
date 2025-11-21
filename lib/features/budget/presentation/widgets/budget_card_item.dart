@@ -5,12 +5,10 @@ import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_constant.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
-import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
 import 'package:xpensemate/core/widget/app_custom_dialog.dart';
 import 'package:xpensemate/core/widget/app_dismissible_widget.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
-import 'package:xpensemate/features/budget/presentation/pages/budget_expenses_page.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/stats_row.dart';
 
 class BudgetGoalCard extends StatefulWidget {
@@ -20,19 +18,20 @@ class BudgetGoalCard extends StatefulWidget {
     this.onStatusChange,
     this.onEdit,
     this.onDelete,
+    this.onSelect,
   });
 
   final BudgetGoalEntity budgetGoal;
   final void Function(String)? onStatusChange;
   final void Function(BudgetGoalEntity)? onEdit;
   final void Function(String id)? onDelete;
+  final void Function(String id)? onSelect;
 
   @override
   State<BudgetGoalCard> createState() => _BudgetGoalCardState();
 }
 
-class _BudgetGoalCardState extends State<BudgetGoalCard>
-    with SingleTickerProviderStateMixin {
+class _BudgetGoalCardState extends State<BudgetGoalCard> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late String _status;
@@ -99,9 +98,7 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
 
   @override
   Widget build(BuildContext context) {
-    final progress = _budgetGoal.amount > 0
-        ? math.min(_budgetGoal.currentSpending / _budgetGoal.amount, 1.0)
-        : 0.0;
+    final progress = _budgetGoal.amount > 0 ? math.min(_budgetGoal.currentSpending / _budgetGoal.amount, 1.0) : 0.0;
     final remaining = _budgetGoal.amount - _budgetGoal.currentSpending;
     final isCompleted = progress >= 1.0;
 
@@ -146,6 +143,7 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
                   status: _status,
                   isOverdue: false,
                   budgetGoalEntity: _budgetGoal,
+                  onSelected: widget.onSelect,
                 ),
                 BottomSection(
                   progress: progress,
@@ -155,8 +153,7 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
                   isOverdue: false,
                   status: _status,
                   categoryColor: context.primaryColor,
-                  onStatusChange: (String value) =>
-                      _updateStatus(value, _budgetGoal, context),
+                  onStatusChange: (String value) => _updateStatus(value, _budgetGoal, context),
                 ),
               ],
             ),
@@ -180,6 +177,7 @@ class TopSection extends StatelessWidget {
     required this.isOverdue,
     required this.status,
     required this.budgetGoalEntity,
+    this.onSelected,
   });
 
   final String title;
@@ -191,6 +189,7 @@ class TopSection extends StatelessWidget {
   final bool isOverdue;
   final String status;
   final BudgetGoalEntity budgetGoalEntity;
+  final void Function(String)? onSelected;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -210,6 +209,7 @@ class TopSection extends StatelessWidget {
               isCompleted: isCompleted,
               isOverdue: isOverdue,
               budgetGoalEntity: budgetGoalEntity,
+              onSelected: onSelected,
             ),
             SizedBox(height: context.sm),
             AmountDisplay(
@@ -231,6 +231,7 @@ class TopHeader extends StatelessWidget {
     required this.isCompleted,
     required this.isOverdue,
     required this.budgetGoalEntity,
+    this.onSelected,
   });
 
   final String title;
@@ -238,6 +239,7 @@ class TopHeader extends StatelessWidget {
   final bool isCompleted;
   final bool isOverdue;
   final BudgetGoalEntity budgetGoalEntity;
+  final void Function(String)? onSelected;
 
   @override
   Widget build(BuildContext context) => Row(
@@ -250,7 +252,7 @@ class TopHeader extends StatelessWidget {
             child: TitleCategory(title: title, category: category),
           ),
           SizedBox(width: context.sm),
-          MenuButton(budgetGoalEntity: budgetGoalEntity),
+          MenuButton(budgetGoalEntity: budgetGoalEntity, onSelected: onSelected),
         ],
       );
 }
@@ -317,8 +319,9 @@ class StatusIcon extends StatelessWidget {
 
 // Menu Button Widget
 class MenuButton extends StatelessWidget {
-  const MenuButton({super.key, required this.budgetGoalEntity});
+  const MenuButton({super.key, required this.budgetGoalEntity, this.onSelected});
   final BudgetGoalEntity budgetGoalEntity;
+  final void Function(String)? onSelected;
 
   @override
   Widget build(BuildContext context) => DecoratedBox(
@@ -337,22 +340,7 @@ class MenuButton extends StatelessWidget {
           ),
           offset: const Offset(0, 8),
           padding: EdgeInsets.all(context.xs),
-          onSelected: (value) {
-            if (value == 'edit') {
-            } else if (value == 'expenses') {
-              AppBottomSheet.showScrollable<void>(
-                context: context,
-                title: context.l10n.budget,
-                config: BottomSheetConfig(
-                  padding: EdgeInsets.symmetric(horizontal: context.sm),
-                  blurSigma: 5,
-                  barrierColor:
-                      context.theme.primaryColor.withValues(alpha: 0.4),
-                ),
-                child: ExpenseScreen(budgetGoal: budgetGoalEntity),
-              );
-            }
-          },
+          onSelected: onSelected,
           itemBuilder: (context) => [
             MenuItemWidget(
               icon: Icons.edit_outlined,
@@ -366,14 +354,12 @@ class MenuButton extends StatelessWidget {
             ),
             MenuItemWidget(
               icon: Icons.share_outlined,
-              text: context.l10n
-                  .share, // Using hardcoded string as no localization available
+              text: context.l10n.share, // Using hardcoded string as no localization available
               value: 'share',
             ),
             MenuItemWidget(
               icon: Icons.archive_outlined,
-              text: context.l10n
-                  .archive, // Using hardcoded string as no localization available
+              text: context.l10n.archive, // Using hardcoded string as no localization available
               value: 'archive',
             ),
             const PopupMenuDivider(),
@@ -423,17 +409,13 @@ class _MenuItemContent extends StatelessWidget {
           Icon(
             icon,
             size: 20,
-            color: isDestructive
-                ? context.colorScheme.error
-                : context.colorScheme.onSurfaceVariant,
+            color: isDestructive ? context.colorScheme.error : context.colorScheme.onSurfaceVariant,
           ),
           SizedBox(width: context.sm),
           Text(
             text,
             style: context.textTheme.bodyMedium?.copyWith(
-              color: isDestructive
-                  ? context.colorScheme.error
-                  : context.colorScheme.onSurface,
+              color: isDestructive ? context.colorScheme.error : context.colorScheme.onSurface,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -487,9 +469,7 @@ class AmountDisplay extends StatelessWidget {
         return 'Due today'; // Using hardcoded string as no localization available
       } else {
         final absDiff = diffDays.abs();
-        final dayText = absDiff > 1
-            ? 'days'
-            : 'day'; // Using hardcoded string as no localization available
+        final dayText = absDiff > 1 ? 'days' : 'day'; // Using hardcoded string as no localization available
         return 'Overdue by $absDiff $dayText'; // Using hardcoded string as no localization available
       }
     } on Exception catch (_) {
@@ -740,26 +720,22 @@ class _ProgressSectionState extends State<ProgressSection> {
                     itemBuilder: (context) => [
                       MenuItemWidget(
                         icon: Icons.local_activity,
-                        text:
-                            'Active', // Using hardcoded string as no localization available
+                        text: 'Active', // Using hardcoded string as no localization available
                         value: 'active',
                       ),
                       MenuItemWidget(
                         icon: Icons.star,
-                        text:
-                            'Achieved', // Using hardcoded string as no localization available
+                        text: 'Achieved', // Using hardcoded string as no localization available
                         value: 'achieved',
                       ),
                       MenuItemWidget(
                         icon: Icons.sms_failed,
-                        text:
-                            'Failed', // Using hardcoded string as no localization available
+                        text: 'Failed', // Using hardcoded string as no localization available
                         value: 'failed',
                       ),
                       MenuItemWidget(
                         icon: Icons.terminal,
-                        text:
-                            'Terminated', // Using hardcoded string as no localization available
+                        text: 'Terminated', // Using hardcoded string as no localization available
                         value: 'terminated',
                         // isDestructive: true,
                       ),

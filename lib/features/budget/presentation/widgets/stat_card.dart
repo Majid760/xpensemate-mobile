@@ -367,7 +367,7 @@ class _ExpandableTextState extends State<_ExpandableText>
           setState(() {
             _isExpanded = !_isExpanded;
           });
-          
+
           if (_isExpanded) {
             _startCollapseTimer();
           } else {

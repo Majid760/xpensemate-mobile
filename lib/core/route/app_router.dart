@@ -20,7 +20,7 @@ class AppRouter {
 
   late final GoRouter router = GoRouter(
     debugLogDiagnostics: true,
-    initialLocation: RouteConstants.budget,
+    initialLocation: RouteConstants.home,
     refreshListenable: _authCubit,
     redirect: _routeGuards.globalRedirect,
     errorBuilder: (context, state) => ErrorPage(error: state.error),

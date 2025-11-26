@@ -5,7 +5,6 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
-import 'package:xpensemate/core/widget/app_button.dart';
 import 'package:xpensemate/core/widget/app_custom_dialog.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/core/widget/error_state_widget.dart';
@@ -15,7 +14,8 @@ import 'package:xpensemate/features/budget/presentation/cubit/budget_state.dart'
 import 'package:xpensemate/features/budget/presentation/pages/budget_expenses_page.dart';
 import 'package:xpensemate/features/budget/presentation/pages/budget_form_page.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/budget_card_item.dart';
-import 'package:xpensemate/l10n/app_localizations.dart';
+import 'package:xpensemate/features/budget/presentation/widgets/no_more_widget.dart';
+import 'package:xpensemate/features/budget/presentation/widgets/retry_widget.dart';
 
 class BudgetGoalsListWidget extends StatefulWidget {
   const BudgetGoalsListWidget({
@@ -30,28 +30,6 @@ class BudgetGoalsListWidget extends StatefulWidget {
 }
 
 class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
-  PagingState<int, BudgetGoalEntity> _pagingState = PagingState();
-
-  Future<void> _fetchNextPage() async {
-    if (_pagingState.isLoading) return;
-
-    setState(() {
-      _pagingState = _pagingState.copyWith(isLoading: true, error: null);
-    });
-
-    try {
-      final pageKey = (_pagingState.keys?.last ?? 0) + 1;
-      await context.read<BudgetCubit>().getBudgetGoals(page: pageKey);
-    } on Exception catch (error) {
-      setState(() {
-        _pagingState = _pagingState.copyWith(
-          error: error,
-          isLoading: false,
-        );
-      });
-    }
-  }
-
   void _editBudget(BudgetGoalEntity? budget, BuildContext context) {
     AppBottomSheet.show<void>(
       context: context,
@@ -78,61 +56,6 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
   @override
   Widget build(BuildContext context) => BlocConsumer<BudgetCubit, BudgetState>(
         listener: (context, state) {
-          // Handle state updates for pagination
-          if (state.state == BudgetStates.loaded) {
-            if (state.budgetGoals != null) {
-              final pageKey = state.budgetGoals!.page;
-              final isLastPage = state.hasReachedMax;
-              final items = state.budgetGoals!.budgetGoals;
-
-              setState(() {
-                if (pageKey == 1) {
-                  // First page - replace the first page with updated data
-                  // If we already have pages, update the first one, otherwise set it
-                  if (_pagingState.keys != null &&
-                      _pagingState.keys!.isNotEmpty) {
-                    // Update the first page with the new data
-                    final updatedPages = [...?_pagingState.pages];
-                    if (updatedPages.isNotEmpty) {
-                      updatedPages[0] = items;
-                    } else {
-                      updatedPages.add(items);
-                    }
-
-                    _pagingState = _pagingState.copyWith(
-                      pages: updatedPages,
-                      hasNextPage: !isLastPage,
-                      isLoading: false,
-                    );
-                  } else {
-                    // First time loading
-                    _pagingState = _pagingState.copyWith(
-                      pages: [items],
-                      keys: [pageKey],
-                      hasNextPage: !isLastPage,
-                      isLoading: false,
-                    );
-                  }
-                } else {
-                  // Append page
-                  _pagingState = _pagingState.copyWith(
-                    pages: [...?_pagingState.pages, items],
-                    keys: [...?_pagingState.keys, pageKey],
-                    hasNextPage: !isLastPage,
-                    isLoading: false,
-                  );
-                }
-              });
-            }
-          } else if (state.state == BudgetStates.error) {
-            setState(() {
-              _pagingState = _pagingState.copyWith(
-                error: state.message,
-                isLoading: false,
-              );
-            });
-          }
-
           // Handle general messages
           if (state.message != null &&
               state.message!.isNotEmpty &&
@@ -147,34 +70,69 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
             );
           }
         },
-        builder: (context, state) {
-          final localizations = AppLocalizations.of(context);
-
-          // Initial loading state
-          if (state.isInitialLoading) {
-            return const SliverToBoxAdapter(
-              child: Padding(
+        builder: (context, state) => PagingListener(
+          controller: context.budgetCubit.pagingController,
+          builder: (context, state, fetchNextPage) =>
+              PagedSliverList<int, BudgetGoalEntity>.separated(
+            state: state,
+            fetchNextPage: fetchNextPage,
+            builderDelegate: PagedChildBuilderDelegate<BudgetGoalEntity>(
+              animateTransitions: true,
+              invisibleItemsThreshold: 1,
+              transitionDuration: const Duration(milliseconds: 300),
+              itemBuilder: (context, budgetGoal, index) => BudgetGoalCard(
+                budgetGoal: budgetGoal,
+                onEdit: (goal) {
+                  _editBudget(goal, context);
+                },
+                onDelete: (goalId) {
+                  context.budgetCubit.deleteBudgetGoal(goalId);
+                },
+                onSelect: (selectedOption) {
+                  if (selectedOption == 'edit') {
+                    _editBudget(budgetGoal, context);
+                  } else if (selectedOption == 'expenses') {
+                    AppBottomSheet.showScrollable<void>(
+                      context: context,
+                      title: context.l10n.budget,
+                      config: BottomSheetConfig(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.sm,
+                        ),
+                        blurSigma: 5,
+                        barrierColor:
+                            context.theme.primaryColor.withValues(alpha: 0.4),
+                      ),
+                      child: ExpenseScreen(budgetGoal: budgetGoal),
+                    );
+                  } else if (selectedOption == 'delete') {
+                    AppCustomDialogs.showDelete(
+                      context: context,
+                      title: context.l10n.delete,
+                      message:
+                          '${context.l10n.confirmDelete}\n\n${context.l10n.deleteWarning}',
+                      onConfirm: () =>
+                          context.budgetCubit.deleteBudgetGoal(budgetGoal.id),
+                      onCancel: () {},
+                    );
+                  }
+                },
+              ),
+              firstPageProgressIndicatorBuilder: (_) => const Padding(
                 padding: EdgeInsets.all(16),
                 child: Center(
                   child: CircularProgressIndicator.adaptive(),
                 ),
               ),
-            );
-          }
-
-          if (state.hasError) {
-            return SliverToBoxAdapter(
-              child: ErrorStateSectionWidget(
-                errorMsg: state.message,
-                onRetry: () => context.read<BudgetCubit>().refreshBudgetGoals(),
+              firstPageErrorIndicatorBuilder: (_) => ErrorStateSectionWidget(
+                errorMsg: state.error.toString(),
+                onRetry: context.budgetCubit.pagingController.refresh,
               ),
-            );
-          }
-
-          // No data state
-          if (!state.hasData) {
-            return SliverToBoxAdapter(
-              child: Center(
+              newPageErrorIndicatorBuilder: (_) => RetryWidget(
+                onRetry: () => fetchNextPage,
+                message: state.error.toString(),
+              ),
+              noItemsFoundIndicatorBuilder: (_) => Center(
                 child: Padding(
                   padding: const EdgeInsets.all(32),
                   child: Column(
@@ -195,162 +153,22 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
                                       .onSurfaceVariant,
                                 ),
                       ),
-                      const SizedBox(height: 8),
-                      const SizedBox(height: 16),
-                      AppButton.icon(
-                        onPressed: () {
-                          context.read<BudgetCubit>().refreshBudgetGoals();
-                        },
-                        leadingIcon: const Icon(Icons.refresh),
-                        text: context.l10n.tryAgain,
-                      ),
                     ],
                   ),
                 ),
               ),
-            );
-          }
-
-          return SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            sliver: PagedSliverList<int, BudgetGoalEntity>.separated(
-              state: _pagingState,
-              fetchNextPage: _fetchNextPage,
-              builderDelegate: PagedChildBuilderDelegate<BudgetGoalEntity>(
-                itemBuilder: (context, budgetGoal, index) => BudgetGoalCard(
-                  budgetGoal: budgetGoal,
-                  onEdit: (goal) {
-                    _editBudget(goal, context);
-                  },
-                  onDelete: (goalId) {
-                    context.budgetCubit.deleteBudgetGoal(goalId);
-                  },
-                  onSelect: (selectedOption) {
-                    if (selectedOption == 'edit') {
-                      _editBudget(budgetGoal, context);
-                    } else if (selectedOption == 'expenses') {
-                      AppBottomSheet.showScrollable<void>(
-                        context: context,
-                        title: context.l10n.budget,
-                        config: BottomSheetConfig(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: context.sm,
-                          ),
-                          blurSigma: 5,
-                          barrierColor:
-                              context.theme.primaryColor.withValues(alpha: 0.4),
-                        ),
-                        child: ExpenseScreen(budgetGoal: budgetGoal),
-                      );
-                    } else if (selectedOption == 'delete') {
-                      AppCustomDialogs.showDelete(
-                        context: context,
-                        title: context.l10n.delete,
-                        message:
-                            '${context.l10n.confirmDelete}\n\n${context.l10n.deleteWarning}',
-                        onConfirm: () =>
-                            context.budgetCubit.deleteBudgetGoal(budgetGoal.id),
-                        onCancel: () {},
-                      );
-                    }
-                  },
+              newPageProgressIndicatorBuilder: (_) => const Padding(
+                padding: EdgeInsets.all(16),
+                child: Center(
+                  child: CircularProgressIndicator.adaptive(),
                 ),
-                firstPageProgressIndicatorBuilder: (_) => const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: CupertinoActivityIndicator(),
-                  ),
-                ),
-                firstPageErrorIndicatorBuilder: (_) => ErrorStateSectionWidget(
-                  errorMsg: _pagingState.error?.toString(),
-                  onRetry: _fetchNextPage,
-                ),
-                newPageErrorIndicatorBuilder: (_) => Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.error_outline,
-                        color: Theme.of(context).colorScheme.error,
-                        size: 32,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        localizations?.budgetGoalsError ?? 'An error occurred',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.error,
-                            ),
-                      ),
-                      const SizedBox(height: 12),
-                      ElevatedButton.icon(
-                        onPressed: _fetchNextPage,
-                        icon: const Icon(Icons.refresh, size: 18),
-                        label: Text(
-                          localizations?.budgetGoalsRetry ?? 'Retry',
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          textStyle: Theme.of(context).textTheme.labelLarge,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                noItemsFoundIndicatorBuilder: (_) => Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(32),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.receipt_long,
-                          size: 64,
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          context.l10n.noDataAvailable,
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
-                                  ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                newPageProgressIndicatorBuilder: (_) => const Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Center(
-                    child: CircularProgressIndicator.adaptive(),
-                  ),
-                ),
-                noMoreItemsIndicatorBuilder: (_) {
-                  print('yes enter in no more');
-                  return Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Center(
-                      child: Text(
-                        'No more budget goals',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                      ),
-                    ),
-                  );
-                },
               ),
-              separatorBuilder: (context, index) => const SizedBox(height: 12),
+              noMoreItemsIndicatorBuilder: (_) =>
+                  const AllCaughtUpWidget(title: 'No more budgets!'),
             ),
-          );
-        },
+            separatorBuilder: (context, index) => const SizedBox(height: 16),
+          ),
+        ),
       );
 }
 

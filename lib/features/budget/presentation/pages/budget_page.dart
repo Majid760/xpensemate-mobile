@@ -35,7 +35,8 @@ class BudgetPageContent extends StatefulWidget {
   State<BudgetPageContent> createState() => _BudgetPageContentState();
 }
 
-class _BudgetPageContentState extends State<BudgetPageContent> with TickerProviderStateMixin {
+class _BudgetPageContentState extends State<BudgetPageContent>
+    with TickerProviderStateMixin {
   late ScrollController _scrollController;
 
   @override
@@ -61,7 +62,10 @@ class _BudgetPageContentState extends State<BudgetPageContent> with TickerProvid
   Widget build(BuildContext context) => BlocConsumer<BudgetCubit, BudgetState>(
         listener: (context, state) {},
         builder: (context, state) => RefreshIndicator(
-          onRefresh: () async => _loadBudgetData(),
+          onRefresh: () async => [
+            _loadBudgetData(),
+            context.budgetCubit.pagingController.refresh(),
+          ],
           color: context.primaryColor,
           child: CustomScrollView(
             controller: _scrollController,
@@ -71,7 +75,8 @@ class _BudgetPageContentState extends State<BudgetPageContent> with TickerProvid
             slivers: [
               BudgetAppBar(
                 defaultPeriod: state.defaultPeriod,
-                onChanged: (value) => context.budgetCubit.getBudgetGoalsInsights(period: value),
+                onChanged: (value) =>
+                    context.budgetCubit.getBudgetGoalsInsights(period: value),
               ),
               SliverPadding(
                 padding: EdgeInsets.all(context.md),
@@ -89,7 +94,11 @@ class _BudgetPageContentState extends State<BudgetPageContent> with TickerProvid
                   ]),
                 ),
               ),
-              BudgetGoalsListWidget(scrollController: _scrollController),
+              SliverPadding(
+                padding: EdgeInsets.symmetric(horizontal: context.md),
+                sliver:
+                    BudgetGoalsListWidget(scrollController: _scrollController),
+              ),
               // Bottom padding for FAB
               SliverToBoxAdapter(child: SizedBox(height: context.xl * 3)),
             ],

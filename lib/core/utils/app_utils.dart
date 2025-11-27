@@ -110,6 +110,20 @@ class AppUtils {
   static String formatCurrency(double amount, {String symbol = r'$'}) =>
       '$symbol${amount.toStringAsFixed(2)}';
 
+  /// Format large numbers with k/M notation
+  static String formatLargeNumber(double amount, {String symbol = r'$'}) {
+    if (amount >= 1000000) {
+      // Format as millions
+      final formatted = (amount / 1000000).toStringAsFixed(1);
+      return '$symbol${formatted}M';
+    } else if (amount >= 1000) {
+      // Format as thousands
+      final formatted = (amount / 1000).toStringAsFixed(1);
+      return '$symbol${formatted}k';
+    }
+    return '$symbol${amount.toStringAsFixed(1)}';
+  }
+
   /// Format file size
   static String formatFileSize(int bytes) {
     if (bytes < 1024) return '$bytes B';
@@ -727,6 +741,50 @@ extension StringExtension on String {
 
   /// Convert to Color
   Color get toColor => AppUtils.hexToColor(this);
+
+  /// Convert date string from 'Nov 26, 2025' format to '26/11/25' format (2-digit year)
+  String get toFormattedDate {
+    try {
+      // Define the input format
+      final months = {
+        'Jan': '01',
+        'Feb': '02',
+        'Mar': '03',
+        'Apr': '04',
+        'May': '05',
+        'Jun': '06',
+        'Jul': '07',
+        'Aug': '08',
+        'Sep': '09',
+        'Oct': '10',
+        'Nov': '11',
+        'Dec': '12'
+      };
+
+      // Split the string by spaces and comma
+      final parts = split(RegExp(r'[,\s]+'));
+      if (parts.length < 3) return this;
+
+      final monthStr = parts[0];
+      final dayStr = parts[1];
+      final yearStr = parts[2];
+
+      final monthNum = months[monthStr];
+      if (monthNum == null) return this;
+
+      // Ensure day is zero-padded if needed
+      final day = dayStr.padLeft(2, '0');
+
+      // Extract last 2 digits of year
+      final twoDigitYear =
+          yearStr.length >= 2 ? yearStr.substring(yearStr.length - 2) : yearStr;
+
+      return '$day/$monthNum/$twoDigitYear';
+    } catch (e) {
+      // Return original string if conversion fails
+      return this;
+    }
+  }
 }
 
 extension ListExtension<T> on List<T>? {

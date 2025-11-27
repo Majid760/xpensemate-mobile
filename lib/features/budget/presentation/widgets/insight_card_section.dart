@@ -8,7 +8,8 @@ import 'package:xpensemate/features/budget/domain/entities/budget_goals_insight_
 import 'package:xpensemate/features/budget/presentation/widgets/stat_card.dart';
 
 class ExpandableStatsCard extends StatefulWidget {
-  const ExpandableStatsCard({super.key, this.budgetGoalsInsight, required this.period});
+  const ExpandableStatsCard(
+      {super.key, this.budgetGoalsInsight, required this.period});
   final BudgetGoalsInsightEntity? budgetGoalsInsight;
   final String period;
 
@@ -16,7 +17,8 @@ class ExpandableStatsCard extends StatefulWidget {
   State<ExpandableStatsCard> createState() => _ExpandableStatsCardState();
 }
 
-class _ExpandableStatsCardState extends State<ExpandableStatsCard> with SingleTickerProviderStateMixin {
+class _ExpandableStatsCardState extends State<ExpandableStatsCard>
+    with SingleTickerProviderStateMixin {
   bool isExpanded = false;
   late AnimationController _animationController;
   late Animation<double> _expandAnimation;
@@ -90,15 +92,20 @@ class _ExpandableStatsCardState extends State<ExpandableStatsCard> with SingleTi
                           children: [
                             Text(
                               context.overview,
-                              style: (context.textTheme.titleMedium ?? const TextStyle()).copyWith(
-                                color: context.colorScheme.onPrimary.withValues(alpha: 0.7),
+                              style: (context.textTheme.titleMedium ??
+                                      const TextStyle())
+                                  .copyWith(
+                                color: context.colorScheme.onPrimary
+                                    .withValues(alpha: 0.7),
                                 letterSpacing: 0.5,
                               ),
                             ),
                             const SizedBox(height: AppSpacing.xs),
                             Text(
                               '${widget.period.capitalize} ${context.budgetStatistics}',
-                              style: (context.textTheme.headlineSmall ?? const TextStyle()).copyWith(
+                              style: (context.textTheme.headlineSmall ??
+                                      const TextStyle())
+                                  .copyWith(
                                 color: context.colorScheme.onPrimary,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -112,7 +119,8 @@ class _ExpandableStatsCardState extends State<ExpandableStatsCard> with SingleTi
                           child: Container(
                             padding: const EdgeInsets.all(AppSpacing.sm),
                             decoration: BoxDecoration(
-                              color: context.colorScheme.onPrimary.withValues(alpha: 0.2),
+                              color: context.colorScheme.onPrimary
+                                  .withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(
                                 ThemeConstants.radiusMedium,
                               ),
@@ -141,9 +149,12 @@ class _ExpandableStatsCardState extends State<ExpandableStatsCard> with SingleTi
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  context.colorScheme.onPrimary.withValues(alpha: 0),
-                                  context.colorScheme.onPrimary.withValues(alpha: 0.3),
-                                  context.colorScheme.onPrimary.withValues(alpha: 0),
+                                  context.colorScheme.onPrimary
+                                      .withValues(alpha: 0),
+                                  context.colorScheme.onPrimary
+                                      .withValues(alpha: 0.3),
+                                  context.colorScheme.onPrimary
+                                      .withValues(alpha: 0),
                                 ],
                               ),
                             ),
@@ -187,7 +198,8 @@ class DetailedStatsGrid extends StatelessWidget {
               Expanded(
                 child: StatsCard(
                   icon: Icons.attach_money_rounded,
-                  value: '\$${budgetGoalsInsight?.totalBudgeted.toStringAsFixed(1) ?? '0.0'}',
+                  value: AppUtils.formatLargeNumber(
+                      budgetGoalsInsight?.totalBudgeted ?? 0.0),
                   label: context.totalBudgeted,
                   subtitle: context.totalAmountAllocated,
                   color: context.primaryColor,
@@ -201,7 +213,8 @@ class DetailedStatsGrid extends StatelessWidget {
               Expanded(
                 child: StatsCard(
                   icon: Icons.analytics_outlined,
-                  value: '${budgetGoalsInsight?.avgProgress.toStringAsFixed(1) ?? '0.0'}%',
+                  value:
+                      '${budgetGoalsInsight?.avgProgress.toStringAsFixed(1) ?? '0.0'}%',
                   label: context.avgProgress,
                   subtitle: context.averageProgressGoals,
                   color: context.primaryColor,
@@ -211,7 +224,9 @@ class DetailedStatsGrid extends StatelessWidget {
               Expanded(
                 child: StatsCard(
                   icon: Icons.event_outlined,
-                  value: budgetGoalsInsight?.closestDeadlineDate ?? context.noDeadlines,
+                  value:
+                      budgetGoalsInsight?.closestDeadlineDate.toFormattedDate ??
+                          context.noDeadlines,
                   label: context.closestDeadline,
                   subtitle: context.nextUpcomingDeadline,
                   color: context.primaryColor,

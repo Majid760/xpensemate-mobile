@@ -12,6 +12,7 @@ class BudgetGoalsInsightEntity extends Equatable {
     required this.avgProgress,
     required this.closestGoals,
     required this.overdueGoals,
+    required this.goals,
   });
 
   factory BudgetGoalsInsightEntity.fromGoals(List<BudgetGoalEntity> goals) {
@@ -53,7 +54,8 @@ class BudgetGoalsInsightEntity extends Equatable {
       closestGoals.add(goal);
 
       // Check for overdue goals (date is before now and not in completed statuses)
-      if (goal.date.isBefore(now) && !['achieved', 'terminated', 'failed'].contains(goal.status)) {
+      if (goal.date.isBefore(now) &&
+          !['achieved', 'terminated', 'failed'].contains(goal.status)) {
         overdueGoals.add(goal);
       }
     }
@@ -74,6 +76,7 @@ class BudgetGoalsInsightEntity extends Equatable {
       avgProgress: avgProgress,
       closestGoals: closestGoals,
       overdueGoals: overdueGoals,
+      goals: goals,
     );
   }
   final int totalGoals;
@@ -85,6 +88,7 @@ class BudgetGoalsInsightEntity extends Equatable {
   final double avgProgress;
   final List<BudgetGoalEntity> closestGoals;
   final List<BudgetGoalEntity> overdueGoals;
+  final List<BudgetGoalEntity> goals;
 
   // Getter to get the formatted closest deadline date
   String get closestDeadlineDate {
@@ -99,7 +103,20 @@ class BudgetGoalsInsightEntity extends Equatable {
 
   // Helper method to format date as "Nov 5, 2025"
   String _formatDate(DateTime date) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
 
     final month = months[date.month - 1];
     final day = date.day;
@@ -119,6 +136,7 @@ class BudgetGoalsInsightEntity extends Equatable {
         avgProgress,
         closestGoals,
         overdueGoals,
+        goals,
       ];
 
   BudgetGoalsInsightEntity copyWith({
@@ -131,6 +149,7 @@ class BudgetGoalsInsightEntity extends Equatable {
     double? avgProgress,
     List<BudgetGoalEntity>? closestGoals,
     List<BudgetGoalEntity>? overdueGoals,
+    List<BudgetGoalEntity>? goals,
   }) =>
       BudgetGoalsInsightEntity(
         totalGoals: totalGoals,
@@ -142,5 +161,6 @@ class BudgetGoalsInsightEntity extends Equatable {
         avgProgress: avgProgress ?? this.avgProgress,
         closestGoals: closestGoals ?? this.closestGoals,
         overdueGoals: overdueGoals ?? this.overdueGoals,
+        goals: goals ?? this.goals,
       );
 }

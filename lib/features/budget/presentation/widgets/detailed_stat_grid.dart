@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goals_insight_entity.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/stat_card.dart';
 import 'package:xpensemate/l10n/app_localizations.dart';
@@ -30,7 +31,7 @@ class DetailedStatsGrid extends StatelessWidget {
             Expanded(
               child: StatsCard(
                 icon: Icons.attach_money_rounded,
-                value: '\$${budgetGoalsInsight?.totalBudgeted.toStringAsFixed(1) ?? '0.0'}',
+                value: AppUtils.formatLargeNumber(budgetGoalsInsight?.totalBudgeted ?? 0.0),
                 label: localizations.totalBudgeted,
                 subtitle: localizations.totalAmountAllocated,
                 color: context.theme.primaryColor,

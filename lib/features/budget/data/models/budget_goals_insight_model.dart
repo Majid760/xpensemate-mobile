@@ -12,6 +12,7 @@ class BudgetGoalsInsightModel extends BudgetGoalsInsightEntity {
     required super.avgProgress,
     required super.closestGoals,
     required super.overdueGoals,
+    required super.goals,
   });
 
   factory BudgetGoalsInsightModel.fromJson(Map<String, dynamic> json) {
@@ -47,6 +48,7 @@ class BudgetGoalsInsightModel extends BudgetGoalsInsightEntity {
             _parseBudgetGoalsList(data['closestGoals'] as List? ?? []),
         overdueGoals:
             _parseBudgetGoalsList(data['overdueGoals'] as List? ?? []),
+        goals: allGoals.map((model) => model.toEntity()).toList(),
       );
     } catch (e) {
       // Handle parsing error appropriately
@@ -71,6 +73,7 @@ class BudgetGoalsInsightModel extends BudgetGoalsInsightEntity {
             entity.closestGoals.map(BudgetGoalModel.fromEntity).toList(),
         overdueGoals:
             entity.overdueGoals.map(BudgetGoalModel.fromEntity).toList(),
+        goals: entity.goals.map(BudgetGoalModel.fromEntity).toList(),
       );
 
   BudgetGoalsInsightEntity toEntity() => BudgetGoalsInsightEntity(
@@ -95,6 +98,9 @@ class BudgetGoalsInsightModel extends BudgetGoalsInsightEntity {
         overdueGoals: overdueGoals
             .map((model) => (model as BudgetGoalModel).toEntity())
             .toList(),
+        goals: goals
+            .map((model) => (model as BudgetGoalModel).toEntity())
+            .toList(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -114,6 +120,7 @@ class BudgetGoalsInsightModel extends BudgetGoalsInsightEntity {
             closestGoals.map((e) => (e as BudgetGoalModel).toJson()).toList(),
         'overdueGoals':
             overdueGoals.map((e) => (e as BudgetGoalModel).toJson()).toList(),
+        'goals': goals.map((e) => (e as BudgetGoalModel).toJson()).toList(),
       };
 
   // Getter to get the formatted closest deadline date

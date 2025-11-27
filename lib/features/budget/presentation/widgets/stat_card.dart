@@ -193,7 +193,11 @@ class _StatsCardState extends State<StatsCard>
                                         .colorScheme
                                         .onPrimary
                                         .withValues(alpha: 0.95),
-                                    fontSize: 24,
+                                    fontSize: widget.label
+                                            .toLowerCase()
+                                            .contains('closest')
+                                        ? 20
+                                        : 24,
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: 0.3,
                                     height: 1.2,

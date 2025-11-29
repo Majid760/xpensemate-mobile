@@ -21,6 +21,7 @@ class BudgetCubit extends Cubit<BudgetState> {
   ) : super(const BudgetState()) {
     // Initialize with insights only
     getBudgetGoalsInsights(period: 'monthly');
+    _pagingController.addListener(_showPaginationError);
   }
 
   //
@@ -38,9 +39,6 @@ class BudgetCubit extends Cubit<BudgetState> {
 
   static const int _limit = 10;
   static String _searchTerm = '';
-
-  // Local cache for budget goals to enable optimistic updates
-  final List<BudgetGoalEntity> _allBudgetGoals = [];
 
   late final _pagingController = PagingController<int, BudgetGoalEntity>(
     getNextPageKey: (state) =>
@@ -280,11 +278,6 @@ class BudgetCubit extends Cubit<BudgetState> {
     }
   }
 
-  void _updateSearchTerm(String searchTerm) {
-    _searchTerm = searchTerm;
-    _pagingController.refresh();
-  }
-
   /// Refreshes the budget goals list and insights
   Future<void> refreshBudgetGoals() async {
     await Future.wait([
@@ -306,6 +299,22 @@ class BudgetCubit extends Cubit<BudgetState> {
     } on Exception catch (e, stack) {
       logE('Failed to recalculate budget insights: $e', stack);
       return null;
+    }
+  }
+
+  void _updateSearchTerm(String searchTerm) {
+    _searchTerm = searchTerm;
+    _pagingController.refresh();
+  }
+
+  void _showPaginationError() {
+    if (_pagingController.value.status == PagingStatus.subsequentPageError) {
+      emit(
+        state.copyWith(
+          state: BudgetStates.error,
+          message: 'Something went wrong while fetching budget goals.',
+        ),
+      );
     }
   }
 }

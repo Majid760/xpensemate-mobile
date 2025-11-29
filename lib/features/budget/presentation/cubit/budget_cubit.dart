@@ -95,7 +95,9 @@ class BudgetCubit extends Cubit<BudgetState> {
           );
           _pagingController.refresh();
           final insight = await _recalculateBudgetInsights(
-            goals: [...?state.budgetGoalsInsight?.goals, createdGoal],
+            goals: state.budgetGoalsInsight?.copyWith(
+              goals: [...?state.budgetGoalsInsight?.goals, createdGoal],
+            ).goals,
           );
           emit(
             state.copyWith(
@@ -180,7 +182,7 @@ class BudgetCubit extends Cubit<BudgetState> {
       final result = await _deleteBudgetGoalUseCase.call(
         DeleteBudgetGoalParams(id: id),
       );
-      result.fold(
+      await result.fold(
         (failure) {
           emit(
             state.copyWith(
@@ -189,39 +191,34 @@ class BudgetCubit extends Cubit<BudgetState> {
             ),
           );
         },
-        (_) {
-          // Remove from local cache
-          _allBudgetGoals.removeWhere((goal) => goal.id == id);
+        (_) async {
+          // Update paging controller pages by removing the deleted goal
+          var pages = <List<BudgetGoalEntity>>[];
+          final newPages = <List<BudgetGoalEntity>>[];
+          pages = [...?pagingController.value.pages];
 
-          // Update the state
-          if (state.budgetGoals != null) {
-            final updatedGoals = state.budgetGoals!.budgetGoals
-                .where((goal) => goal.id != id)
-                .toList();
-            final updatedListModel =
-                state.budgetGoals!.copyWith(budgetGoals: updatedGoals);
-
-            emit(
-              state.copyWith(
-                state: BudgetStates.loaded,
-                budgetGoals: updatedListModel,
-                message: 'Budget goal deleted successfully',
-              ),
-            );
-          } else {
-            emit(
-              state.copyWith(
-                state: BudgetStates.loaded,
-                message: 'Budget goal deleted successfully',
-              ),
-            );
+          for (final page in pages) {
+            final newPage = page.where((item) => item.id != id).toList();
+            newPages.add(newPage);
           }
+          pagingController.value = pagingController.value.copyWith(
+            pages: newPages,
+          );
+          _pagingController.refresh();
 
           // Recalculate insights after deleting a goal
-          _recalculateBudgetInsights();
-
-          // Refresh the paging controller to ensure UI consistency
-          _pagingController.refresh();
+          final insight = await _recalculateBudgetInsights(
+            goals: state.budgetGoalsInsight?.goals
+                .where((goal) => goal.id != id)
+                .toList(),
+          );
+          emit(
+            state.copyWith(
+              budgetGoalsInsight: insight,
+              state: BudgetStates.loaded,
+              message: 'Budget goal deleted successfully',
+            ),
+          );
         },
       );
     } on Exception catch (e, stack) {

@@ -41,8 +41,11 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
       ),
       child: BudgetFormPage(
         budget: budget,
-        onSave: (goal) {
-          context.budgetCubit.updateBudgetGoal(goal);
+        onSave: (goal) async {
+          await context.budgetCubit.updateBudgetGoal(goal);
+          if (context.mounted) {
+            Navigator.of(context).pop();
+          }
         },
       ),
     );

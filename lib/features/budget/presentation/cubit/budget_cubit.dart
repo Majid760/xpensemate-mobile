@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,6 +39,9 @@ class BudgetCubit extends Cubit<BudgetState> {
   static const int _limit = 10;
   static String _searchTerm = '';
 
+  // Local cache for budget goals to enable optimistic updates
+  final List<BudgetGoalEntity> _allBudgetGoals = [];
+
   late final _pagingController = PagingController<int, BudgetGoalEntity>(
     getNextPageKey: (state) =>
         state.lastPageIsEmpty ? null : state.nextIntPageKey,
@@ -66,35 +71,6 @@ class BudgetCubit extends Cubit<BudgetState> {
     }
   }
 
-  void _updateSearchTerm(String searchTerm) {
-    _searchTerm = searchTerm;
-    _pagingController.refresh();
-  }
-
-  /// Refreshes the budget goals list and insights
-  Future<void> refreshBudgetGoals() async {
-    await Future.wait([
-      getBudgetGoals(),
-      getBudgetGoalsInsights(period: 'monthly'),
-    ]);
-  }
-
-  /// Recalculates budget insights based on current goals
-  Future<BudgetGoalsInsightEntity?> _recalculateBudgetInsights({
-    List<BudgetGoalEntity>? goals,
-  }) async {
-    try {
-      final recalculatedInsight = await compute(
-        BudgetGoalsInsightEntity.fromGoals,
-        goals ?? state.budgetGoals?.budgetGoals ?? [],
-      );
-      return recalculatedInsight;
-    } on Exception catch (e, stack) {
-      logE('Failed to recalculate budget insights: $e', stack);
-      return null;
-    }
-  }
-
   /// Creates a new budget goal
   Future<void> createBudgetGoal(BudgetGoalEntity goal) async {
     try {
@@ -110,6 +86,13 @@ class BudgetCubit extends Cubit<BudgetState> {
           );
         },
         (createdGoal) async {
+          pagingController.value = pagingController.value.copyWith(
+            pages: [
+              [createdGoal],
+              ...pagingController.value.pages ?? [],
+            ],
+            keys: [...pagingController.value.keys ?? [], 1],
+          );
           _pagingController.refresh();
           final insight = await _recalculateBudgetInsights(
             goals: [...?state.budgetGoalsInsight?.goals, createdGoal],
@@ -137,76 +120,46 @@ class BudgetCubit extends Cubit<BudgetState> {
 
   /// Updates an existing budget goal
   Future<void> updateBudgetGoal(BudgetGoalEntity goal) async {
-    // Validate input
-    if (goal.id.isEmpty) {
-      emit(
-        state.copyWith(
-          state: BudgetStates.error,
-          message: 'Invalid budget goal: missing ID',
-        ),
-      );
-      return;
-    }
-
     try {
-      // Optimistic update - update local cache immediately
-      final originalBudgetGoals = state.budgetGoals;
-
-      // Update current state if we have budget goals loaded
-      if (state.budgetGoals != null) {
-        final updatedGoals = state.budgetGoals!.budgetGoals
-            .map((g) => g.id == goal.id ? goal : g)
-            .toList();
-        final updatedListModel =
-            state.budgetGoals!.copyWith(budgetGoals: updatedGoals);
-        emit(state.copyWith(budgetGoals: updatedListModel));
-      }
-
-      emit(state.copyWith(state: BudgetStates.loading));
-
       final result = await _updateBudgetGoalUseCase.call(
         UpdateBudgetGoalParams(budgetGoal: goal),
       );
-
-      result.fold(
+      await result.fold(
         (failure) {
           emit(
             state.copyWith(
               state: BudgetStates.error,
-              message: failure.message,
-              budgetGoals: originalBudgetGoals,
+              message: failure.toString(),
             ),
           );
         },
-        (updatedGoal) {
-          // Update successful - update the local cache with the returned goal
+        (updatedGoal) async {
+          // Create new pages list with updated item
+          var pages = <List<BudgetGoalEntity>>[];
+          final newPages = <List<BudgetGoalEntity>>[];
+          pages = [...?pagingController.value.pages];
 
-          // Update current state with the updated goal
-          if (state.budgetGoals != null) {
-            final updatedGoals = state.budgetGoals!.budgetGoals
-                .map((g) => g.id == updatedGoal.id ? updatedGoal : g)
-                .toList();
-            final updatedListModel =
-                state.budgetGoals!.copyWith(budgetGoals: updatedGoals);
-            _recalculateBudgetInsights();
-            emit(
-              state.copyWith(
-                state: BudgetStates.loaded,
-                message: 'Budget goal updated successfully',
-                budgetGoals: updatedListModel,
-              ),
-            );
-          } else {
-            emit(
-              state.copyWith(
-                state: BudgetStates.loaded,
-                message: 'Budget goal updated successfully',
-              ),
-            );
+          for (final page in pages) {
+            final newPage =
+                page.map((item) => item.id == goal.id ? goal : item).toList();
+            newPages.add(newPage);
           }
-
-          // Recalculate insights after updating a goal
-          _recalculateBudgetInsights();
+          pagingController.value = pagingController.value.copyWith(
+            pages: newPages,
+          );
+          _pagingController.refresh();
+          final insight = await _recalculateBudgetInsights(
+            goals: state.budgetGoalsInsight?.goals
+                .map((element) => element.id == goal.id ? goal : element)
+                .toList(),
+          );
+          emit(
+            state.copyWith(
+              budgetGoalsInsight: insight,
+              state: BudgetStates.loaded,
+              message: 'Budget goal updated successfully',
+            ),
+          );
         },
       );
     } on Exception catch (e, stack) {
@@ -223,19 +176,7 @@ class BudgetCubit extends Cubit<BudgetState> {
 
   /// Deletes a budget goal
   Future<void> deleteBudgetGoal(String id) async {
-    if (id.isEmpty) {
-      emit(
-        state.copyWith(
-          state: BudgetStates.error,
-          message: 'Invalid budget goal ID',
-        ),
-      );
-      return;
-    }
-
     try {
-      emit(state.copyWith(state: BudgetStates.loading));
-
       final result = await _deleteBudgetGoalUseCase.call(
         DeleteBudgetGoalParams(id: id),
       );
@@ -250,21 +191,37 @@ class BudgetCubit extends Cubit<BudgetState> {
         },
         (_) {
           // Remove from local cache
+          _allBudgetGoals.removeWhere((goal) => goal.id == id);
 
-          emit(
-            state.copyWith(
-              state: BudgetStates.loaded,
-              budgetGoals: state.budgetGoals?.copyWith(
-                budgetGoals: state.budgetGoals!.budgetGoals
-                    .where((goal) => goal.id != id)
-                    .toList(),
+          // Update the state
+          if (state.budgetGoals != null) {
+            final updatedGoals = state.budgetGoals!.budgetGoals
+                .where((goal) => goal.id != id)
+                .toList();
+            final updatedListModel =
+                state.budgetGoals!.copyWith(budgetGoals: updatedGoals);
+
+            emit(
+              state.copyWith(
+                state: BudgetStates.loaded,
+                budgetGoals: updatedListModel,
+                message: 'Budget goal deleted successfully',
               ),
-              message: 'Budget goal deleted successfully',
-            ),
-          );
+            );
+          } else {
+            emit(
+              state.copyWith(
+                state: BudgetStates.loaded,
+                message: 'Budget goal deleted successfully',
+              ),
+            );
+          }
 
           // Recalculate insights after deleting a goal
           _recalculateBudgetInsights();
+
+          // Refresh the paging controller to ensure UI consistency
+          _pagingController.refresh();
         },
       );
     } on Exception catch (e, stack) {
@@ -323,6 +280,35 @@ class BudgetCubit extends Cubit<BudgetState> {
           stackTrace: stack,
         ),
       );
+    }
+  }
+
+  void _updateSearchTerm(String searchTerm) {
+    _searchTerm = searchTerm;
+    _pagingController.refresh();
+  }
+
+  /// Refreshes the budget goals list and insights
+  Future<void> refreshBudgetGoals() async {
+    await Future.wait([
+      getBudgetGoals(),
+      getBudgetGoalsInsights(period: 'monthly'),
+    ]);
+  }
+
+  /// Recalculates budget insights based on current goals
+  Future<BudgetGoalsInsightEntity?> _recalculateBudgetInsights({
+    List<BudgetGoalEntity>? goals,
+  }) async {
+    try {
+      final recalculatedInsight = await compute(
+        BudgetGoalsInsightEntity.fromGoals,
+        goals ?? state.budgetGoals?.budgetGoals ?? [],
+      );
+      return recalculatedInsight;
+    } on Exception catch (e, stack) {
+      logE('Failed to recalculate budget insights: $e', stack);
+      return null;
     }
   }
 }

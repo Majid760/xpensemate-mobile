@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:xpensemate/core/widget/app_button.dart';
 import 'package:xpensemate/l10n/app_localizations.dart';
 
 class RetryWidget extends StatelessWidget {
@@ -28,19 +29,10 @@ class RetryWidget extends StatelessWidget {
                 ),
           ),
           const SizedBox(height: 12),
-          ElevatedButton.icon(
+          AppButton.icon(
+            text: localizations?.budgetGoalsRetry ?? 'Retry',
             onPressed: onRetry,
-            icon: const Icon(Icons.refresh, size: 18),
-            label: Text(
-              localizations?.budgetGoalsRetry ?? 'Retry',
-            ),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 8,
-              ),
-              textStyle: Theme.of(context).textTheme.labelLarge,
-            ),
+            leadingIcon: const Icon(Icons.refresh, size: 24),
           ),
         ],
       ),

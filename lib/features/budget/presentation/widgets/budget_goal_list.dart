@@ -138,25 +138,11 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
               noItemsFoundIndicatorBuilder: (_) => Center(
                 child: Padding(
                   padding: const EdgeInsets.all(32),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.receipt_long,
-                        size: 64,
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        context.l10n.noDataAvailable,
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurfaceVariant,
-                                ),
-                      ),
-                    ],
+                  child: RetryWidget(
+                    onRetry: () => fetchNextPage,
+                    message: state.error != null
+                        ? state.error.toString()
+                        : 'No Budget goals found!',
                   ),
                 ),
               ),

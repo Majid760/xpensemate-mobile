@@ -87,8 +87,9 @@ class _AnimatedSectionHeaderState extends State<AnimatedSectionHeader>
         );
       } else {
         _animationController.reverse();
-        _searchController.clear();
         widget.onSearchCleared?.call();
+
+        _searchController.clear();
         _focusNode.unfocus();
       }
     });
@@ -162,7 +163,7 @@ class _AnimatedSectionHeaderState extends State<AnimatedSectionHeader>
                 // Search Field Container (expands from right)
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOutCubic,
+                  curve: Curves.ease,
                   width: currentSearchWidth,
                   height: 48,
                   child: currentSearchWidth > 50
@@ -194,6 +195,10 @@ class _AnimatedSectionHeaderState extends State<AnimatedSectionHeader>
                               focusNode: _focusNode,
                               style: Theme.of(context).textTheme.bodyMedium,
                               decoration: InputDecoration(
+                                fillColor: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHighest
+                                    .withValues(alpha: 0.4),
                                 hintText: widget.searchHint,
                                 hintStyle: TextStyle(
                                   color: Theme.of(context)

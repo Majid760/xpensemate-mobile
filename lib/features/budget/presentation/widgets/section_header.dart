@@ -238,14 +238,15 @@ class _SectionHeaderState extends State<SectionHeader>
                   child: IconButton(
                     icon: AnimatedSwitcher(
                       duration: const Duration(milliseconds: 250),
-                      transitionBuilder: (child, animation) => RotationTransition(
-                          turns: Tween<double>(begin: 0.5, end: 1)
-                              .animate(animation),
-                          child: ScaleTransition(
-                            scale: animation,
-                            child: child,
-                          ),
+                      transitionBuilder: (child, animation) =>
+                          RotationTransition(
+                        turns: Tween<double>(begin: 0.5, end: 1)
+                            .animate(animation),
+                        child: ScaleTransition(
+                          scale: animation,
+                          child: child,
                         ),
+                      ),
                       child: Icon(
                         _isSearchExpanded ? Icons.close : Icons.search,
                         key: ValueKey<bool>(_isSearchExpanded),

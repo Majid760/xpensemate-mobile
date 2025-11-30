@@ -9,7 +9,7 @@ import 'package:xpensemate/features/budget/presentation/pages/budget_form_page.d
 import 'package:xpensemate/features/budget/presentation/widgets/budget_appbar.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/budget_goal_list.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/insight_card_section.dart';
-import 'package:xpensemate/features/budget/presentation/widgets/section_header.dart';
+import 'package:xpensemate/core/widget/animated_section_header.dart';
 
 class BudgetPage extends StatelessWidget {
   const BudgetPage({super.key});
@@ -87,7 +87,7 @@ class _BudgetPageContentState extends State<BudgetPageContent>
                       period: state.defaultPeriod,
                     ),
                     SizedBox(height: context.xl),
-                    SectionHeader(
+                    AnimatedSectionHeader(
                       title: context.l10n.budget,
                     ),
                     SizedBox(height: context.sm),

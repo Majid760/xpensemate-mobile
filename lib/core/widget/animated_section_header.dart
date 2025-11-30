@@ -7,6 +7,7 @@ class AnimatedSectionHeader extends StatefulWidget {
     required this.title,
     this.icon,
     this.onSearchChanged,
+    this.onSearchCleared,
     this.searchHint = 'Search...',
   });
 
@@ -14,6 +15,7 @@ class AnimatedSectionHeader extends StatefulWidget {
   final Widget? icon;
   final ValueChanged<String>? onSearchChanged;
   final String searchHint;
+  final VoidCallback? onSearchCleared;
 
   @override
   State<AnimatedSectionHeader> createState() => _AnimatedSectionHeaderState();
@@ -38,13 +40,11 @@ class _AnimatedSectionHeaderState extends State<AnimatedSectionHeader>
       vsync: this,
     );
 
-    // Width expands smoothly from 0 to 1
     _widthAnimation = CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOutCubic,
     );
 
-    // Title fades out quickly at the start
     _fadeOutAnimation = Tween<double>(begin: 1, end: 0).animate(
       CurvedAnimation(
         parent: _animationController,
@@ -52,7 +52,6 @@ class _AnimatedSectionHeaderState extends State<AnimatedSectionHeader>
       ),
     );
 
-    // Search field content fades in after expansion starts
     _fadeInAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _animationController,
@@ -62,7 +61,10 @@ class _AnimatedSectionHeaderState extends State<AnimatedSectionHeader>
 
     _searchController.addListener(() {
       setState(() {});
-      widget.onSearchChanged?.call(_searchController.text);
+      if (_searchController.text.length >= 3 ||
+          _searchController.text.isEmpty) {
+        widget.onSearchChanged?.call(_searchController.text);
+      }
     });
   }
 
@@ -80,12 +82,13 @@ class _AnimatedSectionHeaderState extends State<AnimatedSectionHeader>
       if (_isSearchExpanded) {
         _animationController.forward();
         Future.delayed(
-          const Duration(milliseconds: 400),
+          const Duration(milliseconds: 300),
           _focusNode.requestFocus,
         );
       } else {
         _animationController.reverse();
         _searchController.clear();
+        widget.onSearchCleared?.call();
         _focusNode.unfocus();
       }
     });
@@ -94,6 +97,7 @@ class _AnimatedSectionHeaderState extends State<AnimatedSectionHeader>
   void _clearSearch() {
     _searchController.clear();
     _focusNode.requestFocus();
+    widget.onSearchCleared?.call();
   }
 
   @override

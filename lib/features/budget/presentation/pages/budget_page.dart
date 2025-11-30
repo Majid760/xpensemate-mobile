@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/utils/app_utils.dart';
+import 'package:xpensemate/core/widget/animated_section_header.dart';
 import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_state.dart';
@@ -9,7 +11,6 @@ import 'package:xpensemate/features/budget/presentation/pages/budget_form_page.d
 import 'package:xpensemate/features/budget/presentation/widgets/budget_appbar.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/budget_goal_list.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/insight_card_section.dart';
-import 'package:xpensemate/core/widget/animated_section_header.dart';
 
 class BudgetPage extends StatelessWidget {
   const BudgetPage({super.key});
@@ -89,6 +90,15 @@ class _BudgetPageContentState extends State<BudgetPageContent>
                     SizedBox(height: context.xl),
                     AnimatedSectionHeader(
                       title: context.l10n.budget,
+                      onSearchChanged: (value) {
+                        if (value.trim().isEmpty) return;
+                        AppUtils.debounce(
+                          () => context.budgetCubit.updateSearchTerm(value),
+                          delay: const Duration(milliseconds: 700),
+                        );
+                      },
+                      onSearchCleared: () =>
+                          context.budgetCubit.updateSearchTerm(''),
                     ),
                     SizedBox(height: context.sm),
                   ]),

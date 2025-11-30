@@ -10,6 +10,7 @@ abstract class BudgetRepository {
     int? page,
     int? limit,
     String? category,
+    String? filterQuery,
     String? status,
     DateTime? startDate,
     DateTime? endDate,

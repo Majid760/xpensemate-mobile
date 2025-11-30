@@ -20,6 +20,7 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
     int? page,
     int? limit,
     String? category,
+    String? filterQuery,
     String? status,
     DateTime? startDate,
     DateTime? endDate,
@@ -30,6 +31,7 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
     if (limit != null) queryParams['limit'] = limit;
     if (category != null) queryParams['category'] = category;
     if (status != null) queryParams['status'] = status;
+    if (filterQuery != null) queryParams['filter_query'] = filterQuery;
     if (startDate != null) {
       queryParams['start_date'] = startDate.toIso8601String();
     }
@@ -50,7 +52,9 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
   ) async =>
       _networkClient.post(
         NetworkConfigs.createBudget,
-        data: budgetGoal is BudgetGoalModel ? budgetGoal.toJson() : BudgetGoalModel.fromEntity(budgetGoal).toJson(),
+        data: budgetGoal is BudgetGoalModel
+            ? budgetGoal.toJson()
+            : BudgetGoalModel.fromEntity(budgetGoal).toJson(),
         fromJson: BudgetGoalModel.fromJson,
       );
 
@@ -60,12 +64,15 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
   ) =>
       _networkClient.put(
         '${NetworkConfigs.updateBudgetGoal}/${budgetGoal.id}',
-        data: budgetGoal is BudgetGoalModel ? budgetGoal.toJson() : BudgetGoalModel.fromEntity(budgetGoal).toJson(),
+        data: budgetGoal is BudgetGoalModel
+            ? budgetGoal.toJson()
+            : BudgetGoalModel.fromEntity(budgetGoal).toJson(),
         fromJson: BudgetGoalModel.fromJson,
       );
 
   @override
-  Future<Either<Failure, bool>> deleteBudgetGoal(String budgetGoalId) async => _networkClient.delete(
+  Future<Either<Failure, bool>> deleteBudgetGoal(String budgetGoalId) async =>
+      _networkClient.delete(
         '${NetworkConfigs.deleteBudgetGoal}/$budgetGoalId',
         fromJson: (json) {
           print('this is return type $json');
@@ -75,11 +82,12 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
       );
 
   @override
-  Future<Either<Failure, BudgetSpecificExpensesListEntity>> getExpensesForSpecificBudgetGoal(String budgetGoalId) =>
-      _networkClient.get(
-        '${NetworkConfigs.getAllExpensesOfBudgetGoal}/$budgetGoalId/expenses',
-        fromJson: BudgetSpecificExpensesListModel.fromJson,
-      );
+  Future<Either<Failure, BudgetSpecificExpensesListEntity>>
+      getExpensesForSpecificBudgetGoal(String budgetGoalId) =>
+          _networkClient.get(
+            '${NetworkConfigs.getAllExpensesOfBudgetGoal}/$budgetGoalId/expenses',
+            fromJson: BudgetSpecificExpensesListModel.fromJson,
+          );
 
   @override
   Future<Either<Failure, BudgetGoalsListModel>> getBudgetGoalByStatus(

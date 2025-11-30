@@ -10,6 +10,7 @@ abstract class BudgetRemoteDataSource {
     int? page,
     int? limit,
     String? category,
+    String? filterQuery,
     String? status,
     DateTime? startDate,
     DateTime? endDate,
@@ -32,7 +33,8 @@ abstract class BudgetRemoteDataSource {
     String budgetGoalId,
   );
 
-  Future<Either<Failure, BudgetSpecificExpensesListEntity>> getExpensesForSpecificBudgetGoal(
+  Future<Either<Failure, BudgetSpecificExpensesListEntity>>
+      getExpensesForSpecificBudgetGoal(
     String budgetGoalId,
   );
 

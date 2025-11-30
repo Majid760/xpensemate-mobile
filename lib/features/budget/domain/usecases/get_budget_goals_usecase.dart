@@ -17,6 +17,7 @@ class GetBudgetsGoalsUseCase
       repository.getBudgetGoals(
         page: params.page,
         limit: params.limit,
+        filterQuery: params.filterQuery,
         category: params.category,
         status: params.status,
         startDate: params.startDate,
@@ -29,6 +30,7 @@ class GetBudgetGoalsParams {
     this.page,
     this.limit,
     this.category,
+    this.filterQuery,
     this.status,
     this.startDate,
     this.endDate,
@@ -37,6 +39,7 @@ class GetBudgetGoalsParams {
   final int? page;
   final int? limit;
   final String? category;
+  final String? filterQuery;
   final String? status;
   final DateTime? startDate;
   final DateTime? endDate;

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -44,7 +42,7 @@ class BudgetCubit extends Cubit<BudgetState> {
     getNextPageKey: (state) =>
         state.lastPageIsEmpty ? null : state.nextIntPageKey,
     fetchPage: (pageKey) async =>
-        getBudgetGoals(page: pageKey, query: _searchTerm),
+        getBudgetGoals(page: pageKey, filterQuery: _searchTerm),
   );
   PagingController<int, BudgetGoalEntity> get pagingController =>
       _pagingController;
@@ -53,11 +51,15 @@ class BudgetCubit extends Cubit<BudgetState> {
   /// Returns the data directly for the UI to handle, while also emitting state
   Future<List<BudgetGoalEntity>> getBudgetGoals({
     int page = 1,
-    String query = '',
+    String filterQuery = '',
   }) async {
     try {
       final result = await _getBudgetGoalsUseCase.call(
-        GetBudgetGoalsParams(page: page, limit: _limit),
+        GetBudgetGoalsParams(
+          page: page,
+          limit: _limit,
+          filterQuery: filterQuery,
+        ),
       );
       return result.fold(
         (failure) => [],
@@ -302,7 +304,7 @@ class BudgetCubit extends Cubit<BudgetState> {
     }
   }
 
-  void _updateSearchTerm(String searchTerm) {
+  void updateSearchTerm(String searchTerm) {
     _searchTerm = searchTerm;
     _pagingController.refresh();
   }

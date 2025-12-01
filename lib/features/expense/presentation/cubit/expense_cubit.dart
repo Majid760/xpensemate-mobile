@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/budgets_list_entity.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_pagination_entity.dart';
@@ -25,6 +26,8 @@ class ExpenseCubit extends Cubit<ExpenseState> {
     this._budgetsUseCase,
     this._createExpenseUseCase,
   ) : super(const ExpenseState()) {
+    _pagingController.addListener(_showPaginationError);
+    // Set the fetchPage function after initialization
     loadExpenseData();
   }
 
@@ -35,182 +38,37 @@ class ExpenseCubit extends Cubit<ExpenseState> {
   final GetBudgetsUseCase _budgetsUseCase;
   final CreateExpensesUseCase _createExpenseUseCase;
 
-  // Pagination state management
-  final List<ExpenseEntity> _allExpenses = [];
-  int _currentPage = 1;
-  bool _hasReachedMax = false;
-  bool _isLoadingMore = false;
-  int _defaultLimit = 10;
+  static const int _limit = 10;
 
-  /// Load expenses with pagination support and infinite scroll logic
-  Future<void> loadExpenses({
-    int page = 1,
-    int limit = 10,
-    bool refresh = false,
-    bool loadMore = false,
-  }) async {
+  late final _pagingController = PagingController<int, ExpenseEntity>(
+    getNextPageKey: (state) =>
+        state.lastPageIsEmpty ? null : state.nextIntPageKey,
+    fetchPage: (pageKey) async => fetchExpenses(pageKey),
+  );
+  PagingController<int, ExpenseEntity> get pagingController =>
+      _pagingController;
+
+  @override
+  Future<void> close() async {
+    _pagingController.dispose();
+    return super.close();
+  }
+
+  /// Fetches expenses for a specific page
+  Future<List<ExpenseEntity>> fetchExpenses(int pageKey) async {
     try {
-      // Prevent multiple concurrent requests for pagination
-      if (_isLoadingMore && loadMore) return;
-      if (_hasReachedMax && loadMore) return;
-
-      // Handle refresh - reset pagination state
-      if (refresh || page == 1) {
-        _resetPaginationState();
-        emit(
-          state.copyWith(
-            state: ExpenseStates.loading,
-          ),
-        );
-      } else if (loadMore) {
-        // Loading more items
-        _isLoadingMore = true;
-        emit(
-          state.copyWith(
-            state: ExpenseStates.loadingMore,
-            isLoadingMore: true,
-          ),
-        );
-      } else if (state.expenses == null) {
-        // Initial load
-        emit(state.copyWith(state: ExpenseStates.loading));
-      }
-
-      _currentPage = page;
-      _defaultLimit = limit;
-
       final params = GetExpensesParams(
-        page: page,
-        limit: limit,
+        page: pageKey,
+        limit: _limit,
       );
-
       final result = await _getExpensesUseCase(params);
-
-      result.fold(
-        (failure) => _handleExpenseLoadFailure(failure.message, page, loadMore),
-        (paginationEntity) => _handleExpenseLoadSuccess(
-          paginationEntity,
-          page,
-          refresh || page == 1,
-        ),
+      return result.fold(
+        (failure) => [],
+        (paginationEntity) => paginationEntity.expenses,
       );
     } on Exception catch (e, stackTrace) {
-      _handleExpenseLoadFailure(
-        'Unexpected error: $e',
-        page,
-        loadMore,
-        stackTrace,
-      );
-    } finally {
-      _isLoadingMore = false;
-    }
-  }
-
-  /// Handle successful expense loading with pagination logic
-  void _handleExpenseLoadSuccess(
-    ExpensePaginationEntity paginationEntity,
-    int page,
-    bool isFirstPageOrRefresh,
-  ) {
-    final newExpenses = paginationEntity.expenses;
-
-    if (isFirstPageOrRefresh) {
-      // First page or refresh - replace all expenses
-      _allExpenses.clear();
-      _allExpenses.addAll(newExpenses);
-    } else {
-      // Subsequent pages - append new expenses, avoiding duplicates
-      final uniqueNewExpenses = newExpenses.where(
-        (newExpense) =>
-            !_allExpenses.any((existing) => existing.id == newExpense.id),
-      );
-      _allExpenses.addAll(uniqueNewExpenses);
-    }
-
-    // Determine if we've reached the maximum
-    _hasReachedMax = _currentPage >= paginationEntity.totalPages ||
-        newExpenses.isEmpty ||
-        newExpenses.length < _defaultLimit;
-
-    // Create updated pagination entity with all loaded expenses
-    final updatedPaginationEntity = ExpensePaginationEntity(
-      page: _currentPage,
-      totalPages: paginationEntity.totalPages,
-      expenses: List.from(_allExpenses),
-      total: paginationEntity.total,
-    );
-
-    emit(
-      state.copyWith(
-        state: ExpenseStates.loaded,
-        expenses: updatedPaginationEntity,
-        currentPage: _currentPage,
-        hasReachedMax: _hasReachedMax,
-        isLoadingMore: false,
-      ),
-    );
-  }
-
-  /// Handle expense loading failure with appropriate error states
-  void _handleExpenseLoadFailure(
-    String errorMessage,
-    int page,
-    bool isLoadMore, [
-    StackTrace? stackTrace,
-  ]) {
-    if (page == 1 || !isLoadMore) {
-      // First page error - show main error state
-      emit(
-        state.copyWith(
-          state: ExpenseStates.error,
-          message: errorMessage,
-          stackTrace: stackTrace,
-          isLoadingMore: false,
-        ),
-      );
-    } else {
-      // Pagination error - keep existing data, show pagination error
-      emit(
-        state.copyWith(
-          state: ExpenseStates.loaded,
-          paginationError: errorMessage,
-          isLoadingMore: false,
-        ),
-      );
-    }
-  }
-
-  /// Load next page for infinite scroll
-  Future<void> loadNextPage() async {
-    if (_hasReachedMax || _isLoadingMore) return;
-
-    await loadExpenses(
-      page: _currentPage + 1,
-      limit: _defaultLimit,
-      loadMore: true,
-    );
-  }
-
-  /// Refresh expenses (reload from first page)
-  Future<void> refreshExpenses({int limit = 10}) async {
-    await loadExpenses(
-      limit: limit,
-      refresh: true,
-    );
-  }
-
-  /// Check if should load more items (for infinite scroll trigger)
-  bool shouldLoadMore(int currentIndex, {int threshold = 5}) {
-    if (_hasReachedMax || _isLoadingMore) return false;
-
-    final totalLoaded = _allExpenses.length;
-    return currentIndex >= totalLoaded - threshold && totalLoaded > 0;
-  }
-
-  /// Trigger load more if conditions are met
-  void checkAndLoadMore(int currentIndex, {int threshold = 5}) {
-    if (shouldLoadMore(currentIndex, threshold: threshold)) {
-      loadNextPage();
+      debugPrint('getExpenses error: $e, stack: $stackTrace');
+      return [];
     }
   }
 
@@ -250,58 +108,28 @@ class ExpenseCubit extends Cubit<ExpenseState> {
 
     try {
       // Load all data concurrently for better performance
-      final expensesFuture = _getExpensesUseCase(
-        GetExpensesParams(
-          page: page,
-          limit: limit,
-        ),
-      );
-
       final expenseStatsFuture = _getExpenseStatsUseCase(
         GetExpenseStatsParams(
           period: period,
         ),
       );
 
-      final results = await Future.wait([expensesFuture, expenseStatsFuture]);
+      final result = await expenseStatsFuture;
 
-      final failures = <String>[];
-      final data = <dynamic>[];
-
-      for (final result in results) {
-        result.fold(
-          (failure) => failures.add(failure.message),
-          data.add,
-        );
-      }
-
-      if (failures.isNotEmpty) {
-        emit(
+      result.fold(
+        (failure) => emit(
           state.copyWith(
             state: ExpenseStates.error,
-            message: failures.first,
+            message: failure.message,
           ),
-        );
-      } else {
-        final paginationEntity = data[0] as ExpensePaginationEntity;
-
-        // Initialize pagination state
-        _resetPaginationState();
-        _allExpenses.addAll(paginationEntity.expenses);
-        _currentPage = page;
-        _hasReachedMax = page >= paginationEntity.totalPages ||
-            paginationEntity.expenses.length < limit;
-
-        emit(
+        ),
+        (expenseStats) => emit(
           state.copyWith(
             state: ExpenseStates.loaded,
-            expenses: paginationEntity,
-            expenseStats: data[1] as ExpenseStatsEntity,
-            currentPage: _currentPage,
-            hasReachedMax: _hasReachedMax,
+            expenseStats: expenseStats,
           ),
-        );
-      }
+        ),
+      );
     } on Exception catch (e, s) {
       emit(
         state.copyWith(
@@ -315,30 +143,41 @@ class ExpenseCubit extends Cubit<ExpenseState> {
 
   /// Update expense with optimistic updates and rollback on failure
   Future<void> updateExpense({required ExpenseEntity expense}) async {
-    final originalExpenses = state.expenses;
-    final originalAllExpenses = List<ExpenseEntity>.from(_allExpenses);
-    final cacheIndex = _allExpenses.indexWhere((e) => e.id == expense.id);
-    if (cacheIndex != -1) {
-      _allExpenses[cacheIndex] = expense;
+    // Find the page and index of the expense to update
+    final pages = _pagingController.value.pages ?? [];
+    int pageIndex = -1;
+    int itemIndex = -1;
+
+    for (int i = 0; i < pages.length; i++) {
+      final page = pages[i];
+      final index = page.indexWhere((e) => e.id == expense.id);
+      if (index != -1) {
+        pageIndex = i;
+        itemIndex = index;
+        break;
+      }
     }
-    if (state.expenses != null) {
-      final updatedExpenses = state.expenses!.expenses
-          .map((e) => e.id == expense.id ? expense : e)
-          .toList();
-      final updatedPagination =
-          state.expenses!.copyWith(expenses: updatedExpenses);
-      emit(state.copyWith(expenses: updatedPagination));
+
+    // If found, update in the paging controller
+    if (pageIndex != -1 && itemIndex != -1) {
+      final updatedPages = List<List<ExpenseEntity>>.from(pages);
+      final updatedPage = List<ExpenseEntity>.from(updatedPages[pageIndex]);
+      updatedPage[itemIndex] = expense;
+      updatedPages[pageIndex] = updatedPage;
+
+      _pagingController.value = _pagingController.value.copyWith(
+        pages: updatedPages,
+      );
     }
 
     final result = await _updateExpenseUseCase(expense);
     await result.fold((failure) {
-      _allExpenses.clear();
-      _allExpenses.addAll(originalAllExpenses);
+      // Refresh to rollback changes on failure
+      _pagingController.refresh();
       emit(
         state.copyWith(
           state: ExpenseStates.error,
           message: failure.message,
-          expenses: originalExpenses,
         ),
       );
     }, (updatedExpense) async {
@@ -350,20 +189,17 @@ class ExpenseCubit extends Cubit<ExpenseState> {
 
   /// Create expense with optimistic updates
   Future<void> createExpense({required ExpenseEntity expense}) async {
-    _allExpenses.insert(0, expense);
-    final updatedPagination = ExpensePaginationEntity(
-      page: state.expenses?.page ?? 1,
-      totalPages: state.expenses?.totalPages ?? 1,
-      expenses: [expense, ...?state.expenses?.expenses],
-      total: (state.expenses?.total ?? 0) + 1,
-    );
+    // Add to the first page
+    final pages = _pagingController.value.pages ?? [];
+    if (pages.isNotEmpty) {
+      final updatedPages = List<List<ExpenseEntity>>.from(pages);
+      final firstPage = [expense, ...updatedPages[0]];
+      updatedPages[0] = firstPage;
 
-    emit(
-      state.copyWith(
-        expenses: updatedPagination,
-        message: "Expense added successfully",
-      ),
-    );
+      _pagingController.value = _pagingController.value.copyWith(
+        pages: updatedPages,
+      );
+    }
 
     // Make the API call
     final result = await _createExpenseUseCase(
@@ -372,26 +208,29 @@ class ExpenseCubit extends Cubit<ExpenseState> {
 
     await result.fold(
       (failure) {
-        _allExpenses.removeWhere((e) => e.id == expense.id);
-        final rollbackPagination = ExpensePaginationEntity(
-          page: state.expenses?.page ?? 1,
-          totalPages: state.expenses?.totalPages ?? 1,
-          expenses: _allExpenses,
-          total: (state.expenses?.total ?? 1) - 1,
-        );
+        // Refresh to rollback changes on failure
+        _pagingController.refresh();
         emit(
           state.copyWith(
             state: ExpenseStates.error,
             message: failure.message,
             stackTrace: failure.stackTrace,
-            expenses: rollbackPagination,
           ),
         );
       },
       (createdExpense) async {
-        final index = _allExpenses.indexWhere((e) => e.id == expense.id);
-        if (index != -1) {
-          _allExpenses[index] = expense;
+        // Update the newly created expense with the one from backend
+        if (pages.isNotEmpty) {
+          final updatedPages = List<List<ExpenseEntity>>.from(pages);
+          final firstPage = List<ExpenseEntity>.from(updatedPages[0]);
+          if (firstPage.isNotEmpty) {
+            firstPage[0] = createdExpense as ExpenseEntity;
+            updatedPages[0] = firstPage;
+
+            _pagingController.value = _pagingController.value.copyWith(
+              pages: updatedPages,
+            );
+          }
         }
         unawaited(_recalculateExpenseStats());
         emit(state.copyWith(state: ExpenseStates.loaded, message: ''));
@@ -401,31 +240,28 @@ class ExpenseCubit extends Cubit<ExpenseState> {
 
   /// Delete expense with optimistic updates and rollback on failure
   Future<void> deleteExpense({required String expenseId}) async {
-    final originalExpenses = state.expenses;
-    final originalAllExpenses = List<ExpenseEntity>.from(_allExpenses);
-    _allExpenses.removeWhere((expense) => expense.id == expenseId);
-    if (state.expenses != null) {
-      final updatedExpenses = state.expenses!.expenses
-          .where((expense) => expense.id != expenseId)
-          .toList();
+    // Remove from all pages
+    final pages = _pagingController.value.pages ?? [];
+    final updatedPages = <List<ExpenseEntity>>[];
 
-      final updatedPagination = state.expenses!.copyWith(
-        expenses: updatedExpenses,
-        total: state.expenses!.total - 1,
-      );
-
-      emit(state.copyWith(expenses: updatedPagination));
+    for (final page in pages) {
+      final updatedPage = page.where((e) => e.id != expenseId).toList();
+      updatedPages.add(updatedPage);
     }
+
+    _pagingController.value = _pagingController.value.copyWith(
+      pages: updatedPages,
+    );
+
     final result = await _deleteExpenseUseCase(expenseId);
     await result.fold(
       (failure) {
-        _allExpenses.clear();
-        _allExpenses.addAll(originalAllExpenses);
+        // Refresh to rollback changes on failure
+        _pagingController.refresh();
         emit(
           state.copyWith(
             state: ExpenseStates.error,
             message: failure.message,
-            expenses: originalExpenses,
           ),
         );
       },
@@ -482,29 +318,21 @@ class ExpenseCubit extends Cubit<ExpenseState> {
     );
   }
 
-  /// Reset pagination state
-  void _resetPaginationState() {
-    _allExpenses.clear();
-    _currentPage = 1;
-    _hasReachedMax = false;
-    _isLoadingMore = false;
-  }
-
-  /// Retry last failed pagination request
-  void retryPaginationRequest() {
-    if (state.paginationError != null) {
-      loadNextPage();
-    } else if (state.state == ExpenseStates.error) {
-      refreshExpenses();
+  void _showPaginationError() {
+    if (_pagingController.value.status == PagingStatus.subsequentPageError) {
+      emit(
+        state.copyWith(
+          state: ExpenseStates.error,
+          message: 'Something went wrong while fetching expenses.',
+        ),
+      );
     }
   }
 
-  // Getters for pagination state
-  bool get hasReachedMax => _hasReachedMax;
-  bool get isLoadingMore => _isLoadingMore;
-  int get currentPage => _currentPage;
-  int get totalItemsLoaded => _allExpenses.length;
-  List<ExpenseEntity> get allLoadedExpenses => List.unmodifiable(_allExpenses);
+  /// Refresh expenses (reload from first page)
+  Future<void> refreshExpenses() async {
+    _pagingController.refresh();
+  }
 }
 
 // Extension for easy access to cubit

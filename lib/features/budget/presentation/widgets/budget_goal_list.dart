@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -128,21 +127,22 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
                 ),
               ),
               firstPageErrorIndicatorBuilder: (_) => ErrorStateSectionWidget(
-                errorMsg: state.error.toString(),
+                errorMsg:
+                    (state.error ?? 'Error while loading budgets!').toString(),
                 onRetry: context.budgetCubit.pagingController.refresh,
               ),
               newPageErrorIndicatorBuilder: (_) => RetryWidget(
                 onRetry: () => fetchNextPage,
-                message: state.error.toString(),
+                message:
+                    (state.error ?? 'Error while loading budgets!').toString(),
               ),
               noItemsFoundIndicatorBuilder: (_) => Center(
                 child: Padding(
                   padding: const EdgeInsets.all(32),
                   child: RetryWidget(
                     onRetry: () => fetchNextPage,
-                    message: state.error != null
-                        ? state.error.toString()
-                        : 'No Budget goals found!',
+                    message:
+                        (state.error ?? 'No Budget goals found!').toString(),
                   ),
                 ),
               ),

@@ -29,7 +29,8 @@ class ExpenseListItem extends StatefulWidget {
   State<ExpenseListItem> createState() => _ExpenseListItemState();
 }
 
-class _ExpenseListItemState extends State<ExpenseListItem> with TickerProviderStateMixin {
+class _ExpenseListItemState extends State<ExpenseListItem>
+    with TickerProviderStateMixin {
   // Smooth entrance animation controller
   late AnimationController _entranceController;
   late Animation<double> _slideAnimation;
@@ -67,7 +68,8 @@ class _ExpenseListItemState extends State<ExpenseListItem> with TickerProviderSt
     // Gentle scale animation
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween(begin: 1.05, end: 1.0).chain(CurveTween(curve: Curves.easeOutCubic)),
+        tween: Tween(begin: 1.05, end: 1.0)
+            .chain(CurveTween(curve: Curves.easeOutCubic)),
         weight: 100,
       ),
     ]).animate(_entranceController);
@@ -148,40 +150,37 @@ class _ExpenseListItemState extends State<ExpenseListItem> with TickerProviderSt
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
-        animation: Listenable.merge([_entranceController, _interactionController]),
+        animation:
+            Listenable.merge([_entranceController, _interactionController]),
         builder: (context, child) => Transform.translate(
           // Smooth entrance slide up from 50px below
-          offset: Offset(0, 50 * (1 - _slideAnimation.value)) + _translateAnimation.value,
+          offset: Offset(0, 50 * (1 - _slideAnimation.value)) +
+              _translateAnimation.value,
           child: Transform.scale(
             // Combine entrance scale with interaction scale
             scale: _scaleAnimation.value * _interactionScaleAnimation.value,
             child: Opacity(
               opacity: _opacityAnimation.value,
-              child: Container(
-                margin: EdgeInsets.only(
-                  bottom: widget.isLast ? 0 : 12,
-                ),
-                child: AppDismissible(
-                  objectKey: 'expense_${widget.expense.id}',
-                  onDeleteConfirm: () async {
-                    final result = await _showDeleteConfirmation(context);
-                    if (result ?? false) {
-                      _handleDelete();
-                    }
-                    return result ?? false;
+              child: AppDismissible(
+                objectKey: 'expense_${widget.expense.id}',
+                onDeleteConfirm: () async {
+                  final result = await _showDeleteConfirmation(context);
+                  if (result ?? false) {
+                    _handleDelete();
+                  }
+                  return result ?? false;
+                },
+                onEdit: () => widget.onEdit?.call(widget.expense),
+                child: ExpenseCard(
+                  expense: widget.expense,
+                  elevation: _elevationAnimation.value,
+                  shadowOpacity: _shadowOpacityAnimation.value,
+                  onTapDown: (_) {
+                    HapticFeedback.selectionClick();
+                    _interactionController.forward();
                   },
-                  onEdit: () => widget.onEdit?.call(widget.expense),
-                  child: ExpenseCard(
-                    expense: widget.expense,
-                    elevation: _elevationAnimation.value,
-                    shadowOpacity: _shadowOpacityAnimation.value,
-                    onTapDown: (_) {
-                      HapticFeedback.selectionClick();
-                      _interactionController.forward();
-                    },
-                    onTapUp: (_) => _interactionController.reverse(),
-                    onTapCancel: () => _interactionController.reverse(),
-                  ),
+                  onTapUp: (_) => _interactionController.reverse(),
+                  onTapCancel: () => _interactionController.reverse(),
                 ),
               ),
             ),
@@ -345,7 +344,9 @@ class ExpenseHeaderRow extends StatelessWidget {
             CurrencyFormatter.format(expense.amount),
             style: context.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: expense.amount < 0 ? context.colorScheme.error : context.colorScheme.primary,
+              color: expense.amount < 0
+                  ? context.colorScheme.error
+                  : context.colorScheme.primary,
             ),
           ),
         ],
@@ -468,12 +469,14 @@ class ExpenseRecurringIndicator extends StatelessWidget {
             decoration: BoxDecoration(
               color: context.colorScheme.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: context.colorScheme.primary.withValues(alpha: 0.3)),
+              border: Border.all(
+                  color: context.colorScheme.primary.withValues(alpha: 0.3)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.autorenew, size: 12, color: context.colorScheme.primary),
+                Icon(Icons.autorenew,
+                    size: 12, color: context.colorScheme.primary),
                 const SizedBox(width: 4),
                 Text(
                   expense.recurring.frequency,
@@ -550,19 +553,23 @@ class ExpenseStatusIndicator extends StatelessWidget {
             ),
           ),
           // Show budget goal indicator at the bottom if expense is linked to a budget goal
-          if (expense.budgetGoalId != null && expense.budgetGoalId!.isNotEmpty) ...[
+          if (expense.budgetGoalId != null &&
+              expense.budgetGoalId!.isNotEmpty) ...[
             const SizedBox(height: 4),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: context.colorScheme.tertiary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: context.colorScheme.secondary.withValues(alpha: 0.3)),
+                border: Border.all(
+                    color:
+                        context.colorScheme.secondary.withValues(alpha: 0.3)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.account_balance_outlined, size: 12, color: context.colorScheme.secondary),
+                  Icon(Icons.account_balance_outlined,
+                      size: 12, color: context.colorScheme.secondary),
                   const SizedBox(width: 4),
                   Text(
                     context.l10n.budget, // Using localization

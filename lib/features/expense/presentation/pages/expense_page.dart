@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:xpensemate/core/utils/app_utils.dart';
+import 'package:xpensemate/core/widget/animated_section_header.dart';
 import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
 import 'package:xpensemate/core/widget/app_custom_dropdown_widget.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
 import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
 import 'package:xpensemate/features/expense/presentation/widgets/expense_form_widget.dart';
-import 'package:xpensemate/features/expense/presentation/widgets/expense_list_header_widget.dart';
 import 'package:xpensemate/features/expense/presentation/widgets/expense_list_widget.dart';
 import 'package:xpensemate/features/expense/presentation/widgets/expense_stats_widget.dart';
 
@@ -101,16 +102,45 @@ class _ExpensePageContentState extends State<ExpensePageContent>
                 ),
                 slivers: [
                   ExpenseStatsWidget(stats: state.expenseStats),
-                  const ExpenseListHeaderWidget(),
-                  ExpenseListWidget(
-                    onEdit: (updatedEntity) {
-                      _editExpense(updatedEntity, context);
-                    },
-                    onDelete: (expenseId) {
-                      context.expenseCubit.deleteExpense(expenseId: expenseId);
-                    },
-                    scrollController: _scrollController,
+
+                  // Wrap non-sliver widgets with SliverToBoxAdapter
+                  SliverPadding(
+                    padding: const EdgeInsets.all(16),
+                    sliver: SliverToBoxAdapter(
+                      child: AnimatedSectionHeader(
+                        title: "Expenses",
+                        icon: Icon(
+                          Icons.receipt_long_rounded,
+                          color: Theme.of(context).primaryColor,
+                          size: 24,
+                        ),
+                        onSearchChanged: (value) {
+                          if (value.trim().isEmpty) return;
+                          AppUtils.debounce(
+                            () {},
+                            delay: const Duration(milliseconds: 700),
+                          );
+                        },
+                        onSearchCleared: () {},
+                      ),
+                    ),
                   ),
+
+                  // Keep ExpenseListWidget as is (assuming it returns a Sliver)
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    sliver: ExpenseListWidget(
+                      onEdit: (updatedEntity) {
+                        _editExpense(updatedEntity, context);
+                      },
+                      onDelete: (expenseId) {
+                        context.expenseCubit
+                            .deleteExpense(expenseId: expenseId);
+                      },
+                      scrollController: _scrollController,
+                    ),
+                  ),
+
                   // Bottom padding for FAB
                   const SliverToBoxAdapter(
                     child: SizedBox(height: 100),

@@ -58,6 +58,8 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget> {
             state: state,
             fetchNextPage: fetchNextPage,
             builderDelegate: PagedChildBuilderDelegate<ExpenseEntity>(
+              animateTransitions: true,
+              transitionDuration: const Duration(milliseconds: 400),
               itemBuilder: (context, expense, index) => ExpenseListItem(
                 expense: expense,
                 onDelete: widget.onDelete,

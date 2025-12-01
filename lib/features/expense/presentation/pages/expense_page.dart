@@ -67,8 +67,11 @@ class _ExpensePageContentState extends State<ExpensePageContent>
       ),
       child: ExpenseFormWidget(
         expense: entity,
-        onSave: (expense) {
-          context.expenseCubit.updateExpense(expense: expense);
+        onSave: (expense) async {
+          await context.expenseCubit.updateExpense(expense: expense);
+          if (context.mounted) {
+            Navigator.of(context).pop();
+          }
         },
       ),
     );

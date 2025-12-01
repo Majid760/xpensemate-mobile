@@ -81,7 +81,7 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
             builderDelegate: PagedChildBuilderDelegate<BudgetGoalEntity>(
               animateTransitions: true,
               invisibleItemsThreshold: 5,
-              transitionDuration: const Duration(milliseconds: 300),
+              transitionDuration: const Duration(milliseconds: 400),
               itemBuilder: (context, budgetGoal, index) => BudgetGoalCard(
                 budgetGoal: budgetGoal,
                 onEdit: (goal) {

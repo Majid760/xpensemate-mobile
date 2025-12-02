@@ -17,6 +17,7 @@ abstract class ExpenseRemoteDataSource {
   Future<Either<Failure, ExpensePaginationModel>> getExpenses({
     required int page,
     required int limit,
+    String? filterQuery,
   });
 
   /// Fetches expense statistics
@@ -59,10 +60,13 @@ class ExpenseRemoteDataSourceImpl implements ExpenseRemoteDataSource {
   Future<Either<Failure, ExpensePaginationModel>> getExpenses({
     required int page,
     required int limit,
+    String? filterQuery,
   }) {
+    print("this is filer query => $filterQuery ");
     final queryParams = <String, dynamic>{
       'page': page,
       'limit': limit,
+      'filterQuery': filterQuery ?? '',
     };
     return _networkClient.get(
       NetworkConfigs.getAllExpenses,

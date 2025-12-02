@@ -15,6 +15,7 @@ class GetExpensesUseCase
   ) async =>
       repository.getExpenses(
         page: params.page,
+        filterQuery: params.filterQuery,
         limit: params.limit,
       );
 }
@@ -23,7 +24,9 @@ class GetExpensesParams {
   GetExpensesParams({
     required this.page,
     required this.limit,
+    this.filterQuery,
   });
   final int page;
+  String? filterQuery;
   final int limit;
 }

@@ -4,7 +4,6 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/core/widget/error_state_widget.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/no_more_widget.dart';
-import 'package:xpensemate/features/budget/presentation/widgets/retry_widget.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
 import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
 import 'package:xpensemate/features/expense/presentation/widgets/expense_item_widget.dart';

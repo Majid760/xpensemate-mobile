@@ -434,7 +434,7 @@
   },
   "of12": "of",
 
-  "budget": "Budget Expenses",
+  "budget": "Budget Goals",
   "@budget": {
     "description": "Budget label"
   },

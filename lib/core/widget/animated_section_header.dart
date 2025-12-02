@@ -61,7 +61,7 @@ class _AnimatedSectionHeaderState extends State<AnimatedSectionHeader>
 
     _searchController.addListener(() {
       setState(() {});
-      if (_searchController.text.length >= 3 ||
+      if (_searchController.text.length >= 2 ||
           _searchController.text.isEmpty) {
         widget.onSearchChanged?.call(_searchController.text);
       }

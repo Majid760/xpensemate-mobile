@@ -23,11 +23,13 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
   Future<Either<Failure, ExpensePaginationEntity>> getExpenses({
     required int page,
     required int limit,
+    String? filterQuery,
   }) async =>
       remoteDataSource
           .getExpenses(
             page: page,
             limit: limit,
+            filterQuery: filterQuery,
           )
           .then(
             (value) => value.fold(

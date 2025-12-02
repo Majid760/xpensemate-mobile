@@ -9,6 +9,7 @@ abstract class ExpenseRepository {
   Future<Either<Failure, ExpensePaginationEntity>> getExpenses({
     required int page,
     required int limit,
+    String? filterQuery,
   });
   Future<Either<Failure, ExpenseStatsEntity>> getExpenseStats({
     String? period,

@@ -39,11 +39,12 @@ class ExpenseCubit extends Cubit<ExpenseState> {
   final CreateExpensesUseCase _createExpenseUseCase;
 
   static const int _limit = 10;
+  String filterQuery = '';
 
   late final _pagingController = PagingController<int, ExpenseEntity>(
     getNextPageKey: (state) =>
         state.lastPageIsEmpty ? null : state.nextIntPageKey,
-    fetchPage: (pageKey) async => fetchExpenses(pageKey),
+    fetchPage: (pageKey) async => fetchExpenses(pageKey, filterQuery),
   );
   PagingController<int, ExpenseEntity> get pagingController =>
       _pagingController;
@@ -55,11 +56,15 @@ class ExpenseCubit extends Cubit<ExpenseState> {
   }
 
   /// Fetches expenses for a specific page
-  Future<List<ExpenseEntity>> fetchExpenses(int pageKey) async {
+  Future<List<ExpenseEntity>> fetchExpenses(
+    int pageKey,
+    String filterQuery,
+  ) async {
     try {
       final params = GetExpensesParams(
         page: pageKey,
         limit: _limit,
+        filterQuery: filterQuery,
       );
       final result = await _getExpensesUseCase(params);
       return result.fold(
@@ -302,8 +307,14 @@ class ExpenseCubit extends Cubit<ExpenseState> {
     }
   }
 
+  void updateSearchTerm(String filterQuery) {
+    this.filterQuery = filterQuery;
+    _pagingController.refresh();
+  }
+
   /// Refresh expenses (reload from first page)
   Future<void> refreshExpenses() async {
+    filterQuery = '';
     _pagingController.refresh();
   }
 }

@@ -122,11 +122,12 @@ class _ExpensePageContentState extends State<ExpensePageContent>
                     onSearchChanged: (value) {
                       if (value.trim().isEmpty) return;
                       AppUtils.debounce(
-                        () {},
+                        () => context.expenseCubit.updateSearchTerm(value),
                         delay: const Duration(milliseconds: 700),
                       );
                     },
-                    onSearchCleared: () {},
+                    onSearchCleared: () =>
+                        context.expenseCubit.refreshExpenses(),
                   ),
                 ),
               ),

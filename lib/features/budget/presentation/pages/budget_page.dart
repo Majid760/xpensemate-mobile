@@ -4,13 +4,14 @@ import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/widget/animated_section_header.dart';
+import 'package:xpensemate/core/widget/app_bar_widget.dart';
 import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_state.dart';
 import 'package:xpensemate/features/budget/presentation/pages/budget_form_page.dart';
-import 'package:xpensemate/features/budget/presentation/widgets/budget_appbar.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/budget_goal_list.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/insight_card_section.dart';
+import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
 
 class BudgetPage extends StatelessWidget {
   const BudgetPage({super.key});
@@ -55,7 +56,8 @@ class _BudgetPageContentState extends State<BudgetPageContent>
   void _loadBudgetData() {
     Future.wait([
       context.budgetCubit.refreshBudgetGoals(),
-      context.budgetCubit.getBudgetGoalsInsights(period: 'monthly'),
+      context.budgetCubit
+          .getBudgetGoalsInsights(period: FilterDefaultValue.monthly),
     ]);
   }
 
@@ -74,7 +76,7 @@ class _BudgetPageContentState extends State<BudgetPageContent>
               parent: AlwaysScrollableScrollPhysics(),
             ),
             slivers: [
-              BudgetAppBar(
+              CustomAppBar(
                 defaultPeriod: state.defaultPeriod,
                 onChanged: (value) =>
                     context.budgetCubit.getBudgetGoalsInsights(period: value),
@@ -85,7 +87,7 @@ class _BudgetPageContentState extends State<BudgetPageContent>
                   delegate: SliverChildListDelegate([
                     ExpandableStatsCard(
                       budgetGoalsInsight: state.budgetGoalsInsight,
-                      period: state.defaultPeriod,
+                      period: state.defaultPeriod.name,
                     ),
                     SizedBox(height: context.xl),
                     AnimatedSectionHeader(

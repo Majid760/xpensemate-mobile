@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goals_insight_entity.dart';
+import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
 
 enum BudgetStates {
   initial,
@@ -15,7 +16,7 @@ class BudgetState extends Equatable {
     this.state = BudgetStates.initial,
     this.budgetGoals,
     this.budgetGoalsInsight,
-    this.defaultPeriod = 'monthly',
+    this.defaultPeriod = FilterDefaultValue.monthly,
     this.message,
     this.stackTrace,
     this.currentPage,
@@ -27,7 +28,7 @@ class BudgetState extends Equatable {
   final BudgetStates state;
   final BudgetGoalsListEntity? budgetGoals;
   final BudgetGoalsInsightEntity? budgetGoalsInsight;
-  final String defaultPeriod;
+  final FilterDefaultValue defaultPeriod;
   final String? message;
   final StackTrace? stackTrace;
 
@@ -41,7 +42,7 @@ class BudgetState extends Equatable {
     BudgetStates? state,
     BudgetGoalsListEntity? budgetGoals,
     BudgetGoalsInsightEntity? budgetGoalsInsight,
-    String? defaultPeriod,
+    FilterDefaultValue? defaultPeriod,
     String? message,
     StackTrace? stackTrace,
     int? currentPage,
@@ -77,8 +78,10 @@ class BudgetState extends Equatable {
       ];
 
   // Helper getters for UI logic
-  bool get isInitialLoading => state == BudgetStates.loading && budgetGoals == null;
-  bool get hasData => budgetGoals != null && budgetGoals!.budgetGoals.isNotEmpty;
+  bool get isInitialLoading =>
+      state == BudgetStates.loading && budgetGoals == null;
+  bool get hasData =>
+      budgetGoals != null && budgetGoals!.budgetGoals.isNotEmpty;
   bool get hasError => state == BudgetStates.error && budgetGoals == null;
   bool get hasPaginationError => paginationError != null;
   bool get canLoadMore => !hasReachedMax && !isLoadingMore && hasData;

@@ -28,7 +28,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
   ) : super(const ExpenseState()) {
     _pagingController.addListener(_showPaginationError);
     // Set the fetchPage function after initialization
-    loadExpenseData();
+    loadExpenseData(period: state.filterDefaultValue);
   }
 
   final GetExpensesUseCase _getExpensesUseCase;
@@ -73,13 +73,13 @@ class ExpenseCubit extends Cubit<ExpenseState> {
   }
 
   /// Load expense statistics
-  Future<void> loadExpenseStats({String? period}) async {
+  Future<void> loadExpenseStats({required FilterDefaultValue period}) async {
     // Only show loading state if we don't have any existing data
     if (state.expenseStats == null) {
       emit(state.copyWith(state: ExpenseStates.loading));
     }
 
-    final params = GetExpenseStatsParams(period: period);
+    final params = GetExpenseStatsParams(period: period.name);
     final result = await _getExpenseStatsUseCase(params);
 
     result.fold(
@@ -92,6 +92,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
       (expenseStats) => emit(
         state.copyWith(
           state: ExpenseStates.loaded,
+          filterDefaultValue: period,
           expenseStats: expenseStats,
         ),
       ),
@@ -99,13 +100,13 @@ class ExpenseCubit extends Cubit<ExpenseState> {
   }
 
   /// Load all expense data with pagination support
-  Future<void> loadExpenseData({String? period}) async {
+  Future<void> loadExpenseData({FilterDefaultValue? period}) async {
     emit(state.copyWith(state: ExpenseStates.loading));
 
     try {
       // Load all data concurrently for better performance
       final expenseStatsFuture = _getExpenseStatsUseCase(
-        GetExpenseStatsParams(period: period),
+        GetExpenseStatsParams(period: period?.name),
       );
       final result = await expenseStatsFuture;
       result.fold(

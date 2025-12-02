@@ -8,6 +8,7 @@ import 'package:xpensemate/features/budget/domain/entities/budget_goals_insight_
 import 'package:xpensemate/features/budget/domain/usecases/get_budget_goals_by_period_usecase.dart';
 import 'package:xpensemate/features/budget/domain/usecases/usecase_export.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_state.dart';
+import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
 
 class BudgetCubit extends Cubit<BudgetState> {
   BudgetCubit(
@@ -18,7 +19,7 @@ class BudgetCubit extends Cubit<BudgetState> {
     this._getBudgetGoalsByPeriodUseCase,
   ) : super(const BudgetState()) {
     // Initialize with insights only
-    getBudgetGoalsInsights(period: 'monthly');
+    getBudgetGoalsInsights(period: FilterDefaultValue.monthly);
     _pagingController.addListener(_showPaginationError);
   }
 
@@ -235,14 +236,14 @@ class BudgetCubit extends Cubit<BudgetState> {
 
   /// Fetches budget goals insights for analytics/dashboard
   Future<void> getBudgetGoalsInsights({
-    required String period,
+    required FilterDefaultValue period,
     DateTime? startDate,
     DateTime? endDate,
   }) async {
     try {
       final result = await _getBudgetGoalsByPeriodUseCase.call(
         GetBudgetGoalsByPeriodParams(
-          period: period,
+          period: period.name,
           startDate: startDate,
           endDate: endDate,
         ),
@@ -284,7 +285,7 @@ class BudgetCubit extends Cubit<BudgetState> {
   Future<void> refreshBudgetGoals() async {
     await Future.wait([
       getBudgetGoals(),
-      getBudgetGoalsInsights(period: 'monthly'),
+      getBudgetGoalsInsights(period: FilterDefaultValue.monthly),
     ]);
   }
 

@@ -131,9 +131,9 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
                     (state.error ?? 'Error while loading budgets!').toString(),
                 onRetry: context.budgetCubit.pagingController.refresh,
               ),
-              newPageErrorIndicatorBuilder: (_) => RetryWidget(
+              newPageErrorIndicatorBuilder: (_) => ErrorStateSectionWidget(
                 onRetry: () => fetchNextPage,
-                message:
+                errorMsg:
                     (state.error ?? 'Error while loading budgets!').toString(),
               ),
               noItemsFoundIndicatorBuilder: (_) => Center(

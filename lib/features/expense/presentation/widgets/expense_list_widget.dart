@@ -80,9 +80,9 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget> {
                     (state.error ?? 'Error while loading expenses!').toString(),
                 onRetry: context.expenseCubit.pagingController.refresh,
               ),
-              newPageErrorIndicatorBuilder: (_) => RetryWidget(
+              newPageErrorIndicatorBuilder: (_) => ErrorStateSectionWidget(
                 onRetry: () => fetchNextPage,
-                message:
+                errorMsg:
                     (state.error ?? 'Error while loading expenses!').toString(),
               ),
               noMoreItemsIndicatorBuilder: (_) =>

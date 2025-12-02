@@ -8,6 +8,13 @@ enum ExpenseStates {
   loadingMore, // New state for loading additional pages
 }
 
+enum FilterDefaultValue {
+  weekly,
+  monthly,
+  quarterly,
+  yearly,
+}
+
 class ExpenseState extends Equatable {
   const ExpenseState({
     this.state = ExpenseStates.initial,
@@ -15,6 +22,7 @@ class ExpenseState extends Equatable {
     this.expenseStats,
     this.budgets,
     this.message,
+    this.filterDefaultValue = FilterDefaultValue.monthly,
     this.stackTrace,
     this.currentPage,
     this.hasReachedMax = false,
@@ -27,6 +35,8 @@ class ExpenseState extends Equatable {
   final ExpenseStatsEntity? expenseStats;
   final BudgetsListEntity? budgets;
   final String? message;
+  final FilterDefaultValue filterDefaultValue;
+
   final StackTrace? stackTrace;
 
   // Pagination-specific properties
@@ -41,6 +51,7 @@ class ExpenseState extends Equatable {
     ExpenseStatsEntity? expenseStats,
     BudgetsListEntity? budgets,
     String? message,
+    FilterDefaultValue? filterDefaultValue,
     StackTrace? stackTrace,
     int? currentPage,
     bool? hasReachedMax,
@@ -53,6 +64,7 @@ class ExpenseState extends Equatable {
         expenseStats: expenseStats ?? this.expenseStats,
         budgets: budgets ?? this.budgets,
         message: message ?? this.message,
+        filterDefaultValue: filterDefaultValue ?? this.filterDefaultValue,
         stackTrace: stackTrace ?? this.stackTrace,
         currentPage: currentPage ?? this.currentPage,
         hasReachedMax: hasReachedMax ?? this.hasReachedMax,
@@ -71,6 +83,7 @@ class ExpenseState extends Equatable {
         currentPage,
         hasReachedMax,
         isLoadingMore,
+        filterDefaultValue,
         paginationError,
       ];
 

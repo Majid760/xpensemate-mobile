@@ -33,11 +33,17 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
   final NetworkClient _networkClient;
 
   @override
-  Future<Either<Failure, WeeklyStatsModel>> getWeeklyStats() =>
-      _networkClient.get(
-        NetworkConfigs.weeklyStats,
-        fromJson: WeeklyStatsModel.fromJson,
-      );
+  Future<Either<Failure, WeeklyStatsModel>> getWeeklyStats({
+    String? filterQuery,
+  }) {
+    final queryParams = <String, dynamic>{};
+    queryParams['filter_query'] = filterQuery ?? "weekly";
+    return _networkClient.get(
+      NetworkConfigs.weeklyStats,
+      query: queryParams,
+      fromJson: WeeklyStatsModel.fromJson,
+    );
+  }
 
   @override
   Future<Either<Failure, BudgetGoalsModel>> getBudgetGoals({

@@ -9,10 +9,14 @@ extension GoRouterExtension on BuildContext {
   void goToHome() => go('/home');
   void goToDashboard() => go('/home/dashboard');
   void goToProfile() => go('/profile');
-  void goToForgotPasword() =>go('/forgot-password');
-  void goToRegister() =>go('/register');
-  void goToVerifyEmail({required String email}) =>go('/email-verify', extra:email);
-  
+  void goToForgotPasword() => go('/forgot-password');
+  void goToBudget() => go('/home/budget');
+  void goToExpense() => go('/home/expense');
+  void goToSettings() => go('/settings');
+  void goToRegister() => go('/register');
+  void goToVerifyEmail({required String email}) =>
+      go('/email-verify', extra: email);
+
   // Push methods
   void pushLogin() => push('/login');
   void pushDashboard() => push('/home/dashboard');
@@ -20,15 +24,13 @@ extension GoRouterExtension on BuildContext {
   void pushForgotPasword() => push('/forgot-password');
   void pushRegister() => push('/register');
 
-  
-  
   // Replace methods
   void replaceWithHome() => pushReplacement('/home');
   void replaceWithLogin() => pushReplacement('/login');
-  
+
   // Pop methods
   void popToRoot() => go('/');
-  
+
   // Generic navigation with error handling
   Future<T?> navigateTo<T extends Object?>(
     String path, {

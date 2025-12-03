@@ -64,11 +64,10 @@ class ActiveBudgetSectionWidget extends StatelessWidget {
                 action: AppButton.textButton(
                   text: context.l10n.seeDetail,
                   textColor: context.primaryColor,
-                  onPressed: context.goToDashboard,
+                  onPressed: context.goToBudget,
                 ),
               ),
               SizedBox(height: context.lg),
-
               // Budget List
               _BudgetList(budgetGoals: budgetGoals),
             ],
@@ -96,15 +95,21 @@ class _BudgetList extends StatelessWidget {
     }
 
     return LayoutBuilder(
-      builder: (context, constraints) {
-        final isTablet = constraints.maxWidth > 600;
-
-        if (isTablet) {
-          return _TabletLayout(goals: activeGoals);
-        } else {
-          return _MobileLayout(goals: activeGoals);
-        }
-      },
+      builder: (context, constraints) => Column(
+        children: [
+          ...activeGoals.map(
+            (goal) => Padding(
+              padding: EdgeInsets.only(bottom: context.md),
+              child: BudgetCard(goal: goal),
+            ),
+          ),
+          AppButton.textButton(
+            text: context.l10n.seeDetail,
+            textColor: context.primaryColor,
+            onPressed: context.goToBudget,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -136,163 +141,130 @@ class _EmptyState extends StatelessWidget {
       );
 }
 
-class _MobileLayout extends StatelessWidget {
-  const _MobileLayout({
-    required this.goals,
-  });
-
-  final List<BudgetGoalEntity> goals;
-
-  @override
-  Widget build(BuildContext context) => Column(
-        children: goals
-            .map(
-              (goal) => Padding(
-                padding: EdgeInsets.only(bottom: context.md),
-                child: _BudgetCard(goal: goal),
-              ),
-            )
-            .toList(),
-      );
-}
-
-class _TabletLayout extends StatelessWidget {
-  const _TabletLayout({
-    required this.goals,
-  });
-
-  final List<BudgetGoalEntity> goals;
-
-  @override
-  Widget build(BuildContext context) => Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: goals
-            .asMap()
-            .entries
-            .map(
-              (entry) => Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    right: entry.key < goals.length - 1 ? context.md : 0,
-                  ),
-                  child: _BudgetCard(goal: entry.value),
-                ),
-              ),
-            )
-            .toList(),
-      );
-}
-
-class _BudgetCard extends StatelessWidget {
-  const _BudgetCard({
+class BudgetCard extends StatelessWidget {
+  const BudgetCard({
+    super.key,
     required this.goal,
+    this.onTap,
   });
 
   final BudgetGoalEntity goal;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final progress = goal.setBudget > 0
         ? (goal.currentSpending / goal.setBudget).clamp(0.0, 1.0)
         : 0.0;
-
     final remaining = goal.setBudget - goal.currentSpending;
-    final status = _getBudgetStatus(progress, context);
+    final status = _getBudgetStatus(progress);
 
-    return Container(
-      padding: EdgeInsets.all(context.md),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            context.colorScheme.surface,
-            context.colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
-            context.colorScheme.surface,
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: status.color.withValues(alpha: 0.15),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: status.color.withValues(alpha: 0.1),
-            blurRadius: 8,
-            spreadRadius: 1,
-            offset: const Offset(0, 2),
-          ),
-          BoxShadow(
-            color: context.colorScheme.shadow.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Budget Name and Priority
-          _BudgetHeader(
-            name: goal.name,
-            category: goal.category,
-            priority: goal.priority,
-          ),
-          SizedBox(height: context.md),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isCompact = constraints.maxWidth < 350;
 
-          // Progress Bar
-          _ProgressBar(
-            progress: progress,
-            color: status.color,
+        return Card(
+          elevation: 0,
+          margin: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(
+              color: status.color.withValues(alpha: 0.1),
+              width: 1,
+            ),
           ),
-          SizedBox(height: context.md),
-
-          // Budget Details
-          _BudgetDetails(
-            spent: goal.currentSpending,
-            remaining: remaining,
-            total: goal.setBudget,
-            status: status,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              padding: EdgeInsets.all(isCompact ? 12 : 16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    status.color.withValues(alpha: 0.03),
+                    Colors.transparent,
+                    status.color.withValues(alpha: 0.02),
+                  ],
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _BudgetHeader(
+                    name: goal.name,
+                    category: goal.category,
+                    priority: goal.priority,
+                    isCompact: isCompact,
+                  ),
+                  SizedBox(height: isCompact ? 12 : 16),
+                  _ProgressSection(
+                    progress: progress,
+                    status: status,
+                    isCompact: isCompact,
+                  ),
+                  SizedBox(height: isCompact ? 12 : 16),
+                  _AmountSection(
+                    spent: goal.currentSpending,
+                    remaining: remaining,
+                    total: goal.setBudget,
+                    status: status,
+                    isCompact: isCompact,
+                  ),
+                ],
+              ),
+            ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  _BudgetStatus _getBudgetStatus(double progress, BuildContext context) {
-    if (progress >= 1) {
-      return _BudgetStatus(
+  _BudgetStatusData _getBudgetStatus(double progress) {
+    if (progress >= 1.0) {
+      return const _BudgetStatusData(
         label: 'overBudget',
-        color: context.colorScheme.error,
-        backgroundColor: context.colorScheme.error,
+        color: Color(0xFFEF4444),
+        icon: Icons.warning_rounded,
       );
     } else if (progress >= 0.8) {
-      return _BudgetStatus(
+      return const _BudgetStatusData(
         label: 'nearLimit',
-        color: context.colorScheme.secondary,
-        backgroundColor: context.colorScheme.secondary,
+        color: Color(0xFFF59E0B),
+        icon: Icons.warning_amber_rounded,
+      );
+    } else if (progress >= 0.5) {
+      return const _BudgetStatusData(
+        label: 'moderate',
+        color: Color(0xFF6366F1),
+        icon: Icons.trending_up_rounded,
       );
     } else {
-      return _BudgetStatus(
+      return const _BudgetStatusData(
         label: 'onTrack',
-        color: context.colorScheme.primary,
-        backgroundColor: context.colorScheme.primary,
+        color: Color(0xFF10B981),
+        icon: Icons.check_circle_rounded,
       );
     }
   }
 }
 
+// ==================== Header Section ====================
 class _BudgetHeader extends StatelessWidget {
   const _BudgetHeader({
     required this.name,
     required this.category,
     required this.priority,
+    required this.isCompact,
   });
 
   final String name;
   final String category;
   final String priority;
+  final bool isCompact;
 
   @override
   Widget build(BuildContext context) => Row(
@@ -300,292 +272,386 @@ class _BudgetHeader extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   name,
-                  style: context.textTheme.titleMedium?.copyWith(
+                  style: TextStyle(
+                    fontSize: isCompact ? 16 : 18,
                     fontWeight: FontWeight.w700,
-                    color: context.colorScheme.onSurface,
+                    color: Theme.of(context).colorScheme.onSurface,
+                    letterSpacing: -0.5,
                   ),
-                  overflow: TextOverflow.ellipsis,
                   maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                SizedBox(height: context.xs),
+                const SizedBox(height: 4),
                 Text(
                   category,
-                  style: context.textTheme.bodyMedium?.copyWith(
-                    color: context.colorScheme.onSurfaceVariant,
+                  style: TextStyle(
+                    fontSize: isCompact ? 12 : 13,
                     fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
-                  overflow: TextOverflow.ellipsis,
                   maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
           ),
-          _PriorityChip(priority: priority),
+          const SizedBox(width: 8),
+          _PriorityBadge(priority: priority, isCompact: isCompact),
         ],
       );
 }
 
-class _PriorityChip extends StatelessWidget {
-  const _PriorityChip({
+// ==================== Priority Badge ====================
+class _PriorityBadge extends StatelessWidget {
+  const _PriorityBadge({
     required this.priority,
+    required this.isCompact,
   });
 
   final String priority;
+  final bool isCompact;
 
   @override
   Widget build(BuildContext context) {
-    final priorityData = _getPriorityData(priority.toLowerCase(), context);
+    final data = _getPriorityData(priority.toLowerCase());
 
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: context.sm,
-        vertical: 4,
+        horizontal: isCompact ? 8 : 10,
+        vertical: isCompact ? 4 : 6,
       ),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            priorityData.color.withValues(alpha: 0.15),
-            priorityData.color.withValues(alpha: 0.25),
-          ],
-        ),
+        color: data.color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: priorityData.color.withValues(alpha: 0.1),
-            blurRadius: 2,
-            offset: const Offset(0, 1),
+        border: Border.all(
+          color: data.color.withValues(alpha: 0.2),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            data.icon,
+            size: isCompact ? 12 : 14,
+            color: data.color,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            data.label,
+            style: TextStyle(
+              fontSize: isCompact ? 10 : 11,
+              fontWeight: FontWeight.w700,
+              color: data.color,
+              letterSpacing: 0.5,
+            ),
           ),
         ],
-      ),
-      child: Text(
-        priorityData.label,
-        style: context.textTheme.labelSmall?.copyWith(
-          color: priorityData.color,
-          fontWeight: FontWeight.w600,
-        ),
       ),
     );
   }
 
-  _PriorityData _getPriorityData(String priority, BuildContext context) {
+  _PriorityInfo _getPriorityData(String priority) {
     switch (priority) {
       case 'high':
-        return _PriorityData(
-          label: context.l10n.highPriority,
-          color: context.colorScheme.error,
+        return const _PriorityInfo(
+          label: 'HIGH',
+          color: Color(0xFFEF4444),
+          icon: Icons.priority_high_rounded,
         );
       case 'medium':
-        return _PriorityData(
-          label: context.l10n.mediumPriority,
-          color: context.colorScheme.secondary,
+        return const _PriorityInfo(
+          label: 'MED',
+          color: Color(0xFF6366F1),
+          icon: Icons.remove_rounded,
         );
       case 'low':
       default:
-        return _PriorityData(
-          label: context.l10n.lowPriority,
-          color: context.colorScheme.primary,
+        return const _PriorityInfo(
+          label: 'LOW',
+          color: Color(0xFF10B981),
+          icon: Icons.trending_down_rounded,
         );
     }
   }
 }
 
-class _ProgressBar extends StatelessWidget {
-  const _ProgressBar({
+// ==================== Progress Section ====================
+class _ProgressSection extends StatelessWidget {
+  const _ProgressSection({
+    required this.progress,
+    required this.status,
+    required this.isCompact,
+  });
+
+  final double progress;
+  final _BudgetStatusData status;
+  final bool isCompact;
+
+  @override
+  Widget build(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    status.icon,
+                    size: isCompact ? 14 : 16,
+                    color: status.color,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    _getStatusText(status.label, context),
+                    style: TextStyle(
+                      fontSize: isCompact ? 12 : 13,
+                      fontWeight: FontWeight.w600,
+                      color: status.color,
+                    ),
+                  ),
+                ],
+              ),
+              Text(
+                '${(progress * 100).toStringAsFixed(0)}%',
+                style: TextStyle(
+                  fontSize: isCompact ? 14 : 16,
+                  fontWeight: FontWeight.w700,
+                  color: status.color,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: isCompact ? 8 : 10),
+          _AnimatedProgressBar(
+            progress: progress,
+            color: status.color,
+            height: isCompact ? 6 : 8,
+          ),
+        ],
+      );
+
+  String _getStatusText(String label, BuildContext context) {
+    switch (label) {
+      case 'overBudget':
+        return 'Over Budget';
+      case 'nearLimit':
+        return 'Near Limit';
+      case 'moderate':
+        return 'Moderate';
+      case 'onTrack':
+      default:
+        return 'On Track';
+    }
+  }
+}
+
+// ==================== Animated Progress Bar ====================
+class _AnimatedProgressBar extends StatelessWidget {
+  const _AnimatedProgressBar({
     required this.progress,
     required this.color,
+    required this.height,
   });
 
   final double progress;
   final Color color;
+  final double height;
 
   @override
   Widget build(BuildContext context) => Container(
-        height: 10,
+        height: height,
         decoration: BoxDecoration(
-          color: context.colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(5),
-          boxShadow: [
-            BoxShadow(
-              color: context.colorScheme.shadow.withValues(alpha: 0.05),
-              blurRadius: 2,
-              offset: const Offset(0, 1),
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(height / 2),
+        ),
+        child: Stack(
+          children: [
+            AnimatedFractionallySizedBox(
+              duration: const Duration(milliseconds: 800),
+              curve: Curves.easeOutCubic,
+              alignment: Alignment.centerLeft,
+              widthFactor: progress,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      color.withValues(alpha: 0.7),
+                      color,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(height / 2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: color.withValues(alpha: 0.3),
+                      blurRadius: 4,
+                      spreadRadius: 0,
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
-        ),
-        child: FractionallySizedBox(
-          alignment: Alignment.centerLeft,
-          widthFactor: progress,
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                colors: [
-                  color.withValues(alpha: 0.7),
-                  color,
-                ],
-              ),
-              borderRadius: BorderRadius.circular(5),
-              boxShadow: [
-                BoxShadow(
-                  color: color.withValues(alpha: 0.3),
-                  blurRadius: 4,
-                ),
-              ],
-            ),
-          ),
         ),
       );
 }
 
-class _BudgetDetails extends StatelessWidget {
-  const _BudgetDetails({
+// ==================== Amount Section ====================
+class _AmountSection extends StatelessWidget {
+  const _AmountSection({
     required this.spent,
     required this.remaining,
     required this.total,
     required this.status,
+    required this.isCompact,
   });
 
   final double spent;
   final double remaining;
   final double total;
-  final _BudgetStatus status;
+  final _BudgetStatusData status;
+  final bool isCompact;
 
   @override
-  Widget build(BuildContext context) => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget build(BuildContext context) => Container(
+        padding: EdgeInsets.all(isCompact ? 12 : 14),
+        decoration: BoxDecoration(
+          color: Theme.of(context)
+              .colorScheme
+              .surfaceContainerHighest
+              .withValues(alpha: 0.3),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.1),
+          ),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: _AmountItem(
+                label: 'Spent',
+                amount: spent,
+                color: Theme.of(context).colorScheme.onSurface,
+                icon: Icons.arrow_upward_rounded,
+                isCompact: isCompact,
+              ),
+            ),
+            Container(
+              width: 1,
+              height: isCompact ? 32 : 40,
+              color:
+                  Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+            ),
+            Expanded(
+              child: _AmountItem(
+                label: 'Left',
+                amount: remaining,
+                color: status.color,
+                icon: Icons.account_balance_wallet_rounded,
+                isCompact: isCompact,
+              ),
+            ),
+            Container(
+              width: 1,
+              height: isCompact ? 32 : 40,
+              color:
+                  Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+            ),
+            Expanded(
+              child: _AmountItem(
+                label: 'Budget',
+                amount: total,
+                color: const Color(0xFF6366F1),
+                icon: Icons.savings_rounded,
+                isCompact: isCompact,
+              ),
+            ),
+          ],
+        ),
+      );
+}
+
+// ==================== Amount Item ====================
+class _AmountItem extends StatelessWidget {
+  const _AmountItem({
+    required this.label,
+    required this.amount,
+    required this.color,
+    required this.icon,
+    required this.isCompact,
+  });
+
+  final String label;
+  final double amount;
+  final Color color;
+  final IconData icon;
+  final bool isCompact;
+
+  @override
+  Widget build(BuildContext context) => Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  CurrencyFormatter.format(spent),
-                  style: context.textTheme.titleMedium?.copyWith(
-                    color: context.colorScheme.onSurface,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(
-                  context.l10n.spent,
-                  style: context.textTheme.bodySmall?.copyWith(
-                    color: context.colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
+          Icon(
+            icon,
+            size: isCompact ? 16 : 18,
+            color: color.withValues(alpha: 0.7),
           ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  CurrencyFormatter.format(remaining),
-                  style: context.textTheme.titleMedium?.copyWith(
-                    color: status.color,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(
-                  context.l10n.remaining,
-                  style: context.textTheme.bodySmall?.copyWith(
-                    color: context.colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+          SizedBox(height: isCompact ? 4 : 6),
+          Text(
+            CurrencyFormatter.format(amount),
+            style: TextStyle(
+              fontSize: isCompact ? 13 : 15,
+              fontWeight: FontWeight.w700,
+              color: color,
+              letterSpacing: -0.3,
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
           ),
-          _StatusChip(status: status),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: isCompact ? 10 : 11,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ],
       );
 }
 
-class _StatusChip extends StatelessWidget {
-  const _StatusChip({
-    required this.status,
-  });
-
-  final _BudgetStatus status;
-
-  @override
-  Widget build(BuildContext context) {
-    String statusText;
-    switch (status.label) {
-      case 'overBudget':
-        statusText = context.l10n.overBudget;
-        break;
-      case 'nearLimit':
-        statusText = context.l10n.nearLimit;
-        break;
-      case 'onTrack':
-      default:
-        statusText = context.l10n.onTrack;
-        break;
-    }
-
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.sm,
-        vertical: 4,
-      ),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            status.color.withValues(alpha: 0.15),
-            status.color.withValues(alpha: 0.25),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: status.color.withValues(alpha: 0.1),
-            blurRadius: 2,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Text(
-        statusText,
-        style: context.textTheme.labelSmall?.copyWith(
-          color: status.color,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-}
-
-// Helper classes
-class _BudgetStatus {
-  const _BudgetStatus({
+// ==================== Helper Classes ====================
+class _BudgetStatusData {
+  const _BudgetStatusData({
     required this.label,
     required this.color,
-    required this.backgroundColor,
+    required this.icon,
   });
 
   final String label;
   final Color color;
-  final Color backgroundColor;
+  final IconData icon;
 }
 
-class _PriorityData {
-  const _PriorityData({
+class _PriorityInfo {
+  const _PriorityInfo({
     required this.label,
     required this.color,
+    required this.icon,
   });
 
   final String label;
   final Color color;
+  final IconData icon;
 }

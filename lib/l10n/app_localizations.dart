@@ -972,7 +972,7 @@ abstract class AppLocalizations {
   /// No description provided for @seeDetail.
   ///
   /// In en, this message translates to:
-  /// **'See Detail'**
+  /// **'See More'**
   String get seeDetail;
 
   /// No description provided for @selectImage.

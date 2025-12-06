@@ -36,7 +36,6 @@ class _DashboardPageState extends State<DashboardPage>
     super.initState();
     _initializeAnimations();
     _initializeScrollController();
-    _loadDashboardData();
   }
 
   @override
@@ -118,10 +117,6 @@ class _DashboardPageState extends State<DashboardPage>
     }
   }
 
-  void _loadDashboardData() {
-    context.read<DashboardCubit>().loadDashboardData();
-  }
-
   // Get appropriate greeting based on time of day
   String _getGreeting() {
     final hour = DateTime.now().hour;
@@ -150,66 +145,90 @@ class _DashboardPageState extends State<DashboardPage>
         builder: (context, state) => Scaffold(
           backgroundColor: context.colorScheme.surface,
           body: RefreshIndicator(
-            onRefresh: () async => _loadDashboardData(),
+            onRefresh: () async =>
+                context.read<DashboardCubit>().loadDashboardData(),
             color: context.colorScheme.primary,
             child: CustomScrollView(
               controller: _scrollController,
               physics: const BouncingScrollPhysics(),
               slivers: [
+                // App Bar with Actions
                 SliverAppBar(
-                  expandedHeight: 320,
                   pinned: true,
                   elevation: 0,
-                  backgroundColor: context.colorScheme.primary,
+                  backgroundColor: context.colorScheme.surface,
+                  toolbarHeight: 60,
                   actions: [
                     Padding(
                       padding: const EdgeInsets.only(right: AppSpacing.md),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          IconButton(
-                            icon: Icon(
-                              Icons.notifications_outlined,
-                              color: context.colorScheme.onPrimary,
-                              size: 28,
-                            ),
-                            onPressed: () {},
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
-                          Positioned(
-                            right: 8,
-                            top: 8,
-                            child: Container(
-                              width: 12,
-                              height: 12,
-                              decoration: BoxDecoration(
-                                color: context.colorScheme.tertiary,
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: context.colorScheme.onPrimary,
-                                  width: 2,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: context.colorScheme.tertiary
-                                        .withValues(alpha: 0.5),
-                                    blurRadius: 6,
-                                    spreadRadius: 1,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF6366F1)
+                                  .withValues(alpha: 0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                Icons.notifications_outlined,
+                                color: context.colorScheme.onPrimary,
+                                size: 28,
+                              ),
+                              onPressed: () {},
+                            ),
+                            Positioned(
+                              right: 8,
+                              top: 8,
+                              child: Container(
+                                width: 12,
+                                height: 12,
+                                decoration: BoxDecoration(
+                                  color: context.colorScheme.tertiary,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: context.colorScheme.onPrimary,
+                                    width: 2,
                                   ),
-                                ],
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: context.colorScheme.tertiary
+                                          .withValues(alpha: 0.5),
+                                      blurRadius: 6,
+                                      spreadRadius: 1,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ],
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: DashboardHeaderWidget(
-                      state: state,
-                      getGreeting: _getGreeting,
-                    ),
+                ),
+
+                // Dashboard Header Widget (Expandable Card)
+                SliverToBoxAdapter(
+                  child: DashboardHeaderWidget(
+                    state: state,
+                    getGreeting: _getGreeting,
                   ),
                 ),
+
+                // Rest of the content
                 SliverToBoxAdapter(
                   child: FadeTransition(
                     opacity: _fadeAnimation,
@@ -225,10 +244,11 @@ class _DashboardPageState extends State<DashboardPage>
                               key: _sectionKeys['weeklyFinancialOverview'],
                               child: WeeklyFinancialOverviewWidget(
                                 state: state,
-                                onRetry: _loadDashboardData,
+                                onRetry: () => context
+                                    .read<DashboardCubit>()
+                                    .loadDashboardData(),
                               ),
                             ),
-                            // Active Budget Section
 
                             if (state.state != DashboardStates.error) ...[
                               SizedBox(height: context.lg),
@@ -242,8 +262,7 @@ class _DashboardPageState extends State<DashboardPage>
                                   ),
                                 ),
                               if (state.budgetGoals != null)
-                                if (state.budgetGoals != null)
-                                  SizedBox(height: context.lg),
+                                SizedBox(height: context.lg),
 
                               // Product Analytics Section
                               KeyedSubtree(

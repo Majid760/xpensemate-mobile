@@ -6,11 +6,9 @@ class DashboardHeaderWidget extends StatelessWidget {
   const DashboardHeaderWidget({
     super.key,
     required this.state,
-    required this.getGreeting,
   });
 
   final DashboardState state;
-  final String Function() getGreeting;
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -96,7 +94,7 @@ class _FinancialOverviewCardState extends State<FinancialOverviewCard>
 
     return FadeTransition(
       opacity: _fadeAnimation,
-      child: Container(
+      child: DecoratedBox(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,

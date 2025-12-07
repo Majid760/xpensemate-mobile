@@ -117,18 +117,6 @@ class _DashboardPageState extends State<DashboardPage>
     }
   }
 
-  // Get appropriate greeting based on time of day
-  String _getGreeting() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) {
-      return context.l10n.goodMorning;
-    } else if (hour < 17) {
-      return context.l10n.goodAfternoon;
-    } else {
-      return context.l10n.goodEvening;
-    }
-  }
-
   @override
   Widget build(BuildContext context) =>
       BlocConsumer<DashboardCubit, DashboardState>(
@@ -222,10 +210,7 @@ class _DashboardPageState extends State<DashboardPage>
 
                 // Dashboard Header Widget (Expandable Card)
                 SliverToBoxAdapter(
-                  child: DashboardHeaderWidget(
-                    state: state,
-                    getGreeting: _getGreeting,
-                  ),
+                  child: DashboardHeaderWidget(state: state),
                 ),
 
                 // Rest of the content

@@ -137,13 +137,10 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
                     (state.error ?? 'Error while loading budgets!').toString(),
               ),
               noItemsFoundIndicatorBuilder: (_) => Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(32),
-                  child: RetryWidget(
-                    onRetry: () => fetchNextPage,
-                    message:
-                        (state.error ?? 'No Budget goals found!').toString(),
-                  ),
+                child: ErrorStateSectionWidget(
+                  onRetry: () => fetchNextPage,
+                  errorMsg:
+                      (state.error ?? 'No Budget goals found!').toString(),
                 ),
               ),
               newPageProgressIndicatorBuilder: (_) => const Padding(

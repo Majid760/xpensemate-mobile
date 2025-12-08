@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/weekly_stats_entity.dart';
 
 class WeeklyInsightsWidget extends StatelessWidget {
@@ -13,40 +14,8 @@ class WeeklyInsightsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
-        builder: (context, constraints) {
-          final isTablet = constraints.maxWidth > 600;
-
-          if (isTablet) {
-            return _TabletInsightsLayout(weeklyStats: weeklyStats);
-          } else {
-            return _MobileInsightsLayout(weeklyStats: weeklyStats);
-          }
-        },
-      );
-}
-
-class _TabletInsightsLayout extends StatelessWidget {
-  const _TabletInsightsLayout({
-    required this.weeklyStats,
-  });
-
-  final WeeklyStatsEntity weeklyStats;
-
-  @override
-  Widget build(BuildContext context) => Row(
-        children: [
-          Expanded(
-            child: _HighestDayCard(weeklyStats: weeklyStats),
-          ),
-          SizedBox(width: context.md),
-          Expanded(
-            child: _LowestDayCard(weeklyStats: weeklyStats),
-          ),
-          SizedBox(width: context.md),
-          Expanded(
-            child: _DailyAverageCard(weeklyStats: weeklyStats),
-          ),
-        ],
+        builder: (context, constraints) =>
+            _MobileInsightsLayout(weeklyStats: weeklyStats),
       );
 }
 
@@ -87,7 +56,7 @@ class _HighestDayCard extends StatelessWidget {
         icon: Icons.trending_up_rounded,
         iconColor: context.colorScheme.primary,
         title: context.l10n.highestDay,
-        amount: "\$${weeklyStats.highestDay.total.toStringAsFixed(0)}",
+        amount: AppUtils.formatLargeNumber(weeklyStats.highestDay.total),
         subtitle: _formatDayName(context, weeklyStats.highestDay.date),
         backgroundColor: context.colorScheme.surface,
         borderColor: Colors.transparent,
@@ -124,7 +93,7 @@ class _LowestDayCard extends StatelessWidget {
         icon: Icons.trending_down_rounded,
         iconColor: context.colorScheme.error,
         title: context.l10n.lowestDay,
-        amount: "\$${weeklyStats.lowestDay.total.toStringAsFixed(0)}",
+        amount: AppUtils.formatLargeNumber(weeklyStats.lowestDay.total),
         subtitle: _formatDayName(context, weeklyStats.lowestDay.date),
         backgroundColor: context.colorScheme.surface,
         borderColor: Colors.transparent,
@@ -161,7 +130,7 @@ class _DailyAverageCard extends StatelessWidget {
         icon: Icons.attach_money,
         iconColor: context.colorScheme.secondary,
         title: context.l10n.dailyAverage,
-        amount: "\$${weeklyStats.dailyAverage.toStringAsFixed(2)}",
+        amount: AppUtils.formatLargeNumber(weeklyStats.dailyAverage),
         subtitle: context.l10n.acrossSevenDays,
         backgroundColor: context.colorScheme.surface,
         borderColor: Colors.transparent,

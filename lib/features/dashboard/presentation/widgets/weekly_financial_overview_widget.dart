@@ -138,15 +138,8 @@ class _LoadedContentSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
-        builder: (context, constraints) {
-          final isTablet = constraints.maxWidth > 600;
-
-          if (isTablet) {
-            return _TabletLayout(weeklyStats: weeklyStats);
-          } else {
-            return _MobileLayout(weeklyStats: weeklyStats);
-          }
-        },
+        builder: (context, constraints) =>
+            _MobileLayout(weeklyStats: weeklyStats),
       );
 }
 
@@ -193,63 +186,6 @@ class _MobileLayout extends StatelessWidget {
             children: [
               Expanded(
                 child: SpendingTrendWidget(weeklyStats: weeklyStats),
-              ),
-            ],
-          ),
-        ],
-      );
-}
-
-class _TabletLayout extends StatelessWidget {
-  const _TabletLayout({
-    required this.weeklyStats,
-  });
-
-  final WeeklyStatsEntity weeklyStats;
-
-  @override
-  Widget build(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Weekly Insights
-          WeeklyInsightsWidget(weeklyStats: weeklyStats),
-          SizedBox(height: context.lg),
-
-          // Main content in two columns
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Left column - Charts
-              Expanded(
-                flex: 2,
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: DailySpendingPatternWidget(
-                            weeklyStats: weeklyStats,
-                          ),
-                        ),
-                        SizedBox(width: context.md),
-                        Expanded(
-                          child: SpendingTrendWidget(weeklyStats: weeklyStats),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(width: context.lg),
-              // Right column - Circular indicators
-              Expanded(
-                child: Column(
-                  children: [
-                    BalanceRemainingWidget(weeklyStats: weeklyStats),
-                    SizedBox(height: context.md),
-                    TotalExpensesWidget(weeklyStats: weeklyStats),
-                  ],
-                ),
               ),
             ],
           ),

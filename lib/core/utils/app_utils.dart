@@ -758,7 +758,7 @@ extension StringExtension on String {
         'Sep': '09',
         'Oct': '10',
         'Nov': '11',
-        'Dec': '12'
+        'Dec': '12',
       };
 
       // Split the string by spaces and comma
@@ -780,7 +780,7 @@ extension StringExtension on String {
           yearStr.length >= 2 ? yearStr.substring(yearStr.length - 2) : yearStr;
 
       return '$day/$monthNum/$twoDigitYear';
-    } catch (e) {
+    } on Exception catch (_) {
       // Return original string if conversion fails
       return this;
     }

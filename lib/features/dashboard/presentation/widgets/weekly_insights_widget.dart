@@ -105,9 +105,9 @@ class _HighestDayCard extends StatelessWidget {
         context.l10n.saturday,
         context.l10n.sunday,
       ];
-      return '${weekdays[dateTime.weekday - 1]}';
+      return weekdays[dateTime.weekday - 1];
     } on Exception catch (_) {
-      return '$date';
+      return date;
     }
   }
 }
@@ -142,9 +142,9 @@ class _LowestDayCard extends StatelessWidget {
         context.l10n.saturday,
         context.l10n.sunday,
       ];
-      return '${weekdays[dateTime.weekday - 1]}';
+      return weekdays[dateTime.weekday - 1];
     } on Exception catch (_) {
-      return '$date';
+      return date;
     }
   }
 }

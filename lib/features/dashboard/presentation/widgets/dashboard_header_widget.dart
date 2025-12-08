@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 
 // ==================== Main Dashboard Header ====================
@@ -171,7 +172,6 @@ class _FinancialOverviewCardState extends State<FinancialOverviewCard>
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
                                   color: Colors.white.withValues(alpha: 0.3),
-                                  width: 1,
                                 ),
                               ),
                               child: Icon(
@@ -274,7 +274,7 @@ class _QuickStatsRow extends StatelessWidget {
             child: _QuickStatItem(
               icon: Icons.account_balance_wallet_rounded,
               value: isBalanceVisible
-                  ? '\$${weeklyBudget.toStringAsFixed(2)}'
+                  ? AppUtils.formatLargeNumber(weeklyBudget)
                   : '••••••',
               label: 'Budget',
             ),
@@ -288,7 +288,7 @@ class _QuickStatsRow extends StatelessWidget {
             child: _QuickStatItem(
               icon: Icons.arrow_upward_rounded,
               value: isBalanceVisible
-                  ? '\$${totalSpent.toStringAsFixed(2)}'
+                  ? AppUtils.formatLargeNumber(totalSpent)
                   : '••••••',
               label: 'Spent',
             ),
@@ -302,7 +302,7 @@ class _QuickStatsRow extends StatelessWidget {
             child: _QuickStatItem(
               icon: Icons.savings_rounded,
               value: isBalanceVisible
-                  ? '\$${availableBalance.toStringAsFixed(2)}'
+                  ? AppUtils.formatLargeNumber(availableBalance)
                   : '••••••',
               label: 'Left',
             ),
@@ -382,7 +382,7 @@ class _WeeklyInsightsSection extends StatelessWidget {
               icon: Icons.account_balance_rounded,
               title: 'Remaining Balance',
               value: isBalanceVisible
-                  ? '\$${availableBalance.toStringAsFixed(2)}'
+                  ? AppUtils.formatLargeNumber(availableBalance)
                   : '••••••',
               subtitle: availableBalance > 0
                   ? "You're doing great!"

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
 import 'package:xpensemate/l10n/app_localizations.dart';
 
@@ -10,8 +11,16 @@ class RetryWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context);
 
-    return Padding(
-      padding: const EdgeInsets.all(16),
+    return Container(
+      width: context.screenWidth - 32,
+      padding: const EdgeInsets.symmetric(
+        vertical: 24,
+        horizontal: 24,
+      ),
+      decoration: BoxDecoration(
+        color: context.colorScheme.primary.withValues(alpha: 0.1),
+        borderRadius: const BorderRadius.all(Radius.circular(16)),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

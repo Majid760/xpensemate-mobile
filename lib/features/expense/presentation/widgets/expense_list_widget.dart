@@ -64,6 +64,11 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget> {
                 onDelete: widget.onDelete,
                 onEdit: widget.onEdit,
               ),
+              noItemsFoundIndicatorBuilder: (context) =>
+                  ErrorStateSectionWidget(
+                onRetry: () => fetchNextPage,
+                errorMsg: (state.error ?? 'No Expense found!').toString(),
+              ),
               firstPageProgressIndicatorBuilder: (_) => const Padding(
                 padding: EdgeInsets.all(16),
                 child: Center(child: CircularProgressIndicator.adaptive()),

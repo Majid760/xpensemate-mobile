@@ -115,11 +115,11 @@ class AppUtils {
     if (amount >= 1000000) {
       // Format as millions
       final formatted = (amount / 1000000).toStringAsFixed(1);
-      return '$symbol${formatted}M';
+      return '$symbol$formatted M';
     } else if (amount >= 1000) {
       // Format as thousands
       final formatted = (amount / 1000).toStringAsFixed(1);
-      return '$symbol${formatted}k';
+      return '$symbol$formatted k';
     }
     return '$symbol${amount.toStringAsFixed(1)}';
   }

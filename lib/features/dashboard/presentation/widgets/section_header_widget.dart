@@ -19,14 +19,14 @@ class SectionHeaderWidget extends StatelessWidget {
           Icon(
             icon,
             color: AppColors.primary,
-            size: 18,
+            size: 24,
           ),
           SizedBox(width: context.sm),
           Expanded(
             child: Text(
               title,
-              style: context.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w600,
+              style: context.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
                 color: context.colorScheme.onSurface,
               ),
               overflow: TextOverflow.ellipsis,

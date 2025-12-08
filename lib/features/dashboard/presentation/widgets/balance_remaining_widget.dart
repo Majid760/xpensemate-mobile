@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/weekly_stats_entity.dart';
 
@@ -237,7 +238,7 @@ class _CircularProgressContent extends StatelessWidget {
           ),
           SizedBox(height: context.xs),
           Text(
-            CurrencyFormatter.format(weeklyStats.balanceLeft),
+            AppUtils.formatLargeNumber(weeklyStats.balanceLeft),
             style: context.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w800,
               color: context.colorScheme.onSurface,

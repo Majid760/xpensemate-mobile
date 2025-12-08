@@ -220,7 +220,7 @@ class _DashboardPageState extends State<DashboardPage>
                     child: SlideTransition(
                       position: _slideAnimation,
                       child: Padding(
-                        padding: EdgeInsets.zero,
+                        padding: const EdgeInsets.all(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

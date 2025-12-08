@@ -5,6 +5,7 @@ import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/product_weekly_analytics_entity.dart';
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/product_analytics_bar_chart.dart';
+import 'package:xpensemate/features/dashboard/presentation/widgets/section_header_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/weekly_summary_cards.dart';
 
 class ProductAnalyticsWidget extends StatefulWidget {
@@ -190,19 +191,26 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
 
           return Container(
             padding: EdgeInsets.all(context.md),
-            child: Row(
+            child:
+
+                // SectionHeaderWidget(
+                //     title: context.l10n.productAnalytic,
+                //     icon:Icons.analytics_outlined,
+                //   ),
+
+                Row(
               children: [
                 Icon(
                   Icons.analytics_outlined,
                   color: context.primaryColor,
-                  size: 18,
+                  size: 24,
                 ),
                 SizedBox(width: context.sm),
                 Expanded(
                   child: Text(
                     context.l10n.productAnalytic,
-                    style: context.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
+                    style: context.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
                       color: context.colorScheme.onSurface,
                     ),
                   ),

@@ -19,10 +19,6 @@ class BudgetState extends Equatable {
     this.defaultPeriod = FilterDefaultValue.monthly,
     this.message,
     this.stackTrace,
-    this.currentPage,
-    this.hasReachedMax = false,
-    this.isLoadingMore = false,
-    this.paginationError,
   });
 
   final BudgetStates state;
@@ -32,12 +28,6 @@ class BudgetState extends Equatable {
   final String? message;
   final StackTrace? stackTrace;
 
-  // Pagination-specific properties
-  final int? currentPage;
-  final bool hasReachedMax;
-  final bool isLoadingMore;
-  final String? paginationError;
-
   BudgetState copyWith({
     BudgetStates? state,
     BudgetGoalsListEntity? budgetGoals,
@@ -45,10 +35,6 @@ class BudgetState extends Equatable {
     FilterDefaultValue? defaultPeriod,
     String? message,
     StackTrace? stackTrace,
-    int? currentPage,
-    bool? hasReachedMax,
-    bool? isLoadingMore,
-    String? paginationError,
   }) =>
       BudgetState(
         state: state ?? this.state,
@@ -57,10 +43,6 @@ class BudgetState extends Equatable {
         defaultPeriod: defaultPeriod ?? this.defaultPeriod,
         message: message ?? this.message,
         stackTrace: stackTrace ?? this.stackTrace,
-        currentPage: currentPage ?? this.currentPage,
-        hasReachedMax: hasReachedMax ?? this.hasReachedMax,
-        isLoadingMore: isLoadingMore ?? this.isLoadingMore,
-        paginationError: paginationError ?? this.paginationError,
       );
 
   @override
@@ -71,10 +53,6 @@ class BudgetState extends Equatable {
         defaultPeriod,
         message,
         stackTrace,
-        currentPage,
-        hasReachedMax,
-        isLoadingMore,
-        paginationError,
       ];
 
   // Helper getters for UI logic
@@ -83,6 +61,4 @@ class BudgetState extends Equatable {
   bool get hasData =>
       budgetGoals != null && budgetGoals!.budgetGoals.isNotEmpty;
   bool get hasError => state == BudgetStates.error && budgetGoals == null;
-  bool get hasPaginationError => paginationError != null;
-  bool get canLoadMore => !hasReachedMax && !isLoadingMore && hasData;
 }

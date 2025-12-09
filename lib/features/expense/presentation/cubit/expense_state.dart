@@ -24,10 +24,6 @@ class ExpenseState extends Equatable {
     this.message,
     this.filterDefaultValue = FilterDefaultValue.monthly,
     this.stackTrace,
-    this.currentPage,
-    this.hasReachedMax = false,
-    this.isLoadingMore = false,
-    this.paginationError,
   });
 
   final ExpenseStates state;
@@ -39,12 +35,6 @@ class ExpenseState extends Equatable {
 
   final StackTrace? stackTrace;
 
-  // Pagination-specific properties
-  final int? currentPage;
-  final bool hasReachedMax;
-  final bool isLoadingMore;
-  final String? paginationError; // Separate error for pagination failures
-
   ExpenseState copyWith({
     ExpenseStates? state,
     ExpensePaginationEntity? expenses,
@@ -55,7 +45,6 @@ class ExpenseState extends Equatable {
     StackTrace? stackTrace,
     int? currentPage,
     bool? hasReachedMax,
-    bool? isLoadingMore,
     String? paginationError,
   }) =>
       ExpenseState(
@@ -66,10 +55,6 @@ class ExpenseState extends Equatable {
         message: message ?? this.message,
         filterDefaultValue: filterDefaultValue ?? this.filterDefaultValue,
         stackTrace: stackTrace ?? this.stackTrace,
-        currentPage: currentPage ?? this.currentPage,
-        hasReachedMax: hasReachedMax ?? this.hasReachedMax,
-        isLoadingMore: isLoadingMore ?? this.isLoadingMore,
-        paginationError: paginationError ?? this.paginationError,
       );
 
   @override
@@ -80,11 +65,7 @@ class ExpenseState extends Equatable {
         budgets,
         message,
         stackTrace,
-        currentPage,
-        hasReachedMax,
-        isLoadingMore,
         filterDefaultValue,
-        paginationError,
       ];
 
   // Helper getters for UI logic
@@ -92,6 +73,4 @@ class ExpenseState extends Equatable {
       state == ExpenseStates.loading && expenses == null;
   bool get hasData => expenses != null && expenses!.expenses.isNotEmpty;
   bool get hasError => state == ExpenseStates.error && expenses == null;
-  bool get hasPaginationError => paginationError != null;
-  bool get canLoadMore => !hasReachedMax && !isLoadingMore && hasData;
 }

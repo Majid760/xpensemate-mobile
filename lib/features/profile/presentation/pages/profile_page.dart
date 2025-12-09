@@ -10,7 +10,7 @@ import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_custom_dialog.dart';
-import 'package:xpensemate/core/widget/app_dialogs.dart' hide AppPermission;
+import 'package:xpensemate/core/widget/app_dialogs.dart';
 import 'package:xpensemate/core/widget/app_image.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/core/widget/morphic_button.dart';
@@ -22,7 +22,9 @@ import 'package:xpensemate/features/profile/presentation/pages/profile_edit_page
 import 'package:xpensemate/features/profile/presentation/widgets/profile_content_item_widget.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  ProfilePage({super.key, this.onBackTap});
+
+  void Function()? onBackTap;
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -149,7 +151,7 @@ class _ProfilePageState extends State<ProfilePage>
                   leading: Padding(
                     padding: EdgeInsets.only(left: context.md),
                     child: GestureDetector(
-                      // onTap: () => context.go('/'),
+                      onTap: widget.onBackTap,
                       child: Icon(
                         Icons.arrow_back_ios_new_rounded,
                         color: context.colorScheme.onPrimary,
@@ -498,10 +500,13 @@ class _CompactProfileImage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8.5),
                 color: context.colorScheme.onPrimary,
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8.5),
-                child: AppImage.network(
-                  profileState.user?.profilePhotoUrl ?? '',
+              child: Hero(
+                tag: 'profilePic',
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.5),
+                  child: AppImage.network(
+                    profileState.user?.profilePhotoUrl ?? '',
+                  ),
                 ),
               ),
             ),

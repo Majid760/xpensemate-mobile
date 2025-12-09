@@ -1,17 +1,25 @@
+import 'package:awesome_drawer_bar/awesome_drawer_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/widget/app_image.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/active_budget_section_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/dashboard_header_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/product_analytics_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/weekly_financial_overview_widget.dart';
+import 'package:xpensemate/features/profile/presentation/pages/profile_page.dart';
 
 class DashboardPage extends StatefulWidget {
-  const DashboardPage({super.key});
+  DashboardPage({
+    super.key,
+    this.onProfileTap,
+  });
+  void Function()? onProfileTap;
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
@@ -24,6 +32,7 @@ class _DashboardPageState extends State<DashboardPage>
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
   late ScrollController _scrollController;
+
   String _currentSectionTitle = '';
   final Map<String, GlobalKey> _sectionKeys = {
     'weeklyFinancialOverview': GlobalKey(),
@@ -132,6 +141,8 @@ class _DashboardPageState extends State<DashboardPage>
         },
         builder: (context, state) => Scaffold(
           backgroundColor: context.colorScheme.surface,
+          drawerScrimColor: Colors.transparent,
+          // endDrawer: ,
           body: RefreshIndicator(
             onRefresh: () async =>
                 context.read<DashboardCubit>().loadDashboardData(),
@@ -144,7 +155,61 @@ class _DashboardPageState extends State<DashboardPage>
                 SliverAppBar(
                   pinned: true,
                   elevation: 0,
+                  leadingWidth: 70,
+                  leading: Builder(
+                    builder: (BuildContext builderContext) => UnconstrainedBox(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: InkWell(
+                          onTap: () {
+                            widget.onProfileTap?.call();
+                          },
+                          child: AppImage.network(
+                            sl.authService.currentUser?.profilePhotoUrl ?? '',
+                            // The height/width here defines how the image fits within the 40x40 container
+                            height: 50, // Use the full parent height/width
+                            width: 50,
+                            border: Border.all(
+                              width: 2,
+                              color: context.colorScheme.primary,
+                            ),
+                            shadows: [
+                              BoxShadow(
+                                color: const Color(0xFF6366F1)
+                                    .withValues(alpha: 0.3),
+                                blurRadius: 9,
+                                offset: const Offset(0, 5),
+                              ),
+                            ],
+                            shape: ImageShape
+                                .circle, // This parameter might not be necessary if ClipOval is used
+                            heroTag: 'profilelDP',
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Builder(
+                  //   builder: (BuildContext builderContext) => Padding(
+                  //     padding: const EdgeInsets.only(left: 16),
+                  //     child: InkWell(
+                  //       onTap: () {
+                  //         // 3. Open the drawer programmatically
+                  //         Scaffold.of(builderContext).openDrawer();
+                  //       },
+                  //       child: AppImage.network(
+                  //         sl.authService.currentUser?.profilePhotoUrl ?? '',
+                  //         height: 40,
+                  //         width: 40,
+                  //         shape: ImageShape.circle,
+                  //         heroTag: 'profilelDP',
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                   backgroundColor: context.colorScheme.surface,
+                  automaticallyImplyLeading: false,
                   toolbarHeight: 60,
                   actions: [
                     Padding(
@@ -269,6 +334,51 @@ class _DashboardPageState extends State<DashboardPage>
               ],
             ),
           ),
+        ),
+      );
+}
+
+class DashboardPageWrapper extends StatefulWidget {
+  const DashboardPageWrapper({super.key});
+
+  @override
+  State<DashboardPageWrapper> createState() => _DashboardPageWrapperState();
+}
+
+class _DashboardPageWrapperState extends State<DashboardPageWrapper> {
+  final _drawerController = AwesomeDrawerBarController();
+  @override
+  Widget build(BuildContext context) => AwesomeDrawerBar(
+        controller: _drawerController,
+        borderRadius: 0,
+        angle: -10,
+        type: StyleState.popUp,
+        duration: const Duration(milliseconds: 400),
+        slideWidth: context.screenWidth * 0.90,
+        mainScreen: DashboardPage(onProfileTap: () {
+          (_drawerController.toggle as void Function()?)?.call();
+        }
+            // onDrawerChanged: (bool isOpened) {
+            //   print('1234 $isOpened');
+            //   if (isOpened) {
+            //     (_drawerController.open as void Function()?)?.call();
+            //   } else {
+            //     (_drawerController.close as void Function()?)?.call();
+            //   }
+            // },
+            // onEndDrawerChanged: (bool isOpened) {
+            //   print('89789 $isOpened');
+
+            //   if (isOpened) {
+            //     (_drawerController.close as void Function()?)?.call();
+            //   } else {
+            //     (_drawerController.open as void Function()?)?.call();
+            //   }
+            // },
+            ),
+        menuScreen: ProfilePage(
+          onBackTap: () =>
+              (_drawerController.close as void Function()?)?.call(),
         ),
       );
 }

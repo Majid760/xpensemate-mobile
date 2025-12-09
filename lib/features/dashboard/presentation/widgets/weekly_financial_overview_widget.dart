@@ -138,57 +138,45 @@ class _LoadedContentSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
-        builder: (context, constraints) =>
-            _MobileLayout(weeklyStats: weeklyStats),
-      );
-}
+        builder: (context, constraints) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Weekly Insights
+            WeeklyInsightsWidget(weeklyStats: weeklyStats),
+            SizedBox(height: context.lg),
 
-class _MobileLayout extends StatelessWidget {
-  const _MobileLayout({
-    required this.weeklyStats,
-  });
+            // Balance and Total Expenses Row
+            Row(
+              children: [
+                Expanded(
+                  child: BalanceRemainingWidget(weeklyStats: weeklyStats),
+                ),
+                SizedBox(width: context.md),
+                Expanded(
+                  child: TotalExpensesWidget(weeklyStats: weeklyStats),
+                ),
+              ],
+            ),
+            SizedBox(height: context.lg),
 
-  final WeeklyStatsEntity weeklyStats;
+            // Charts Row
+            Row(
+              children: [
+                Expanded(
+                  child: DailySpendingPatternWidget(weeklyStats: weeklyStats),
+                ),
+              ],
+            ),
+            SizedBox(height: context.lg),
 
-  @override
-  Widget build(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Weekly Insights
-          WeeklyInsightsWidget(weeklyStats: weeklyStats),
-          SizedBox(height: context.lg),
-
-          // Balance and Total Expenses Row
-          Row(
-            children: [
-              Expanded(
-                child: BalanceRemainingWidget(weeklyStats: weeklyStats),
-              ),
-              SizedBox(width: context.md),
-              Expanded(
-                child: TotalExpensesWidget(weeklyStats: weeklyStats),
-              ),
-            ],
-          ),
-          SizedBox(height: context.lg),
-
-          // Charts Row
-          Row(
-            children: [
-              Expanded(
-                child: DailySpendingPatternWidget(weeklyStats: weeklyStats),
-              ),
-            ],
-          ),
-          SizedBox(height: context.lg),
-
-          Row(
-            children: [
-              Expanded(
-                child: SpendingTrendWidget(weeklyStats: weeklyStats),
-              ),
-            ],
-          ),
-        ],
+            Row(
+              children: [
+                Expanded(
+                  child: SpendingTrendWidget(weeklyStats: weeklyStats),
+                ),
+              ],
+            ),
+          ],
+        ),
       );
 }

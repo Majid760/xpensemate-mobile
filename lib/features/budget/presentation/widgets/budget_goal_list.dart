@@ -14,7 +14,6 @@ import 'package:xpensemate/features/budget/presentation/pages/budget_expenses_pa
 import 'package:xpensemate/features/budget/presentation/pages/budget_form_page.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/budget_card_item.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/no_more_widget.dart';
-import 'package:xpensemate/features/budget/presentation/widgets/retry_widget.dart';
 
 class BudgetGoalsListWidget extends StatefulWidget {
   const BudgetGoalsListWidget({
@@ -149,8 +148,10 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
                   child: CircularProgressIndicator.adaptive(),
                 ),
               ),
-              noMoreItemsIndicatorBuilder: (_) =>
-                  const AllCaughtUpWidget(title: 'No more budgets!'),
+              noMoreItemsIndicatorBuilder: (_) => const Padding(
+                padding: EdgeInsets.only(top: 32),
+                child: AllCaughtUpWidget(title: 'No more budgets!'),
+              ),
             ),
             separatorBuilder: (context, index) => const SizedBox(height: 16),
           ),

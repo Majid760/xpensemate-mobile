@@ -89,8 +89,10 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget> {
                 errorMsg:
                     (state.error ?? 'Error while loading expenses!').toString(),
               ),
-              noMoreItemsIndicatorBuilder: (_) =>
-                  const AllCaughtUpWidget(title: 'No more expenses!'),
+              noMoreItemsIndicatorBuilder: (_) => const Padding(
+                padding: EdgeInsets.only(top: 32),
+                child: AllCaughtUpWidget(title: 'No more expenses!'),
+              ),
             ),
             separatorBuilder: (context, index) => const SizedBox(height: 4),
           ),

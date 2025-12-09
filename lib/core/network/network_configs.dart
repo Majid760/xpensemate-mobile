@@ -88,6 +88,14 @@ class NetworkConfigs {
   // budgets by period endpoint
   static const String budgetsByPeriod = '/budget-by-period/';
 
+  // payment  endpoints
+
+  static const String createPayment = '/create-payment/';
+  static const String getPayments = '/payments/';
+  static const String getSinglePayment = '/payment/:id';
+  static const String updatePayment = '/payment';
+  static const String deletePayment = '/payment/:id';
+
   // ------------------------------------------------------------------
   //  Static Pages URLs
   // ------------------------------------------------------------------

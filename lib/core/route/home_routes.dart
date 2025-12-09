@@ -13,12 +13,12 @@ abstract class HomeRoutes {
           path: RouteConstants.home,
           name: RouteNames.home,
           redirect: RouteGuards.requireAuth,
-          builder: (context, state) => const DashboardPage(),
+          builder: (context, state) => const DashboardPageWrapper(),
           routes: [
             GoRoute(
               path: 'dashboard',
               name: RouteNames.dashboard,
-              builder: (context, state) => const DashboardPage(),
+              builder: (context, state) => const DashboardPageWrapper(),
             ),
             GoRoute(
               path: 'expense',

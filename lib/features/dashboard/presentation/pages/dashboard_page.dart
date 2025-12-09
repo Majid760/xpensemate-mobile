@@ -350,11 +350,15 @@ class _DashboardPageWrapperState extends State<DashboardPageWrapper> {
   @override
   Widget build(BuildContext context) => AwesomeDrawerBar(
         controller: _drawerController,
-        borderRadius: 0,
+        borderRadius: 12,
         angle: -10,
         type: StyleState.popUp,
+        showShadow: true,
+        shadowColor: context.colorScheme.primary,
+        backgroundColor: context.colorScheme.primary,
         duration: const Duration(milliseconds: 400),
         slideWidth: context.screenWidth * 0.90,
+        // openCurve:
         mainScreen: DashboardPage(onProfileTap: () {
           (_drawerController.toggle as void Function()?)?.call();
         }

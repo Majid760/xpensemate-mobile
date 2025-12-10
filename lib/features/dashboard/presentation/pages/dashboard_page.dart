@@ -90,14 +90,16 @@ class _DashboardPageState extends State<DashboardPage>
   }
 
   void _onScroll() {
+    // Add a check to ensure the widget is still mounted
+    if (!mounted) return;
+    
     // Determine which section is currently visible
     var newTitle = context.l10n.dashboard;
 
     // Check each section to see which one is in view
     _sectionKeys.forEach((key, globalKey) {
-      final renderBox =
-          globalKey.currentContext?.findRenderObject() as RenderBox?;
-      if (renderBox != null) {
+      final renderBox = globalKey.currentContext?.findRenderObject() as RenderBox?;
+      if (renderBox != null && mounted) {
         final position = renderBox.localToGlobal(Offset.zero);
         final size = renderBox.size;
 
@@ -119,7 +121,7 @@ class _DashboardPageState extends State<DashboardPage>
       }
     });
 
-    if (_currentSectionTitle != newTitle) {
+    if (_currentSectionTitle != newTitle && mounted) {
       setState(() {
         _currentSectionTitle = newTitle;
       });
@@ -130,6 +132,9 @@ class _DashboardPageState extends State<DashboardPage>
   Widget build(BuildContext context) =>
       BlocConsumer<DashboardCubit, DashboardState>(
         listener: (context, state) {
+          // Add a mounted check to prevent setState after dispose
+          if (!mounted) return;
+          
           if (state.state == DashboardStates.error &&
               state.errorMessage != null) {
             AppSnackBar.show(
@@ -162,7 +167,10 @@ class _DashboardPageState extends State<DashboardPage>
                         padding: const EdgeInsets.only(left: 8),
                         child: InkWell(
                           onTap: () {
-                            widget.onProfileTap?.call();
+                            // Check if widget is still mounted before calling callback
+                            if (mounted) {
+                              widget.onProfileTap?.call();
+                            }
                           },
                           child: AppImage.network(
                             sl.authService.currentUser?.profilePhotoUrl ?? '',

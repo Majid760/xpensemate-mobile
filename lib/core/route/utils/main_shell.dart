@@ -53,7 +53,7 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
     NavItem(
       icon: Icons.currency_exchange_rounded,
       label: 'Payment',
-      route: '/payment',
+      route: '/home/payment',
     ),
   ];
 
@@ -80,8 +80,7 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
     final loc = GoRouterState.of(context).matchedLocation;
     if (loc.startsWith('/home/budget')) return 3;
     if (loc.startsWith('/home/expense')) return 1;
-    if (loc.startsWith('/home/payment')) return 2;
-    if (loc.startsWith('/profile')) return 4;
+    if (loc.startsWith('/home/payment')) return 4;
     // Default to dashboard for /home and /home/dashboard
     if (loc == '/home' || loc.startsWith('/home/dashboard')) return 0;
     return 0;
@@ -142,14 +141,11 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
         case 1: // expense
           context.go('/home/expense');
           break;
-        case 2: // budget
+        case 3: // Budget
           context.go('/home/budget');
           break;
-        case 3: // Payment
-          context.go('/home/budget');
-          break;
-        case 4: // Profile
-          context.goToPayment();
+        case 4: // Payment
+          context.go('/home/payment');
           break;
       }
 
@@ -171,7 +167,22 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
   void _onFabAction(FabAction action, int index) {
     logI('FAB Action clicked - Index: $index');
     print('Action of: ${action.label}');
-    context.goToProfile();
+
+    // Navigate to the correct route based on the FAB action
+    switch (index) {
+      case 0: // Add Expense
+        context.goToExpense();
+        break;
+      case 1: // Add Budget
+        context.goToBudget();
+        break;
+      case 2: // Add Payment
+        context.goToPayment();
+        break;
+      default:
+        context.goToProfile(); // fallback
+    }
+
     _toggleFab();
   }
 

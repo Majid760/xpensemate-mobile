@@ -6,6 +6,7 @@ import 'package:xpensemate/features/budget/presentation/pages/budget_page.dart';
 import 'package:xpensemate/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:xpensemate/features/expense/presentation/pages/expense_page.dart';
 import 'package:xpensemate/features/home/presentation/pages/home_page.dart';
+import 'package:xpensemate/features/payment/presentation/pages/payment_page.dart';
 
 abstract class HomeRoutes {
   static List<RouteBase> get routes => [
@@ -32,8 +33,8 @@ abstract class HomeRoutes {
             ),
             GoRoute(
               path: 'payment',
-              name: 'payment',
-              builder: (context, state) => const HomePage(), // Placeholder
+              name: RouteNames.payment,
+              builder: (context, state) => const PaymentPage(), // Placeholder
             ),
             GoRoute(
               path: 'notifications',
@@ -41,6 +42,11 @@ abstract class HomeRoutes {
               builder: (context, state) => const HomePage(),
             ),
           ],
+        ),
+        // Add a top-level payment route that redirects to the nested one
+        GoRoute(
+          path: '/payment',
+          redirect: (_, __) => '/home/payment',
         ),
       ];
 }

@@ -16,6 +16,7 @@ import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart'
 import 'package:xpensemate/features/budget/presentation/cubit/budget_expense_cubit.dart';
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
+import 'package:xpensemate/features/payment/presentation/cubit/payment_cubit.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
 import 'package:xpensemate/firebase_options.dart';
 import 'package:xpensemate/l10n/app_localizations.dart';
@@ -80,6 +81,9 @@ class MyApp extends StatelessWidget {
           BlocProvider<BudgetExpensesCubit>(
             create: (context) => sl.budgetExpensesCubit,
           ),
+          BlocProvider<PaymentCubit>(
+            create: (context) => sl.paymentCubit,
+          ),
           // Other cubits/blocs
         ],
         child: Builder(
@@ -94,7 +98,8 @@ class MyApp extends StatelessWidget {
                 debugShowCheckedModeBanner: false,
                 // themeMode: ThemeMode.system, // Follows system setting
                 // Localization configuration
-                routerConfig: AppRouter(authCubit, RouteGuards(authCubit)).router,
+                routerConfig:
+                    AppRouter(authCubit, RouteGuards(authCubit)).router,
                 localizationsDelegates: const [
                   AppLocalizations.delegate,
                   GlobalMaterialLocalizations.delegate,

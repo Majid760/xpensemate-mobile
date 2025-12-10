@@ -14,7 +14,7 @@ extension GoRouterExtension on BuildContext {
   void goToForgotPasword() => go('/forgot-password');
   void goToBudget() => go('/home/budget');
   void goToExpense() => go('/home/expense');
-  void goToSettings() => go('/settings');
+  void goToSettings() => go('/profile/settings');
   void goToRegister() => go('/register');
   void goToVerifyEmail({required String email}) =>
       go('/email-verify', extra: email);

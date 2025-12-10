@@ -45,19 +45,24 @@ class AppRouter {
               addExpense(context);
             } else if (index == 3) {
               addBudget(context);
+            } else if (index == 4) {
+              // addPayment(context);
             }
           },
         ),
         routes: [
           ...HomeRoutes.routes,
           ...ProfileRoutes.routes,
+          
         ],
       ),
     ],
   );
 
-  static final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
-  static final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
+  static final GlobalKey<NavigatorState> _rootNavigatorKey =
+      GlobalKey<NavigatorState>(debugLabel: 'root');
+  static final GlobalKey<NavigatorState> _shellNavigatorKey =
+      GlobalKey<NavigatorState>(debugLabel: 'shell');
 
   static GlobalKey<NavigatorState> get rootNavigatorKey => _rootNavigatorKey;
   static GlobalKey<NavigatorState> get shellNavigatorKey => _shellNavigatorKey;

@@ -44,6 +44,15 @@ import 'package:xpensemate/features/expense/domain/usecases/get_expenses_usecase
 import 'package:xpensemate/features/expense/domain/usecases/update_expense_usecase.dart';
 import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
 import 'package:xpensemate/features/home/presentation/cubit/home_cubit.dart';
+import 'package:xpensemate/features/payment/data/datasources/payment_remote_data_source.dart';
+import 'package:xpensemate/features/payment/data/repositories/payment_repository_impl.dart';
+import 'package:xpensemate/features/payment/domain/repositories/payment_repository.dart';
+import 'package:xpensemate/features/payment/domain/usecases/create_payment_usecase.dart';
+import 'package:xpensemate/features/payment/domain/usecases/delete_payment_usecase.dart';
+import 'package:xpensemate/features/payment/domain/usecases/get_payments_usecase.dart';
+import 'package:xpensemate/features/payment/domain/usecases/get_single_payment_usecase.dart';
+import 'package:xpensemate/features/payment/domain/usecases/update_payment_usecase.dart';
+import 'package:xpensemate/features/payment/presentation/cubit/payment_cubit.dart';
 import 'package:xpensemate/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:xpensemate/features/profile/data/repositories/profile_repository_impl.dart';
 import 'package:xpensemate/features/profile/domain/repositories/profile_repository.dart';
@@ -131,6 +140,10 @@ Future<void> initLocator() async {
       () => BudgetRemoteDataSourceImpl(sl()),
     );
 
+    sl.registerLazySingleton<PaymentRemoteDataSource>(
+      () => PaymentRemoteDataSourceImpl(sl()),
+    );
+
     // ---------- Repositories ----------
     sl.registerLazySingleton<AuthRepository>(
       () => AuthRepositoryImpl(
@@ -152,6 +165,9 @@ Future<void> initLocator() async {
 
     sl.registerLazySingleton<BudgetRepository>(
       () => BudgetRepositoryImpl(sl()),
+    );
+    sl.registerLazySingleton<PaymentRepository>(
+      () => PaymentRepositoryImpl(sl()),
     );
 
     // ---------- Use-cases ----------
@@ -187,6 +203,13 @@ Future<void> initLocator() async {
     sl.registerLazySingleton(() => GetBudgetSpecificExpensesUseCase(sl()));
     sl.registerLazySingleton(() => GetBudgetGoalsByPeriodUseCase(sl()));
 
+    // payment use cases
+    sl.registerLazySingleton(() => CreatePaymentUseCase(sl()));
+    sl.registerLazySingleton(() => GetPaymentsUseCase(sl()));
+    sl.registerLazySingleton(() => UpdatePaymentUseCase(sl()));
+    sl.registerLazySingleton(() => DeletePaymentUseCase(sl()));
+    sl.registerLazySingleton(() => GetSinglePaymentUseCase(sl()));
+
     // ---------- Presentation Layer ----------
     sl.registerFactory(() => ProfileCubit(sl()));
     sl.registerFactory(
@@ -195,6 +218,7 @@ Future<void> initLocator() async {
     sl.registerFactory(() => ExpenseCubit(sl(), sl(), sl(), sl(), sl(), sl()));
     sl.registerFactory(() => BudgetCubit(sl(), sl(), sl(), sl(), sl()));
     sl.registerFactory(() => BudgetExpensesCubit(sl()));
+    sl.registerFactory(() => PaymentCubit(sl(), sl(), sl(), sl()));
 
     AppLogger.i('Service locator initialized successfully');
   } on Exception catch (e) {
@@ -234,6 +258,7 @@ extension ServiceLocatorExtension on GetIt {
   ExpenseCubit get expenseCubit => this<ExpenseCubit>();
   BudgetCubit get budgetCubit => this<BudgetCubit>();
   BudgetExpensesCubit get budgetExpensesCubit => this<BudgetExpensesCubit>();
+  PaymentCubit get paymentCubit => this<PaymentCubit>();
   // services
   AuthService get authService => this<AuthService>();
 }

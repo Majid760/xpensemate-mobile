@@ -13,11 +13,7 @@ class GetPaymentsUseCase
   Future<Either<Failure, PaymentPaginationEntity>> call(
     GetPaymentsParams params,
   ) async =>
-      repository.getPayments(
-        page: params.page,
-        filterQuery: params.filterQuery,
-        limit: params.limit,
-      );
+      repository.getPayments(params);
 }
 
 class GetPaymentsParams {

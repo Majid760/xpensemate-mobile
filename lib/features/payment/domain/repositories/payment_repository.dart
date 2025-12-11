@@ -1,14 +1,14 @@
-
 import 'package:dartz/dartz.dart';
 import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_entity.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_pagination_entity.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_stats_entity.dart';
-import 'package:xpensemate/features/payment/domain/usecases/get_payments.dart';
+import 'package:xpensemate/features/payment/domain/usecases/get_payments_usecase.dart';
 
 abstract class PaymentRepository {
   Future<Either<Failure, PaymentPaginationEntity>> getPayments(
-      GetPaymentsParams params);
+    GetPaymentsParams params,
+  );
 
   Future<Either<Failure, PaymentStatsEntity>> getPaymentStats();
 

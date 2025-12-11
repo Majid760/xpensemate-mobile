@@ -307,10 +307,8 @@ class ExpenseContent extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           ExpenseDetailsRow(expense: expense),
-          if (expense.location.isNotEmpty) ...[
-            const SizedBox(height: 4),
-            ExpenseLocationRow(expense: expense),
-          ],
+          const SizedBox(height: 4),
+          ExpenseLocationRow(expense: expense),
           if (expense.recurring.isRecurring) ...[
             const SizedBox(height: 8),
             ExpenseRecurringIndicator(expense: expense),
@@ -432,11 +430,12 @@ class ExpenseLocationRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Row(
         children: [
-          Icon(
-            Icons.location_on_outlined,
-            size: 14,
-            color: context.colorScheme.onSurface.withValues(alpha: 0.6),
-          ),
+          if (expense.location.isNotEmpty)
+            Icon(
+              Icons.location_on_outlined,
+              size: 14,
+              color: context.colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
           const SizedBox(width: 4),
           Expanded(
             child: Text(

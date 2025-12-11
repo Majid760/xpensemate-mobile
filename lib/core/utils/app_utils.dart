@@ -730,6 +730,13 @@ extension StringExtension on String {
   /// Check if string is null or empty
   bool get isNullOrEmpty => isEmpty;
 
+  /// Format payment type: remove special chars and capitalize first letter
+  String get toFormattedPaymentType {
+    final cleaned = removeSpecialChars;
+    if (cleaned.isEmpty) return cleaned;
+    return cleaned[0].toUpperCase() + cleaned.substring(1).toLowerCase();
+  }
+
   /// Capitalize first letter
   String get capitalize => AppUtils.capitalize(this);
 

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/core/widget/error_state_widget.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/no_more_widget.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
@@ -26,75 +24,54 @@ class ExpenseListWidget extends StatefulWidget {
 
 class _ExpenseListWidgetState extends State<ExpenseListWidget> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) =>
-      BlocConsumer<ExpenseCubit, ExpenseState>(
-        listener: (context, state) {
-          // Handle general messages
-          if (state.message != null && state.message!.isNotEmpty) {
-            AppSnackBar.show(
-              context: context,
-              message: state.message!,
-              type: state.state == ExpenseStates.error
-                  ? SnackBarType.error
-                  : SnackBarType.success,
-            );
-          }
-        },
-        builder: (context, state) => PagingListener(
-          controller: context.expenseCubit.pagingController,
-          builder: (context, state, fetchNextPage) =>
-              PagedSliverList<int, ExpenseEntity>.separated(
-            state: state,
-            fetchNextPage: fetchNextPage,
-            builderDelegate: PagedChildBuilderDelegate<ExpenseEntity>(
-              animateTransitions: true,
-              transitionDuration: const Duration(milliseconds: 400),
-              itemBuilder: (context, expense, index) => ExpenseListItem(
+  Widget build(BuildContext context) => PagingListener(
+        controller: context.expenseCubit.pagingController,
+        builder: (context, pagingState, fetchNextPage) =>
+            PagedSliverList<int, ExpenseEntity>(
+          state: pagingState,
+          fetchNextPage: fetchNextPage,
+          builderDelegate: PagedChildBuilderDelegate<ExpenseEntity>(
+            animateTransitions: true,
+            transitionDuration: const Duration(milliseconds: 400),
+            itemBuilder: (context, expense, index) => Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: ExpenseListItem(
                 expense: expense,
                 onDelete: widget.onDelete,
                 onEdit: widget.onEdit,
               ),
-              noItemsFoundIndicatorBuilder: (context) =>
-                  ErrorStateSectionWidget(
-                onRetry: () => fetchNextPage,
-                errorMsg: (state.error ?? 'No Expense found!').toString(),
-              ),
-              firstPageProgressIndicatorBuilder: (_) => const Padding(
+            ),
+            noItemsFoundIndicatorBuilder: (context) => ErrorStateSectionWidget(
+              onRetry: () => context.expenseCubit.pagingController.refresh(),
+              errorMsg: 'No Expense found!',
+            ),
+            firstPageProgressIndicatorBuilder: (_) => const Padding(
+              padding: EdgeInsets.all(16),
+              child: Center(child: CircularProgressIndicator.adaptive()),
+            ),
+            newPageProgressIndicatorBuilder: (_) => const Center(
+              child: Padding(
                 padding: EdgeInsets.all(16),
-                child: Center(child: CircularProgressIndicator.adaptive()),
-              ),
-              newPageProgressIndicatorBuilder: (_) => const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: CircularProgressIndicator.adaptive(),
-                ),
-              ),
-              firstPageErrorIndicatorBuilder: (_) => ErrorStateSectionWidget(
-                errorMsg:
-                    (state.error ?? 'Error while loading expenses!').toString(),
-                onRetry: context.expenseCubit.pagingController.refresh,
-              ),
-              newPageErrorIndicatorBuilder: (_) => ErrorStateSectionWidget(
-                onRetry: () => fetchNextPage,
-                errorMsg:
-                    (state.error ?? 'Error while loading expenses!').toString(),
-              ),
-              noMoreItemsIndicatorBuilder: (_) => const Padding(
-                padding: EdgeInsets.only(top: 32),
-                child: AllCaughtUpWidget(title: 'No more expenses!'),
+                child: CircularProgressIndicator.adaptive(),
               ),
             ),
-            separatorBuilder: (context, index) => const SizedBox(height: 4),
+            firstPageErrorIndicatorBuilder: (_) => ErrorStateSectionWidget(
+              errorMsg: (context.expenseCubit.pagingController.error ??
+                      'Error while loading expenses!')
+                  .toString(),
+              onRetry: context.expenseCubit.pagingController.refresh,
+            ),
+            newPageErrorIndicatorBuilder: (_) => ErrorStateSectionWidget(
+              onRetry: () =>
+                  context.expenseCubit.pagingController.fetchNextPage(),
+              errorMsg: (context.expenseCubit.pagingController.error ??
+                      'Error while loading expenses!')
+                  .toString(),
+            ),
+            noMoreItemsIndicatorBuilder: (_) => const Padding(
+              padding: EdgeInsets.only(top: 32),
+              child: AllCaughtUpWidget(title: 'No more expenses!'),
+            ),
           ),
         ),
       );

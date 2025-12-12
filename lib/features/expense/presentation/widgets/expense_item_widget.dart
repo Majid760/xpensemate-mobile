@@ -113,8 +113,8 @@ class _ExpenseListItemState extends State<ExpenseListItem>
   }
 
   void _startEntranceAnimation() {
-    // Stagger delay based on index - 150ms per item
-    Future.delayed(Duration(milliseconds: 150 * widget.index), () {
+    // Stagger delay based on index - 100ms per item
+    Future.delayed(Duration(milliseconds: 100 * widget.index), () {
       if (mounted) {
         _entranceController.forward();
       }

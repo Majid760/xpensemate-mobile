@@ -79,7 +79,10 @@ class _ExpensePageContentState extends State<ExpensePageContent>
 
   @override
   Widget build(BuildContext context) =>
-      BlocConsumer<ExpenseCubit, ExpenseState>(
+      BlocListener<ExpenseCubit, ExpenseState>(
+        listenWhen: (previous, current) =>
+            previous.message != current.message &&
+            (current.message != null && current.message!.isNotEmpty),
         listener: (context, state) {
           if (state.message != null && state.message!.isNotEmpty) {
             AppSnackBar.show(
@@ -91,7 +94,7 @@ class _ExpensePageContentState extends State<ExpensePageContent>
             );
           }
         },
-        builder: (context, state) => RefreshIndicator(
+        child: RefreshIndicator(
           onRefresh: () async => _loadExpenseData(),
           color: Theme.of(context).primaryColor,
           child: CustomScrollView(
@@ -100,14 +103,22 @@ class _ExpensePageContentState extends State<ExpensePageContent>
               parent: AlwaysScrollableScrollPhysics(),
             ),
             slivers: [
-              CustomAppBar(
-                defaultPeriod: state.filterDefaultValue,
-                onChanged: (value) =>
-                    context.expenseCubit.loadExpenseStats(period: value),
+              BlocSelector<ExpenseCubit, ExpenseState, FilterDefaultValue>(
+                selector: (state) => state.filterDefaultValue,
+                builder: (context, filterDefaultValue) => CustomAppBar(
+                  defaultPeriod: filterDefaultValue,
+                  onChanged: (value) =>
+                      context.expenseCubit.loadExpenseStats(period: value),
+                ),
               ),
-              ExpenseStatsWidget(
-                stats: state.expenseStats,
-                filter: state.filterDefaultValue,
+              BlocBuilder<ExpenseCubit, ExpenseState>(
+                buildWhen: (previous, current) =>
+                    previous.expenseStats != current.expenseStats ||
+                    previous.filterDefaultValue != current.filterDefaultValue,
+                builder: (context, state) => ExpenseStatsWidget(
+                  stats: state.expenseStats,
+                  filter: state.filterDefaultValue,
+                ),
               ),
               SliverPadding(
                 padding: const EdgeInsets.all(16),

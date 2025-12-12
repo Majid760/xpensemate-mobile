@@ -2,13 +2,12 @@ import 'package:awesome_drawer_bar/awesome_drawer_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
-import 'package:xpensemate/core/service/service_locator.dart';
-import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
-import 'package:xpensemate/core/widget/app_image.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
+import 'package:xpensemate/features/dashboard/domain/entities/budget_goals_entity.dart';
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/active_budget_section_widget.dart';
+import 'package:xpensemate/features/dashboard/presentation/widgets/app_bar_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/dashboard_header_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/product_analytics_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/weekly_financial_overview_widget.dart';
@@ -92,13 +91,14 @@ class _DashboardPageState extends State<DashboardPage>
   void _onScroll() {
     // Add a check to ensure the widget is still mounted
     if (!mounted) return;
-    
+
     // Determine which section is currently visible
     var newTitle = context.l10n.dashboard;
 
     // Check each section to see which one is in view
     _sectionKeys.forEach((key, globalKey) {
-      final renderBox = globalKey.currentContext?.findRenderObject() as RenderBox?;
+      final renderBox =
+          globalKey.currentContext?.findRenderObject() as RenderBox?;
       if (renderBox != null && mounted) {
         final position = renderBox.localToGlobal(Offset.zero);
         final size = renderBox.size;
@@ -129,26 +129,24 @@ class _DashboardPageState extends State<DashboardPage>
   }
 
   @override
-  Widget build(BuildContext context) =>
-      BlocConsumer<DashboardCubit, DashboardState>(
-        listener: (context, state) {
-          // Add a mounted check to prevent setState after dispose
-          if (!mounted) return;
-          
-          if (state.state == DashboardStates.error &&
-              state.errorMessage != null) {
-            AppSnackBar.show(
-              context: context,
-              message: state.errorMessage!,
-              type: SnackBarType.error,
-            );
-          }
-        },
-        builder: (context, state) => Scaffold(
-          backgroundColor: context.colorScheme.surface,
-          drawerScrimColor: Colors.transparent,
-          // endDrawer: ,
-          body: RefreshIndicator(
+  Widget build(BuildContext context) => Scaffold(
+        backgroundColor: context.colorScheme.surface,
+        drawerScrimColor: Colors.transparent,
+        body: BlocListener<DashboardCubit, DashboardState>(
+          listenWhen: (previous, current) =>
+              previous.state != current.state ||
+              previous.errorMessage != current.errorMessage,
+          listener: (context, state) {
+            if (state.state == DashboardStates.error &&
+                state.errorMessage != null) {
+              AppSnackBar.show(
+                context: context,
+                message: state.errorMessage!,
+                type: SnackBarType.error,
+              );
+            }
+          },
+          child: RefreshIndicator(
             onRefresh: () async =>
                 context.read<DashboardCubit>().loadDashboardData(),
             color: context.colorScheme.primary,
@@ -157,133 +155,17 @@ class _DashboardPageState extends State<DashboardPage>
               physics: const BouncingScrollPhysics(),
               slivers: [
                 // App Bar with Actions
-                SliverAppBar(
-                  pinned: true,
-                  elevation: 0,
-                  leadingWidth: 70,
-                  leading: Builder(
-                    builder: (BuildContext builderContext) => UnconstrainedBox(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 8),
-                        child: InkWell(
-                          onTap: () {
-                            // Check if widget is still mounted before calling callback
-                            if (mounted) {
-                              widget.onProfileTap?.call();
-                            }
-                          },
-                          child: AppImage.network(
-                            sl.authService.currentUser?.profilePhotoUrl ?? '',
-                            // The height/width here defines how the image fits within the 40x40 container
-                            height: 50, // Use the full parent height/width
-                            width: 50,
-                            border: Border.all(
-                              width: 2,
-                              color: context.colorScheme.primary,
-                            ),
-                            shadows: [
-                              BoxShadow(
-                                color: const Color(0xFF6366F1)
-                                    .withValues(alpha: 0.3),
-                                blurRadius: 9,
-                                offset: const Offset(0, 5),
-                              ),
-                            ],
-                            shape: ImageShape
-                                .circle, // This parameter might not be necessary if ClipOval is used
-                            heroTag: 'profilelDP',
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  // Builder(
-                  //   builder: (BuildContext builderContext) => Padding(
-                  //     padding: const EdgeInsets.only(left: 16),
-                  //     child: InkWell(
-                  //       onTap: () {
-                  //         // 3. Open the drawer programmatically
-                  //         Scaffold.of(builderContext).openDrawer();
-                  //       },
-                  //       child: AppImage.network(
-                  //         sl.authService.currentUser?.profilePhotoUrl ?? '',
-                  //         height: 40,
-                  //         width: 40,
-                  //         shape: ImageShape.circle,
-                  //         heroTag: 'profilelDP',
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                  backgroundColor: context.colorScheme.surface,
-                  automaticallyImplyLeading: false,
-                  toolbarHeight: 60,
-                  actions: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: AppSpacing.md),
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFF6366F1)
-                                  .withValues(alpha: 0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            IconButton(
-                              icon: Icon(
-                                Icons.notifications_outlined,
-                                color: context.colorScheme.onPrimary,
-                                size: 28,
-                              ),
-                              onPressed: () {},
-                            ),
-                            Positioned(
-                              right: 8,
-                              top: 8,
-                              child: Container(
-                                width: 12,
-                                height: 12,
-                                decoration: BoxDecoration(
-                                  color: context.colorScheme.tertiary,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: context.colorScheme.onPrimary,
-                                    width: 2,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: context.colorScheme.tertiary
-                                          .withValues(alpha: 0.5),
-                                      blurRadius: 6,
-                                      spreadRadius: 1,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                AppBarWidget(onProfileTap: widget.onProfileTap),
 
                 // Dashboard Header Widget (Expandable Card)
                 SliverToBoxAdapter(
-                  child: DashboardHeaderWidget(state: state),
+                  child: BlocBuilder<DashboardCubit, DashboardState>(
+                    buildWhen: (previous, current) =>
+                        previous.weeklyStats != current.weeklyStats ||
+                        previous.state != current.state,
+                    builder: (context, state) =>
+                        DashboardHeaderWidget(state: state),
+                  ),
                 ),
 
                 // Rest of the content
@@ -300,36 +182,61 @@ class _DashboardPageState extends State<DashboardPage>
                             // Weekly Financial Overview Section
                             KeyedSubtree(
                               key: _sectionKeys['weeklyFinancialOverview'],
-                              child: WeeklyFinancialOverviewWidget(
-                                state: state,
-                                onRetry: () => context
-                                    .read<DashboardCubit>()
-                                    .loadDashboardData(),
+                              child:
+                                  BlocBuilder<DashboardCubit, DashboardState>(
+                                buildWhen: (previous, current) =>
+                                    previous.weeklyStats !=
+                                        current.weeklyStats ||
+                                    previous.state != current.state ||
+                                    previous.errorMessage !=
+                                        current.errorMessage,
+                                builder: (context, state) =>
+                                    WeeklyFinancialOverviewWidget(
+                                  weeklyStats: state.weeklyStats,
+                                  isLoading:
+                                      state.state == DashboardStates.loading,
+                                  errorMessage:
+                                      state.state == DashboardStates.error
+                                          ? state.errorMessage
+                                          : null,
+                                  onRetry: () => context
+                                      .read<DashboardCubit>()
+                                      .loadDashboardData(),
+                                ),
                               ),
                             ),
 
-                            if (state.state != DashboardStates.error) ...[
-                              SizedBox(height: context.lg),
+                            SizedBox(height: context.lg),
 
-                              // Active Budget Section
-                              if (state.budgetGoals != null)
-                                KeyedSubtree(
-                                  key: _sectionKeys['activeBudgets'],
-                                  child: ActiveBudgetSectionWidget(
-                                    budgetGoals: state.budgetGoals!,
-                                  ),
-                                ),
-                              if (state.budgetGoals != null)
-                                SizedBox(height: context.lg),
-
-                              // Product Analytics Section
-                              KeyedSubtree(
-                                key: _sectionKeys['productAnalytics'],
-                                child: const ProductAnalyticsWidget(),
+                            // Active Budget Section
+                            KeyedSubtree(
+                              key: _sectionKeys['activeBudgets'],
+                              child: BlocSelector<DashboardCubit,
+                                  DashboardState, BudgetGoalsEntity?>(
+                                selector: (state) => state.budgetGoals,
+                                builder: (context, budgetGoals) {
+                                  if (budgetGoals != null) {
+                                    return Column(
+                                      children: [
+                                        ActiveBudgetSectionWidget(
+                                          budgetGoals: budgetGoals,
+                                        ),
+                                        SizedBox(height: context.lg),
+                                      ],
+                                    );
+                                  }
+                                  return const SizedBox.shrink();
+                                },
                               ),
+                            ),
 
-                              SizedBox(height: context.lg),
-                            ],
+                            // Product Analytics Section
+                            KeyedSubtree(
+                              key: _sectionKeys['productAnalytics'],
+                              child: const ProductAnalyticsWidget(),
+                            ),
+
+                            SizedBox(height: context.lg),
 
                             // Additional padding at bottom for better scrolling
                             SizedBox(height: context.xl),
@@ -367,27 +274,11 @@ class _DashboardPageWrapperState extends State<DashboardPageWrapper> {
         duration: const Duration(milliseconds: 400),
         slideWidth: context.screenWidth * 0.90,
         // openCurve:
-        mainScreen: DashboardPage(onProfileTap: () {
-          (_drawerController.toggle as void Function()?)?.call();
-        }
-            // onDrawerChanged: (bool isOpened) {
-            //   print('1234 $isOpened');
-            //   if (isOpened) {
-            //     (_drawerController.open as void Function()?)?.call();
-            //   } else {
-            //     (_drawerController.close as void Function()?)?.call();
-            //   }
-            // },
-            // onEndDrawerChanged: (bool isOpened) {
-            //   print('89789 $isOpened');
-
-            //   if (isOpened) {
-            //     (_drawerController.close as void Function()?)?.call();
-            //   } else {
-            //     (_drawerController.open as void Function()?)?.call();
-            //   }
-            // },
-            ),
+        mainScreen: DashboardPage(
+          onProfileTap: () {
+            (_drawerController.toggle as void Function()?)?.call();
+          },
+        ),
         menuScreen: ProfilePage(
           onBackTap: () =>
               (_drawerController.close as void Function()?)?.call(),

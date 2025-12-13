@@ -68,8 +68,12 @@ class ActiveBudgetSectionWidget extends StatelessWidget {
                 ),
               ),
               SizedBox(height: context.lg),
+
+              SizedBox(height: context.md),
               // Budget List
+
               _BudgetList(budgetGoals: budgetGoals),
+              SizedBox(height: context.md),
             ],
           ),
         ),

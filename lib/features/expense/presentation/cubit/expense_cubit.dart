@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:xpensemate/core/enums.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/budgets_list_entity.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_pagination_entity.dart';
@@ -78,7 +79,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
   }
 
   /// Load expense statistics
-  Future<void> loadExpenseStats({required FilterDefaultValue period}) async {
+  Future<void> loadExpenseStats({required FilterValue period}) async {
     // Only show loading state if we don't have any existing data
     if (state.expenseStats == null) {
       emit(state.copyWith(state: ExpenseStates.loading));
@@ -105,7 +106,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
   }
 
   /// Load all expense data with pagination support
-  Future<void> loadExpenseData({FilterDefaultValue? period}) async {
+  Future<void> loadExpenseData({FilterValue? period}) async {
     emit(state.copyWith(state: ExpenseStates.loading));
 
     try {

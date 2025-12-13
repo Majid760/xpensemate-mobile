@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:xpensemate/core/enums.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/widget/animated_section_header.dart';
 import 'package:xpensemate/core/widget/app_bar_widget.dart';
@@ -103,7 +104,7 @@ class _ExpensePageContentState extends State<ExpensePageContent>
               parent: AlwaysScrollableScrollPhysics(),
             ),
             slivers: [
-              BlocSelector<ExpenseCubit, ExpenseState, FilterDefaultValue>(
+              BlocSelector<ExpenseCubit, ExpenseState, FilterValue>(
                 selector: (state) => state.filterDefaultValue,
                 builder: (context, filterDefaultValue) => CustomAppBar(
                   defaultPeriod: filterDefaultValue,
@@ -191,21 +192,4 @@ void addExpense(BuildContext context) {
       onCancel: () => Navigator.of(context).pop(),
     ),
   );
-}
-
-class MockExpense {
-  MockExpense({
-    required this.title,
-    required this.category,
-    required this.amount,
-    required this.date,
-    required this.icon,
-    required this.color,
-  });
-  final String title;
-  final String category;
-  final double amount;
-  final DateTime date;
-  final IconData icon;
-  final Color color;
 }

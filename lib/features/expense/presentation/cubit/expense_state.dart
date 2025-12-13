@@ -8,13 +8,6 @@ enum ExpenseStates {
   loadingMore, // New state for loading additional pages
 }
 
-enum FilterDefaultValue {
-  weekly,
-  monthly,
-  quarterly,
-  yearly,
-}
-
 class ExpenseState extends Equatable {
   const ExpenseState({
     this.state = ExpenseStates.initial,
@@ -22,7 +15,7 @@ class ExpenseState extends Equatable {
     this.expenseStats,
     this.budgets,
     this.message,
-    this.filterDefaultValue = FilterDefaultValue.monthly,
+    this.filterDefaultValue = FilterValue.monthly,
     this.stackTrace,
   });
 
@@ -31,7 +24,7 @@ class ExpenseState extends Equatable {
   final ExpenseStatsEntity? expenseStats;
   final BudgetsListEntity? budgets;
   final String? message;
-  final FilterDefaultValue filterDefaultValue;
+  final FilterValue filterDefaultValue;
 
   final StackTrace? stackTrace;
 
@@ -41,7 +34,7 @@ class ExpenseState extends Equatable {
     ExpenseStatsEntity? expenseStats,
     BudgetsListEntity? budgets,
     String? message,
-    FilterDefaultValue? filterDefaultValue,
+    FilterValue? filterDefaultValue,
     StackTrace? stackTrace,
     int? currentPage,
     bool? hasReachedMax,

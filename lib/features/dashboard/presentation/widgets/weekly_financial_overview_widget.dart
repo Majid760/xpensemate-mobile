@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/widget/app_button.dart';
 import 'package:xpensemate/core/widget/error_state_widget.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/weekly_stats_entity.dart';
-import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
+
+import 'package:xpensemate/features/dashboard/presentation/widgets/animated_dashboard_content.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/balance_remaining_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/daily_spending_pattern_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/section_header_widget.dart';
@@ -14,55 +16,60 @@ import 'package:xpensemate/features/dashboard/presentation/widgets/weekly_insigh
 class WeeklyFinancialOverviewWidget extends StatelessWidget {
   const WeeklyFinancialOverviewWidget({
     super.key,
-    required this.state,
+    required this.weeklyStats,
+    required this.isLoading,
+    required this.errorMessage,
     required this.onRetry,
   });
 
-  final DashboardState state;
+  final WeeklyStatsEntity? weeklyStats;
+  final bool isLoading;
+  final String? errorMessage;
   final VoidCallback onRetry;
 
   @override
-  Widget build(BuildContext context) => DecoratedBox(
-        decoration: BoxDecoration(
-          color: context.colorScheme.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: context.colorScheme.outline.withValues(alpha: 0.1),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: context.colorScheme.shadow.withValues(alpha: 0.08),
-              blurRadius: 20,
-              offset: const Offset(0, 4),
+  Widget build(BuildContext context) => AnimatedDashboardContent(
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: context.colorScheme.surface,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: context.colorScheme.outline.withValues(alpha: 0.1),
             ),
-          ],
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(context.md),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              SectionHeaderWidget(
-                title: context.l10n.weeklyFinancialOverview,
-                icon: Icons.calendar_today_rounded,
+            boxShadow: [
+              BoxShadow(
+                color: context.colorScheme.shadow.withValues(alpha: 0.08),
+                blurRadius: 20,
+                offset: const Offset(0, 4),
               ),
-              SizedBox(height: context.lg),
-
-              // Content based on state
-              if (state.state == DashboardStates.loading)
-                const _LoadingStateSection()
-              else if (state.state == DashboardStates.error)
-                ErrorStateSectionWidget(
-                  errorMsg: state.errorMessage,
-                  onRetry: onRetry,
-                )
-              else if (state.state == DashboardStates.loaded &&
-                  state.weeklyStats != null)
-                _LoadedContentSection(weeklyStats: state.weeklyStats!)
-              else
-                const _EmptyStateSection(),
             ],
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(context.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                SectionHeaderWidget(
+                  title: context.l10n.weeklyFinancialOverview,
+                  icon: Icons.dashboard,
+                ),
+                SizedBox(height: context.lg),
+
+                // Content based on state
+                if (isLoading)
+                  const _LoadingStateSection()
+                else if (errorMessage != null)
+                  ErrorStateSectionWidget(
+                    errorMsg: errorMessage,
+                    onRetry: onRetry,
+                  )
+                else if (weeklyStats != null)
+                  _LoadedContentSection(weeklyStats: weeklyStats!)
+                else
+                  const _EmptyStateSection(),
+              ],
+            ),
           ),
         ),
       );

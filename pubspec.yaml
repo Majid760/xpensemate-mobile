@@ -73,6 +73,7 @@ dependencies:
   reactive_phone_form_field: ^5.0.2
   fl_chart: ^1.0.0
   infinite_scroll_pagination: ^5.1.1
+  awesome_drawer_bar: ^1.2.1
 
 
 

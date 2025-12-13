@@ -169,7 +169,6 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
 
   void _onFabAction(FabAction action, int index) {
     logI('FAB Action clicked - Index: $index');
-    print('Action of: ${action.label}');
 
     // Navigate to the correct route based on the FAB action
     switch (index) {

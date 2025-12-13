@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:xpensemate/core/enums.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
@@ -11,7 +12,6 @@ import 'package:xpensemate/features/budget/presentation/cubit/budget_state.dart'
 import 'package:xpensemate/features/budget/presentation/pages/budget_form_page.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/budget_goal_list.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/insight_card_section.dart';
-import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
 
 class BudgetPage extends StatelessWidget {
   const BudgetPage({super.key});
@@ -56,8 +56,7 @@ class _BudgetPageContentState extends State<BudgetPageContent>
   void _loadBudgetData() {
     Future.wait([
       context.budgetCubit.refreshBudgetGoals(),
-      context.budgetCubit
-          .getBudgetGoalsInsights(period: FilterDefaultValue.monthly),
+      context.budgetCubit.getBudgetGoalsInsights(period: FilterValue.monthly),
     ]);
   }
 

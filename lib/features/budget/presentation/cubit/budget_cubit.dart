@@ -2,13 +2,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:xpensemate/core/enums.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goals_insight_entity.dart';
 import 'package:xpensemate/features/budget/domain/usecases/get_budget_goals_by_period_usecase.dart';
 import 'package:xpensemate/features/budget/domain/usecases/usecase_export.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_state.dart';
-import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
 
 class BudgetCubit extends Cubit<BudgetState> {
   BudgetCubit(
@@ -19,7 +19,7 @@ class BudgetCubit extends Cubit<BudgetState> {
     this._getBudgetGoalsByPeriodUseCase,
   ) : super(const BudgetState()) {
     // Initialize with insights only
-    getBudgetGoalsInsights(period: FilterDefaultValue.monthly);
+    getBudgetGoalsInsights(period: FilterValue.monthly);
     _pagingController.addListener(_showPaginationError);
   }
 
@@ -236,7 +236,7 @@ class BudgetCubit extends Cubit<BudgetState> {
 
   /// Fetches budget goals insights for analytics/dashboard
   Future<void> getBudgetGoalsInsights({
-    required FilterDefaultValue period,
+    required FilterValue period,
     DateTime? startDate,
     DateTime? endDate,
   }) async {
@@ -285,7 +285,7 @@ class BudgetCubit extends Cubit<BudgetState> {
   Future<void> refreshBudgetGoals() async {
     await Future.wait([
       getBudgetGoals(),
-      getBudgetGoalsInsights(period: FilterDefaultValue.monthly),
+      getBudgetGoalsInsights(period: FilterValue.monthly),
     ]);
   }
 

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:xpensemate/core/enums.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_stats_entity.dart';
-import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
 
 class ExpenseStatsWidget extends StatefulWidget {
   const ExpenseStatsWidget(
       {super.key, required this.stats, required this.filter});
   final ExpenseStatsEntity? stats;
-  final FilterDefaultValue filter;
+  final FilterValue filter;
 
   @override
   State<ExpenseStatsWidget> createState() => _ExpenseStatsWidgetState();

@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
+import 'package:xpensemate/core/enums.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goals_insight_entity.dart';
-import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
 
 enum BudgetStates {
   initial,
@@ -16,7 +16,7 @@ class BudgetState extends Equatable {
     this.state = BudgetStates.initial,
     this.budgetGoals,
     this.budgetGoalsInsight,
-    this.defaultPeriod = FilterDefaultValue.monthly,
+    this.defaultPeriod = FilterValue.monthly,
     this.message,
     this.stackTrace,
   });
@@ -24,7 +24,7 @@ class BudgetState extends Equatable {
   final BudgetStates state;
   final BudgetGoalsListEntity? budgetGoals;
   final BudgetGoalsInsightEntity? budgetGoalsInsight;
-  final FilterDefaultValue defaultPeriod;
+  final FilterValue defaultPeriod;
   final String? message;
   final StackTrace? stackTrace;
 
@@ -32,7 +32,7 @@ class BudgetState extends Equatable {
     BudgetStates? state,
     BudgetGoalsListEntity? budgetGoals,
     BudgetGoalsInsightEntity? budgetGoalsInsight,
-    FilterDefaultValue? defaultPeriod,
+    FilterValue? defaultPeriod,
     String? message,
     StackTrace? stackTrace,
   }) =>

@@ -13,6 +13,7 @@ class PaymentState extends Equatable {
     this.status = PaymentStatus.initial,
     this.payments,
     this.paymentStats,
+    this.filterValue = FilterValue.monthly,
     this.message,
     this.stackTrace,
   });
@@ -22,11 +23,13 @@ class PaymentState extends Equatable {
   final PaymentStatsEntity? paymentStats;
   final String? message;
   final StackTrace? stackTrace;
+  final FilterValue filterValue;
 
   PaymentState copyWith({
     PaymentStatus? status,
     PaymentPaginationEntity? payments,
     PaymentStatsEntity? paymentStats,
+    FilterValue? filterValue,
     String? message,
     StackTrace? stackTrace,
   }) =>
@@ -34,6 +37,7 @@ class PaymentState extends Equatable {
         status: status ?? this.status,
         payments: payments ?? this.payments,
         paymentStats: paymentStats ?? this.paymentStats,
+        filterValue: filterValue ?? this.filterValue,
         message: message ?? this.message,
         stackTrace: stackTrace ?? this.stackTrace,
       );
@@ -43,6 +47,7 @@ class PaymentState extends Equatable {
         status,
         payments,
         paymentStats,
+        filterValue,
         message,
         stackTrace,
       ];

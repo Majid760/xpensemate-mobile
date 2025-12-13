@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:xpensemate/core/enums.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_stats_entity.dart';
 
 class PaymentStatsWidget extends StatefulWidget {
-  const PaymentStatsWidget({super.key, required this.stats});
+  const PaymentStatsWidget(
+      {super.key, required this.stats, required this.defaultPeriod});
   final PaymentStatsEntity? stats;
+  final FilterValue defaultPeriod;
 
   @override
   State<PaymentStatsWidget> createState() => _PaymentStatsWidgetState();
@@ -100,7 +103,7 @@ class _PaymentStatsWidgetState extends State<PaymentStatsWidget>
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                'Payment Insights',
+                                '${widget.defaultPeriod.name.capitalize} Insights',
                                 style: Theme.of(context)
                                     .textTheme
                                     .headlineSmall
@@ -178,7 +181,7 @@ class _QuickStatsRow extends StatelessWidget {
           Expanded(
             child: _QuickStatItem(
               icon: Icons.account_balance_wallet_rounded,
-              value: CurrencyFormatter.format(stats?.walletBalance ?? 0),
+              value: AppUtils.formatLargeNumber(stats?.walletBalance ?? 0),
               label: 'Wallet Balance',
               iconBg: Colors.white.withValues(alpha: 0.2),
             ),
@@ -276,7 +279,7 @@ class _DetailedStatsGrid extends StatelessWidget {
               Expanded(
                 child: _StatsCard(
                   icon: Icons.account_balance_wallet_rounded,
-                  value: CurrencyFormatter.format(stats?.totalAmount ?? 0),
+                  value: AppUtils.formatLargeNumber(stats?.totalAmount ?? 0),
                   label: 'Total Balance',
                   subtitle: 'Wallet Balance',
                 ),
@@ -285,7 +288,7 @@ class _DetailedStatsGrid extends StatelessWidget {
               Expanded(
                 child: _StatsCard(
                   icon: Icons.analytics_rounded,
-                  value: CurrencyFormatter.format(stats?.averagePayment ?? 0),
+                  value: AppUtils.formatLargeNumber(stats?.averagePayment ?? 0),
                   label: 'Average Payment',
                   subtitle: 'Per transaction',
                 ),
@@ -298,8 +301,7 @@ class _DetailedStatsGrid extends StatelessWidget {
               Expanded(
                 child: _StatsCard(
                   icon: Icons.trending_up_rounded,
-                  value:
-                      '+${(stats?.periodGrowth ?? 0).toStringAsFixed(1)}%',
+                  value: '+${(stats?.periodGrowth ?? 0).toStringAsFixed(1)}%',
                   label: 'Growth (Weekly)',
                   subtitle: 'Increase from previous period',
                 ),
@@ -310,7 +312,8 @@ class _DetailedStatsGrid extends StatelessWidget {
                   icon: Icons.person_rounded,
                   value: stats?.topPayer ?? 'N/A',
                   label: 'Top Payer',
-                  subtitle: CurrencyFormatter.format(stats?.topPayerAmount ?? 0),
+                  subtitle:
+                      CurrencyFormatter.format(stats?.topPayerAmount ?? 0),
                 ),
               ),
             ],

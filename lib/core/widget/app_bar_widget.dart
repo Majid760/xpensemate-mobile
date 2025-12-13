@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:xpensemate/core/enums.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
-import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
 
 class CustomAppBar extends StatelessWidget {
   const CustomAppBar({super.key, this.onChanged, required this.defaultPeriod});
-  final ValueChanged<FilterDefaultValue>? onChanged;
-  final FilterDefaultValue defaultPeriod;
+  final ValueChanged<FilterValue>? onChanged;
+  final FilterValue defaultPeriod;
 
   @override
   Widget build(BuildContext context) => SliverAppBar(
@@ -68,8 +68,8 @@ class FilterDropdownSheetView extends StatefulWidget {
     required this.defaultPeriod,
     this.onChanged,
   });
-  final FilterDefaultValue defaultPeriod;
-  final ValueChanged<FilterDefaultValue>? onChanged;
+  final FilterValue defaultPeriod;
+  final ValueChanged<FilterValue>? onChanged;
 
   @override
   State<FilterDropdownSheetView> createState() =>
@@ -81,22 +81,22 @@ class _FilterDropdownSheetViewState extends State<FilterDropdownSheetView> {
 
   List<Map<String, dynamic>> _buildItems(BuildContext context) => [
         {
-          'value': FilterDefaultValue.weekly,
+          'value': FilterValue.weekly,
           'label': context.l10n.weeklyInsights,
           'icon': Icons.view_week_rounded,
         },
         {
-          'value': FilterDefaultValue.monthly,
+          'value': FilterValue.monthly,
           'label': context.l10n.monthlyInsight,
           'icon': Icons.calendar_month_rounded,
         },
         {
-          'value': FilterDefaultValue.quarterly,
+          'value': FilterValue.quarterly,
           'label': context.l10n.quarterInsight,
           'icon': Icons.calendar_view_month_rounded,
         },
         {
-          'value': FilterDefaultValue.yearly,
+          'value': FilterValue.yearly,
           'label': context.l10n.yearlyInsight,
           'icon': Icons.calendar_today_rounded,
         },
@@ -160,7 +160,7 @@ class _FilterDropdownSheetViewState extends State<FilterDropdownSheetView> {
               ),
             ),
             ...items.map((item) {
-              final isSelected = (item['value']! as FilterDefaultValue).name ==
+              final isSelected = (item['value']! as FilterValue).name ==
                   widget.defaultPeriod.name;
               return Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -186,8 +186,7 @@ class _FilterDropdownSheetViewState extends State<FilterDropdownSheetView> {
                     borderRadius: BorderRadius.circular(16),
                     onTap: () {
                       Navigator.pop(context);
-                      widget.onChanged
-                          ?.call(item['value']! as FilterDefaultValue);
+                      widget.onChanged?.call(item['value']! as FilterValue);
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(

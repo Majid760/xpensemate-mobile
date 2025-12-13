@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:xpensemate/core/usecase/usecase.dart';
+import 'package:xpensemate/core/enums.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_entity.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_pagination_entity.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_stats_entity.dart';
@@ -25,6 +25,7 @@ class PaymentCubit extends Cubit<PaymentState> {
     this._getPaymentStatsUseCase,
   ) : super(const PaymentState()) {
     _pagingController.addListener(_showPaginationError);
+    fetchPaymentStats(FilterValue.monthly);
   }
 
   final GetPaymentsUseCase _getPaymentsUseCase;
@@ -73,12 +74,11 @@ class PaymentCubit extends Cubit<PaymentState> {
   }
 
   /// Load all payment data with pagination support
-  Future<void> loadPaymentData() async {
-    emit(state.copyWith(status: PaymentStatus.loading));
-    _pagingController.refresh();
+  Future<void> fetchPaymentStats(FilterValue filterValue) async {
     try {
-      // Load stats
-      final statsResult = await _getPaymentStatsUseCase(const NoParams());
+      final statsResult = await _getPaymentStatsUseCase(
+        GetPaymentsStatsParams(filterQuery: filterValue.name),
+      );
       statsResult.fold(
         (failure) => emit(
           state.copyWith(
@@ -89,6 +89,7 @@ class PaymentCubit extends Cubit<PaymentState> {
         (stats) => emit(
           state.copyWith(
             paymentStats: stats,
+            filterValue: filterValue,
             status: PaymentStatus.loaded,
           ),
         ),

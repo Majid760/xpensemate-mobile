@@ -10,7 +10,9 @@ abstract class PaymentRepository {
     GetPaymentsParams params,
   );
 
-  Future<Either<Failure, PaymentStatsEntity>> getPaymentStats();
+  Future<Either<Failure, PaymentStatsEntity>> getPaymentStats(
+    String? filterQuery,
+  );
 
   Future<Either<Failure, bool>> deletePayment(String paymentId);
 

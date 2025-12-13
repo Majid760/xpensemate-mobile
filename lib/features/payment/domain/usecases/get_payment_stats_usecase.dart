@@ -4,11 +4,21 @@ import 'package:xpensemate/core/usecase/usecase.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_stats_entity.dart';
 import 'package:xpensemate/features/payment/domain/repositories/payment_repository.dart';
 
-class GetPaymentStatsUseCase implements UseCase<PaymentStatsEntity, NoParams> {
+class GetPaymentStatsUseCase
+    implements UseCase<PaymentStatsEntity, GetPaymentsStatsParams> {
   GetPaymentStatsUseCase(this.repository);
   final PaymentRepository repository;
 
   @override
-  Future<Either<Failure, PaymentStatsEntity>> call(NoParams params) =>
-      repository.getPaymentStats();
+  Future<Either<Failure, PaymentStatsEntity>> call(
+    GetPaymentsStatsParams params,
+  ) =>
+      repository.getPaymentStats(params.filterQuery);
+}
+
+class GetPaymentsStatsParams {
+  GetPaymentsStatsParams({
+    this.filterQuery,
+  });
+  String? filterQuery;
 }

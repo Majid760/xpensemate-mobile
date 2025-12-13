@@ -1,25 +1,29 @@
 import 'package:dartz/dartz.dart';
+import 'package:xpensemate/core/enums.dart';
 import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/core/network/network_configs.dart';
 import 'package:xpensemate/core/network/network_contracts.dart';
 import 'package:xpensemate/features/payment/data/models/payment_model.dart';
 import 'package:xpensemate/features/payment/data/models/payment_pagination_model.dart';
+import 'package:xpensemate/features/payment/data/models/payment_stats_model.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_entity.dart';
+import 'package:xpensemate/features/payment/domain/entities/payment_pagination_entity.dart';
+import 'package:xpensemate/features/payment/domain/entities/payment_stats_entity.dart';
 
 sealed class PaymentRemoteDataSource {
   Future<Either<Failure, bool>> createPayment({required PaymentEntity expense});
 
   /// Fetches payments with pagination (matches web app: /payments?page=${page}&limit=${limit})
-  Future<Either<Failure, PaymentPaginationModel>> getPayments({
+  Future<Either<Failure, PaymentPaginationEntity>> getPayments({
     required int page,
     required int limit,
     String? filterQuery,
   });
 
-  // /// Fetches payment statistics
-  // Future<Either<Failure, PaymentStatsModel>> getPaymentStats({
-  //   String? period,
-  // });
+  // // /// Fetches payment statistics
+  Future<Either<Failure, PaymentStatsEntity>> getPaymentStats({
+    String? filterQuery,
+  });
 
   /// Update an payment
   Future<Either<Failure, PaymentEntity>> getSinglePayment(String paymentId);
@@ -49,7 +53,7 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
   }
 
   @override
-  Future<Either<Failure, PaymentPaginationModel>> getPayments({
+  Future<Either<Failure, PaymentPaginationEntity>> getPayments({
     required int page,
     required int limit,
     String? filterQuery,
@@ -87,6 +91,21 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
       '${NetworkConfigs.updatePayment}/${payment.id}',
       data: paymentModel.toJson(),
       fromJson: PaymentModel.fromJson,
+    );
+  }
+
+  @override
+  Future<Either<Failure, PaymentStatsEntity>> getPaymentStats({
+    String? filterQuery,
+  }) {
+    print("this is filterQuery $filterQuery");
+    final queryParams = <String, dynamic>{
+      'period': filterQuery ?? FilterValue.monthly.toString(),
+    };
+    return _networkClient.get(
+      NetworkConfigs.getPaymentStats,
+      query: queryParams,
+      fromJson: PaymentStatsModel.fromJson,
     );
   }
 }

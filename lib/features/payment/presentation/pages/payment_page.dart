@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:xpensemate/core/enums.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/widget/animated_section_header.dart';
 import 'package:xpensemate/core/widget/app_bar_widget.dart';
 import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
-import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_entity.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_stats_entity.dart';
 import 'package:xpensemate/features/payment/presentation/cubit/payment_cubit.dart';
@@ -53,12 +53,12 @@ class _PaymentPageContentState extends State<PaymentPageContent>
     super.dispose();
   }
 
-  void _loadPaymentData() {
-    BlocProvider.of<PaymentCubit>(context).loadPaymentData();
+  void _loadPaymentData(FilterValue filterValue) {
+    BlocProvider.of<PaymentCubit>(context).fetchPaymentStats(filterValue);
+    context.read<PaymentCubit>().pagingController.refresh();
   }
 
   void _editPayment(PaymentEntity entity, BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
     AppBottomSheet.show<void>(
       context: context,
       title: "Edit Payment",
@@ -84,7 +84,8 @@ class _PaymentPageContentState extends State<PaymentPageContent>
   Widget build(BuildContext context) =>
       BlocListener<PaymentCubit, PaymentState>(
         listenWhen: (previous, current) =>
-            previous.message != current.message && current.message != null,
+            (previous.message != current.message && current.message != null) ||
+            (previous != current),
         listener: (context, state) {
           if (state.message != null && state.message!.isNotEmpty) {
             AppSnackBar.show(
@@ -97,7 +98,7 @@ class _PaymentPageContentState extends State<PaymentPageContent>
           }
         },
         child: RefreshIndicator(
-          onRefresh: () async => _loadPaymentData(),
+          onRefresh: () async => _loadPaymentData(FilterValue.monthly),
           color: Theme.of(context).primaryColor,
           child: CustomScrollView(
             controller: _scrollController,
@@ -105,14 +106,19 @@ class _PaymentPageContentState extends State<PaymentPageContent>
               parent: AlwaysScrollableScrollPhysics(),
             ),
             slivers: [
-              const CustomAppBar(
-                defaultPeriod:
-                    FilterDefaultValue.monthly, // Default value for now
+              BlocSelector<PaymentCubit, PaymentState, FilterValue>(
+                selector: (state) => state.filterValue,
+                builder: (context, filterValue) => CustomAppBar(
+                  defaultPeriod: filterValue,
+                  onChanged: (value) =>
+                      context.paymentCubit.fetchPaymentStats(value),
+                ),
               ),
-              BlocSelector<PaymentCubit, PaymentState, PaymentStatsEntity?>(
-                selector: (state) => state.paymentStats,
-                builder: (context, paymentStats) =>
-                    PaymentStatsWidget(stats: paymentStats),
+              BlocBuilder<PaymentCubit, PaymentState>(
+                builder: (context, state) => PaymentStatsWidget(
+                  stats: state.paymentStats,
+                  defaultPeriod: state.filterValue,
+                ),
               ),
               SliverPadding(
                 padding: const EdgeInsets.all(16),
@@ -156,30 +162,6 @@ class _PaymentPageContentState extends State<PaymentPageContent>
           ),
         ),
       );
-}
-
-void _addPayment(BuildContext context) {
-  final screenHeight = MediaQuery.of(context).size.height;
-  AppBottomSheet.show<void>(
-    context: context,
-    title: 'Add Payment',
-    config: BottomSheetConfig(
-      minHeight: screenHeight * 0.8,
-      maxHeight: screenHeight * 0.95,
-      padding: EdgeInsets.zero,
-      blurSigma: 5,
-      barrierColor: Colors.transparent,
-    ),
-    child: PaymentFormWidget(
-      onSave: (payment) async {
-        await context.paymentCubit.createPayment(payment: payment);
-        if (context.mounted) {
-          Navigator.of(context).pop();
-        }
-      },
-      onCancel: () => Navigator.of(context).pop(),
-    ),
-  );
 }
 
 void addPayment(BuildContext context) {

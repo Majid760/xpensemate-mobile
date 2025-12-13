@@ -20,35 +20,7 @@ class PaymentPage extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: const PaymentPageBody(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => _addPayment(context),
-          child: const Icon(Icons.add),
-        ),
       );
-
-  void _addPayment(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    AppBottomSheet.show<void>(
-      context: context,
-      title: 'Add Payment',
-      config: BottomSheetConfig(
-        minHeight: screenHeight * 0.8,
-        maxHeight: screenHeight * 0.95,
-        padding: EdgeInsets.zero,
-        blurSigma: 5,
-        barrierColor: Colors.transparent,
-      ),
-      child: PaymentFormWidget(
-        onSave: (payment) async {
-          await context.paymentCubit.createPayment(payment: payment);
-          if (context.mounted) {
-            Navigator.of(context).pop();
-          }
-        },
-        onCancel: () => Navigator.of(context).pop(),
-      ),
-    );
-  }
 }
 
 class PaymentPageBody extends StatelessWidget {
@@ -90,9 +62,7 @@ class _PaymentPageContentState extends State<PaymentPageContent>
     AppBottomSheet.show<void>(
       context: context,
       title: "Edit Payment",
-      config: BottomSheetConfig(
-        minHeight: screenHeight * 0.8,
-        maxHeight: screenHeight * 0.95,
+      config: const BottomSheetConfig(
         padding: EdgeInsets.zero,
         blurSigma: 5,
         barrierColor: Colors.transparent,
@@ -186,4 +156,52 @@ class _PaymentPageContentState extends State<PaymentPageContent>
           ),
         ),
       );
+}
+
+void _addPayment(BuildContext context) {
+  final screenHeight = MediaQuery.of(context).size.height;
+  AppBottomSheet.show<void>(
+    context: context,
+    title: 'Add Payment',
+    config: BottomSheetConfig(
+      minHeight: screenHeight * 0.8,
+      maxHeight: screenHeight * 0.95,
+      padding: EdgeInsets.zero,
+      blurSigma: 5,
+      barrierColor: Colors.transparent,
+    ),
+    child: PaymentFormWidget(
+      onSave: (payment) async {
+        await context.paymentCubit.createPayment(payment: payment);
+        if (context.mounted) {
+          Navigator.of(context).pop();
+        }
+      },
+      onCancel: () => Navigator.of(context).pop(),
+    ),
+  );
+}
+
+void addPayment(BuildContext context) {
+  final screenHeight = MediaQuery.of(context).size.height;
+  AppBottomSheet.show<void>(
+    context: context,
+    title: 'Add Payment',
+    config: BottomSheetConfig(
+      minHeight: screenHeight * 0.8,
+      maxHeight: screenHeight * 0.95,
+      padding: EdgeInsets.zero,
+      blurSigma: 5,
+      barrierColor: Colors.transparent,
+    ),
+    child: PaymentFormWidget(
+      onSave: (payment) async {
+        await context.paymentCubit.createPayment(payment: payment);
+        if (context.mounted) {
+          Navigator.of(context).pop();
+        }
+      },
+      onCancel: () => Navigator.of(context).pop(),
+    ),
+  );
 }

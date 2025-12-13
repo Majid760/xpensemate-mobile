@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:xpensemate/core/widget/error_state_widget.dart';
+import 'package:xpensemate/features/budget/presentation/widgets/no_more_widget.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_entity.dart';
 import 'package:xpensemate/features/payment/presentation/cubit/payment_cubit.dart';
 import 'package:xpensemate/features/payment/presentation/widgets/payment_item_widget.dart';
@@ -71,6 +72,10 @@ class _PaymentListWidgetState extends State<PaymentListWidget> {
               onRetry: () => fetchNextPage,
               errorMsg: (pagingState.error ?? 'Error while loading payments!')
                   .toString(),
+            ),
+            noMoreItemsIndicatorBuilder: (_) => const Padding(
+              padding: EdgeInsets.only(top: 32),
+              child: AllCaughtUpWidget(title: 'No more payments!'),
             ),
           ),
           separatorBuilder: (context, index) => const SizedBox(height: 8),

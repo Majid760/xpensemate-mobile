@@ -9,7 +9,7 @@ class NetworkConfigs {
   static String get baseUrl => switch (_env) {
         'prod' => 'http://192.168.15.148:5001/api/v1',
         'stg' => 'http://192.168.15.148:5001/api/v1',
-        _ => 'http://192.168.0.105:5001/api/v1', // dev
+        _ => 'http://192.168.0.104:5001/api/v1', // dev
       };
 
   // ------------------------------------------------------------------
@@ -95,6 +95,7 @@ class NetworkConfigs {
   static const String getSinglePayment = '/payment/:id';
   static const String updatePayment = '/payment';
   static const String deletePayment = '/payment/:id';
+  static const String getPaymentStats = '/payments/stats';
 
   // ------------------------------------------------------------------
   //  Static Pages URLs

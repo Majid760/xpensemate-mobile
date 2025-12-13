@@ -49,6 +49,7 @@ import 'package:xpensemate/features/payment/data/repositories/payment_repository
 import 'package:xpensemate/features/payment/domain/repositories/payment_repository.dart';
 import 'package:xpensemate/features/payment/domain/usecases/create_payment_usecase.dart';
 import 'package:xpensemate/features/payment/domain/usecases/delete_payment_usecase.dart';
+import 'package:xpensemate/features/payment/domain/usecases/get_payment_stats_usecase.dart';
 import 'package:xpensemate/features/payment/domain/usecases/get_payments_usecase.dart';
 import 'package:xpensemate/features/payment/domain/usecases/get_single_payment_usecase.dart';
 import 'package:xpensemate/features/payment/domain/usecases/update_payment_usecase.dart';
@@ -205,6 +206,7 @@ Future<void> initLocator() async {
 
     // payment use cases
     sl.registerLazySingleton(() => CreatePaymentUseCase(sl()));
+    sl.registerLazySingleton(() => GetPaymentStatsUseCase(sl()));
     sl.registerLazySingleton(() => GetPaymentsUseCase(sl()));
     sl.registerLazySingleton(() => UpdatePaymentUseCase(sl()));
     sl.registerLazySingleton(() => DeletePaymentUseCase(sl()));
@@ -218,7 +220,7 @@ Future<void> initLocator() async {
     sl.registerFactory(() => ExpenseCubit(sl(), sl(), sl(), sl(), sl(), sl()));
     sl.registerFactory(() => BudgetCubit(sl(), sl(), sl(), sl(), sl()));
     sl.registerFactory(() => BudgetExpensesCubit(sl()));
-    sl.registerFactory(() => PaymentCubit(sl(), sl(), sl(), sl()));
+    sl.registerFactory(() => PaymentCubit(sl(), sl(), sl(), sl(), sl()));
 
     AppLogger.i('Service locator initialized successfully');
   } on Exception catch (e) {

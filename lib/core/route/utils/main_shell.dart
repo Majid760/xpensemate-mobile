@@ -89,7 +89,6 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
   void _onFabTap() {
     // If custom action is provided, use it instead of default behavior
     if (widget.customFabAction != null) {
-      print('Custom FAB action triggered');
       // find out which action to trigger based on current route
       if (GoRouterState.of(context)
           .matchedLocation
@@ -99,8 +98,12 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
       } else if (GoRouterState.of(context)
           .matchedLocation
           .startsWith('/home/budget')) {
-        print('Custom FAB action for budget triggered');
         widget.customFabAction!(3);
+        return;
+      } else if (GoRouterState.of(context)
+          .matchedLocation
+          .startsWith('/home/payment')) {
+        widget.customFabAction!(4);
         return;
       }
       widget.customFabAction!(0);

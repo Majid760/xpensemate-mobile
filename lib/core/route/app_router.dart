@@ -12,6 +12,7 @@ import 'package:xpensemate/core/route/utils/router_middleware_guard.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/budget_goal_list.dart';
 import 'package:xpensemate/features/expense/presentation/pages/expense_page.dart';
+import 'package:xpensemate/features/payment/presentation/pages/payment_page.dart';
 
 class AppRouter {
   AppRouter(this._authCubit, this._routeGuards);
@@ -46,14 +47,13 @@ class AppRouter {
             } else if (index == 3) {
               addBudget(context);
             } else if (index == 4) {
-              // addPayment(context);
+              addPayment(context);
             }
           },
         ),
         routes: [
           ...HomeRoutes.routes,
           ...ProfileRoutes.routes,
-          
         ],
       ),
     ],

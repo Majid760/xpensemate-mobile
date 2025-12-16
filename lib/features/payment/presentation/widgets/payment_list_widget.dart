@@ -4,7 +4,7 @@ import 'package:xpensemate/core/widget/error_state_widget.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/no_more_widget.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_entity.dart';
 import 'package:xpensemate/features/payment/presentation/cubit/payment_cubit.dart';
-import 'package:xpensemate/features/payment/presentation/widgets/payment_item_widget.dart';
+import 'package:xpensemate/features/payment/presentation/widgets/payment_card_widget.dart';
 
 class PaymentListWidget extends StatefulWidget {
   const PaymentListWidget({
@@ -78,7 +78,7 @@ class _PaymentListWidgetState extends State<PaymentListWidget> {
               child: AllCaughtUpWidget(title: 'No more payments!'),
             ),
           ),
-          separatorBuilder: (context, index) => const SizedBox(height: 8),
+          separatorBuilder: (context, index) => const SizedBox(height: 4),
         ),
       );
 }

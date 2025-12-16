@@ -83,6 +83,7 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
               transitionDuration: const Duration(milliseconds: 400),
               itemBuilder: (context, budgetGoal, index) => BudgetGoalCard(
                 budgetGoal: budgetGoal,
+                index: index,
                 onEdit: (goal) {
                   _editBudget(goal, context);
                 },

@@ -48,7 +48,7 @@ class AppUtils {
 
     if (lastTime == null || now.difference(lastTime) >= delay) {
       _lastExecuted[key] = now;
-      callback();
+      // callback();b nm,. mncbn,k
     }
   }
 

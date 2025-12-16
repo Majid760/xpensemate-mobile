@@ -108,6 +108,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
   /// Load all expense data with pagination support
   Future<void> loadExpenseData({FilterValue? period}) async {
     emit(state.copyWith(state: ExpenseStates.loading));
+    _pagingController.refresh();
 
     try {
       // Load all data concurrently for better performance

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_constant.dart';
@@ -44,6 +45,7 @@ class _ExpandableStatsCardState extends State<ExpandableStatsCard>
   }
 
   void _toggleExpanded() {
+    HapticFeedback.lightImpact();
     setState(() {
       isExpanded = !isExpanded;
       if (isExpanded) {

@@ -134,7 +134,7 @@ class _PaymentPageContentState extends State<PaymentPageContent>
                       if (value.trim().isEmpty) return;
                       AppUtils.debounce(
                         () => context.paymentCubit.updateSearchTerm(value),
-                        delay: const Duration(milliseconds: 700),
+                        delay: const Duration(milliseconds: 800),
                       );
                     },
                     onSearchCleared: () =>

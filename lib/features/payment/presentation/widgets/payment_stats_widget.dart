@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:xpensemate/core/enums.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
@@ -40,6 +41,7 @@ class _PaymentStatsWidgetState extends State<PaymentStatsWidget>
   }
 
   void _toggleExpanded() {
+    HapticFeedback.lightImpact();
     setState(() {
       isExpanded = !isExpanded;
       if (isExpanded) {

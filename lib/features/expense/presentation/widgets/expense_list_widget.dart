@@ -4,7 +4,7 @@ import 'package:xpensemate/core/widget/error_state_widget.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/no_more_widget.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
 import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
-import 'package:xpensemate/features/expense/presentation/widgets/expense_item_widget.dart';
+import 'package:xpensemate/features/expense/presentation/widgets/expense_card_widget.dart';
 
 class ExpenseListWidget extends StatefulWidget {
   const ExpenseListWidget({
@@ -35,7 +35,7 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget> {
             transitionDuration: const Duration(milliseconds: 400),
             itemBuilder: (context, expense, index) => Padding(
               padding: const EdgeInsets.only(bottom: 4),
-              child: ExpenseListItem(
+              child: ExpenseCardWidget(
                 expense: expense,
                 onDelete: widget.onDelete,
                 onEdit: widget.onEdit,

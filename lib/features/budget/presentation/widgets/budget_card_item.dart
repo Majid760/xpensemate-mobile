@@ -1,10 +1,12 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_constant.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/widget/animated_card_widget.dart';
 import 'package:xpensemate/core/widget/app_custom_dialog.dart';
 import 'package:xpensemate/core/widget/app_dismissible_widget.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
@@ -18,6 +20,7 @@ class BudgetGoalCard extends StatefulWidget {
     this.onStatusChange,
     this.onEdit,
     this.onDelete,
+    required this.index,
     this.onSelect,
   });
 
@@ -26,14 +29,14 @@ class BudgetGoalCard extends StatefulWidget {
   final void Function(BudgetGoalEntity)? onEdit;
   final void Function(String id)? onDelete;
   final void Function(String id)? onSelect;
+  final int index;
 
   @override
   State<BudgetGoalCard> createState() => _BudgetGoalCardState();
 }
 
-class _BudgetGoalCardState extends State<BudgetGoalCard> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
+class _BudgetGoalCardState extends State<BudgetGoalCard>
+    with SingleTickerProviderStateMixin {
   late String _status;
   late BudgetGoalEntity _budgetGoal;
 
@@ -42,13 +45,6 @@ class _BudgetGoalCardState extends State<BudgetGoalCard> with SingleTickerProvid
     super.initState();
     _budgetGoal = widget.budgetGoal;
     _status = _budgetGoal.status;
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 150),
-      vsync: this,
-    );
-    _scaleAnimation = Tween<double>(begin: 1, end: 0.97).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
   }
 
   void _updateStatus(
@@ -69,18 +65,10 @@ class _BudgetGoalCardState extends State<BudgetGoalCard> with SingleTickerProvid
 
   void _updateBudgetGoal(BudgetGoalEntity goal) {
     widget.onEdit?.call(widget.budgetGoal);
-    // call the cubit function or drigger the the bottomsheet
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 
   Future<bool?> _showDeleteConfirmation(BuildContext context) async {
     bool? confirmResult;
-
     await AppCustomDialogs.showDelete(
       context: context,
       title: context.l10n.delete,
@@ -98,39 +86,38 @@ class _BudgetGoalCardState extends State<BudgetGoalCard> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-    final progress = _budgetGoal.amount > 0 ? math.min(_budgetGoal.currentSpending / _budgetGoal.amount, 1.0) : 0.0;
+    final progress = _budgetGoal.amount > 0
+        ? math.min(_budgetGoal.currentSpending / _budgetGoal.amount, 1.0)
+        : 0.0;
     final remaining = _budgetGoal.amount - _budgetGoal.currentSpending;
     final isCompleted = progress >= 1.0;
 
-    return AppDismissible(
-      objectKey: 'budget_${_budgetGoal.id}',
-      onDeleteConfirm: () async {
-        final result = await _showDeleteConfirmation(context);
-        if (result ?? false) {
-          _handleDelete();
-        }
-        return result ?? false;
-      },
-      onEdit: () => _updateBudgetGoal(widget.budgetGoal),
-      child: GestureDetector(
-        onTapDown: (_) => _controller.forward(),
-        onTapUp: (_) => _controller.reverse(),
-        onTapCancel: () => _controller.reverse(),
-        onTap: () {},
-        child: ScaleTransition(
-          scale: _scaleAnimation,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: context.colorScheme.surface,
-              borderRadius: BorderRadius.circular(ThemeConstants.radiusXLarge),
-              boxShadow: [
-                BoxShadow(
-                  color: context.colorScheme.shadow.withValues(alpha: 0.06),
-                  blurRadius: 20,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+    return AnimatedCardWidget(
+      index: widget.index,
+      child: AppDismissible(
+        objectKey: 'budget_${_budgetGoal.id}',
+        onDeleteConfirm: () async {
+          final result = await _showDeleteConfirmation(context);
+          if (result ?? false) {
+            _handleDelete();
+          }
+          return result ?? false;
+        },
+        onEdit: () => _updateBudgetGoal(widget.budgetGoal),
+        child: Card(
+          elevation: 2,
+          color: Theme.of(context).cardColor,
+          shadowColor: Theme.of(context).shadowColor.withValues(alpha: .1),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(
+              color: Theme.of(context).dividerColor.withValues(alpha: .1),
             ),
+          ),
+          child: InkWell(
+            onTap: () => HapticFeedback.lightImpact,
+            onTapDown: (_) => HapticFeedback.selectionClick(),
+            borderRadius: BorderRadius.circular(16),
             child: Column(
               children: [
                 TopSection(
@@ -153,7 +140,8 @@ class _BudgetGoalCardState extends State<BudgetGoalCard> with SingleTickerProvid
                   isOverdue: false,
                   status: _status,
                   categoryColor: context.primaryColor,
-                  onStatusChange: (String value) => _updateStatus(value, _budgetGoal, context),
+                  onStatusChange: (String value) =>
+                      _updateStatus(value, _budgetGoal, context),
                 ),
               ],
             ),
@@ -252,7 +240,8 @@ class TopHeader extends StatelessWidget {
             child: TitleCategory(title: title, category: category),
           ),
           SizedBox(width: context.sm),
-          MenuButton(budgetGoalEntity: budgetGoalEntity, onSelected: onSelected),
+          MenuButton(
+              budgetGoalEntity: budgetGoalEntity, onSelected: onSelected),
         ],
       );
 }
@@ -319,7 +308,8 @@ class StatusIcon extends StatelessWidget {
 
 // Menu Button Widget
 class MenuButton extends StatelessWidget {
-  const MenuButton({super.key, required this.budgetGoalEntity, this.onSelected});
+  const MenuButton(
+      {super.key, required this.budgetGoalEntity, this.onSelected});
   final BudgetGoalEntity budgetGoalEntity;
   final void Function(String)? onSelected;
 
@@ -354,12 +344,14 @@ class MenuButton extends StatelessWidget {
             ),
             MenuItemWidget(
               icon: Icons.share_outlined,
-              text: context.l10n.share, // Using hardcoded string as no localization available
+              text: context.l10n
+                  .share, // Using hardcoded string as no localization available
               value: 'share',
             ),
             MenuItemWidget(
               icon: Icons.archive_outlined,
-              text: context.l10n.archive, // Using hardcoded string as no localization available
+              text: context.l10n
+                  .archive, // Using hardcoded string as no localization available
               value: 'archive',
             ),
             const PopupMenuDivider(),
@@ -409,13 +401,17 @@ class _MenuItemContent extends StatelessWidget {
           Icon(
             icon,
             size: 20,
-            color: isDestructive ? context.colorScheme.error : context.colorScheme.onSurfaceVariant,
+            color: isDestructive
+                ? context.colorScheme.error
+                : context.colorScheme.onSurfaceVariant,
           ),
           SizedBox(width: context.sm),
           Text(
             text,
             style: context.textTheme.bodyMedium?.copyWith(
-              color: isDestructive ? context.colorScheme.error : context.colorScheme.onSurface,
+              color: isDestructive
+                  ? context.colorScheme.error
+                  : context.colorScheme.onSurface,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -469,7 +465,9 @@ class AmountDisplay extends StatelessWidget {
         return 'Due today'; // Using hardcoded string as no localization available
       } else {
         final absDiff = diffDays.abs();
-        final dayText = absDiff > 1 ? 'days' : 'day'; // Using hardcoded string as no localization available
+        final dayText = absDiff > 1
+            ? 'days'
+            : 'day'; // Using hardcoded string as no localization available
         return 'Overdue by $absDiff $dayText'; // Using hardcoded string as no localization available
       }
     } on Exception catch (_) {
@@ -720,22 +718,26 @@ class _ProgressSectionState extends State<ProgressSection> {
                     itemBuilder: (context) => [
                       MenuItemWidget(
                         icon: Icons.local_activity,
-                        text: 'Active', // Using hardcoded string as no localization available
+                        text:
+                            'Active', // Using hardcoded string as no localization available
                         value: 'active',
                       ),
                       MenuItemWidget(
                         icon: Icons.star,
-                        text: 'Achieved', // Using hardcoded string as no localization available
+                        text:
+                            'Achieved', // Using hardcoded string as no localization available
                         value: 'achieved',
                       ),
                       MenuItemWidget(
                         icon: Icons.sms_failed,
-                        text: 'Failed', // Using hardcoded string as no localization available
+                        text:
+                            'Failed', // Using hardcoded string as no localization available
                         value: 'failed',
                       ),
                       MenuItemWidget(
                         icon: Icons.terminal,
-                        text: 'Terminated', // Using hardcoded string as no localization available
+                        text:
+                            'Terminated', // Using hardcoded string as no localization available
                         value: 'terminated',
                         // isDestructive: true,
                       ),

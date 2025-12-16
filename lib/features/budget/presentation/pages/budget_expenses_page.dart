@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
@@ -20,7 +21,8 @@ class ExpenseScreen extends StatefulWidget {
   State<ExpenseScreen> createState() => _ExpenseScreenState();
 }
 
-class _ExpenseScreenState extends State<ExpenseScreen> with SingleTickerProviderStateMixin {
+class _ExpenseScreenState extends State<ExpenseScreen>
+    with SingleTickerProviderStateMixin {
   bool _isHeaderExpanded = false;
   late AnimationController _animationController;
   late Animation<double> _expandAnimation;
@@ -38,7 +40,8 @@ class _ExpenseScreenState extends State<ExpenseScreen> with SingleTickerProvider
     );
 
     if (context.mounted) {
-      context.budgetExpensesCubit.getBudgetSpecificExpenses(widget.budgetGoal.id);
+      context.budgetExpensesCubit
+          .getBudgetSpecificExpenses(widget.budgetGoal.id);
     }
   }
 
@@ -49,6 +52,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> with SingleTickerProvider
   }
 
   void _toggleHeaderExpansion() {
+    HapticFeedback.lightImpact();
     setState(() {
       _isHeaderExpanded = !_isHeaderExpanded;
       if (_isHeaderExpanded) {
@@ -81,9 +85,11 @@ class _ExpenseScreenState extends State<ExpenseScreen> with SingleTickerProvider
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ErrorStateSectionWidget(
-                      errorMsg: '${context.l10n.errorGeneric}: ${state.message}',
+                      errorMsg:
+                          '${context.l10n.errorGeneric}: ${state.message}',
                       onRetry: () {
-                        context.budgetExpensesCubit.getBudgetSpecificExpenses(widget.budgetGoal.id);
+                        context.budgetExpensesCubit
+                            .getBudgetSpecificExpenses(widget.budgetGoal.id);
                       },
                     ),
                   ],
@@ -104,7 +110,8 @@ class _ExpenseScreenState extends State<ExpenseScreen> with SingleTickerProvider
                   child: Builder(
                     builder: (context) {
                       // Calculate stats based on original unfiltered expenses
-                      final originalExpensesTotal = originalExpenses.fold<double>(
+                      final originalExpensesTotal =
+                          originalExpenses.fold<double>(
                         0,
                         (sum, expense) => sum + expense.amount,
                       );
@@ -116,10 +123,13 @@ class _ExpenseScreenState extends State<ExpenseScreen> with SingleTickerProvider
                         category: '${budgetGoal.name} ${context.l10n.expenses}',
                         budgetGoal: budgetGoal.name,
                         totalSpent: originalExpensesTotal,
-                        average: originalExpenses.isNotEmpty ? originalExpensesTotal / originalExpenses.length : 0,
+                        average: originalExpenses.isNotEmpty
+                            ? originalExpensesTotal / originalExpenses.length
+                            : 0,
                         transactions: originalExpenses.length,
                         budgetAmount: budgetGoal.amount, // New parameter
-                        remaining: budgetGoal.amount - originalExpensesTotal, // New parameter
+                        remaining: budgetGoal.amount -
+                            originalExpensesTotal, // New parameter
                       );
                     },
                   ),
@@ -133,7 +143,8 @@ class _ExpenseScreenState extends State<ExpenseScreen> with SingleTickerProvider
                   pinned: true,
                   delegate: ExpandableSearchBarDelegate(
                     minHeight: 100,
-                    maxHeight: 100, // Increased height to accommodate filter content
+                    maxHeight:
+                        100, // Increased height to accommodate filter content
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: const SearchAndFilterBar(),
@@ -190,7 +201,8 @@ class _ExpenseScreenState extends State<ExpenseScreen> with SingleTickerProvider
                   ),
 
                 // Show message when no expenses match the filter
-                if (expenses.isEmpty && (state.originalBudgetGoals?.expenses ?? []).isNotEmpty)
+                if (expenses.isEmpty &&
+                    (state.originalBudgetGoals?.expenses ?? []).isNotEmpty)
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.all(AppSpacing.md),
@@ -229,7 +241,8 @@ class _ExpenseScreenState extends State<ExpenseScreen> with SingleTickerProvider
                   const SliverToBoxAdapter(
                     child: Padding(
                       padding: EdgeInsets.all(AppSpacing.md),
-                      child: Center(child: CircularProgressIndicator.adaptive()),
+                      child:
+                          Center(child: CircularProgressIndicator.adaptive()),
                     ),
                   ),
 
@@ -291,7 +304,8 @@ class AnimatedWidget extends StatefulWidget {
   State<AnimatedWidget> createState() => _AnimatedWidgetState();
 }
 
-class _AnimatedWidgetState extends State<AnimatedWidget> with SingleTickerProviderStateMixin {
+class _AnimatedWidgetState extends State<AnimatedWidget>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -400,9 +414,12 @@ class BudgetProgressBar extends StatelessWidget {
                 spacing: AppSpacing.sm,
                 runSpacing: 8,
                 children: [
-                  _BudgetLabel(context.l10n.budget, budget, colorScheme.onSurfaceVariant),
-                  _BudgetLabel(context.l10n.spent, spent, colorScheme.onSurfaceVariant),
-                  _BudgetLabel(context.l10n.remaining, remaining, context.primaryColor),
+                  _BudgetLabel(context.l10n.budget, budget,
+                      colorScheme.onSurfaceVariant),
+                  _BudgetLabel(
+                      context.l10n.spent, spent, colorScheme.onSurfaceVariant),
+                  _BudgetLabel(
+                      context.l10n.remaining, remaining, context.primaryColor),
                 ],
               ),
             ],

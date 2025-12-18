@@ -95,6 +95,7 @@ class WeeklyStatsModel extends WeeklyStatsEntity {
     try {
       // Check if this is a wrapped response (with type, title, message, data)
       // or a direct response
+
       Map<String, dynamic> actualData;
       if (json.containsKey('data') && json.containsKey('type')) {
         // This is a wrapped response, extract the actual data
@@ -114,18 +115,18 @@ class WeeklyStatsModel extends WeeklyStatsEntity {
         dailyBreakdown: (actualData['dailyBreakdown'] as List? ?? [])
             .map((e) => DailyStatsModel.fromJson(e as Map<String, dynamic>))
             .toList(),
-        weekTotal: (actualData['weekTotal'] as num?)?.toDouble() ?? 0.0,
+        weekTotal: (actualData['periodTotal'] as num?)?.toDouble() ?? 0.0,
         balanceLeft: (actualData['balanceLeft'] as num?)?.toDouble() ?? 0.0,
-        weeklyBudget: (actualData['weeklyBudget'] as num?)?.toDouble() ?? 0.0,
+        weeklyBudget: (actualData['periodBudget'] as num?)?.toDouble() ?? 0.0,
         dailyAverage: (actualData['dailyAverage'] as num?)?.toDouble() ?? 0.0,
         highestDay: actualData['highestDay'] != null
             ? DayStatsModel.fromJson(
                 actualData['highestDay'] as Map<String, dynamic>)
-            : const DayStatsModel(date: '', total: 0.0),
+            : const DayStatsModel(date: '', total: 0),
         lowestDay: actualData['lowestDay'] != null
             ? DayStatsModel.fromJson(
                 actualData['lowestDay'] as Map<String, dynamic>)
-            : const DayStatsModel(date: '', total: 0.0),
+            : const DayStatsModel(date: '', total: 0),
       );
     } catch (e) {
       AppLogger.e(
@@ -162,9 +163,9 @@ class WeeklyStatsModel extends WeeklyStatsEntity {
         'days': days.map((e) => (e as DailyStatsModel).toJson()).toList(),
         'dailyBreakdown':
             dailyBreakdown.map((e) => (e as DailyStatsModel).toJson()).toList(),
-        'weekTotal': weekTotal,
+        'periodTotal': weekTotal,
         'balanceLeft': balanceLeft,
-        'weeklyBudget': weeklyBudget,
+        'periodBudget': weeklyBudget,
         'dailyAverage': dailyAverage,
         'highestDay': (highestDay as DayStatsModel).toJson(),
         'lowestDay': (lowestDay as DayStatsModel).toJson(),

@@ -4,6 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:xpensemate/core/route/utils/router_extension.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
+import 'package:xpensemate/features/budget/presentation/pages/budget_page.dart';
+
+import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
+import 'package:xpensemate/features/expense/presentation/pages/expense_page.dart';
+import 'package:xpensemate/features/payment/presentation/pages/payment_page.dart';
 
 // Define a typedef for the custom FAB action
 typedef FabActionCallback = void Function(int index);
@@ -88,6 +93,13 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
 
   void _onFabTap() {
     // If custom action is provided, use it instead of default behavior
+    final currentIndex = _calculateSelectedIndex(context);
+
+    // If we're on dashboard (index 0), always show the arc menu
+    if (currentIndex == 0) {
+      _toggleFab();
+      return;
+    }
     if (widget.customFabAction != null) {
       // find out which action to trigger based on current route
       if (GoRouterState.of(context)
@@ -106,8 +118,8 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
         widget.customFabAction!(4);
         return;
       }
-      widget.customFabAction!(0);
-      return;
+      // widget.customFabAction!(0);
+      // return;
     }
 
     // Default behavior - toggle FAB
@@ -158,28 +170,62 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
   }
 
   void _toggleFab() {
-    // Only toggle if no custom action is provided
-    if (widget.customFabAction == null) {
-      setState(() => _isFabExpanded = !_isFabExpanded);
-      _isFabExpanded
-          ? _fabAnimationController.forward()
-          : _fabAnimationController.reverse();
-    }
+    setState(() => _isFabExpanded = !_isFabExpanded);
+    _isFabExpanded
+        ? _fabAnimationController.forward()
+        : _fabAnimationController.reverse();
   }
 
   void _onFabAction(FabAction action, int index) {
     logI('FAB Action clicked - Index: $index');
+    logI('FAB Action route: ${action.route}');
+
+    // Close the FAB menu
+    _toggleFab();
 
     // Navigate to the correct route based on the FAB action
     switch (index) {
-      case 0: // Add Expense
-        context.goToExpense();
+      case 0:
+        addPayment(
+          context: context,
+          onSave: (payment) async {
+            await context.dashboardCubit.createPayment(payment: payment);
+            if (context.mounted) {
+              Navigator.of(context).pop();
+              if (_isFabExpanded) {
+                _toggleFab();
+              }
+            }
+          },
+        );
         break;
-      case 1: // Add Budget
-        context.goToBudget();
+      case 1:
+        addExpense(
+          context: context,
+          onSave: (expense) async {
+            await context.dashboardCubit.createExpense(expense: expense);
+            if (context.mounted) {
+              Navigator.of(context).pop();
+              if (_isFabExpanded) {
+                _toggleFab();
+              }
+            }
+          },
+        );
         break;
-      case 2: // Add Payment
-        context.goToPayment();
+      case 2:
+        addBudget(
+          context: context,
+          onSave: (budget) async {
+            await context.dashboardCubit.createBudget(budget: budget);
+            if (context.mounted) {
+              Navigator.of(context).pop();
+              if (_isFabExpanded) {
+                _toggleFab();
+              }
+            }
+          },
+        );
         break;
       default:
         context.goToProfile(); // fallback
@@ -196,23 +242,71 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
   }
 
   /* ---------- build ---------- */
+  /* ---------- build ---------- */
   @override
   Widget build(BuildContext context) {
     final currentIndex = _calculateSelectedIndex(context);
     return Scaffold(
-      body: GestureDetector(
-        onTap: _isFabExpanded ? _toggleFab : null,
-        child: widget.child,
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(bottom: 8), // whole bar margin
-        child: _buildBottomBar(currentIndex),
+      extendBody: true,
+      body: Stack(
+        children: [
+          // Content with padding for bottom bar
+          Padding(
+            padding: const EdgeInsets.only(bottom: 90),
+            child: widget.child,
+          ),
+
+          // Dimmer Overlay
+          if (_isFabExpanded)
+            Positioned.fill(
+              child: GestureDetector(
+                onTap: _toggleFab,
+                behavior: HitTestBehavior.opaque,
+                child: Container(
+                  color: Colors.black.withValues(alpha: 0.3),
+                ),
+              ),
+            ),
+
+          // Bottom Bar Background & Nav Items
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: _buildNavBar(currentIndex),
+          ),
+
+          // Arc Action Buttons (Menu)
+          if (widget.customFabAction == null || currentIndex == 0)
+            ..._fabActions.asMap().entries.map((e) {
+              final idx = e.key;
+              final action = e.value;
+              return _ArcActionButton(
+                action: action,
+                animation: _fabAnimation,
+                index: idx,
+                total: _fabActions.length,
+                onTap: () => _onFabAction(action, idx),
+              );
+            }),
+
+          // Main FAB
+          Positioned(
+            bottom: 40,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: _buildFab(),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  /* ---------- bottom bar (with arc buttons) ---------- */
-  Widget _buildBottomBar(int currentIndex) => SizedBox(
+  /* ---------- sub-widgets ---------- */
+
+  Widget _buildNavBar(int currentIndex) => SizedBox(
         height: 100,
         child: Stack(
           clipBehavior: Clip.none,
@@ -271,76 +365,55 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
                 );
               }).toList(),
             ),
+          ],
+        ),
+      );
 
-            /* ---------- central + button (moved 6 px up) ---------- */
-            Positioned(
-              left: (MediaQuery.of(context).size.width / 2) - 28,
-              bottom: 40, // 6 px higher
-              child: AnimatedBuilder(
-                animation: _fabAnimation,
-                builder: (_, __) => Transform.scale(
-                  scale: 1.0 + (_fabAnimation.value * 0.05),
-                  child: Transform.rotate(
-                    angle: _fabAnimation.value * (math.pi / 4),
-                    child: Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(28),
-                        gradient: const LinearGradient(
-                          colors: [
-                            Color(0xFF6366F1),
-                            Color(0xFF8B5CF6),
-                            Color(0xFFA855F7),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                                const Color(0xFF6366F1).withValues(alpha: 0.35),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Material(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(28),
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(28),
-                          onTap: _onFabTap,
-                          child: Center(
-                            child: Icon(
-                              _isFabExpanded ? Icons.close : Icons.add,
-                              color: Colors.white,
-                              size: 28,
-                            ),
-                          ),
-                        ),
-                      ),
+  Widget _buildFab() => AnimatedBuilder(
+        animation: _fabAnimation,
+        builder: (_, __) => Transform.scale(
+          scale: 1.0 + (_fabAnimation.value * 0.05),
+          child: Transform.rotate(
+            angle: _fabAnimation.value * (math.pi / 4),
+            child: Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(28),
+                gradient: const LinearGradient(
+                  colors: [
+                    Color(0xFF6366F1),
+                    Color(0xFF8B5CF6),
+                    Color(0xFFA855F7),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF6366F1).withValues(alpha: 0.35),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Material(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(28),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(28),
+                  onTap: _onFabTap,
+                  child: Center(
+                    child: Icon(
+                      _isFabExpanded ? Icons.close : Icons.add,
+                      color: Colors.white,
+                      size: 28,
                     ),
                   ),
                 ),
               ),
             ),
-
-            /* ---------- arc action buttons ---------- */
-            // Only show arc action buttons if no custom action is provided
-            if (widget.customFabAction == null)
-              ..._fabActions.asMap().entries.map((e) {
-                final idx = e.key;
-                final action = e.value;
-                return _ArcActionButton(
-                  action: action,
-                  animation: _fabAnimation,
-                  index: idx,
-                  total: _fabActions.length,
-                  onTap: () => _onFabAction(action, idx),
-                );
-              }),
-          ],
+          ),
         ),
       );
 }
@@ -382,6 +455,7 @@ class _ArcActionButton extends StatelessWidget {
               opacity: t,
               child: GestureDetector(
                 onTap: onTap,
+                behavior: HitTestBehavior.opaque,
                 child: Container(
                   width: 44,
                   height: 44,

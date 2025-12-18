@@ -7,6 +7,7 @@ import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/widget/animated_section_header.dart';
 import 'package:xpensemate/core/widget/app_bar_widget.dart';
 import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
+import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_state.dart';
 import 'package:xpensemate/features/budget/presentation/pages/budget_form_page.dart';
@@ -120,7 +121,9 @@ class _BudgetPageContentState extends State<BudgetPageContent>
 
 // This function can be called from other pages or components
 // to trigger the add budget action
-void addBudget(BuildContext context) {
+void addBudget(
+    {required BuildContext context,
+    required void Function(BudgetGoalEntity)? onSave}) {
   final screenHeight = MediaQuery.of(context).size.height;
   AppBottomSheet.show<void>(
     context: context,
@@ -133,12 +136,13 @@ void addBudget(BuildContext context) {
       barrierColor: Colors.transparent,
     ),
     child: BudgetFormPage(
-      onSave: (goal) async {
-        await context.budgetCubit.createBudgetGoal(goal);
-        if (context.mounted) {
-          Navigator.of(context).pop();
-        }
-      },
+      onSave: onSave ??
+          (goal) async {
+            await context.budgetCubit.createBudgetGoal(goal);
+            if (context.mounted) {
+              Navigator.of(context).pop();
+            }
+          },
       onCancel: () => Navigator.of(context).pop(),
     ),
   );

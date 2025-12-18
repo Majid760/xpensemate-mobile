@@ -162,7 +162,10 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
 
 // This function can be called from other pages or components
 // to trigger the add budget action
-void addBudget(BuildContext context) {
+void addBudget({
+  required BuildContext context,
+  void Function(BudgetGoalEntity)? onSave,
+}) {
   final screenHeight = MediaQuery.of(context).size.height;
   AppBottomSheet.show<void>(
     context: context,
@@ -175,12 +178,13 @@ void addBudget(BuildContext context) {
       barrierColor: Colors.transparent,
     ),
     child: BudgetFormPage(
-      onSave: (goal) async {
-        await context.budgetCubit.createBudgetGoal(goal);
-        if (context.mounted) {
-          Navigator.of(context).pop();
-        }
-      },
+      onSave: onSave ??
+          (goal) async {
+            await context.budgetCubit.createBudgetGoal(goal);
+            if (context.mounted) {
+              Navigator.of(context).pop();
+            }
+          },
       onCancel: () => Navigator.of(context).pop(),
     ),
   );

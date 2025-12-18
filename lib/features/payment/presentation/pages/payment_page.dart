@@ -7,7 +7,6 @@ import 'package:xpensemate/core/widget/app_bar_widget.dart';
 import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_entity.dart';
-import 'package:xpensemate/features/payment/domain/entities/payment_stats_entity.dart';
 import 'package:xpensemate/features/payment/presentation/cubit/payment_cubit.dart';
 import 'package:xpensemate/features/payment/presentation/widgets/payment_form_widget.dart';
 import 'package:xpensemate/features/payment/presentation/widgets/payment_list_widget.dart';
@@ -164,7 +163,10 @@ class _PaymentPageContentState extends State<PaymentPageContent>
       );
 }
 
-void addPayment(BuildContext context) {
+void addPayment({
+  required BuildContext context,
+  void Function(PaymentEntity)? onSave,
+}) {
   final screenHeight = MediaQuery.of(context).size.height;
   AppBottomSheet.show<void>(
     context: context,
@@ -177,12 +179,13 @@ void addPayment(BuildContext context) {
       barrierColor: Colors.transparent,
     ),
     child: PaymentFormWidget(
-      onSave: (payment) async {
-        await context.paymentCubit.createPayment(payment: payment);
-        if (context.mounted) {
-          Navigator.of(context).pop();
-        }
-      },
+      onSave: onSave ??
+          (payment) async {
+            await context.paymentCubit.createPayment(payment: payment);
+            if (context.mounted) {
+              Navigator.of(context).pop();
+            }
+          },
       onCancel: () => Navigator.of(context).pop(),
     ),
   );

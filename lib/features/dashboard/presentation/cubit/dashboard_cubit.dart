@@ -1,12 +1,21 @@
+import 'dart:async';
+
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/usecase/usecase.dart';
+import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
+import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/budget_goals_entity.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/product_weekly_analytics_entity.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/weekly_stats_entity.dart';
 import 'package:xpensemate/features/dashboard/domain/usecases/get_budget_goals_usecase.dart';
 import 'package:xpensemate/features/dashboard/domain/usecases/get_product_weekly_analytics_usecase.dart';
 import 'package:xpensemate/features/dashboard/domain/usecases/get_weekly_stats_usecase.dart';
+import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
+import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
+import 'package:xpensemate/features/payment/domain/entities/payment_entity.dart';
+import 'package:xpensemate/features/payment/presentation/cubit/payment_cubit.dart';
 
 part 'dashboard_state.dart';
 
@@ -15,6 +24,9 @@ class DashboardCubit extends Cubit<DashboardState> {
     this._getWeeklyStatsUseCase,
     this._getBudgetGoalsUseCase,
     this._getProductWeeklyAnalyticsUseCase,
+    this._expenseCubit,
+    this._paymentCubit,
+    this._budgetCubit,
   ) : super(const DashboardState()) {
     loadDashboardData();
   }
@@ -22,6 +34,9 @@ class DashboardCubit extends Cubit<DashboardState> {
   final GetWeeklyStatsUseCase _getWeeklyStatsUseCase;
   final GetBudgetGoalsUseCase _getBudgetGoalsUseCase;
   final GetProductWeeklyAnalyticsUseCase _getProductWeeklyAnalyticsUseCase;
+  final ExpenseCubit _expenseCubit;
+  final PaymentCubit _paymentCubit;
+  final BudgetCubit _budgetCubit;
 
   /// Load weekly statistics
   Future<void> loadWeeklyStats() async {
@@ -33,7 +48,7 @@ class DashboardCubit extends Cubit<DashboardState> {
       (failure) => emit(
         state.copyWith(
           state: DashboardStates.error,
-          errorMessage: failure.message,
+          message: failure.message,
         ),
       ),
       (weeklyStats) => emit(
@@ -69,7 +84,7 @@ class DashboardCubit extends Cubit<DashboardState> {
       (failure) => emit(
         state.copyWith(
           state: DashboardStates.error,
-          errorMessage: failure.message,
+          message: failure.message,
         ),
       ),
       (budgetGoals) => emit(
@@ -94,7 +109,7 @@ class DashboardCubit extends Cubit<DashboardState> {
         emit(
           state.copyWith(
             state: DashboardStates.error,
-            errorMessage: failure.message,
+            message: failure.message,
           ),
         );
       },
@@ -152,7 +167,7 @@ class DashboardCubit extends Cubit<DashboardState> {
         emit(
           state.copyWith(
             state: DashboardStates.error,
-            errorMessage: failures.first,
+            message: failures.first,
           ),
         );
       } else {
@@ -169,10 +184,84 @@ class DashboardCubit extends Cubit<DashboardState> {
       emit(
         state.copyWith(
           state: DashboardStates.error,
-          errorMessage: 'An unexpected error occurred: $e',
+          message: 'An unexpected error occurred: $e',
           stackTrace: s,
         ),
       );
     }
   }
+
+  // add expense
+  Future<void> createExpense({required ExpenseEntity expense}) async {
+    try {
+      if (!_expenseCubit.isClosed) {
+        await _expenseCubit.createExpense(expense: expense);
+        unawaited(loadDashboardData());
+        emit(
+          state.copyWith(
+            state: DashboardStates.loaded,
+            message: 'Expense created successfully!',
+          ),
+        );
+      }
+    } on Exception catch (e, stackTrace) {
+      emit(
+        state.copyWith(
+          state: DashboardStates.error,
+          message: 'An unexpected error occurred while creating expense: $e',
+          stackTrace: stackTrace,
+        ),
+      );
+    }
+  }
+
+  // add payment
+  Future<void> createPayment({required PaymentEntity payment}) async {
+    try {
+      if (!_paymentCubit.isClosed) {
+        await _paymentCubit.createPayment(payment: payment);
+        unawaited(loadDashboardData());
+        emit(state.copyWith(
+          state: DashboardStates.loaded,
+          message: 'Payment created successfully!',
+        ));
+      }
+    } on Exception catch (e, stackTrace) {
+      emit(
+        state.copyWith(
+          state: DashboardStates.error,
+          message: 'An unexpected error occurred while creating payment: $e',
+          stackTrace: stackTrace,
+        ),
+      );
+    }
+  }
+
+  // add budget
+  Future<void> createBudget({required BudgetGoalEntity budget}) async {
+    try {
+      if (!_budgetCubit.isClosed) {
+        await _budgetCubit.createBudgetGoal(budget);
+      }
+      unawaited(loadDashboardData());
+      emit(
+        state.copyWith(
+          state: DashboardStates.loaded,
+          message: 'Budget created successfully!',
+        ),
+      );
+    } on Exception catch (e, stackTrace) {
+      emit(
+        state.copyWith(
+          state: DashboardStates.error,
+          message: 'An unexpected error occurred while creating budget: $e',
+          stackTrace: stackTrace,
+        ),
+      );
+    }
+  }
+}
+
+extension DashboardCubitX on BuildContext {
+  DashboardCubit get dashboardCubit => read<DashboardCubit>();
 }

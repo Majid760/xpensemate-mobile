@@ -215,7 +215,7 @@ Future<void> initLocator() async {
     // ---------- Presentation Layer ----------
     sl.registerFactory(() => ProfileCubit(sl()));
     sl.registerFactory(
-      () => DashboardCubit(sl(), sl(), sl()),
+      () => DashboardCubit(sl(), sl(), sl(), sl(), sl(), sl()),
     );
     sl.registerFactory(() => ExpenseCubit(sl(), sl(), sl(), sl(), sl(), sl()));
     sl.registerFactory(() => BudgetCubit(sl(), sl(), sl(), sl(), sl()));

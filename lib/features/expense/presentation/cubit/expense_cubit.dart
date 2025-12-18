@@ -143,117 +143,152 @@ class ExpenseCubit extends Cubit<ExpenseState> {
 
   /// Update expense with optimistic updates and rollback on failure
   Future<void> updateExpense({required ExpenseEntity expense}) async {
-    // Find the page and index of the expense to update
-    final pages = _pagingController.value.pages ?? [];
-    var pageIndex = -1;
-    var itemIndex = -1;
+    try {
+      // Find the page and index of the expense to update
+      final pages = _pagingController.value.pages ?? [];
+      var pageIndex = -1;
+      var itemIndex = -1;
 
-    for (var i = 0; i < pages.length; i++) {
-      final page = pages[i];
-      final index = page.indexWhere((e) => e.id == expense.id);
-      if (index != -1) {
-        pageIndex = i;
-        itemIndex = index;
-        break;
+      for (var i = 0; i < pages.length; i++) {
+        final page = pages[i];
+        final index = page.indexWhere((e) => e.id == expense.id);
+        if (index != -1) {
+          pageIndex = i;
+          itemIndex = index;
+          break;
+        }
       }
-    }
-    // If found, update in the paging controller
-    if (pageIndex != -1 && itemIndex != -1) {
-      final updatedPages = List<List<ExpenseEntity>>.from(pages);
-      final updatedPage = List<ExpenseEntity>.from(updatedPages[pageIndex]);
-      updatedPage[itemIndex] = expense;
-      updatedPages[pageIndex] = updatedPage;
+      // If found, update in the paging controller
+      if (pageIndex != -1 && itemIndex != -1) {
+        final updatedPages = List<List<ExpenseEntity>>.from(pages);
+        final updatedPage = List<ExpenseEntity>.from(updatedPages[pageIndex]);
+        updatedPage[itemIndex] = expense;
+        updatedPages[pageIndex] = updatedPage;
 
-      _pagingController.value = _pagingController.value.copyWith(
-        pages: updatedPages,
-      );
-    }
+        _pagingController.value = _pagingController.value.copyWith(
+          pages: updatedPages,
+        );
+      }
 
-    final result = await _updateExpenseUseCase(expense);
-    await result.fold((failure) {
-      // Refresh to rollback changes on failure
-      _pagingController.refresh();
+      final result = await _updateExpenseUseCase(expense);
+      await result.fold((failure) {
+        // Refresh to rollback changes on failure
+        _pagingController.refresh();
+        emit(
+          state.copyWith(
+            state: ExpenseStates.error,
+            message: failure.message,
+          ),
+        );
+      }, (updatedExpense) async {
+        // Recalculate stats after successful update
+        unawaited(_recalculateExpenseStats());
+        emit(
+          state.copyWith(
+            state: ExpenseStates.loaded,
+            message: 'Expense updated successfully!',
+          ),
+        );
+      });
+    } on Exception catch (e, stackTrace) {
       emit(
         state.copyWith(
           state: ExpenseStates.error,
-          message: failure.message,
+          message: 'An unexpected error occurred: $e',
+          stackTrace: stackTrace,
         ),
       );
-    }, (updatedExpense) async {
-      // Recalculate stats after successful update
-      unawaited(_recalculateExpenseStats());
-      emit(
-        state.copyWith(
-          state: ExpenseStates.loaded,
-          message: 'Expense updated successfully!',
-        ),
-      );
-    });
+    }
   }
 
   /// Create expense with optimistic updates
   Future<void> createExpense({required ExpenseEntity expense}) async {
-    // Make the API call
-    final result = await _createExpenseUseCase(
-      CreateExpensesParams(expenseEntity: expense),
-    );
+    try {
+      // Make the API call
+      final result = await _createExpenseUseCase(
+        CreateExpensesParams(expenseEntity: expense),
+      );
+      await result.fold(
+        (failure) {
+          // Refresh to rollback changes on failure
+          _pagingController.refresh();
+          emit(
+            state.copyWith(
+              state: ExpenseStates.error,
+              message: failure.message,
+              stackTrace: failure.stackTrace,
+            ),
+          );
+        },
+        (createdExpense) async {
+          final pages = _pagingController.value.pages;
+          if (pages != null && pages.isNotEmpty) {
+            final updatedPages = List<List<ExpenseEntity>>.from(pages);
+            final firstPage = [expense, ...updatedPages[0]];
+            updatedPages[0] = firstPage;
 
-    await result.fold(
-      (failure) {
-        // Refresh to rollback changes on failure
-        _pagingController.refresh();
-        emit(
-          state.copyWith(
-            state: ExpenseStates.error,
-            message: failure.message,
-            stackTrace: failure.stackTrace,
-          ),
-        );
-      },
-      (createdExpense) async {
-        final pages = _pagingController.value.pages ?? [];
-        final updatedPages = List<List<ExpenseEntity>>.from(pages);
-        final firstPage = [expense, ...updatedPages[0]];
-        updatedPages[0] = firstPage;
-
-        _pagingController.value = _pagingController.value.copyWith(
-          pages: updatedPages,
-        );
-        unawaited(_recalculateExpenseStats());
-        emit(state.copyWith(state: ExpenseStates.loaded, message: ''));
-      },
-    );
+            _pagingController.value = _pagingController.value.copyWith(
+              pages: updatedPages,
+            );
+          } else {
+            // If the list is empty or not loaded yet, refreshing is the safest
+            // and cleanest way to sync state without complex manual page construction.
+            _pagingController.refresh();
+          }
+          unawaited(_recalculateExpenseStats());
+          emit(state.copyWith(state: ExpenseStates.loaded, message: ''));
+        },
+      );
+    } on Exception catch (e, stackTrace) {
+      emit(
+        state.copyWith(
+          state: ExpenseStates.error,
+          message: 'An unexpected error occurred: $e',
+          stackTrace: stackTrace,
+        ),
+      );
+    }
   }
 
   /// Delete expense with optimistic updates and rollback on failure
   Future<void> deleteExpense({required String expenseId}) async {
-    final result = await _deleteExpenseUseCase(expenseId);
-    await result.fold(
-      (failure) {
-        // Refresh to rollback changes on failure
-        _pagingController.refresh();
-        emit(
-          state.copyWith(
-            state: ExpenseStates.error,
-            message: failure.message,
-          ),
-        );
-      },
-      (success) async {
-        // Remove from all pages
-        final pages = _pagingController.value.pages ?? [];
-        final updatedPages = <List<ExpenseEntity>>[];
-        for (final page in pages) {
-          final updatedPage = page.where((e) => e.id != expenseId).toList();
-          updatedPages.add(updatedPage);
-        }
-        _pagingController.value = _pagingController.value.copyWith(
-          pages: updatedPages,
-        );
-        unawaited(_recalculateExpenseStats());
-        emit(state.copyWith(state: ExpenseStates.loaded));
-      },
-    );
+    try {
+      final result = await _deleteExpenseUseCase(expenseId);
+      await result.fold(
+        (failure) {
+          // Refresh to rollback changes on failure
+          _pagingController.refresh();
+          emit(
+            state.copyWith(
+              state: ExpenseStates.error,
+              message: failure.message,
+            ),
+          );
+        },
+        (success) async {
+          // Remove from all pages
+          final pages = _pagingController.value.pages ?? [];
+          final updatedPages = <List<ExpenseEntity>>[];
+          for (final page in pages) {
+            final updatedPage = page.where((e) => e.id != expenseId).toList();
+            updatedPages.add(updatedPage);
+          }
+          _pagingController.value = _pagingController.value.copyWith(
+            pages: updatedPages,
+          );
+          unawaited(_recalculateExpenseStats());
+          emit(state.copyWith(state: ExpenseStates.loaded));
+        },
+      );
+    } on Exception catch (e, stackTrace) {
+      emit(
+        state.copyWith(
+          state: ExpenseStates.error,
+          message: 'An unexpected error occurred: $e',
+          stackTrace: stackTrace,
+        ),
+      );
+    }
   }
 
   Future<void> _recalculateExpenseStats() async {

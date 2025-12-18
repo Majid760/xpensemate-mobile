@@ -22,9 +22,9 @@ import 'package:xpensemate/features/profile/presentation/pages/profile_edit_page
 import 'package:xpensemate/features/profile/presentation/widgets/profile_content_item_widget.dart';
 
 class ProfilePage extends StatefulWidget {
-  ProfilePage({super.key, this.onBackTap});
+  const ProfilePage({super.key, this.onBackTap});
 
-  void Function()? onBackTap;
+  final void Function()? onBackTap;
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -233,12 +233,14 @@ class _ProfilePageState extends State<ProfilePage>
     );
     if (mounted && (result[AppPermission.camera]?.isGranted ?? false)) {
       final currentContext = context;
-      await AppDialogs.showImagePicker(
-        context: currentContext,
-        onImageSelected: (file) {
-          currentContext.profileCubit.updateProfileImage(file!);
-        },
-      );
+      if (currentContext.mounted) {
+        await AppDialogs.showImagePicker(
+          context: currentContext,
+          onImageSelected: (file) {
+            currentContext.profileCubit.updateProfileImage(file!);
+          },
+        );
+      }
     }
   }
 }
@@ -606,7 +608,7 @@ class ThemeToggle extends StatelessWidget {
                 child: Switch.adaptive(
                   value: isDarkMode,
                   onChanged: onChanged,
-                  activeColor: context.colorScheme.onSecondary,
+                  activeThumbColor: context.colorScheme.onSecondary,
                   inactiveThumbColor: context.colorScheme.onPrimary,
                   inactiveTrackColor: Colors.transparent,
                   activeTrackColor: Colors.transparent,

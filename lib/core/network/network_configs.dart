@@ -100,16 +100,16 @@ class NetworkConfigs {
   // ------------------------------------------------------------------
   //  Static Pages URLs
   // ------------------------------------------------------------------
-  static String get aboutUrl => "http://192.168.15.84:3000/about";
+  static String get aboutUrl => "http://192.168.0.104:3000/about";
 
-  static String get privacyPolicyUrl => "http://192.168.15.84:3000/privacy";
+  static String get privacyPolicyUrl => "http://192.168.0.104:3000/privacy";
 
   static String get termsAndConditionsUrl =>
-      "http://192.168.15.84:3000/terms&conditions";
+      "http://192.168.0.104:3000/terms&conditions";
 
-  static String get helpSupportUrl => "http://192.168.15.84:3000/help&support";
+  static String get helpSupportUrl => "http://192.168.0.104:3000/help&support";
 
-  // ------------------------------------------------------------------
+  // ---------------------------------------------------------- -------
   //  Timeouts & Retry
   // ------------------------------------------------------------------
   static const Duration connectTimeout = Duration(seconds: 15);

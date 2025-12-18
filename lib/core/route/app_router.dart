@@ -43,12 +43,13 @@ class AppRouter {
           child: child,
           customFabAction: (index) {
             if (index == 1) {
-              addExpense(context);
+              addExpense(context: context);
             } else if (index == 3) {
-              addBudget(context);
+              addBudget(context: context);
             } else if (index == 4) {
-              addPayment(context);
+              addPayment(context: context);
             }
+            return;
           },
         ),
         routes: [

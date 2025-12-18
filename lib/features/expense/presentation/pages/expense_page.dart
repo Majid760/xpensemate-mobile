@@ -82,8 +82,8 @@ class _ExpensePageContentState extends State<ExpensePageContent>
   Widget build(BuildContext context) =>
       BlocListener<ExpenseCubit, ExpenseState>(
         listenWhen: (previous, current) =>
-            previous.message != current.message &&
-            (current.message != null && current.message!.isNotEmpty),
+            previous.message != current.message ||
+            (current.expenseStats != previous.expenseStats),
         listener: (context, state) {
           if (state.message != null && state.message!.isNotEmpty) {
             AppSnackBar.show(
@@ -170,7 +170,8 @@ class _ExpensePageContentState extends State<ExpensePageContent>
 
 // This function can be called from other pages or components
 // to trigger the add expense action
-void addExpense(BuildContext context) {
+void addExpense(
+    {required BuildContext context, void Function(ExpenseEntity)? onSave}) {
   final screenHeight = MediaQuery.of(context).size.height;
   AppBottomSheet.show<void>(
     context: context,
@@ -183,12 +184,15 @@ void addExpense(BuildContext context) {
       barrierColor: Colors.transparent,
     ),
     child: ExpenseFormWidget(
-      onSave: (expense) async {
-        await context.expenseCubit.createExpense(expense: expense);
-        if (context.mounted) {
-          Navigator.of(context).pop();
-        }
-      },
+      onSave: onSave ??
+          (expense) async {
+            if (!context.expenseCubit.isClosed) {
+              await context.expenseCubit.createExpense(expense: expense);
+            }
+            if (context.mounted) {
+              Navigator.of(context).pop();
+            }
+          },
       onCancel: () => Navigator.of(context).pop(),
     ),
   );

@@ -1,8 +1,8 @@
 // import logger
 import 'package:xpensemate/core/utils/app_logger.dart';
-import 'package:xpensemate/features/expense/data/models/budgets_model.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/budget_goals_entity.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/budgets_list_entity.dart';
+import 'package:xpensemate/features/expense/data/models/budgets_model.dart';
 
 class BudgetsListModel extends BudgetsListEntity {
   const BudgetsListModel({
@@ -145,7 +145,7 @@ class BudgetGoalsModel extends BudgetGoalsEntity {
 //  Sub-models for Budget Goals
 // ------------------------------------------------------------------
 
-class BudgetGoalModel extends BudgetGoalEntity {
+class BudgetGoalModel extends BudgetGoalDashboardEntity {
   const BudgetGoalModel({
     required super.id,
     required super.name,
@@ -181,7 +181,7 @@ class BudgetGoalModel extends BudgetGoalEntity {
     }
   }
 
-  factory BudgetGoalModel.fromEntity(BudgetGoalEntity entity) =>
+  factory BudgetGoalModel.fromEntity(BudgetGoalDashboardEntity entity) =>
       BudgetGoalModel(
         id: entity.id,
         name: entity.name,
@@ -194,7 +194,7 @@ class BudgetGoalModel extends BudgetGoalEntity {
         createdAt: entity.createdAt,
       );
 
-  BudgetGoalEntity toEntity() => BudgetGoalEntity(
+  BudgetGoalDashboardEntity toEntity() => BudgetGoalDashboardEntity(
         id: id,
         name: name,
         category: category,

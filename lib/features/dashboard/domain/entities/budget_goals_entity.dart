@@ -4,8 +4,8 @@ import 'package:equatable/equatable.dart';
 //  Sub-entities for Budget Goals
 // ------------------------------------------------------------------
 
-class BudgetGoalEntity extends Equatable {
-  const BudgetGoalEntity({
+class BudgetGoalDashboardEntity extends Equatable {
+  const BudgetGoalDashboardEntity({
     required this.id,
     required this.name,
     required this.category,
@@ -29,16 +29,16 @@ class BudgetGoalEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-    id,
-    name,
-    category,
-    setBudget,
-    currentSpending,
-    priority,
-    status,
-    date,
-    createdAt,
-  ];
+        id,
+        name,
+        category,
+        setBudget,
+        currentSpending,
+        priority,
+        status,
+        date,
+        createdAt,
+      ];
 }
 
 class PaginationEntity extends Equatable {
@@ -73,12 +73,12 @@ class BudgetStatsEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-    totalGoals,
-    activeGoals,
-    achievedGoals,
-    totalBudgeted,
-    totalAchievedBudget,
-  ];
+        totalGoals,
+        activeGoals,
+        achievedGoals,
+        totalBudgeted,
+        totalAchievedBudget,
+      ];
 }
 
 class DateRangeEntity extends Equatable {
@@ -107,7 +107,7 @@ class BudgetGoalsEntity extends Equatable {
     required this.dateRange,
   });
 
-  final List<BudgetGoalEntity> goals;
+  final List<BudgetGoalDashboardEntity> goals;
   final PaginationEntity pagination;
   final BudgetStatsEntity stats;
   final String duration;
@@ -115,10 +115,10 @@ class BudgetGoalsEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-    goals,
-    pagination,
-    stats,
-    duration,
-    dateRange,
-  ];
+        goals,
+        pagination,
+        stats,
+        duration,
+        dateRange,
+      ];
 }

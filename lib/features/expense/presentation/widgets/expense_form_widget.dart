@@ -33,7 +33,8 @@ class ExpenseFormWidget extends StatefulWidget {
   State<ExpenseFormWidget> createState() => _ExpenseFormWidgetState();
 }
 
-class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProviderStateMixin {
+class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
+    with TickerProviderStateMixin {
   late final FormGroup _form;
   late final List<String> _predefinedCategories;
   late final List<String> _paymentMethods;
@@ -120,7 +121,11 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
 
     _form = FormGroup({
       'name': FormControl<String>(
-        validators: [Validators.required, Validators.maxLength(100), Validators.minLength(2)],
+        validators: [
+          Validators.required,
+          Validators.maxLength(100),
+          Validators.minLength(2)
+        ],
       ),
       'amount': FormControl<String>(
         validators: [
@@ -244,7 +249,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
     final categoryName = expense.categoryName;
 
     // Check if the expense category exists in our predefined list
-    if (_predefinedCategories.any((cat) => cat.toLowerCase() == categoryName.toLowerCase())) {
+    if (_predefinedCategories
+        .any((cat) => cat.toLowerCase() == categoryName.toLowerCase())) {
       // Category exists in predefined list - just select it
       _form.control('category').value = categoryName;
       _isCustomCategoryMode = false;
@@ -292,7 +298,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
         categoryValue = customCategory.trim();
 
         // Add the custom category to predefined list for future use
-        if (!_predefinedCategories.any((cat) => cat.toLowerCase() == categoryValue.toLowerCase())) {
+        if (!_predefinedCategories
+            .any((cat) => cat.toLowerCase() == categoryValue.toLowerCase())) {
           _predefinedCategories.add(categoryValue);
         }
       } else {
@@ -304,7 +311,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
         categoryValue = selectedCategory;
       }
 
-      final amountString = (_form.control('amount').value as String?)?.trim() ?? '0';
+      final amountString =
+          (_form.control('amount').value as String?)?.trim() ?? '0';
       final amount = double.tryParse(amountString);
       if (amount == null || amount < 0) {
         // Check if this is a pattern validation error first
@@ -313,7 +321,9 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
           return;
         } else {
           // Otherwise, set a generic error
-          _form.control('amount').setErrors({'pattern': 'Please enter a valid amount'});
+          _form
+              .control('amount')
+              .setErrors({'pattern': 'Please enter a valid amount'});
           return;
         }
       }
@@ -343,18 +353,22 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
 
       // Create or update expense entity
       final expense = ExpenseEntity(
-        id: widget.expense?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
+        id: widget.expense?.id ??
+            DateTime.now().millisecondsSinceEpoch.toString(),
         userId: widget.expense?.userId ?? sl.authService.currentUser!.id,
         name: (_form.control('name').value as String?)?.trim() ?? '',
         amount: amount,
-        budgetGoalId: budgetGoalId, // Use processed budget ID (null if NO_BUDGET selected)
+        budgetGoalId:
+            budgetGoalId, // Use processed budget ID (null if NO_BUDGET selected)
         date: _form.control('date').value as DateTime? ?? DateTime.now(),
-        time: _form.control('time').value as String? ?? _formatTime(DateTime.now()),
+        time: _form.control('time').value as String? ??
+            _formatTime(DateTime.now()),
         location: (_form.control('location').value as String?)?.trim() ?? '',
         categoryId: categoryValue,
         categoryName: categoryValue,
         detail: (_form.control('detail').value as String?)?.trim() ?? '',
-        paymentMethod: _form.control('paymentMethod').value as String? ?? 'cash',
+        paymentMethod:
+            _form.control('paymentMethod').value as String? ?? 'cash',
         attachments: widget.expense?.attachments ?? [],
         isDeleted: widget.expense?.isDeleted ?? false,
         createdAt: widget.expense?.createdAt ?? DateTime.now(),
@@ -441,7 +455,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
     // Add "No Budget" option
     items.add(
       DropdownMenuItem<String>(
-        value: 'NO_BUDGET', // Use a special value instead of null for better handling
+        value:
+            'NO_BUDGET', // Use a special value instead of null for better handling
         child: Container(
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.md,
@@ -546,7 +561,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
     );
 
     if (picked != null) {
-      final timeString = '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
+      final timeString =
+          '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
       _form.control('time').value = timeString;
     }
   }
@@ -593,7 +609,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
                             hintText: l10n.description,
                             prefixIcon: Icon(
                               Icons.description_outlined,
-                              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                              color: colorScheme.onSurfaceVariant
+                                  .withValues(alpha: 0.6),
                             ),
                             textInputAction: TextInputAction.next,
                             validationMessages: {
@@ -612,18 +629,21 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
                             fieldType: FieldType.number,
                             prefixIcon: Icon(
                               Icons.attach_money_outlined,
-                              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                              color: colorScheme.onSurfaceVariant
+                                  .withValues(alpha: 0.6),
                             ),
                             textInputAction: TextInputAction.next,
                             inputFormatters: [
-                              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')),
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d*\.?\d*$')),
                             ],
                             validationMessages: {
                               'required': (error) => l10n.fieldRequired,
                               'pattern': (error) => l10n.invalidAmount,
                             },
                             showErrors: (control) {
-                              final hasError = control.hasError('required') || control.hasError('pattern');
+                              final hasError = control.hasError('required') ||
+                                  control.hasError('pattern');
                               final touched = control.touched == true;
                               return hasError && touched;
                             },
@@ -657,8 +677,11 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
                                       _isCustomCategoryMode = false;
                                     });
                                     // Clear custom category field when selecting from dropdown
-                                    _form.control('customCategory').value = null;
-                                    _form.control('customCategory').setErrors({});
+                                    _form.control('customCategory').value =
+                                        null;
+                                    _form
+                                        .control('customCategory')
+                                        .setErrors({});
                                   }
                                 },
                               ),
@@ -672,7 +695,10 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
                                   hintText: l10n.category,
                                   prefixIcon: Icon(
                                     Icons.category_outlined,
-                                    color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant
+                                        .withValues(alpha: 0.6),
                                   ),
                                   textInputAction: TextInputAction.next,
                                   validationMessages: {
@@ -704,15 +730,19 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
                                     const SizedBox(height: AppSpacing.xs),
                                     DecoratedBox(
                                       decoration: BoxDecoration(
-                                        color: context.colorScheme.surfaceContainer.withValues(alpha: 0.7),
+                                        color: context
+                                            .colorScheme.surfaceContainer
+                                            .withValues(alpha: 0.7),
                                         borderRadius: BorderRadius.circular(12),
                                         border: Border.all(
-                                          color: context.colorScheme.outline.withValues(alpha: 0.2),
+                                          color: context.colorScheme.outline
+                                              .withValues(alpha: 0.2),
                                           width: 1.5,
                                         ),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: context.colorScheme.primary.withValues(alpha: 0.1),
+                                            color: context.colorScheme.primary
+                                                .withValues(alpha: 0.1),
                                             blurRadius: 8,
                                             offset: const Offset(0, 2),
                                           ),
@@ -720,41 +750,57 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
                                       ),
                                       child: ReactiveFormConsumer(
                                         builder: (context, formModel, child) {
-                                          final date = formModel.control('date').value as DateTime?;
+                                          final date = formModel
+                                              .control('date')
+                                              .value as DateTime?;
                                           return InkWell(
                                             onTap: _selectDate,
                                             borderRadius: BorderRadius.circular(
                                               12,
                                             ),
                                             child: Container(
-                                              padding: const EdgeInsets.symmetric(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
                                                 horizontal: AppSpacing.md,
                                                 vertical: AppSpacing.md,
                                               ),
                                               decoration: BoxDecoration(
-                                                color: context.colorScheme.surfaceContainer.withValues(alpha: 0.7),
-                                                borderRadius: BorderRadius.circular(12),
+                                                color: context.colorScheme
+                                                    .surfaceContainer
+                                                    .withValues(alpha: 0.7),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
                                                 border: Border.all(
-                                                  color: context.colorScheme.outline.withValues(alpha: 0.2),
+                                                  color: context
+                                                      .colorScheme.outline
+                                                      .withValues(alpha: 0.2),
                                                   width: 1.5,
                                                 ),
                                               ),
                                               child: Row(
                                                 children: [
                                                   Icon(
-                                                    Icons.calendar_today_outlined,
-                                                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                                                    Icons
+                                                        .calendar_today_outlined,
+                                                    color: colorScheme
+                                                        .onSurfaceVariant
+                                                        .withValues(alpha: 0.6),
                                                     size: 20,
                                                   ),
                                                   const SizedBox(
                                                     width: AppSpacing.sm,
                                                   ),
                                                   Text(
-                                                    date != null ? '${date.day}/${date.month}/${date.year}' : l10n.date,
-                                                    style: textTheme.bodyLarge?.copyWith(
+                                                    date != null
+                                                        ? '${date.day}/${date.month}/${date.year}'
+                                                        : l10n.date,
+                                                    style: textTheme.bodyLarge
+                                                        ?.copyWith(
                                                       color: date != null
-                                                          ? colorScheme.onSurface
-                                                          : colorScheme.onSurfaceVariant,
+                                                          ? colorScheme
+                                                              .onSurface
+                                                          : colorScheme
+                                                              .onSurfaceVariant,
                                                     ),
                                                   ),
                                                 ],
@@ -781,15 +827,19 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
                                     const SizedBox(height: AppSpacing.xs),
                                     DecoratedBox(
                                       decoration: BoxDecoration(
-                                        color: context.colorScheme.surfaceContainer.withValues(alpha: 0.7),
+                                        color: context
+                                            .colorScheme.surfaceContainer
+                                            .withValues(alpha: 0.7),
                                         borderRadius: BorderRadius.circular(12),
                                         border: Border.all(
-                                          color: context.colorScheme.outline.withValues(alpha: 0.2),
+                                          color: context.colorScheme.outline
+                                              .withValues(alpha: 0.2),
                                           width: 1.5,
                                         ),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: context.colorScheme.primary.withValues(alpha: 0.1),
+                                            color: context.colorScheme.primary
+                                                .withValues(alpha: 0.1),
                                             blurRadius: 8,
                                             offset: const Offset(0, 2),
                                           ),
@@ -797,19 +847,27 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
                                       ),
                                       child: ReactiveFormConsumer(
                                         builder: (context, formModel, child) {
-                                          final time = formModel.control('time').value as String?;
+                                          final time = formModel
+                                              .control('time')
+                                              .value as String?;
                                           return InkWell(
                                             onTap: _selectTime,
                                             child: Container(
                                               decoration: BoxDecoration(
-                                                color: context.colorScheme.surfaceContainer.withValues(alpha: 0.7),
-                                                borderRadius: BorderRadius.circular(12),
+                                                color: context.colorScheme
+                                                    .surfaceContainer
+                                                    .withValues(alpha: 0.7),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
                                                 border: Border.all(
-                                                  color: context.colorScheme.outline.withValues(alpha: 0.2),
+                                                  color: context
+                                                      .colorScheme.outline
+                                                      .withValues(alpha: 0.2),
                                                   width: 1.5,
                                                 ),
                                               ),
-                                              padding: const EdgeInsets.symmetric(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
                                                 horizontal: AppSpacing.md,
                                                 vertical: AppSpacing.md,
                                               ),
@@ -817,7 +875,9 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
                                                 children: [
                                                   Icon(
                                                     Icons.access_time_outlined,
-                                                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                                                    color: colorScheme
+                                                        .onSurfaceVariant
+                                                        .withValues(alpha: 0.6),
                                                     size: 20,
                                                   ),
                                                   const SizedBox(
@@ -825,10 +885,13 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
                                                   ),
                                                   Text(
                                                     time ?? l10n.time,
-                                                    style: textTheme.bodyLarge?.copyWith(
+                                                    style: textTheme.bodyLarge
+                                                        ?.copyWith(
                                                       color: time != null
-                                                          ? colorScheme.onSurface
-                                                          : colorScheme.onSurfaceVariant,
+                                                          ? colorScheme
+                                                              .onSurface
+                                                          : colorScheme
+                                                              .onSurfaceVariant,
                                                     ),
                                                   ),
                                                 ],
@@ -882,7 +945,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
                               dropdownItems: _buildBudgetDropdownItems(),
                               prefixIcon: Icon(
                                 Icons.account_balance_wallet_outlined,
-                                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                                color: colorScheme.onSurfaceVariant
+                                    .withValues(alpha: 0.6),
                               ),
                             ),
                           const SizedBox(height: AppSpacing.md),
@@ -894,7 +958,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
                             hintText: l10n.location,
                             prefixIcon: Icon(
                               Icons.location_on_outlined,
-                              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                              color: colorScheme.onSurfaceVariant
+                                  .withValues(alpha: 0.6),
                             ),
                             textInputAction: TextInputAction.next,
                           ),
@@ -917,7 +982,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
                             maxLines: 3,
                             prefixIcon: Icon(
                               Icons.notes_outlined,
-                              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                              color: colorScheme.onSurfaceVariant
+                                  .withValues(alpha: 0.6),
                             ),
                             textInputAction: TextInputAction.newline,
                           ),
@@ -943,11 +1009,13 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget> with TickerProvid
                           textColor: Colors.white,
                         ),
                       ),
-                    if (widget.onCancel != null) const SizedBox(width: AppSpacing.md),
+                    if (widget.onCancel != null)
+                      const SizedBox(width: AppSpacing.md),
                     Expanded(
                       child: AppButton.primary(
                         onPressed: _submitForm,
-                        text: (widget.expense == null ? l10n.add : l10n.save).toUpperCase(),
+                        text: (widget.expense == null ? l10n.add : l10n.save)
+                            .toUpperCase(),
                         textColor: Colors.white,
                       ),
                     ),

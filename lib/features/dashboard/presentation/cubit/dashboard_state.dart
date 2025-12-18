@@ -8,7 +8,7 @@ class DashboardState extends Equatable {
     this.weeklyStats,
     this.budgetGoals,
     this.productAnalytics,
-    this.errorMessage,
+    this.message,
     this.stackTrace,
   });
 
@@ -16,7 +16,7 @@ class DashboardState extends Equatable {
   final WeeklyStatsEntity? weeklyStats;
   final BudgetGoalsEntity? budgetGoals;
   final ProductWeeklyAnalyticsEntity? productAnalytics;
-  final String? errorMessage;
+  final String? message;
   final StackTrace? stackTrace;
 
   DashboardState copyWith({
@@ -24,7 +24,7 @@ class DashboardState extends Equatable {
     WeeklyStatsEntity? weeklyStats,
     BudgetGoalsEntity? budgetGoals,
     ProductWeeklyAnalyticsEntity? productAnalytics,
-    String? errorMessage,
+    String? message,
     StackTrace? stackTrace,
   }) =>
       DashboardState(
@@ -32,7 +32,7 @@ class DashboardState extends Equatable {
         weeklyStats: weeklyStats ?? this.weeklyStats,
         budgetGoals: budgetGoals ?? this.budgetGoals,
         productAnalytics: productAnalytics ?? this.productAnalytics,
-        errorMessage: errorMessage ?? this.errorMessage,
+        message: message ?? this.message,
         stackTrace: stackTrace ?? this.stackTrace,
       );
 
@@ -42,7 +42,7 @@ class DashboardState extends Equatable {
         weeklyStats,
         budgetGoals,
         productAnalytics,
-        errorMessage,
+        message,
         stackTrace,
       ];
 }

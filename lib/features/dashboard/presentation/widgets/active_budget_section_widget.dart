@@ -152,7 +152,7 @@ class BudgetCard extends StatelessWidget {
     this.onTap,
   });
 
-  final BudgetGoalEntity goal;
+  final BudgetGoalDashboardEntity goal;
   final VoidCallback? onTap;
 
   @override

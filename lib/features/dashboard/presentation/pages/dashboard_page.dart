@@ -135,14 +135,15 @@ class _DashboardPageState extends State<DashboardPage>
         body: BlocListener<DashboardCubit, DashboardState>(
           listenWhen: (previous, current) =>
               previous.state != current.state ||
-              previous.errorMessage != current.errorMessage,
+              previous.message != current.message,
           listener: (context, state) {
-            if (state.state == DashboardStates.error &&
-                state.errorMessage != null) {
+            if (state.message != null && state.message!.isNotEmpty) {
               AppSnackBar.show(
                 context: context,
-                message: state.errorMessage!,
-                type: SnackBarType.error,
+                message: state.message!,
+                type: state.state == DashboardStates.error
+                    ? SnackBarType.error
+                    : SnackBarType.success,
               );
             }
           },
@@ -188,8 +189,7 @@ class _DashboardPageState extends State<DashboardPage>
                                     previous.weeklyStats !=
                                         current.weeklyStats ||
                                     previous.state != current.state ||
-                                    previous.errorMessage !=
-                                        current.errorMessage,
+                                    previous.message != current.message,
                                 builder: (context, state) =>
                                     WeeklyFinancialOverviewWidget(
                                   weeklyStats: state.weeklyStats,
@@ -197,7 +197,7 @@ class _DashboardPageState extends State<DashboardPage>
                                       state.state == DashboardStates.loading,
                                   errorMessage:
                                       state.state == DashboardStates.error
-                                          ? state.errorMessage
+                                          ? state.message
                                           : null,
                                   onRetry: () => context
                                       .read<DashboardCubit>()

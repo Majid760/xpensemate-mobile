@@ -112,16 +112,32 @@ class AppUtils {
 
   /// Format large numbers with k/M notation
   static String formatLargeNumber(double amount, {String symbol = r'$'}) {
+    double value = amount;
+    String suffix = '';
+
     if (amount >= 1000000) {
-      // Format as millions
-      final formatted = (amount / 1000000).toStringAsFixed(1);
-      return '$symbol$formatted M';
+      value = amount / 1000000;
+      suffix = ' M';
     } else if (amount >= 1000) {
-      // Format as thousands
-      final formatted = (amount / 1000).toStringAsFixed(1);
-      return '$symbol$formatted k';
+      value = amount / 1000;
+      suffix = ' k';
     }
-    return '$symbol${amount.toStringAsFixed(1)}';
+
+    String formatted = value.toStringAsFixed(2);
+    final parts = formatted.split('.');
+
+    // show only double digit(after decimal) when first and second digit
+    // after decimal point are non zero, otherwise show just single digit
+    if (parts.length == 2) {
+      final decimals = parts[1];
+      if (decimals.length >= 2) {
+        if (decimals[0] == '0' || decimals[1] == '0') {
+          formatted = value.toStringAsFixed(1);
+        }
+      }
+    }
+
+    return '$symbol$formatted$suffix';
   }
 
   /// Format file size

@@ -9,6 +9,7 @@ import 'package:xpensemate/core/localization/supported_locales.dart';
 import 'package:xpensemate/core/route/app_router.dart';
 import 'package:xpensemate/core/route/utils/router_middleware_guard.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
+import 'package:xpensemate/core/service/storage_service.dart';
 import 'package:xpensemate/core/theme/app_theme.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
@@ -30,6 +31,9 @@ void main() async {
       );
       // Initialize services locator/dependency injection
       await initLocator();
+
+      // Initialize Hive Storage
+      await sl<StorageService>().init();
 
       // Initialize auth cubit after service locator is ready
       await sl<AuthCubit>().initializeAuth();

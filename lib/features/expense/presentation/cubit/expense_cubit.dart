@@ -56,6 +56,20 @@ class ExpenseCubit extends Cubit<ExpenseState> {
     return super.close();
   }
 
+  @override
+  void onChange(Change<ExpenseState> change) {
+    super.onChange(change);
+    // analytics event
+    if (change.currentState.state == ExpenseStates.loaded) {
+      // AnalyticsService().logEvent(
+      //   name: 'expense_loaded',
+      //   parameters: {
+      //     'expense_count': change.currentState.expenses.length,
+      //   },
+      // );
+    }
+  }
+
   /// Fetches expenses for a specific page
   Future<List<ExpenseEntity>> fetchExpenses(
     int pageKey,

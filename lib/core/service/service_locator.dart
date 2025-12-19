@@ -11,6 +11,8 @@ import 'package:xpensemate/core/service/secure_storage_service.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/features/auth/data/datasources/auth_local_storage.dart';
 import 'package:xpensemate/features/auth/data/datasources/auth_remote_data_source.dart';
+import 'package:xpensemate/core/service/hive_storage_service.dart';
+import 'package:xpensemate/core/service/storage_service.dart';
 import 'package:xpensemate/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:xpensemate/features/auth/data/services/auth_service.dart';
 import 'package:xpensemate/features/auth/domain/repositories/auth_repository.dart';
@@ -98,6 +100,11 @@ Future<void> initLocator() async {
     // ---------- Secure Storage Service ----------
     sl.registerLazySingleton<IStorageService>(
       () => SecureStorageService.instance,
+    );
+
+    // Provide generic storage service (Hive implementation)
+    sl.registerLazySingleton<StorageService>(
+      () => HiveStorageService.instance,
     );
 
     // ---------- Secure Storage token ----------
@@ -248,7 +255,9 @@ extension ServiceLocatorExtension on GetIt {
 
   /// Quick access to other commonly used services
   NetworkInfoService get networkInfo => this<NetworkInfoService>();
-  IStorageService get storage => this<IStorageService>();
+  IStorageService get secureStorage => this<IStorageService>();
+  StorageService get hiveStorage => this<StorageService>();
+
   AuthLocalDataSource get authLocalDataSource => this<AuthLocalDataSource>();
   SharedPreferences get sharedPrefs => this<SharedPreferences>();
 

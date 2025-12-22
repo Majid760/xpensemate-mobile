@@ -60,15 +60,6 @@ class DashboardRepositoryImpl implements DashboardRepository {
 
   @override
   Future<Either<Failure, ProductWeeklyAnalyticsEntity>>
-      getProductWeeklyAnalyticsForCategory(String category) async {
-    final remoteProductAnalytics =
-        await _remoteDataSource.getProductWeeklyAnalyticsForCategory(category);
-    return remoteProductAnalytics.fold(
-      Left.new,
-      (remoteProductAnalytics) {
-        final productAnalytics = remoteProductAnalytics;
-        return right(productAnalytics);
-      },
-    );
-  }
+      getProductWeeklyAnalyticsForCategory() =>
+          _remoteDataSource.getProductWeeklyAnalyticsForCategory();
 }

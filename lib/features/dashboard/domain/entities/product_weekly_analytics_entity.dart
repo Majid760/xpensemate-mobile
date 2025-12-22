@@ -4,30 +4,65 @@ import 'package:equatable/equatable.dart';
 //  Sub-entities for Product Weekly Analytics
 // ------------------------------------------------------------------
 
-class DailyProductAnalyticsEntity extends Equatable {
-  const DailyProductAnalyticsEntity({
-    required this.date,
-    required this.total,
+// ------------------------------------------------------------------
+//  Sub-entities for Product Weekly Analytics
+// ------------------------------------------------------------------
+
+class AnalyticsSummaryEntity extends Equatable {
+  const AnalyticsSummaryEntity({
+    required this.totalSpent,
+    required this.dailyAverage,
+    required this.highestDay,
+    required this.lowestDay,
+    required this.daysWithExpenses,
   });
 
-  final String date;
-  final double total;
+  final double totalSpent;
+  final double dailyAverage;
+  final double highestDay;
+  final double lowestDay;
+  final int daysWithExpenses;
 
   @override
-  List<Object?> get props => [date, total];
+  List<Object?> get props => [
+        totalSpent,
+        dailyAverage,
+        highestDay,
+        lowestDay,
+        daysWithExpenses,
+      ];
 }
 
-class DayProductAnalyticsEntity extends Equatable {
-  const DayProductAnalyticsEntity({
+class DailyProductAnalyticsEntity extends Equatable {
+  const DailyProductAnalyticsEntity({
+    required this.day,
+    required this.fullDay,
     required this.date,
-    required this.total,
+    required this.value,
   });
 
+  final String day;
+  final String fullDay;
   final String date;
-  final double total;
+  final double value;
 
   @override
-  List<Object?> get props => [date, total];
+  List<Object?> get props => [day, fullDay, date, value];
+}
+
+class CategoryDataEntity extends Equatable {
+  const CategoryDataEntity({
+    required this.category,
+    required this.data,
+    required this.summary,
+  });
+
+  final String category;
+  final List<DailyProductAnalyticsEntity> data;
+  final AnalyticsSummaryEntity summary;
+
+  @override
+  List<Object?> get props => [category, data, summary];
 }
 
 // ------------------------------------------------------------------
@@ -36,69 +71,26 @@ class DayProductAnalyticsEntity extends Equatable {
 
 class ProductWeeklyAnalyticsEntity extends Equatable {
   const ProductWeeklyAnalyticsEntity({
-    required this.days,
-    required this.dailyBreakdown,
-    required this.weekTotal,
-    required this.balanceLeft,
-    required this.weeklyBudget,
-    required this.dailyAverage,
-    required this.highestDay,
-    required this.lowestDay,
-    this.availableCategories = const [],
-    this.currentCategory = 'Food',
-    this.allCategoryData = const {},
+    required this.categories,
+    required this.categoriesData,
+    required this.overallSummary,
   });
 
-  final List<DailyProductAnalyticsEntity> days;
-  final List<DailyProductAnalyticsEntity> dailyBreakdown;
-  final double weekTotal;
-  final double balanceLeft;
-  final double weeklyBudget;
-  final double dailyAverage;
-  final DayProductAnalyticsEntity highestDay;
-  final DayProductAnalyticsEntity lowestDay;
-  final List<String> availableCategories;
-  final String currentCategory;
-  final Map<String, List<DailyProductAnalyticsEntity>> allCategoryData;
+  final List<String> categories;
+  final List<CategoryDataEntity> categoriesData;
+  final AnalyticsSummaryEntity overallSummary;
 
   ProductWeeklyAnalyticsEntity copyWith({
-    List<DailyProductAnalyticsEntity>? days,
-    List<DailyProductAnalyticsEntity>? dailyBreakdown,
-    double? weekTotal,
-    double? balanceLeft,
-    double? weeklyBudget,
-    double? dailyAverage,
-    DayProductAnalyticsEntity? highestDay,
-    DayProductAnalyticsEntity? lowestDay,
-    List<String>? availableCategories,
-    String? currentCategory,
-    Map<String, List<DailyProductAnalyticsEntity>>? allCategoryData,
-  }) => ProductWeeklyAnalyticsEntity(
-      days: days ?? this.days,
-      dailyBreakdown: dailyBreakdown ?? this.dailyBreakdown,
-      weekTotal: weekTotal ?? this.weekTotal,
-      balanceLeft: balanceLeft ?? this.balanceLeft,
-      weeklyBudget: weeklyBudget ?? this.weeklyBudget,
-      dailyAverage: dailyAverage ?? this.dailyAverage,
-      highestDay: highestDay ?? this.highestDay,
-      lowestDay: lowestDay ?? this.lowestDay,
-      availableCategories: availableCategories ?? this.availableCategories,
-      currentCategory: currentCategory ?? this.currentCategory,
-      allCategoryData: allCategoryData ?? this.allCategoryData,
-    );
+    List<String>? categories,
+    List<CategoryDataEntity>? categoriesData,
+    AnalyticsSummaryEntity? overallSummary,
+  }) =>
+      ProductWeeklyAnalyticsEntity(
+        categories: categories ?? this.categories,
+        categoriesData: categoriesData ?? this.categoriesData,
+        overallSummary: overallSummary ?? this.overallSummary,
+      );
 
   @override
-  List<Object?> get props => [
-    days,
-    dailyBreakdown,
-    weekTotal,
-    balanceLeft,
-    weeklyBudget,
-    dailyAverage,
-    highestDay,
-    lowestDay,
-    availableCategories,
-    currentCategory,
-    allCategoryData,
-  ];
+  List<Object?> get props => [categories, categoriesData, overallSummary];
 }

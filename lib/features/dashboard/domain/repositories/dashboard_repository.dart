@@ -23,5 +23,5 @@ abstract class DashboardRepository {
 
   /// Fetches product weekly analytics for a specific category
   Future<Either<Failure, ProductWeeklyAnalyticsEntity>>
-      getProductWeeklyAnalyticsForCategory(String category);
+      getProductWeeklyAnalyticsForCategory();
 }

@@ -25,7 +25,7 @@ abstract class DashboardRemoteDataSource {
 
   /// Fetches product weekly analytics for a specific category
   Future<Either<Failure, ProductWeeklyAnalyticsModel>>
-      getProductWeeklyAnalyticsForCategory(String category);
+      getProductWeeklyAnalyticsForCategory();
 }
 
 class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
@@ -81,24 +81,8 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
 
   @override
   Future<Either<Failure, ProductWeeklyAnalyticsModel>>
-      getProductWeeklyAnalyticsForCategory(String category) async {
-    final response = await _networkClient.get(
-      NetworkConfigs.expenseStats,
-      fromJson: (json) => json, // Get raw JSON first
-    );
-    return response.fold(
-      Left.new,
-      (rawJson) {
-        try {
-          final model = ProductWeeklyAnalyticsModel.fromJsonForCategory(
-            rawJson,
-            category,
+      getProductWeeklyAnalyticsForCategory() => _networkClient.get(
+            NetworkConfigs.expenseStats,
+            fromJson: ProductWeeklyAnalyticsModel.fromJson,
           );
-          return Right(model);
-        } on Exception catch (e) {
-          return Left(ServerFailure(message: e.toString()));
-        }
-      },
-    );
-  }
 }

@@ -11,12 +11,12 @@ import 'package:xpensemate/features/dashboard/domain/entities/product_weekly_ana
 class ProductAnalyticsBarChart extends StatefulWidget {
   const ProductAnalyticsBarChart({
     super.key,
-    required this.productAnalytics,
+    required this.categoryData,
     this.height = 300,
     this.animationDuration = const Duration(milliseconds: 1500),
   });
 
-  final ProductWeeklyAnalyticsEntity productAnalytics;
+  final CategoryDataEntity categoryData;
   final double height;
   final Duration animationDuration;
 
@@ -42,12 +42,7 @@ class _ProductAnalyticsBarChartState extends State<ProductAnalyticsBarChart>
   @override
   void didUpdateWidget(ProductAnalyticsBarChart oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.productAnalytics.currentCategory !=
-            widget.productAnalytics.currentCategory ||
-        oldWidget.productAnalytics.days.length !=
-            widget.productAnalytics.days.length ||
-        oldWidget.productAnalytics.hashCode !=
-            widget.productAnalytics.hashCode) {
+    if (oldWidget.categoryData != widget.categoryData) {
       _initializeData();
       if (_animationController.isCompleted) {
         _animationController.reset();
@@ -65,19 +60,11 @@ class _ProductAnalyticsBarChartState extends State<ProductAnalyticsBarChart>
   }
 
   void _initializeData() {
-    _weekDays = widget.productAnalytics.days.map((day) {
-      try {
-        final date = DateTime.parse(day.date);
-        return _getShortDayName(date.weekday);
-      } on Exception catch (_) {
-        return day.date.isNotEmpty
-            ? day.date.substring(0, math.min(3, day.date.length))
-            : context.l10n.day;
-      }
-    }).toList();
+    // Expected that DailyProductAnalyticsEntity has 'day' field with short name (Mon, Tue...)
+    // or we can use 'date' if needed. Assuming 'day' is suitable for display.
+    _weekDays = widget.categoryData.data.map((item) => item.day).toList();
 
-    final values =
-        widget.productAnalytics.days.map((day) => day.total).toList();
+    final values = widget.categoryData.data.map((item) => item.value).toList();
     if (values.isEmpty) {
       _maxValue = 100.0;
     } else {
@@ -99,11 +86,6 @@ class _ProductAnalyticsBarChartState extends State<ProductAnalyticsBarChart>
     Future.delayed(const Duration(milliseconds: 300), () {
       if (mounted) _animationController.forward();
     });
-  }
-
-  String _getShortDayName(int weekday) {
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    return days[weekday - 1];
   }
 
   Widget _bottomTitles(double value, TitleMeta meta) {
@@ -207,70 +189,12 @@ class _ProductAnalyticsBarChartState extends State<ProductAnalyticsBarChart>
       );
 
   List<BarChartGroupData> _buildBarGroups() {
-    final days = widget.productAnalytics.days;
-    // Handle empty data gracefully
-    if (days.isEmpty) {
-      // EMERGENCY FIX: If days is empty but allCategoryData has data, try using that
-      if (widget.productAnalytics.allCategoryData.isNotEmpty) {
-        final firstCategory =
-            widget.productAnalytics.allCategoryData.keys.first;
-        final backupData =
-            widget.productAnalytics.allCategoryData[firstCategory];
+    final dataList = widget.categoryData.data;
 
-        if (backupData != null && backupData.isNotEmpty) {
-          return backupData.asMap().entries.map((entry) {
-            final index = entry.key;
-            final day = entry.value;
-            final animatedValue = day.total * _animationValue.value;
-
-            // Calculate responsive bar width based on available space
-            const baseWidth = 16.0; // Thinner bars
-            final constraints = MediaQuery.of(context).size;
-            final barsWidth = baseWidth * constraints.width / 400;
-
-            return BarChartGroupData(
-              x: index,
-              barRods: [
-                BarChartRodData(
-                  toY: animatedValue,
-                  gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                    colors: [
-                      AppColors.primary.withValues(alpha: 0.7),
-                      AppColors.primary,
-                      AppColors.primary.withValues(alpha: 0.9),
-                    ],
-                    stops: const [0.0, 0.5, 1.0],
-                  ),
-                  width: barsWidth.clamp(
-                    12.0,
-                    20.0,
-                  ), // Ensure reasonable width range
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(4),
-                    topRight: Radius.circular(4),
-                  ),
-                  backDrawRodData: BackgroundBarChartRodData(
-                    show: true,
-                    toY: _maxValue * 1.15,
-                    color: context.colorScheme.surfaceContainerHigh
-                        .withValues(alpha: 0.2),
-                  ),
-                ),
-              ],
-            );
-          }).toList();
-        }
-      }
-
-      return [];
-    }
-
-    return days.asMap().entries.map((entry) {
+    return dataList.asMap().entries.map((entry) {
       final index = entry.key;
-      final day = entry.value;
-      final animatedValue = day.total * _animationValue.value;
+      final item = entry.value;
+      final animatedValue = item.value * _animationValue.value;
 
       // Calculate responsive bar width based on available space
       const baseWidth = 16.0; // Thinner bars

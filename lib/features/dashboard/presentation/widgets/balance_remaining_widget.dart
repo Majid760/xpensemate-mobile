@@ -58,6 +58,11 @@ class _BalanceRemainingWidgetState extends State<BalanceRemainingWidget>
   double _calculateProgressPercentage() {
     // Match web implementation:
     // percentage = max > 0 ? Math.min((Math.abs(value) / max) * 100, 100) : 0
+    print("this is f=> ${widget.weeklyStats.balanceLeft}");
+    print("this is   dailyAverage => ${widget.weeklyStats.dailyAverage}");
+    print("this is   weeklyBudget => ${widget.weeklyStats.weeklyBudget}");
+    print("this is   weeklyTotal => ${widget.weeklyStats.weekTotal}");
+    print("this is   dailyAverage => ${widget.weeklyStats.dailyAverage}");
 
     // If weeklyBudget is 0 or negative, show no progress
     if (widget.weeklyStats.weeklyBudget <= 0) {

@@ -7,10 +7,10 @@ import 'package:xpensemate/features/dashboard/domain/entities/product_weekly_ana
 class WeeklySummaryCards extends StatefulWidget {
   const WeeklySummaryCards({
     super.key,
-    required this.productAnalytics,
+    required this.summary,
   });
 
-  final ProductWeeklyAnalyticsEntity productAnalytics;
+  final AnalyticsSummaryEntity summary;
 
   @override
   State<WeeklySummaryCards> createState() => _WeeklySummaryCardsState();
@@ -86,30 +86,28 @@ class _WeeklySummaryCardsState extends State<WeeklySummaryCards>
     final summaryData = [
       _SummaryCardData(
         title: 'TOTAL SPENT',
-        value: CurrencyFormatter.format(widget.productAnalytics.weekTotal),
+        value: CurrencyFormatter.format(widget.summary.totalSpent),
         icon: Icons.attach_money_rounded,
         iconColor: AppColors.primary,
         backgroundColor: AppColors.primaryContainer.withValues(alpha: 0.3),
       ),
       _SummaryCardData(
         title: 'DAILY\nAVERAGE',
-        value: CurrencyFormatter.format(widget.productAnalytics.dailyAverage),
+        value: CurrencyFormatter.format(widget.summary.dailyAverage),
         icon: Icons.trending_up_rounded,
         iconColor: AppColors.success,
         backgroundColor: AppColors.successContainer.withValues(alpha: 0.3),
       ),
       _SummaryCardData(
         title: 'HIGHEST DAY',
-        value:
-            CurrencyFormatter.format(widget.productAnalytics.highestDay.total),
+        value: CurrencyFormatter.format(widget.summary.highestDay),
         icon: Icons.calendar_today_rounded,
         iconColor: AppColors.warning,
         backgroundColor: AppColors.warningContainer.withValues(alpha: 0.3),
       ),
       _SummaryCardData(
         title: 'LOWEST DAY',
-        value:
-            CurrencyFormatter.format(widget.productAnalytics.lowestDay.total),
+        value: CurrencyFormatter.format(widget.summary.lowestDay),
         icon: Icons.show_chart_rounded,
         iconColor: AppColors.info,
         backgroundColor: AppColors.infoContainer.withValues(alpha: 0.3),
@@ -137,14 +135,14 @@ class _WeeklySummaryCardsState extends State<WeeklySummaryCards>
           itemBuilder: (context, index) => AnimatedBuilder(
             animation: _animationControllers[index],
             builder: (context, child) => Transform.translate(
-                offset: Offset(0, _slideAnimations[index].value),
-                child: Opacity(
-                  opacity: _fadeAnimations[index].value,
-                  child: _SummaryCard(
-                    data: summaryData[index],
-                  ),
+              offset: Offset(0, _slideAnimations[index].value),
+              child: Opacity(
+                opacity: _fadeAnimations[index].value,
+                child: _SummaryCard(
+                  data: summaryData[index],
                 ),
               ),
+            ),
           ),
         );
       },
@@ -233,6 +231,7 @@ class _SummaryCard extends StatelessWidget {
                   color: context.colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
+                  fontSize: 10,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 2,
@@ -248,35 +247,35 @@ class _SummaryCard extends StatelessWidget {
 class WeeklySummaryHorizontalCards extends StatelessWidget {
   const WeeklySummaryHorizontalCards({
     super.key,
-    required this.productAnalytics,
+    required this.summary,
   });
 
-  final ProductWeeklyAnalyticsEntity productAnalytics;
+  final AnalyticsSummaryEntity summary;
 
   @override
   Widget build(BuildContext context) {
     final summaryItems = [
       _HorizontalSummaryItem(
         title: 'TOTAL SPENT',
-        value: CurrencyFormatter.format(productAnalytics.weekTotal),
+        value: CurrencyFormatter.format(summary.totalSpent),
         icon: Icons.attach_money_rounded,
         iconColor: AppColors.primary,
       ),
       _HorizontalSummaryItem(
         title: 'DAILY AVERAGE',
-        value: CurrencyFormatter.format(productAnalytics.dailyAverage),
+        value: CurrencyFormatter.format(summary.dailyAverage),
         icon: Icons.trending_up_rounded,
         iconColor: AppColors.success,
       ),
       _HorizontalSummaryItem(
         title: 'HIGHEST DAY',
-        value: CurrencyFormatter.format(productAnalytics.highestDay.total),
+        value: CurrencyFormatter.format(summary.highestDay),
         icon: Icons.calendar_today_rounded,
         iconColor: AppColors.warning,
       ),
       _HorizontalSummaryItem(
         title: 'LOWEST DAY',
-        value: CurrencyFormatter.format(productAnalytics.lowestDay.total),
+        value: CurrencyFormatter.format(summary.lowestDay),
         icon: Icons.show_chart_rounded,
         iconColor: AppColors.info,
       ),
@@ -324,50 +323,50 @@ class _HorizontalSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-      width: 140,
-      padding: EdgeInsets.all(context.sm),
-      decoration: BoxDecoration(
-        color: context.colorScheme.surface,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: context.colorScheme.outline.withValues(alpha: 0.1),
+        width: 140,
+        padding: EdgeInsets.all(context.sm),
+        decoration: BoxDecoration(
+          color: context.colorScheme.surface,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: context.colorScheme.outline.withValues(alpha: 0.1),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: context.colorScheme.shadow.withValues(alpha: 0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 1),
+            ),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: context.colorScheme.shadow.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            item.icon,
-            color: item.iconColor,
-            size: 18,
-          ),
-          SizedBox(height: context.xs),
-          Text(
-            item.value,
-            style: context.textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: context.colorScheme.onSurface,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              item.icon,
+              color: item.iconColor,
+              size: 18,
             ),
-          ),
-          SizedBox(height: 2),
-          Text(
-            item.title,
-            style: context.textTheme.bodySmall?.copyWith(
-              color: context.colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
-              fontSize: 10,
+            SizedBox(height: context.xs),
+            Text(
+              item.value,
+              style: context.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: context.colorScheme.onSurface,
+              ),
             ),
-            textAlign: TextAlign.center,
-            maxLines: 2,
-          ),
-        ],
-      ),
-    );
+            SizedBox(height: 2),
+            Text(
+              item.title,
+              style: context.textTheme.bodySmall?.copyWith(
+                color: context.colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
+                fontSize: 10,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+            ),
+          ],
+        ),
+      );
 }

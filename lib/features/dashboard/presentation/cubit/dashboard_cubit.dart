@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/usecase/usecase.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
-import 'package:xpensemate/features/budget/presentation/cubit/budget_state.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/budget_goals_entity.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/product_weekly_analytics_entity.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/weekly_stats_entity.dart';
@@ -30,6 +29,7 @@ class DashboardCubit extends Cubit<DashboardState> {
     this._budgetCubit,
   ) : super(const DashboardState()) {
     loadDashboardData();
+    loadProductAnalytics();
   }
 
   final GetWeeklyStatsUseCase _getWeeklyStatsUseCase;
@@ -149,7 +149,6 @@ class DashboardCubit extends Cubit<DashboardState> {
     DateTime? endDate,
   }) async {
     emit(state.copyWith(state: DashboardStates.loading));
-
     try {
       // Load all data concurrently for better performance
       final weeklyStatsFuture = _getWeeklyStatsUseCase(const NoParams());

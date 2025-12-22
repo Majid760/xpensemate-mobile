@@ -1,7 +1,6 @@
 import 'package:awesome_drawer_bar/awesome_drawer_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/budget_goals_entity.dart';
@@ -30,27 +29,16 @@ class _DashboardPageState extends State<DashboardPage>
   late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  late ScrollController _scrollController;
-
-  String _currentSectionTitle = '';
-  final Map<String, GlobalKey> _sectionKeys = {
-    'weeklyFinancialOverview': GlobalKey(),
-    'activeBudgets': GlobalKey(),
-    'productAnalytics': GlobalKey(),
-  };
-
   @override
   void initState() {
     super.initState();
     _initializeAnimations();
-    _initializeScrollController();
   }
 
   @override
   void dispose() {
     _fadeController.dispose();
     _slideController.dispose();
-    _scrollController.dispose();
     super.dispose();
   }
 
@@ -83,51 +71,6 @@ class _DashboardPageState extends State<DashboardPage>
     _slideController.forward();
   }
 
-  void _initializeScrollController() {
-    _scrollController = ScrollController();
-    _scrollController.addListener(_onScroll);
-  }
-
-  void _onScroll() {
-    // Add a check to ensure the widget is still mounted
-    if (!mounted) return;
-
-    // Determine which section is currently visible
-    var newTitle = context.l10n.dashboard;
-
-    // Check each section to see which one is in view
-    _sectionKeys.forEach((key, globalKey) {
-      final renderBox =
-          globalKey.currentContext?.findRenderObject() as RenderBox?;
-      if (renderBox != null && mounted) {
-        final position = renderBox.localToGlobal(Offset.zero);
-        final size = renderBox.size;
-
-        // If the section is in the viewport (top 30% of screen)
-        if (position.dy < MediaQuery.of(context).size.height * 0.3 &&
-            position.dy + size.height > 0) {
-          switch (key) {
-            case 'weeklyFinancialOverview':
-              newTitle = context.l10n.weeklyFinancialOverview;
-              break;
-            case 'activeBudgets':
-              newTitle = context.l10n.activeBudgets;
-              break;
-            case 'productAnalytics':
-              newTitle = context.l10n.dashboard;
-              break;
-          }
-        }
-      }
-    });
-
-    if (_currentSectionTitle != newTitle && mounted) {
-      setState(() {
-        _currentSectionTitle = newTitle;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: context.colorScheme.surface,
@@ -152,7 +95,6 @@ class _DashboardPageState extends State<DashboardPage>
                 context.read<DashboardCubit>().loadDashboardData(),
             color: context.colorScheme.primary,
             child: CustomScrollView(
-              controller: _scrollController,
               physics: const BouncingScrollPhysics(),
               slivers: [
                 // App Bar with Actions
@@ -181,60 +123,49 @@ class _DashboardPageState extends State<DashboardPage>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Weekly Financial Overview Section
-                            KeyedSubtree(
-                              key: _sectionKeys['weeklyFinancialOverview'],
-                              child:
-                                  BlocBuilder<DashboardCubit, DashboardState>(
-                                buildWhen: (previous, current) =>
-                                    previous.weeklyStats !=
-                                        current.weeklyStats ||
-                                    previous.state != current.state ||
-                                    previous.message != current.message,
-                                builder: (context, state) =>
-                                    WeeklyFinancialOverviewWidget(
-                                  weeklyStats: state.weeklyStats,
-                                  isLoading:
-                                      state.state == DashboardStates.loading,
-                                  errorMessage:
-                                      state.state == DashboardStates.error
-                                          ? state.message
-                                          : null,
-                                  onRetry: () => context
-                                      .read<DashboardCubit>()
-                                      .loadDashboardData(),
-                                ),
+                            BlocBuilder<DashboardCubit, DashboardState>(
+                              buildWhen: (previous, current) =>
+                                  previous.weeklyStats != current.weeklyStats ||
+                                  previous.state != current.state ||
+                                  previous.message != current.message,
+                              builder: (context, state) =>
+                                  WeeklyFinancialOverviewWidget(
+                                weeklyStats: state.weeklyStats,
+                                isLoading:
+                                    state.state == DashboardStates.loading,
+                                errorMessage:
+                                    state.state == DashboardStates.error
+                                        ? state.message
+                                        : null,
+                                onRetry: () => context
+                                    .read<DashboardCubit>()
+                                    .loadDashboardData(),
                               ),
                             ),
 
                             SizedBox(height: context.lg),
 
                             // Active Budget Section
-                            KeyedSubtree(
-                              key: _sectionKeys['activeBudgets'],
-                              child: BlocSelector<DashboardCubit,
-                                  DashboardState, BudgetGoalsEntity?>(
-                                selector: (state) => state.budgetGoals,
-                                builder: (context, budgetGoals) {
-                                  if (budgetGoals != null) {
-                                    return Column(
-                                      children: [
-                                        ActiveBudgetSectionWidget(
-                                          budgetGoals: budgetGoals,
-                                        ),
-                                        SizedBox(height: context.lg),
-                                      ],
-                                    );
-                                  }
-                                  return const SizedBox.shrink();
-                                },
-                              ),
+                            BlocSelector<DashboardCubit, DashboardState,
+                                BudgetGoalsEntity?>(
+                              selector: (state) => state.budgetGoals,
+                              builder: (context, budgetGoals) {
+                                if (budgetGoals != null) {
+                                  return Column(
+                                    children: [
+                                      ActiveBudgetSectionWidget(
+                                        budgetGoals: budgetGoals,
+                                      ),
+                                      SizedBox(height: context.lg),
+                                    ],
+                                  );
+                                }
+                                return const SizedBox.shrink();
+                              },
                             ),
 
                             // Product Analytics Section
-                            KeyedSubtree(
-                              key: _sectionKeys['productAnalytics'],
-                              child: const ProductAnalyticsWidget(),
-                            ),
+                            const ProductAnalyticsWidget(),
 
                             SizedBox(height: context.lg),
 

@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/core/usecase/usecase.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
@@ -29,7 +31,6 @@ class DashboardCubit extends Cubit<DashboardState> {
     this._budgetCubit,
   ) : super(const DashboardState()) {
     loadDashboardData();
-    loadProductAnalytics();
   }
 
   final GetWeeklyStatsUseCase _getWeeklyStatsUseCase;
@@ -150,48 +151,66 @@ class DashboardCubit extends Cubit<DashboardState> {
   }) async {
     emit(state.copyWith(state: DashboardStates.loading));
     try {
-      // Load all data concurrently for better performance
-      final weeklyStatsFuture = _getWeeklyStatsUseCase(const NoParams());
-      final budgetGoalsFuture = _getBudgetGoalsUseCase(
-        GetBudgetGoalsParams(
-          page: page,
-          limit: limit,
-          duration: duration,
-          startDate: startDate,
-          endDate: endDate,
-        ),
-      );
-      final productAnalyticsFuture =
-          _getProductWeeklyAnalyticsUseCase(const NoParams());
-
       final results = await Future.wait([
-        weeklyStatsFuture,
-        budgetGoalsFuture,
-        productAnalyticsFuture,
+        _getWeeklyStatsUseCase(const NoParams()),
+        _getBudgetGoalsUseCase(
+          GetBudgetGoalsParams(
+            page: page,
+            limit: limit,
+            duration: duration,
+            startDate: startDate,
+            endDate: endDate,
+          ),
+        ),
+        _getProductWeeklyAnalyticsUseCase(const NoParams()),
       ]);
 
-      final failures = <String>[];
-      final data = <dynamic>[];
-      for (final result in results) {
-        result.fold(
-          (failure) => failures.add(failure.message),
-          data.add,
-        );
-      }
-      if (failures.isNotEmpty) {
+      final weeklyStatsResult =
+          results[0] as Either<Failure, WeeklyStatsEntity>;
+      final budgetGoalsResult =
+          results[1] as Either<Failure, BudgetGoalsEntity>;
+      final productAnalyticsResult =
+          results[2] as Either<Failure, ProductWeeklyAnalyticsEntity>;
+
+      var newWeeklyStats = state.weeklyStats;
+      var newBudgetGoals = state.budgetGoals;
+      var newProductAnalytics = state.productAnalytics;
+      final errors = <String>[];
+
+      weeklyStatsResult.fold(
+        (l) => errors.add(l.message),
+        (r) => newWeeklyStats = r,
+      );
+
+      budgetGoalsResult.fold(
+        (l) => errors.add(l.message),
+        (r) => newBudgetGoals = r,
+      );
+
+      productAnalyticsResult.fold(
+        (l) => errors.add(l.message),
+        (r) => newProductAnalytics = r,
+      );
+
+      if (errors.length == 3) {
+        // All failed
         emit(
           state.copyWith(
             state: DashboardStates.error,
-            message: failures.first,
+            message: errors.join('\n'),
           ),
         );
       } else {
+        // Partial or full success
         emit(
           state.copyWith(
             state: DashboardStates.loaded,
-            weeklyStats: data[0] as WeeklyStatsEntity,
-            budgetGoals: data[1] as BudgetGoalsEntity,
-            productAnalytics: data[2] as ProductWeeklyAnalyticsEntity,
+            weeklyStats: newWeeklyStats,
+            budgetGoals: newBudgetGoals,
+            productAnalytics: newProductAnalytics,
+            message: errors.isNotEmpty
+                ? 'Some data failed to load: ${errors.join(", ")}'
+                : null,
           ),
         );
       }
@@ -236,10 +255,12 @@ class DashboardCubit extends Cubit<DashboardState> {
       if (!_paymentCubit.isClosed) {
         await _paymentCubit.createPayment(payment: payment);
         unawaited(loadDashboardData());
-        emit(state.copyWith(
-          state: DashboardStates.loaded,
-          message: 'Payment created successfully!',
-        ));
+        emit(
+          state.copyWith(
+            state: DashboardStates.loaded,
+            message: 'Payment created successfully!',
+          ),
+        );
       }
     } on Exception catch (e, stackTrace) {
       emit(

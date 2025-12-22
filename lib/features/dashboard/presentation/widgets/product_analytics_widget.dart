@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/widget/app_custom_dropdown_widget.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/product_weekly_analytics_entity.dart';
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/product_analytics_bar_chart.dart';
@@ -78,48 +79,33 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header
+                  // Header and Dropdown
                   Padding(
                     padding: const EdgeInsets.all(8),
-                    child: SectionHeaderWidget(
-                      title: context.l10n.productAnalytic,
-                      icon: Icons.analytics,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: SectionHeaderWidget(
+                            title: context.l10n.productAnalytic,
+                            icon: Icons.analytics,
+                          ),
+                        ),
+                        if (analytics.categories.isNotEmpty) ...[
+                          const SizedBox(width: 8),
+                          CustomDropDown(
+                            items: analytics.categories,
+                            initialValue: _selectedCategory,
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedCategory = value;
+                              });
+                            },
+                          ),
+                        ],
+                      ],
                     ),
                   ),
-
-                  // Category Selector
-                  if (analytics.categories.isNotEmpty)
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      padding: EdgeInsets.symmetric(horizontal: context.sm),
-                      child: Row(
-                        children: analytics.categories.map((category) {
-                          final isSelected = category == _selectedCategory;
-                          return Padding(
-                            padding: EdgeInsets.only(right: context.sm),
-                            child: ChoiceChip(
-                              label: Text(category),
-                              selected: isSelected,
-                              onSelected: (selected) {
-                                if (selected) {
-                                  setState(() {
-                                    _selectedCategory = category;
-                                  });
-                                }
-                              },
-                              labelStyle: TextStyle(
-                                color: isSelected
-                                    ? context.colorScheme.onPrimary
-                                    : context.colorScheme.onSurfaceVariant,
-                                fontWeight: isSelected
-                                    ? FontWeight.w600
-                                    : FontWeight.normal,
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ),
 
                   SizedBox(height: context.lg),
 

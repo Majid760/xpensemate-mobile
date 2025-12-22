@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
 
 class CustomDropDown extends StatefulWidget {
-  const CustomDropDown(
-      {super.key, this.defaultValue, this.value, required this.onChanged});
-  final String? defaultValue;
-  final List<String>? value;
-  final Function(String?) onChanged;
+  const CustomDropDown({
+    super.key,
+    this.initialValue,
+    required this.items,
+    required this.onChanged,
+  });
+
+  final String? initialValue;
+  final List<String> items;
+  final ValueChanged<String> onChanged;
 
   @override
   State<CustomDropDown> createState() => _CustomDropDownState();
@@ -14,142 +20,129 @@ class CustomDropDown extends StatefulWidget {
 
 class _CustomDropDownState extends State<CustomDropDown>
     with SingleTickerProviderStateMixin {
-  late AnimationController _dropdownAnimationController;
-  late Animation<double> _dropdownOpacityAnimation;
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<double> _scaleAnimation;
 
-  late Animation<double> _dropdownAnimation;
-
-  String _selectedPeriod = 'weekly';
-  bool _isDropdownOpen = false;
-  final List<String> _periods = ['Weekly', 'Monthly', 'Yearly'];
+  final LayerLink _layerLink = LayerLink();
+  OverlayEntry? _overlayEntry;
+  late String _selectedItem;
+  bool _isOpen = false;
 
   @override
   void initState() {
     super.initState();
-    _selectedPeriod = widget.defaultValue ?? _periods.first;
-    _dropdownAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
+    _selectedItem = widget.initialValue ??
+        (widget.items.isNotEmpty ? widget.items.first : '');
+
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    _dropdownAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(
-      CurvedAnimation(
-        parent: _dropdownAnimationController,
-        curve: Curves.easeOutBack,
-      ),
+
+    _fadeAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOut,
     );
 
-    _dropdownOpacityAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(
-      CurvedAnimation(
-        parent: _dropdownAnimationController,
-        curve: const Interval(0, 0.7, curve: Curves.easeOut),
-      ),
+    _scaleAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOutBack,
     );
+  }
+
+  @override
+  void didUpdateWidget(CustomDropDown oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialValue != oldWidget.initialValue &&
+        widget.initialValue != null) {
+      _selectedItem = widget.initialValue!;
+    }
   }
 
   void _toggleDropdown() {
-    setState(() {
-      _isDropdownOpen = !_isDropdownOpen;
-    });
-
-    if (_isDropdownOpen) {
-      _dropdownAnimationController.forward();
+    if (_isOpen) {
+      _closeDropdown();
     } else {
-      _dropdownAnimationController.reverse();
+      _openDropdown();
     }
-
     HapticFeedback.lightImpact();
   }
 
-  void _selectPeriod(String period) {
-    widget.onChanged(period);
+  void _openDropdown() {
+    _overlayEntry = _createOverlayEntry();
+    Overlay.of(context).insert(_overlayEntry!);
+    _animationController.forward();
     setState(() {
-      _selectedPeriod = period;
-      _isDropdownOpen = false;
+      _isOpen = true;
     });
-    _dropdownAnimationController.reverse();
-
-    HapticFeedback.selectionClick();
   }
 
-  @override
-  void dispose() {
-    _dropdownAnimationController.dispose();
-    super.dispose();
+  Future<void> _closeDropdown() async {
+    await _animationController.reverse();
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+    if (mounted) {
+      setState(() {
+        _isOpen = false;
+      });
+    }
   }
 
-  @override
-  Widget build(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
+  OverlayEntry _createOverlayEntry() {
+    final renderBox = context.findRenderObject() as RenderBox?;
+    if (renderBox == null) {
+      return OverlayEntry(builder: (_) => const SizedBox());
+    }
+
+    final size = renderBox.size;
+    // final offset = renderBox.localToGlobal(Offset.zero);
+
+    // Determine position (default to bottom, flip if close to bottom edge?)
+    // For simplicity, just anchor to bottom right of target for now.
+
+    return OverlayEntry(
+      builder: (context) => Stack(
         children: [
-          // Dropdown button
-          GestureDetector(
-            onTap: _toggleDropdown,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.3),
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    _selectedPeriod,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  AnimatedRotation(
-                    turns: _isDropdownOpen ? 0.5 : 0,
-                    duration: const Duration(milliseconds: 300),
-                    child: const Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-                ],
-              ),
+          // Transparent dismiss barrier
+          Positioned.fill(
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: _closeDropdown,
+              child: Container(color: Colors.transparent),
             ),
           ),
-
-          // Dropdown menu
-          AnimatedBuilder(
-            animation: _dropdownAnimation,
-            builder: (context, child) {
-              if (_dropdownAnimation.value == 0) {
-                return const SizedBox.shrink();
-              }
-
-              return Transform.scale(
-                scale: _dropdownAnimation.value,
-                alignment: Alignment.topRight,
-                child: Transform.translate(
-                  offset: Offset(0, 10 * (1 - _dropdownAnimation.value)),
-                  child: Opacity(
-                    opacity: _dropdownOpacityAnimation.value,
+          // Dropdown content
+          Positioned(
+            width:
+                200, // Or dynamic? Fixed width for the menu looks cleaner typically
+            child: CompositedTransformFollower(
+              link: _layerLink,
+              showWhenUnlinked: false,
+              offset:
+                  Offset(size.width - 200, size.height + 8), // Align right edge
+              child: Material(
+                color: Colors.transparent,
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: ScaleTransition(
+                    scale: _scaleAnimation,
+                    alignment: Alignment.topRight,
                     child: Container(
-                      margin: const EdgeInsets.only(top: 8),
+                      constraints: const BoxConstraints(maxHeight: 250),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: context.colorScheme.surfaceContainer,
                         borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: context.colorScheme.outline
+                              .withValues(alpha: 0.1),
+                        ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
-                            blurRadius: 20,
-                            offset: const Offset(0, 10),
+                            color: context.colorScheme.shadow
+                                .withValues(alpha: 0.15),
+                            blurRadius: 24,
+                            offset: const Offset(0, 8),
                           ),
                         ],
                       ),
@@ -157,65 +150,158 @@ class _CustomDropDownState extends State<CustomDropDown>
                         borderRadius: BorderRadius.circular(16),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
-                          children: _periods.map((period) {
-                            final isSelected = period == _selectedPeriod;
-                            return Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                onTap: () => _selectPeriod(period),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 20,
-                                    vertical: 12,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: isSelected
-                                        ? Theme.of(context)
-                                            .primaryColor
-                                            .withValues(alpha: 0.1)
-                                        : Colors.transparent,
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      if (isSelected)
-                                        Container(
-                                          width: 6,
-                                          height: 6,
-                                          margin:
-                                              const EdgeInsets.only(right: 8),
+                          children: [
+                            Flexible(
+                              child: SingleChildScrollView(
+                                padding: EdgeInsets.zero,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: widget.items.map((item) {
+                                    final isSelected = item == _selectedItem;
+                                    return Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        onTap: () {
+                                          _selectItem(item);
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 12,
+                                          ),
                                           decoration: BoxDecoration(
-                                            color:
-                                                Theme.of(context).primaryColor,
-                                            shape: BoxShape.circle,
+                                            color: isSelected
+                                                ? context.colorScheme.primary
+                                                    .withValues(alpha: 0.1)
+                                                : Colors.transparent,
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              if (isSelected)
+                                                Container(
+                                                  width: 6,
+                                                  height: 6,
+                                                  margin: const EdgeInsets.only(
+                                                      right: 12),
+                                                  decoration: BoxDecoration(
+                                                    color: context
+                                                        .colorScheme.primary,
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                )
+                                              else
+                                                const SizedBox(width: 18),
+                                              Expanded(
+                                                child: Text(
+                                                  item,
+                                                  style: context
+                                                      .textTheme.bodyMedium
+                                                      ?.copyWith(
+                                                    color: isSelected
+                                                        ? context
+                                                            .colorScheme.primary
+                                                        : context.colorScheme
+                                                            .onSurface,
+                                                    fontWeight: isSelected
+                                                        ? FontWeight.w600
+                                                        : FontWeight.w500,
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                      Text(
-                                        period,
-                                        style: TextStyle(
-                                          color: isSelected
-                                              ? Theme.of(context).primaryColor
-                                              : Colors.grey[700],
-                                          fontSize: 14,
-                                          fontWeight: isSelected
-                                              ? FontWeight.w600
-                                              : FontWeight.w500,
-                                        ),
                                       ),
-                                    ],
-                                  ),
+                                    );
+                                  }).toList(),
                                 ),
                               ),
-                            );
-                          }).toList(),
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ),
                 ),
-              );
-            },
+              ),
+            ),
           ),
         ],
-      );
+      ),
+    );
+  }
+
+  void _selectItem(String item) {
+    widget.onChanged(item);
+    setState(() {
+      _selectedItem = item;
+    });
+    _closeDropdown();
+    HapticFeedback.selectionClick();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _overlayEntry?.remove();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.items.isEmpty) return const SizedBox.shrink();
+
+    return CompositedTransformTarget(
+      link: _layerLink,
+      child: GestureDetector(
+        onTap: _toggleDropdown,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: _isOpen
+                ? context.colorScheme.primary.withValues(alpha: 0.1)
+                : context.colorScheme.surfaceContainerHigh
+                    .withValues(alpha: 0.5),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: _isOpen
+                  ? context.colorScheme.primary.withValues(alpha: 0.2)
+                  : context.colorScheme.outline.withValues(alpha: 0.1),
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                _selectedItem,
+                style: context.textTheme.labelLarge?.copyWith(
+                  color: _isOpen
+                      ? context.colorScheme.primary
+                      : context.colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(width: 8),
+              AnimatedRotation(
+                turns: _isOpen ? 0.5 : 0,
+                duration: const Duration(milliseconds: 200),
+                child: Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: _isOpen
+                      ? context.colorScheme.primary
+                      : context.colorScheme.onSurfaceVariant,
+                  size: 20,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

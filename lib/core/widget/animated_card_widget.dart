@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 
 class AnimatedCardWidget extends StatefulWidget {
-  const AnimatedCardWidget(
-      {super.key, required this.child, required this.index});
+  const AnimatedCardWidget({
+    super.key,
+    required this.child,
+    required this.index,
+    this.shouldAnimate = true,
+  });
   final int index;
   final Widget child;
+  final bool shouldAnimate;
 
   @override
   State<AnimatedCardWidget> createState() => _AnimatedCardWidgetState();
@@ -53,6 +58,11 @@ class _AnimatedCardWidgetState extends State<AnimatedCardWidget>
   }
 
   void _startEntranceAnimation() {
+    if (!widget.shouldAnimate) {
+      _entranceController.value = 1.0;
+      return;
+    }
+
     Future.delayed(Duration(milliseconds: 100 * widget.index), () {
       if (mounted) {
         _entranceController.forward();

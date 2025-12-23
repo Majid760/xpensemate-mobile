@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:xpensemate/core/widget/error_state_widget.dart';
@@ -23,6 +24,27 @@ class ExpenseListWidget extends StatefulWidget {
 }
 
 class _ExpenseListWidgetState extends State<ExpenseListWidget> {
+  bool _shouldAnimate = true;
+  Timer? _animationTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationTimer = Timer(const Duration(seconds: 2), () {
+      if (mounted) {
+        setState(() {
+          _shouldAnimate = false;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _animationTimer?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) => PagingListener(
         controller: context.expenseCubit.pagingController,
@@ -36,6 +58,8 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget> {
             itemBuilder: (context, expense, index) => Padding(
               padding: const EdgeInsets.only(bottom: 4),
               child: ExpenseCardWidget(
+                key: ValueKey(expense.id),
+                shouldAnimate: _shouldAnimate,
                 expense: expense,
                 onDelete: widget.onDelete,
                 onEdit: widget.onEdit,

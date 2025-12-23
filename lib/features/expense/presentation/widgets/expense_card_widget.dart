@@ -18,6 +18,7 @@ class ExpenseCardWidget extends StatefulWidget {
     this.onDelete,
     this.onEdit,
     this.index = 0,
+    this.shouldAnimate = true,
   });
 
   final ExpenseEntity expense;
@@ -25,6 +26,7 @@ class ExpenseCardWidget extends StatefulWidget {
   final void Function(String expenseId)? onDelete;
   final void Function(ExpenseEntity expenseEntity)? onEdit;
   final int index;
+  final bool shouldAnimate;
 
   @override
   State<ExpenseCardWidget> createState() => _ExpenseCardWidgetState();
@@ -63,6 +65,7 @@ class _ExpenseCardWidgetState extends State<ExpenseCardWidget> {
 
   @override
   Widget build(BuildContext context) => AnimatedCardWidget(
+        shouldAnimate: widget.shouldAnimate,
         index: widget.index,
         child: AppDismissible(
           objectKey: 'expense_${widget.expense.id}',

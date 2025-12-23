@@ -13,6 +13,7 @@ import 'package:xpensemate/features/auth/data/datasources/auth_local_storage.dar
 import 'package:xpensemate/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:xpensemate/core/service/hive_storage_service.dart';
 import 'package:xpensemate/core/service/storage_service.dart';
+import 'package:xpensemate/core/service/crashlytics_service.dart';
 import 'package:xpensemate/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:xpensemate/features/auth/data/services/auth_service.dart';
 import 'package:xpensemate/features/auth/domain/repositories/auth_repository.dart';
@@ -97,6 +98,12 @@ Future<void> initLocator() async {
     sl.registerLazySingleton<PermissionService>(
       PermissionService.new,
     );
+
+    // Crashlytics Service
+    sl.registerLazySingleton<CrashlyticsService>(
+      FirebaseCrashlyticsService.new,
+    );
+
     // ---------- Secure Storage Service ----------
     sl.registerLazySingleton<IStorageService>(
       () => SecureStorageService.instance,
@@ -272,4 +279,5 @@ extension ServiceLocatorExtension on GetIt {
   PaymentCubit get paymentCubit => this<PaymentCubit>();
   // services
   AuthService get authService => this<AuthService>();
+  CrashlyticsService get crashlytics => this<CrashlyticsService>();
 }

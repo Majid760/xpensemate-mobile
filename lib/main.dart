@@ -32,6 +32,9 @@ void main() async {
       // Initialize services locator/dependency injection
       await initLocator();
 
+      // Initialize Crashlytics
+      await sl.crashlytics.init();
+
       // Initialize Hive Storage
       await sl<StorageService>().init();
 
@@ -48,8 +51,9 @@ void main() async {
       debugPrint('Stack trace: $stack');
       debugPrint('==============================');
 
-      // TODO: Implement proper error reporting to Crashlytics or other error tracking service
-      // Example: FirebaseCrashlytics.instance.recordError(error, stack);
+      // Record fatal error to Crashlytics
+      sl.crashlytics
+          .recordError(error, stack, reason: 'Fatal error in main zone');
     },
   );
 }

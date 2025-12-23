@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:xpensemate/core/service/crashlytics_service.dart';
+import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_specific_expense_entity.dart';
 import 'package:xpensemate/features/budget/domain/usecases/get_budget_specific_expenses_usecase.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_expense_state.dart';
@@ -7,9 +11,13 @@ import 'package:xpensemate/features/budget/presentation/cubit/budget_expense_sta
 class BudgetExpensesCubit extends Cubit<BudgetExpensesState> {
   BudgetExpensesCubit(
     this._getBudgetSpecificExpensesUseCase,
-  ) : super(const BudgetExpensesState());
+  ) : super(const BudgetExpensesState()) {
+    _crashlytics = sl.crashlytics;
+    unawaited(_crashlytics.log('Initializing BudgetExpensesCubit...'));
+  }
 
   final GetBudgetSpecificExpensesUseCase _getBudgetSpecificExpensesUseCase;
+  late final CrashlyticsService _crashlytics;
 
   // Filter parameters
   String _searchQuery = '';
@@ -21,6 +29,8 @@ class BudgetExpensesCubit extends Cubit<BudgetExpensesState> {
     String? searchQuery,
     String? paymentMethod,
   }) async {
+    unawaited(_crashlytics
+        .log('Fetching budget specific expenses for: $budgetId...'));
     // Update filter parameters
     _searchQuery = searchQuery ?? _searchQuery;
     _paymentMethodFilter = paymentMethod ?? _paymentMethodFilter;
@@ -28,32 +38,50 @@ class BudgetExpensesCubit extends Cubit<BudgetExpensesState> {
     if (state.budgetGoals == null) {
       emit(state.copyWith(state: BudgetExpensesStates.loading));
     }
-    final result =
-        await _getBudgetSpecificExpensesUseCase.call(GetBudgetSpecificExpensesUseCaseParams(budgetId: budgetId));
-    result.fold(
-      (failure) => emit(
+    try {
+      final result = await _getBudgetSpecificExpensesUseCase
+          .call(GetBudgetSpecificExpensesUseCaseParams(budgetId: budgetId));
+      result.fold(
+        (failure) {
+          unawaited(_crashlytics
+              .log('Fetch budget expenses failed: ${failure.toString()}'));
+          emit(
+            state.copyWith(
+              state: BudgetExpensesStates.error,
+              message: failure.toString(),
+            ),
+          );
+        },
+        (expenses) {
+          unawaited(_crashlytics.log(
+              'Fetch budget expenses success (${expenses.expenses.length} items)'));
+          // Store original expenses
+          final originalExpensesList = expenses;
+
+          // Apply filters to expenses
+          final filteredExpenses = _applyFilters(expenses.expenses);
+          final filteredExpensesList =
+              expenses.copyWith(expenses: filteredExpenses);
+
+          emit(
+            state.copyWith(
+              state: BudgetExpensesStates.loaded,
+              budgetGoals: filteredExpensesList,
+              originalBudgetGoals: originalExpensesList,
+            ),
+          );
+        },
+      );
+    } on Exception catch (e, s) {
+      unawaited(_crashlytics.recordError(e, s,
+          reason: 'getBudgetSpecificExpenses failed'));
+      emit(
         state.copyWith(
           state: BudgetExpensesStates.error,
-          message: failure.toString(),
+          message: e.toString(),
         ),
-      ),
-      (expenses) {
-        // Store original expenses
-        final originalExpensesList = expenses;
-
-        // Apply filters to expenses
-        final filteredExpenses = _applyFilters(expenses.expenses);
-        final filteredExpensesList = expenses.copyWith(expenses: filteredExpenses);
-
-        emit(
-          state.copyWith(
-            state: BudgetExpensesStates.loaded,
-            budgetGoals: filteredExpensesList,
-            originalBudgetGoals: originalExpensesList,
-          ),
-        );
-      },
-    );
+      );
+    }
   }
 
   // Apply search and filter logic
@@ -67,8 +95,12 @@ class BudgetExpensesCubit extends Cubit<BudgetExpensesState> {
       filtered = filtered
           .where(
             (expense) =>
-                expense.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-                expense.detail.toLowerCase().contains(_searchQuery.toLowerCase()),
+                expense.name
+                    .toLowerCase()
+                    .contains(_searchQuery.toLowerCase()) ||
+                expense.detail
+                    .toLowerCase()
+                    .contains(_searchQuery.toLowerCase()),
           )
           .toList();
     }
@@ -76,7 +108,9 @@ class BudgetExpensesCubit extends Cubit<BudgetExpensesState> {
     // Apply payment method filter
     if (_paymentMethodFilter != 'all') {
       // Changed from 'All' to 'all'
-      filtered = filtered.where((expense) => expense.paymentMethod == _paymentMethodFilter).toList();
+      filtered = filtered
+          .where((expense) => expense.paymentMethod == _paymentMethodFilter)
+          .toList();
     }
 
     return filtered;
@@ -88,8 +122,10 @@ class BudgetExpensesCubit extends Cubit<BudgetExpensesState> {
     // For now, we'll just update the state and re-apply filters
     _searchQuery = query;
     if (state.originalBudgetGoals != null) {
-      final filteredExpenses = _applyFilters(state.originalBudgetGoals!.expenses);
-      final filteredExpensesList = state.originalBudgetGoals!.copyWith(expenses: filteredExpenses);
+      final filteredExpenses =
+          _applyFilters(state.originalBudgetGoals!.expenses);
+      final filteredExpensesList =
+          state.originalBudgetGoals!.copyWith(expenses: filteredExpenses);
       emit(state.copyWith(budgetGoals: filteredExpensesList));
     }
   }
@@ -98,8 +134,10 @@ class BudgetExpensesCubit extends Cubit<BudgetExpensesState> {
   void updatePaymentMethodFilter(String method) {
     _paymentMethodFilter = method;
     if (state.originalBudgetGoals != null) {
-      final filteredExpenses = _applyFilters(state.originalBudgetGoals!.expenses);
-      final filteredExpensesList = state.originalBudgetGoals!.copyWith(expenses: filteredExpenses);
+      final filteredExpenses =
+          _applyFilters(state.originalBudgetGoals!.expenses);
+      final filteredExpensesList =
+          state.originalBudgetGoals!.copyWith(expenses: filteredExpenses);
       emit(state.copyWith(budgetGoals: filteredExpensesList));
     }
   }

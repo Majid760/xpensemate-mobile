@@ -10,7 +10,7 @@ class SearchAndFilterBar extends StatefulWidget {
     this.onFilterToggle,
   });
 
-  final Function(bool)? onFilterToggle;
+  final void Function(bool)? onFilterToggle;
 
   @override
   State<SearchAndFilterBar> createState() => _SearchAndFilterBarState();
@@ -117,8 +117,9 @@ class _SearchAndFilterBarState extends State<SearchAndFilterBar>
                           boxShadow: [
                             BoxShadow(
                               color: _isFilterVisible
-                                  ? const Color(0xFF6C63FF).withOpacity(0.3)
-                                  : Colors.black.withOpacity(0.05),
+                                  ? const Color(0xFF6C63FF)
+                                      .withValues(alpha: 0.3)
+                                  : Colors.black.withValues(alpha: 0.05),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
@@ -165,14 +166,16 @@ class _SearchAndFilterBarState extends State<SearchAndFilterBar>
                   ],
                 ),
                 const SizedBox(height: 16),
-                PaymentMethodFilter(onFilterChanged: (method) {
-                  if (context.mounted) {
-                    // Convert display names to database format
-                    final dbFormat = _convertToDatabaseFormat(method);
-                    context.budgetExpensesCubit
-                        .updatePaymentMethodFilter(dbFormat);
-                  }
-                }),
+                PaymentMethodFilter(
+                  onFilterChanged: (method) {
+                    if (context.mounted) {
+                      // Convert display names to database format
+                      final dbFormat = _convertToDatabaseFormat(method);
+                      context.budgetExpensesCubit
+                          .updatePaymentMethodFilter(dbFormat);
+                    }
+                  },
+                ),
               ],
             ],
           ),
@@ -279,8 +282,8 @@ class FilterChip extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 color: isSelected
-                    ? const Color(0xFF6C63FF).withOpacity(0.3)
-                    : Colors.black.withOpacity(0.05),
+                    ? const Color(0xFF6C63FF).withValues(alpha: 0.3)
+                    : Colors.black.withValues(alpha: 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),

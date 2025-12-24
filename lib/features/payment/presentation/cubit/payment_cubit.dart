@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:xpensemate/core/enums.dart';
-import 'package:xpensemate/core/service/crashlytics_service.dart';
-import 'package:xpensemate/core/service/service_locator.dart';
+import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_entity.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_pagination_entity.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_stats_entity.dart';
@@ -26,8 +25,7 @@ class PaymentCubit extends Cubit<PaymentState> {
     this._createPaymentUseCase,
     this._getPaymentStatsUseCase,
   ) : super(const PaymentState()) {
-    _crashlytics = sl.crashlytics;
-    unawaited(_crashlytics.log('Initializing PaymentCubit...'));
+    AppLogger.breadcrumb('Initializing PaymentCubit...');
     _pagingController.addListener(_showPaginationError);
     fetchPaymentStats(FilterValue.monthly);
   }
@@ -37,7 +35,6 @@ class PaymentCubit extends Cubit<PaymentState> {
   final UpdatePaymentUseCase _updatePaymentUseCase;
   final CreatePaymentUseCase _createPaymentUseCase;
   final GetPaymentStatsUseCase _getPaymentStatsUseCase;
-  late final CrashlyticsService _crashlytics;
 
   static const int _limit = 10;
   String filterQuery = '';
@@ -61,7 +58,7 @@ class PaymentCubit extends Cubit<PaymentState> {
     int pageKey,
     String filterQuery,
   ) async {
-    unawaited(_crashlytics.log('Fetching payments page: $pageKey...'));
+    AppLogger.breadcrumb('Fetching payments page: $pageKey...');
     try {
       final params = GetPaymentsParams(
         page: pageKey,
@@ -71,19 +68,17 @@ class PaymentCubit extends Cubit<PaymentState> {
       final result = await _getPaymentsUseCase(params);
       return result.fold(
         (failure) {
-          unawaited(
-              _crashlytics.log('Fetch payments failed: ${failure.message}'));
+          AppLogger.breadcrumb('Fetch payments failed: ${failure.message}');
           return [];
         },
         (paginationEntity) {
-          unawaited(_crashlytics.log(
-              'Fetch payments success (${paginationEntity.payments.length} items)'));
+          AppLogger.breadcrumb(
+              'Fetch payments success (${paginationEntity.payments.length} items)');
           return paginationEntity.payments;
         },
       );
     } on Exception catch (e, stackTrace) {
-      unawaited(_crashlytics.recordError(e, stackTrace,
-          reason: 'fetchPayments failed'));
+      AppLogger.e('fetchPayments failed', e, stackTrace);
       debugPrint('getPayments error: $e, stack: $stackTrace');
       return [];
     }
@@ -91,16 +86,15 @@ class PaymentCubit extends Cubit<PaymentState> {
 
   /// Load all payment data with pagination support
   Future<void> fetchPaymentStats(FilterValue filterValue) async {
-    unawaited(
-        _crashlytics.log('Fetching payment stats for: ${filterValue.name}...'));
+    AppLogger.breadcrumb('Fetching payment stats for: ${filterValue.name}...');
     try {
       final statsResult = await _getPaymentStatsUseCase(
         GetPaymentsStatsParams(filterQuery: filterValue.name),
       );
       statsResult.fold(
         (failure) {
-          unawaited(_crashlytics
-              .log('Fetch payment stats failed: ${failure.message}'));
+          AppLogger.breadcrumb(
+              'Fetch payment stats failed: ${failure.message}');
           emit(
             state.copyWith(
               status: PaymentStatus.error,
@@ -109,7 +103,7 @@ class PaymentCubit extends Cubit<PaymentState> {
           );
         },
         (stats) {
-          unawaited(_crashlytics.log('Fetch payment stats success'));
+          AppLogger.breadcrumb('Fetch payment stats success');
           emit(
             state.copyWith(
               paymentStats: stats,
@@ -120,8 +114,7 @@ class PaymentCubit extends Cubit<PaymentState> {
         },
       );
     } on Exception catch (e, s) {
-      unawaited(
-          _crashlytics.recordError(e, s, reason: 'fetchPaymentStats failed'));
+      AppLogger.e('fetchPaymentStats failed', e, s);
       emit(
         state.copyWith(
           status: PaymentStatus.error,
@@ -134,7 +127,7 @@ class PaymentCubit extends Cubit<PaymentState> {
 
   /// Update payment with optimistic updates and rollback on failure
   Future<void> updatePayment({required PaymentEntity payment}) async {
-    unawaited(_crashlytics.log('Updating payment: ${payment.id}...'));
+    AppLogger.breadcrumb('Updating payment: ${payment.id}...');
     try {
       // Find the page and index of the payment to update
       final pages = _pagingController.value.pages ?? [];
@@ -162,8 +155,7 @@ class PaymentCubit extends Cubit<PaymentState> {
       }
       final result = await _updatePaymentUseCase(payment);
       await result.fold((failure) {
-        unawaited(
-            _crashlytics.log('Update payment failed: ${failure.message}'));
+        AppLogger.breadcrumb('Update payment failed: ${failure.message}');
         // Refresh to rollback changes on failure
         _pagingController.refresh();
         emit(
@@ -173,7 +165,7 @@ class PaymentCubit extends Cubit<PaymentState> {
           ),
         );
       }, (updatedPayment) async {
-        unawaited(_crashlytics.log('Update payment success'));
+        AppLogger.breadcrumb('Update payment success');
         emit(
           state.copyWith(
             status: PaymentStatus.loaded,
@@ -182,8 +174,7 @@ class PaymentCubit extends Cubit<PaymentState> {
         );
       });
     } on Exception catch (e, stackTrace) {
-      unawaited(_crashlytics.recordError(e, stackTrace,
-          reason: 'updatePayment failed'));
+      AppLogger.e('updatePayment failed', e, stackTrace);
       emit(
         state.copyWith(
           status: PaymentStatus.error,
@@ -196,15 +187,14 @@ class PaymentCubit extends Cubit<PaymentState> {
 
   /// Create payment with optimistic updates
   Future<void> createPayment({required PaymentEntity payment}) async {
-    unawaited(_crashlytics.log('Creating payment...'));
+    AppLogger.breadcrumb('Creating payment...');
     try {
       // Make the API call
       final result = await _createPaymentUseCase(payment);
 
       await result.fold(
         (failure) {
-          unawaited(
-              _crashlytics.log('Create payment failed: ${failure.message}'));
+          AppLogger.breadcrumb('Create payment failed: ${failure.message}');
           // Refresh to rollback changes on failure
           _pagingController.refresh();
           emit(
@@ -216,7 +206,7 @@ class PaymentCubit extends Cubit<PaymentState> {
           );
         },
         (createdPayment) async {
-          unawaited(_crashlytics.log('Create payment success'));
+          AppLogger.breadcrumb('Create payment success');
           final pages = _pagingController.value.pages ?? [];
           if (pages.isNotEmpty) {
             final updatedPages = List<List<PaymentEntity>>.from(pages);
@@ -235,8 +225,7 @@ class PaymentCubit extends Cubit<PaymentState> {
         },
       );
     } on Exception catch (e, stackTrace) {
-      unawaited(_crashlytics.recordError(e, stackTrace,
-          reason: 'createPayment failed'));
+      AppLogger.e('createPayment failed', e, stackTrace);
       emit(
         state.copyWith(
           status: PaymentStatus.error,
@@ -249,13 +238,12 @@ class PaymentCubit extends Cubit<PaymentState> {
 
   /// Delete payment with optimistic updates and rollback on failure
   Future<void> deletePayment({required String paymentId}) async {
-    unawaited(_crashlytics.log('Deleting payment: $paymentId...'));
+    AppLogger.breadcrumb('Deleting payment: $paymentId...');
     try {
       final result = await _deletePaymentUseCase(paymentId);
       await result.fold(
         (failure) {
-          unawaited(
-              _crashlytics.log('Delete payment failed: ${failure.message}'));
+          AppLogger.breadcrumb('Delete payment failed: ${failure.message}');
           // Refresh to rollback changes on failure
           _pagingController.refresh();
           emit(
@@ -266,7 +254,7 @@ class PaymentCubit extends Cubit<PaymentState> {
           );
         },
         (success) async {
-          unawaited(_crashlytics.log('Delete payment success'));
+          AppLogger.breadcrumb('Delete payment success');
           // Remove from all pages
           final pages = _pagingController.value.pages ?? [];
           final updatedPages = <List<PaymentEntity>>[];
@@ -286,8 +274,7 @@ class PaymentCubit extends Cubit<PaymentState> {
         },
       );
     } on Exception catch (e, stackTrace) {
-      unawaited(_crashlytics.recordError(e, stackTrace,
-          reason: 'deletePayment failed'));
+      AppLogger.e('deletePayment failed', e, stackTrace);
       emit(
         state.copyWith(
           status: PaymentStatus.error,

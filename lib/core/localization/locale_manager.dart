@@ -17,14 +17,19 @@ class LocaleManager extends ChangeNotifier {
   /// Initialize locale - load from storage or use default
   Future<void> initialize() async {
     try {
-      final savedLocale = await SecureStorageService.instance.read(StorageKeys.locale);
+      final savedLocale =
+          await SecureStorageService.instance.read(StorageKeys.locale);
 
       if (savedLocale != null) {
         _currentLocale = _parseLocale(savedLocale) ?? _defaultLocale;
+        AppLogger.breadcrumb(
+            'Locale initialized from storage: $_currentLocale');
       } else {
         // No saved locale - use default and save it
         _currentLocale = _defaultLocale;
         await _saveCurrentLocale();
+        AppLogger.breadcrumb(
+            'Locale initialized with default: $_currentLocale');
       }
     } on Exception catch (e) {
       logE('Error initializing locale: $e');
@@ -41,6 +46,7 @@ class LocaleManager extends ChangeNotifier {
 
     _currentLocale = locale;
     await _saveCurrentLocale();
+    AppLogger.breadcrumb('Locale changed to: $locale');
     notifyListeners();
   }
 
@@ -61,7 +67,9 @@ class LocaleManager extends ChangeNotifier {
         return _isSupported(locale) ? locale : null;
       } else {
         // Just language code - find matching supported locale
-        final locale = SupportedLocales.supportedLocales.where((l) => l.languageCode == localeString).firstOrNull;
+        final locale = SupportedLocales.supportedLocales
+            .where((l) => l.languageCode == localeString)
+            .firstOrNull;
         return locale;
       }
     } on Exception catch (e) {
@@ -76,7 +84,8 @@ class LocaleManager extends ChangeNotifier {
       // Use only language code to avoid storage issues
       final localeString = _currentLocale.languageCode;
       logD('Saving locale: $localeString');
-      await SecureStorageService.instance.write(StorageKeys.locale, localeString);
+      await SecureStorageService.instance
+          .write(StorageKeys.locale, localeString);
       logD('Locale saved: $localeString');
     } on Exception catch (e) {
       logE('Error saving locale: $e');
@@ -86,10 +95,14 @@ class LocaleManager extends ChangeNotifier {
 
   /// Check if locale is supported
   bool _isSupported(Locale locale) => SupportedLocales.supportedLocales.any(
-        (supported) => supported.languageCode == locale.languageCode && supported.countryCode == locale.countryCode,
+        (supported) =>
+            supported.languageCode == locale.languageCode &&
+            supported.countryCode == locale.countryCode,
       );
 
   /// Get locale from language code (helper method)
   Locale? getLocaleFromLanguageCode(String languageCode) =>
-      SupportedLocales.supportedLocales.where((locale) => locale.languageCode == languageCode).firstOrNull;
+      SupportedLocales.supportedLocales
+          .where((locale) => locale.languageCode == languageCode)
+          .firstOrNull;
 }

@@ -11,6 +11,7 @@ import 'package:xpensemate/core/route/utils/router_middleware_guard.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/service/storage_service.dart';
 import 'package:xpensemate/core/theme/app_theme.dart';
+import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
@@ -52,8 +53,7 @@ void main() async {
       debugPrint('==============================');
 
       // Record fatal error to Crashlytics
-      sl.crashlytics
-          .recordError(error, stack, reason: 'Fatal error in main zone');
+      AppLogger.e('Fatal error in main zone', error, stack);
     },
   );
 }

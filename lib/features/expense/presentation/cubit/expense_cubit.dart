@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:xpensemate/core/enums.dart';
-import 'package:xpensemate/core/service/crashlytics_service.dart';
-import 'package:xpensemate/core/service/service_locator.dart';
+import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/budgets_list_entity.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_pagination_entity.dart';
@@ -29,8 +28,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
     this._budgetsUseCase,
     this._createExpenseUseCase,
   ) : super(const ExpenseState()) {
-    _crashlytics = sl.crashlytics;
-    unawaited(_crashlytics.log('Initializing ExpenseCubit...'));
+    AppLogger.breadcrumb('Initializing ExpenseCubit...');
     _pagingController.addListener(_showPaginationError);
     // Set the fetchPage function after initialization
     loadExpenseData(period: state.filterDefaultValue);
@@ -42,7 +40,6 @@ class ExpenseCubit extends Cubit<ExpenseState> {
   final UpdateExpenseUseCase _updateExpenseUseCase;
   final GetBudgetsUseCase _budgetsUseCase;
   final CreateExpensesUseCase _createExpenseUseCase;
-  late final CrashlyticsService _crashlytics;
 
   static const int _limit = 10;
   String filterQuery = '';
@@ -80,7 +77,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
     int pageKey,
     String filterQuery,
   ) async {
-    unawaited(_crashlytics.log('Fetching expenses page: $pageKey...'));
+    AppLogger.breadcrumb('Fetching expenses page: $pageKey...');
     try {
       final params = GetExpensesParams(
         page: pageKey,
@@ -90,28 +87,18 @@ class ExpenseCubit extends Cubit<ExpenseState> {
       final result = await _getExpensesUseCase(params);
       return result.fold(
         (failure) {
-          unawaited(
-            _crashlytics.log('Fetch expenses failed: ${failure.message}'),
-          );
+          AppLogger.breadcrumb('Fetch expenses failed: ${failure.message}');
           return [];
         },
         (paginationEntity) {
-          unawaited(
-            _crashlytics.log(
-              'Fetch expenses success (${paginationEntity.expenses.length} items)',
-            ),
+          AppLogger.breadcrumb(
+            'Fetch expenses success (${paginationEntity.expenses.length} items)',
           );
           return paginationEntity.expenses;
         },
       );
     } on Exception catch (e, stackTrace) {
-      unawaited(
-        _crashlytics.recordError(
-          e,
-          stackTrace,
-          reason: 'fetchExpenses failed',
-        ),
-      );
+      AppLogger.e('fetchExpenses failed', e, stackTrace);
       debugPrint('getExpenses error: $e, stack: $stackTrace');
       return [];
     }
@@ -124,18 +111,14 @@ class ExpenseCubit extends Cubit<ExpenseState> {
       emit(state.copyWith(state: ExpenseStates.loading));
     }
 
-    unawaited(
-      _crashlytics.log('Loading expense stats for period: ${period.name}...'),
-    );
+    AppLogger.breadcrumb('Loading expense stats for period: ${period.name}...');
     final params = GetExpenseStatsParams(period: period.name);
     try {
       final result = await _getExpenseStatsUseCase(params);
 
       result.fold(
         (failure) {
-          unawaited(
-            _crashlytics.log('Load expense stats failed: ${failure.message}'),
-          );
+          AppLogger.breadcrumb('Load expense stats failed: ${failure.message}');
           emit(
             state.copyWith(
               state: ExpenseStates.error,
@@ -144,7 +127,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
           );
         },
         (expenseStats) {
-          unawaited(_crashlytics.log('Load expense stats success'));
+          AppLogger.breadcrumb('Load expense stats success');
           emit(
             state.copyWith(
               state: ExpenseStates.loaded,
@@ -155,9 +138,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
         },
       );
     } on Exception catch (e, s) {
-      unawaited(
-        _crashlytics.recordError(e, s, reason: 'loadExpenseStats failed'),
-      );
+      AppLogger.e('loadExpenseStats failed', e, s);
       emit(
         state.copyWith(
           state: ExpenseStates.error,
@@ -170,7 +151,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
 
   /// Load all expense data with pagination support
   Future<void> loadExpenseData({FilterValue? period}) async {
-    unawaited(_crashlytics.log('Loading full expense data...'));
+    AppLogger.breadcrumb('Loading full expense data...');
     emit(state.copyWith(state: ExpenseStates.loading));
     _pagingController.refresh();
 
@@ -182,10 +163,8 @@ class ExpenseCubit extends Cubit<ExpenseState> {
       final result = await expenseStatsFuture;
       result.fold(
         (failure) {
-          unawaited(
-            _crashlytics
-                .log('Load expense data (stats) failed: ${failure.message}'),
-          );
+          AppLogger.breadcrumb(
+              'Load expense data (stats) failed: ${failure.message}');
           emit(
             state.copyWith(
               state: ExpenseStates.error,
@@ -194,7 +173,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
           );
         },
         (expenseStats) {
-          unawaited(_crashlytics.log('Load expense data success'));
+          AppLogger.breadcrumb('Load expense data success');
           emit(
             state.copyWith(
               state: ExpenseStates.loaded,
@@ -204,9 +183,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
         },
       );
     } on Exception catch (e, s) {
-      unawaited(
-        _crashlytics.recordError(e, s, reason: 'loadExpenseData failed'),
-      );
+      AppLogger.e('loadExpenseData failed', e, s);
       emit(
         state.copyWith(
           state: ExpenseStates.error,
@@ -219,7 +196,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
 
   /// Update expense with optimistic updates and rollback on failure
   Future<void> updateExpense({required ExpenseEntity expense}) async {
-    unawaited(_crashlytics.log('Updating expense: ${expense.id}...'));
+    AppLogger.breadcrumb('Updating expense: ${expense.id}...');
     try {
       // ... existing optimistic update logic ...
       // Find the page and index of the expense to update
@@ -250,9 +227,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
 
       final result = await _updateExpenseUseCase(expense);
       await result.fold((failure) {
-        unawaited(
-          _crashlytics.log('Update expense failed: ${failure.message}'),
-        );
+        AppLogger.breadcrumb('Update expense failed: ${failure.message}');
         // Refresh to rollback changes on failure
         _pagingController.refresh();
         emit(
@@ -262,7 +237,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
           ),
         );
       }, (updatedExpense) async {
-        unawaited(_crashlytics.log('Update expense success'));
+        AppLogger.breadcrumb('Update expense success');
         // Recalculate stats after successful update
         unawaited(_recalculateExpenseStats());
         emit(
@@ -273,13 +248,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
         );
       });
     } on Exception catch (e, stackTrace) {
-      unawaited(
-        _crashlytics.recordError(
-          e,
-          stackTrace,
-          reason: 'updateExpense failed',
-        ),
-      );
+      AppLogger.e('updateExpense failed', e, stackTrace);
       emit(
         state.copyWith(
           state: ExpenseStates.error,
@@ -292,7 +261,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
 
   /// Create expense with optimistic updates
   Future<void> createExpense({required ExpenseEntity expense}) async {
-    unawaited(_crashlytics.log('Creating expense...'));
+    AppLogger.breadcrumb('Creating expense...');
     try {
       // Make the API call
       final result = await _createExpenseUseCase(
@@ -300,9 +269,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
       );
       await result.fold(
         (failure) {
-          unawaited(
-            _crashlytics.log('Create expense failed: ${failure.message}'),
-          );
+          AppLogger.breadcrumb('Create expense failed: ${failure.message}');
           // Refresh to rollback changes on failure
           _pagingController.refresh();
           emit(
@@ -314,7 +281,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
           );
         },
         (createdExpense) async {
-          unawaited(_crashlytics.log('Create expense success'));
+          AppLogger.breadcrumb('Create expense success');
           final pages = _pagingController.value.pages;
           if (pages != null && pages.isNotEmpty) {
             final updatedPages = List<List<ExpenseEntity>>.from(pages);
@@ -334,13 +301,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
         },
       );
     } on Exception catch (e, stackTrace) {
-      unawaited(
-        _crashlytics.recordError(
-          e,
-          stackTrace,
-          reason: 'createExpense failed',
-        ),
-      );
+      AppLogger.e('createExpense failed', e, stackTrace);
       emit(
         state.copyWith(
           state: ExpenseStates.error,
@@ -353,14 +314,12 @@ class ExpenseCubit extends Cubit<ExpenseState> {
 
   /// Delete expense with optimistic updates and rollback on failure
   Future<void> deleteExpense({required String expenseId}) async {
-    unawaited(_crashlytics.log('Deleting expense: $expenseId...'));
+    AppLogger.breadcrumb('Deleting expense: $expenseId...');
     try {
       final result = await _deleteExpenseUseCase(expenseId);
       await result.fold(
         (failure) {
-          unawaited(
-            _crashlytics.log('Delete expense failed: ${failure.message}'),
-          );
+          AppLogger.breadcrumb('Delete expense failed: ${failure.message}');
           // Refresh to rollback changes on failure
           _pagingController.refresh();
           emit(
@@ -371,7 +330,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
           );
         },
         (success) async {
-          unawaited(_crashlytics.log('Delete expense success'));
+          AppLogger.breadcrumb('Delete expense success');
           // Remove from all pages
           final pages = _pagingController.value.pages ?? [];
           final updatedPages = <List<ExpenseEntity>>[];
@@ -387,13 +346,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
         },
       );
     } on Exception catch (e, stackTrace) {
-      unawaited(
-        _crashlytics.recordError(
-          e,
-          stackTrace,
-          reason: 'deleteExpense failed',
-        ),
-      );
+      AppLogger.e('deleteExpense failed', e, stackTrace);
       emit(
         state.copyWith(
           state: ExpenseStates.error,
@@ -405,29 +358,21 @@ class ExpenseCubit extends Cubit<ExpenseState> {
   }
 
   Future<void> _recalculateExpenseStats() async {
-    unawaited(_crashlytics.log('Recalculating expense stats...'));
+    AppLogger.breadcrumb('Recalculating expense stats...');
     try {
       final result = await _getExpenseStatsUseCase(GetExpenseStatsParams());
       result.fold(
         (failure) {
-          unawaited(
-            _crashlytics.log('Recalculate stats failed: ${failure.message}'),
-          );
+          AppLogger.breadcrumb('Recalculate stats failed: ${failure.message}');
           debugPrint('Failed to recalculate expense stats: ${failure.message}');
         },
         (expenseStats) {
-          unawaited(_crashlytics.log('Recalculate stats success'));
+          AppLogger.breadcrumb('Recalculate stats success');
           emit(state.copyWith(expenseStats: expenseStats));
         },
       );
     } on Exception catch (e, s) {
-      unawaited(
-        _crashlytics.recordError(
-          e,
-          s,
-          reason: 'recalculateExpenseStats failed',
-        ),
-      );
+      AppLogger.e('recalculateExpenseStats failed', e, s);
       debugPrint('Unexpected error while recalculating expense stats: $e');
     }
   }
@@ -438,7 +383,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
     int? page,
     int? limit,
   }) async {
-    unawaited(_crashlytics.log('Loading budgets for ExpenseCubit...'));
+    AppLogger.breadcrumb('Loading budgets for ExpenseCubit...');
     final params = GetBudgetsParams(status: status, page: page, limit: limit);
 
     try {
@@ -446,9 +391,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
 
       result.fold(
         (failure) {
-          unawaited(
-            _crashlytics.log('Load budgets failed: ${failure.message}'),
-          );
+          AppLogger.breadcrumb('Load budgets failed: ${failure.message}');
           emit(
             state.copyWith(
               state: ExpenseStates.error,
@@ -457,7 +400,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
           );
         },
         (success) {
-          unawaited(_crashlytics.log('Load budgets success'));
+          AppLogger.breadcrumb('Load budgets success');
           emit(
             state.copyWith(
               state: ExpenseStates.loaded,
@@ -467,13 +410,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
         },
       );
     } on Exception catch (e, s) {
-      unawaited(
-        _crashlytics.recordError(
-          e,
-          s,
-          reason: 'loadBudgets in ExpenseCubit failed',
-        ),
-      );
+      AppLogger.e('loadBudgets in ExpenseCubit failed', e, s);
       emit(
         state.copyWith(
           state: ExpenseStates.error,

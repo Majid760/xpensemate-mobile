@@ -5,9 +5,8 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/error/failures.dart';
-import 'package:xpensemate/core/service/crashlytics_service.dart';
-import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/usecase/usecase.dart';
+import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/budget_goals_entity.dart';
@@ -32,7 +31,6 @@ class DashboardCubit extends Cubit<DashboardState> {
     this._paymentCubit,
     this._budgetCubit,
   ) : super(const DashboardState()) {
-    _crashlytics = sl.crashlytics;
     loadDashboardData();
   }
 
@@ -42,7 +40,6 @@ class DashboardCubit extends Cubit<DashboardState> {
   final ExpenseCubit _expenseCubit;
   final PaymentCubit _paymentCubit;
   final BudgetCubit _budgetCubit;
-  late final CrashlyticsService _crashlytics;
 
   @override
   void onChange(Change<DashboardState> change) {
@@ -61,7 +58,7 @@ class DashboardCubit extends Cubit<DashboardState> {
 
   /// Load weekly statistics
   Future<void> loadWeeklyStats() async {
-    unawaited(_crashlytics.log('Loading individual WeeklyStats...'));
+    AppLogger.breadcrumb('Loading individual WeeklyStats...');
     if (state.weeklyStats == null) {
       emit(state.copyWith(state: DashboardStates.loading));
     }
@@ -69,7 +66,7 @@ class DashboardCubit extends Cubit<DashboardState> {
       final result = await _getWeeklyStatsUseCase(const NoParams());
       result.fold(
         (failure) {
-          unawaited(_crashlytics.log('WeeklyStats failed: ${failure.message}'));
+          AppLogger.breadcrumb('WeeklyStats failed: ${failure.message}');
           emit(
             state.copyWith(
               state: DashboardStates.error,
@@ -78,7 +75,7 @@ class DashboardCubit extends Cubit<DashboardState> {
           );
         },
         (weeklyStats) {
-          unawaited(_crashlytics.log('WeeklyStats loaded successfully'));
+          AppLogger.breadcrumb('WeeklyStats loaded successfully');
           emit(
             state.copyWith(
               state: DashboardStates.loaded,
@@ -88,11 +85,7 @@ class DashboardCubit extends Cubit<DashboardState> {
         },
       );
     } on Exception catch (e, s) {
-      await _crashlytics.recordError(
-        e,
-        s,
-        reason: 'loadWeeklyStats unexpected error',
-      );
+      AppLogger.e('loadWeeklyStats unexpected error', e, s);
       emit(
         state.copyWith(
           state: DashboardStates.error,
@@ -111,7 +104,7 @@ class DashboardCubit extends Cubit<DashboardState> {
     DateTime? startDate,
     DateTime? endDate,
   }) async {
-    unawaited(_crashlytics.log('Loading individual BudgetGoals...'));
+    AppLogger.breadcrumb('Loading individual BudgetGoals...');
     if (state.budgetGoals == null) {
       emit(state.copyWith(state: DashboardStates.loading));
     }
@@ -127,7 +120,7 @@ class DashboardCubit extends Cubit<DashboardState> {
       final result = await _getBudgetGoalsUseCase(params);
       result.fold(
         (failure) {
-          unawaited(_crashlytics.log('BudgetGoals failed: ${failure.message}'));
+          AppLogger.breadcrumb('BudgetGoals failed: ${failure.message}');
           emit(
             state.copyWith(
               state: DashboardStates.error,
@@ -136,7 +129,7 @@ class DashboardCubit extends Cubit<DashboardState> {
           );
         },
         (budgetGoals) {
-          unawaited(_crashlytics.log('BudgetGoals loaded successfully'));
+          AppLogger.breadcrumb('BudgetGoals loaded successfully');
           emit(
             state.copyWith(
               state: DashboardStates.loaded,
@@ -146,11 +139,7 @@ class DashboardCubit extends Cubit<DashboardState> {
         },
       );
     } on Exception catch (e, s) {
-      await _crashlytics.recordError(
-        e,
-        s,
-        reason: 'loadBudgetGoals unexpected error',
-      );
+      AppLogger.e('loadBudgetGoals unexpected error', e, s);
       emit(
         state.copyWith(
           state: DashboardStates.error,
@@ -163,7 +152,7 @@ class DashboardCubit extends Cubit<DashboardState> {
 
   /// Load product weekly analytics
   Future<void> loadProductAnalytics() async {
-    unawaited(_crashlytics.log('Loading individual ProductAnalytics...'));
+    AppLogger.breadcrumb('Loading individual ProductAnalytics...');
     // Only show loading state if we don't have any existing data
     if (state.productAnalytics == null) {
       emit(state.copyWith(state: DashboardStates.loading));
@@ -173,9 +162,7 @@ class DashboardCubit extends Cubit<DashboardState> {
       final result = await _getProductWeeklyAnalyticsUseCase(const NoParams());
       result.fold(
         (failure) {
-          unawaited(
-            _crashlytics.log('ProductAnalytics failed: ${failure.message}'),
-          );
+          AppLogger.breadcrumb('ProductAnalytics failed: ${failure.message}');
           emit(
             state.copyWith(
               state: DashboardStates.error,
@@ -184,7 +171,7 @@ class DashboardCubit extends Cubit<DashboardState> {
           );
         },
         (productAnalytics) {
-          unawaited(_crashlytics.log('ProductAnalytics loaded successfully'));
+          AppLogger.breadcrumb('ProductAnalytics loaded successfully');
           emit(
             state.copyWith(
               state: DashboardStates.loaded,
@@ -194,11 +181,7 @@ class DashboardCubit extends Cubit<DashboardState> {
         },
       );
     } on Exception catch (e, s) {
-      await _crashlytics.recordError(
-        e,
-        s,
-        reason: 'loadProductAnalytics unexpected error',
-      );
+      AppLogger.e('loadProductAnalytics unexpected error', e, s);
       emit(
         state.copyWith(
           state: DashboardStates.error,
@@ -217,8 +200,8 @@ class DashboardCubit extends Cubit<DashboardState> {
     DateTime? startDate,
     DateTime? endDate,
   }) async {
-    unawaited(_crashlytics.log('Loading dashboard data (Bulk)...'));
-    unawaited(_crashlytics.setCustomKey('dashboard_fetch_status', 'loading'));
+    AppLogger.breadcrumb('Loading dashboard data (Bulk)...');
+    AppLogger.setCustomKey('dashboard_fetch_status', 'loading');
     emit(state.copyWith(state: DashboardStates.loading));
     try {
       final results = await Future.wait([
@@ -250,7 +233,7 @@ class DashboardCubit extends Cubit<DashboardState> {
       weeklyStatsResult.fold(
         (l) => [
           errors.add(l.message),
-          unawaited(_crashlytics.log('WeeklyStats failed: ${l.message}')),
+          AppLogger.breadcrumb('WeeklyStats failed: ${l.message}'),
         ],
         (r) => newWeeklyStats = r,
       );
@@ -258,7 +241,7 @@ class DashboardCubit extends Cubit<DashboardState> {
       budgetGoalsResult.fold(
         (l) => [
           errors.add(l.message),
-          unawaited(_crashlytics.log('BudgetGoals failed: ${l.message}')),
+          AppLogger.breadcrumb('BudgetGoals failed: ${l.message}'),
         ],
         (r) => newBudgetGoals = r,
       );
@@ -266,15 +249,13 @@ class DashboardCubit extends Cubit<DashboardState> {
       productAnalyticsResult.fold(
         (l) => [
           errors.add(l.message),
-          unawaited(_crashlytics.log('ProductAnalytics failed: ${l.message}')),
+          AppLogger.breadcrumb('ProductAnalytics failed: ${l.message}'),
         ],
         (r) => newProductAnalytics = r,
       );
       if (errors.length == 3) {
         // All failed
-        unawaited(
-          _crashlytics.setCustomKey('dashboard_fetch_status', 'failed'),
-        );
+        AppLogger.setCustomKey('dashboard_fetch_status', 'failed');
         emit(
           state.copyWith(
             state: DashboardStates.error,
@@ -283,9 +264,7 @@ class DashboardCubit extends Cubit<DashboardState> {
         );
       } else {
         // Partial or full success
-        unawaited(
-          _crashlytics.setCustomKey('dashboard_fetch_status', 'success'),
-        );
+        AppLogger.setCustomKey('dashboard_fetch_status', 'success');
         emit(
           state.copyWith(
             state: DashboardStates.loaded,
@@ -299,12 +278,8 @@ class DashboardCubit extends Cubit<DashboardState> {
         );
       }
     } on Exception catch (e, s) {
-      unawaited(_crashlytics.setCustomKey('dashboard_fetch_status', 'error'));
-      await _crashlytics.recordError(
-        e,
-        s,
-        reason: 'Dashboard data fetch failed (Fatal)',
-      );
+      AppLogger.setCustomKey('dashboard_fetch_status', 'error');
+      AppLogger.e('Dashboard data fetch failed (Fatal)', e, s);
       emit(
         state.copyWith(
           state: DashboardStates.error,
@@ -317,12 +292,12 @@ class DashboardCubit extends Cubit<DashboardState> {
 
   // add expense
   Future<void> createExpense({required ExpenseEntity expense}) async {
-    unawaited(_crashlytics.log('Creating expense from Dashboard...'));
+    AppLogger.breadcrumb('Creating expense from Dashboard...');
     try {
       if (!_expenseCubit.isClosed) {
         await _expenseCubit.createExpense(expense: expense);
-        unawaited(_crashlytics.log('Expense created successfully (Dashboard)'));
-        unawaited(loadDashboardData());
+        AppLogger.breadcrumb('Expense created successfully (Dashboard)');
+        loadDashboardData();
         emit(
           state.copyWith(
             state: DashboardStates.loaded,
@@ -331,13 +306,7 @@ class DashboardCubit extends Cubit<DashboardState> {
         );
       }
     } on Exception catch (e, stackTrace) {
-      unawaited(
-        _crashlytics.recordError(
-          e,
-          stackTrace,
-          reason: 'createExpense from Dashboard failed',
-        ),
-      );
+      AppLogger.e('createExpense from Dashboard failed', e, stackTrace);
       emit(
         state.copyWith(
           state: DashboardStates.error,
@@ -350,12 +319,12 @@ class DashboardCubit extends Cubit<DashboardState> {
 
   // add payment
   Future<void> createPayment({required PaymentEntity payment}) async {
-    unawaited(_crashlytics.log('Creating payment from Dashboard...'));
+    AppLogger.breadcrumb('Creating payment from Dashboard...');
     try {
       if (!_paymentCubit.isClosed) {
         await _paymentCubit.createPayment(payment: payment);
-        unawaited(_crashlytics.log('Payment created successfully (Dashboard)'));
-        unawaited(loadDashboardData());
+        AppLogger.breadcrumb('Payment created successfully (Dashboard)');
+        loadDashboardData();
         emit(
           state.copyWith(
             state: DashboardStates.loaded,
@@ -364,13 +333,7 @@ class DashboardCubit extends Cubit<DashboardState> {
         );
       }
     } on Exception catch (e, stackTrace) {
-      unawaited(
-        _crashlytics.recordError(
-          e,
-          stackTrace,
-          reason: 'createPayment from Dashboard failed',
-        ),
-      );
+      AppLogger.e('createPayment from Dashboard failed', e, stackTrace);
       emit(
         state.copyWith(
           state: DashboardStates.error,
@@ -383,12 +346,12 @@ class DashboardCubit extends Cubit<DashboardState> {
 
   // add budget
   Future<void> createBudget({required BudgetGoalEntity budget}) async {
-    unawaited(_crashlytics.log('Creating budget from Dashboard...'));
+    AppLogger.breadcrumb('Creating budget from Dashboard...');
     try {
       if (!_budgetCubit.isClosed) {
         await _budgetCubit.createBudgetGoal(budget);
       }
-      unawaited(_crashlytics.log('Budget created successfully (Dashboard)'));
+      AppLogger.breadcrumb('Budget created successfully (Dashboard)');
       unawaited(loadDashboardData());
       emit(
         state.copyWith(
@@ -397,13 +360,7 @@ class DashboardCubit extends Cubit<DashboardState> {
         ),
       );
     } on Exception catch (e, stackTrace) {
-      unawaited(
-        _crashlytics.recordError(
-          e,
-          stackTrace,
-          reason: 'createBudget from Dashboard failed',
-        ),
-      );
+      AppLogger.e('createBudget from Dashboard failed', e, stackTrace);
       emit(
         state.copyWith(
           state: DashboardStates.error,

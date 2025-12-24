@@ -160,11 +160,16 @@ class PermissionService {
         await _getPermissionsToRequest(permissionConfig.requiredPermissions);
 
     if (permissionsToRequest.isEmpty) {
+      AppLogger.breadcrumb(
+          'PermissionService: No startup permissions need requesting');
       for (final p in permissionConfig.requiredPermissions) {
         results[p] = await checkPermission(p);
       }
       return results;
     }
+
+    AppLogger.breadcrumb(
+        'PermissionService: Requesting startup permissions: ${permissionsToRequest.map(_getPermissionName).join(', ')}');
 
     if (permissionConfig.showRationaleDialog &&
         context != null &&
@@ -285,6 +290,8 @@ class PermissionService {
     final status = await permission.request();
 
     final result = _mapPermissionStatus(status, appPermission);
+    AppLogger.breadcrumb(
+        'PermissionService: ${appPermission.name} request result: ${result.isGranted}');
     return result;
   }
 

@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:xpensemate/core/service/crashlytics_service.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
+import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/features/auth/domain/entities/user.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:xpensemate/features/profile/domain/usecases/update_profile_image_usecase.dart';
@@ -12,14 +12,12 @@ import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_sta
 
 class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit(this._authCubit) : super(const ProfileState()) {
-    _crashlytics = sl.crashlytics;
-    unawaited(_crashlytics.log('Initializing ProfileCubit...'));
+    AppLogger.breadcrumb('Initializing ProfileCubit...');
     _initializeProfile();
     _listenToAuthChanges();
   }
 
   final AuthCubit _authCubit;
-  late final CrashlyticsService _crashlytics;
 
   /// Initialize profile with current user data from AuthCubit
   void _initializeProfile() {
@@ -69,16 +67,16 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   /// Update user profile information
   Future<void> updateProfile(Map<String, dynamic> data) async {
-    unawaited(_crashlytics.log('Updating profile...'));
+    AppLogger.breadcrumb('Updating profile...');
     if (state.user == null) {
-      unawaited(_crashlytics.log('Profile update aborted: state.user is null'));
+      AppLogger.breadcrumb('Profile update aborted: state.user is null');
       return;
     }
     emit(state.copyWith(isUpdating: true));
     try {
       String? photoUrl;
       if (state.imageFile != null) {
-        unawaited(_crashlytics.log('Updating profile image first...'));
+        AppLogger.breadcrumb('Updating profile image first...');
         photoUrl = await updateProfileImage(state.imageFile);
       }
       // update the text data
@@ -86,8 +84,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       final rslt =
           await sl<UpdateProfileUseCase>().call(UpdateProfileParams(data));
       rslt.fold((failure) {
-        unawaited(
-            _crashlytics.log('Profile update failed: ${failure.message}'));
+        AppLogger.breadcrumb('Profile update failed: ${failure.message}');
         emit(
           state.copyWith(
             message: failure.message,
@@ -96,13 +93,13 @@ class ProfileCubit extends Cubit<ProfileState> {
           ),
         );
       }, (user) {
-        unawaited(_crashlytics.log('Profile update successful'));
+        AppLogger.breadcrumb('Profile update successful');
         emit(state.copyWith(user: user, isUpdating: false, message: 'updated'));
         // after update at in server side we need to update user in local storage
         _authCubit.updateUser(user);
       });
     } on Exception catch (e, s) {
-      unawaited(_crashlytics.recordError(e, s, reason: 'updateProfile failed'));
+      AppLogger.e('updateProfile failed', e, s);
       emit(
         state.copyWith(
           status: ProfileStatus.error,
@@ -116,25 +113,23 @@ class ProfileCubit extends Cubit<ProfileState> {
   /// Upload profile image and update user state. Returns uploaded URL or null.
   Future<String?> updateProfileImage(File? file) async {
     if (file == null) return null;
-    unawaited(_crashlytics.log('Uploading profile image...'));
+    AppLogger.breadcrumb('Uploading profile image...');
     String? uploadedUrl;
     try {
       final result = await sl<UpdateProfileImageUseCase>()
           .call(UpdateProfileImageParams(imageFile: state.imageFile!));
       result.fold(
         (failure) {
-          unawaited(
-              _crashlytics.log('Image upload failed: ${failure.message}'));
+          AppLogger.breadcrumb('Image upload failed: ${failure.message}');
           uploadedUrl = null;
         },
         (url) {
-          unawaited(_crashlytics.log('Image upload successful'));
+          AppLogger.breadcrumb('Image upload successful');
           if (url != null && url.isNotEmpty) uploadedUrl = url;
         },
       );
     } on Exception catch (e, s) {
-      unawaited(
-          _crashlytics.recordError(e, s, reason: 'updateProfileImage failed'));
+      AppLogger.e('updateProfileImage failed', e, s);
     }
     return uploadedUrl;
   }

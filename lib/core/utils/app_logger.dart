@@ -84,6 +84,16 @@ class AppLogger {
   static void breadcrumb(String message) {
     unawaited(sl.crashlytics.log(message));
   }
+
+  // Crashlytics User Identifier
+  static void setUserId(String identifier) {
+    unawaited(sl.crashlytics.setUserIdentifier(identifier));
+  }
+
+  // Crashlytics Custom Key
+  static void setCustomKey(String key, Object value) {
+    unawaited(sl.crashlytics.setCustomKey(key, value));
+  }
 }
 
 enum LogLevel { debug, info, warning, error }

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/network/network_configs.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_state.dart';
@@ -166,9 +167,8 @@ class ModernContent extends StatelessWidget {
     );
 
     if (!success) {
-      AppUtils.log(
+      AppLogger.e(
         'Failed to launch About page: ${NetworkConfigs.aboutUrl}',
-        level: LogLevel.error,
       );
     }
   }
@@ -180,9 +180,8 @@ class ModernContent extends StatelessWidget {
     );
 
     if (!success) {
-      AppUtils.log(
+      AppLogger.e(
         'Failed to launch Privacy Policy page: ${NetworkConfigs.privacyPolicyUrl}',
-        level: LogLevel.error,
       );
     }
   }
@@ -194,9 +193,8 @@ class ModernContent extends StatelessWidget {
     );
 
     if (!success) {
-      AppUtils.log(
+      AppLogger.e(
         'Failed to launch Terms & Conditions page: ${NetworkConfigs.termsAndConditionsUrl}',
-        level: LogLevel.error,
       );
     }
   }

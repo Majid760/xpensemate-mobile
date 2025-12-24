@@ -2,8 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:xpensemate/core/service/crashlytics_service.dart';
-import 'package:xpensemate/core/service/service_locator.dart';
+import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_specific_expense_entity.dart';
 import 'package:xpensemate/features/budget/domain/usecases/get_budget_specific_expenses_usecase.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_expense_state.dart';
@@ -12,12 +11,10 @@ class BudgetExpensesCubit extends Cubit<BudgetExpensesState> {
   BudgetExpensesCubit(
     this._getBudgetSpecificExpensesUseCase,
   ) : super(const BudgetExpensesState()) {
-    _crashlytics = sl.crashlytics;
-    unawaited(_crashlytics.log('Initializing BudgetExpensesCubit...'));
+    AppLogger.breadcrumb('Initializing BudgetExpensesCubit...');
   }
 
   final GetBudgetSpecificExpensesUseCase _getBudgetSpecificExpensesUseCase;
-  late final CrashlyticsService _crashlytics;
 
   // Filter parameters
   String _searchQuery = '';
@@ -29,8 +26,7 @@ class BudgetExpensesCubit extends Cubit<BudgetExpensesState> {
     String? searchQuery,
     String? paymentMethod,
   }) async {
-    unawaited(_crashlytics
-        .log('Fetching budget specific expenses for: $budgetId...'));
+    AppLogger.breadcrumb('Fetching budget specific expenses for: $budgetId...');
     // Update filter parameters
     _searchQuery = searchQuery ?? _searchQuery;
     _paymentMethodFilter = paymentMethod ?? _paymentMethodFilter;
@@ -43,8 +39,8 @@ class BudgetExpensesCubit extends Cubit<BudgetExpensesState> {
           .call(GetBudgetSpecificExpensesUseCaseParams(budgetId: budgetId));
       result.fold(
         (failure) {
-          unawaited(_crashlytics
-              .log('Fetch budget expenses failed: ${failure.toString()}'));
+          AppLogger.breadcrumb(
+              'Fetch budget expenses failed: ${failure.toString()}');
           emit(
             state.copyWith(
               state: BudgetExpensesStates.error,
@@ -53,8 +49,8 @@ class BudgetExpensesCubit extends Cubit<BudgetExpensesState> {
           );
         },
         (expenses) {
-          unawaited(_crashlytics.log(
-              'Fetch budget expenses success (${expenses.expenses.length} items)'));
+          AppLogger.breadcrumb(
+              'Fetch budget expenses success (${expenses.expenses.length} items)');
           // Store original expenses
           final originalExpensesList = expenses;
 
@@ -73,8 +69,7 @@ class BudgetExpensesCubit extends Cubit<BudgetExpensesState> {
         },
       );
     } on Exception catch (e, s) {
-      unawaited(_crashlytics.recordError(e, s,
-          reason: 'getBudgetSpecificExpenses failed'));
+      AppLogger.e('getBudgetSpecificExpenses failed', e, s);
       emit(
         state.copyWith(
           state: BudgetExpensesStates.error,

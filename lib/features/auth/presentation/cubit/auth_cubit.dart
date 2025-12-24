@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:xpensemate/core/route/utils/route_constants.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
+import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/core/usecase/usecase.dart';
 import 'package:xpensemate/features/auth/domain/entities/user.dart';
 import 'package:xpensemate/features/auth/domain/usecases/cases_export.dart';
@@ -23,11 +24,11 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
 
     final user = sl.authService.currentUser;
     if (user != null) {
-      unawaited(sl.crashlytics.setUserIdentifier(user.id));
-      unawaited(sl.crashlytics.setCustomKey('is_authenticated', true));
-      unawaited(sl.crashlytics.log('User session restored: ${user.id}'));
+      AppLogger.setUserId(user.id);
+      AppLogger.setCustomKey('is_authenticated', true);
+      AppLogger.breadcrumb('User session restored: ${user.id}');
     } else {
-      unawaited(sl.crashlytics.setCustomKey('is_authenticated', false));
+      AppLogger.setCustomKey('is_authenticated', false);
     }
 
     emit(
@@ -44,7 +45,7 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
     required String email,
     required String password,
   }) async {
-    sl.crashlytics.log('User starting login process...');
+    AppLogger.breadcrumb('User starting login process...');
     emit(state.copyWith(state: AuthStates.loading, errorMessage: ''));
     final loginUseCase = sl<SignInWithEmailUseCase>();
     final result = await loginUseCase.call(
@@ -52,7 +53,7 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
     );
     result.fold(
       (failure) {
-        unawaited(sl.crashlytics.log('Login failed: ${failure.message}'));
+        AppLogger.breadcrumb('Login failed: ${failure.message}');
         emit(
           state.copyWith(
             state: AuthStates.error,
@@ -62,9 +63,9 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
         );
       },
       (user) {
-        unawaited(sl.crashlytics.setUserIdentifier(user.id));
-        unawaited(sl.crashlytics.setCustomKey('is_authenticated', true));
-        unawaited(sl.crashlytics.log('Login successful for user: ${user.id}'));
+        AppLogger.setUserId(user.id);
+        AppLogger.setCustomKey('is_authenticated', true);
+        AppLogger.breadcrumb('Login successful for user: ${user.id}');
         emit(
           state.copyWith(
             state: AuthStates.loaded,
@@ -82,7 +83,7 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
     required String email,
     required String password,
   }) async {
-    sl.crashlytics.log('User starting registration...');
+    AppLogger.breadcrumb('User starting registration...');
     emit(state.copyWith(state: AuthStates.loading));
     final registerUseCase = sl<SignUpUseCase>();
     final result = await registerUseCase.call(
@@ -90,8 +91,7 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
     );
     result.fold(
       (failure) {
-        unawaited(
-            sl.crashlytics.log('Registration failed: ${failure.message}'));
+        AppLogger.breadcrumb('Registration failed: ${failure.message}');
         emit(
           state.copyWith(
             state: AuthStates.error,
@@ -101,7 +101,7 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
         );
       },
       (user) {
-        unawaited(sl.crashlytics.log('Registration successful'));
+        AppLogger.breadcrumb('Registration successful');
         emit(
           state.copyWith(
             state: AuthStates.loaded,
@@ -114,7 +114,7 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
 
   /// forgot password
   Future<void> forgotPassword({required String email}) async {
-    sl.crashlytics.log('User requested password reset');
+    AppLogger.breadcrumb('User requested password reset');
     emit(state.copyWith(state: AuthStates.loading, errorMessage: ''));
     final forgotPasswordUseCase = sl<ForgotPasswordUseCase>();
     final result = await forgotPasswordUseCase.call(
@@ -122,8 +122,7 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
     );
     result.fold(
       (failure) {
-        unawaited(
-            sl.crashlytics.log('Forgot password failed: ${failure.message}'));
+        AppLogger.breadcrumb('Forgot password failed: ${failure.message}');
         emit(
           state.copyWith(
             state: AuthStates.error,
@@ -132,7 +131,7 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
         );
       },
       (user) {
-        unawaited(sl.crashlytics.log('Forgot password email sent'));
+        AppLogger.breadcrumb('Forgot password email sent');
         emit(state.copyWith(state: AuthStates.loaded));
       },
     );
@@ -140,7 +139,7 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
 
   /// send verification email
   Future<void> sendVerificationEmail({required String email}) async {
-    unawaited(sl.crashlytics.log('User requested verification email'));
+    AppLogger.breadcrumb('User requested verification email');
     emit(state.copyWith(state: AuthStates.loading));
     final sendVerificationEmailUseCase = sl<SendVerificationEmailUseCase>();
     final result = await sendVerificationEmailUseCase.call(
@@ -148,8 +147,7 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
     );
     result.fold(
       (failure) {
-        unawaited(sl.crashlytics
-            .log('Verification email failed: ${failure.message}'));
+        AppLogger.breadcrumb('Verification email failed: ${failure.message}');
         emit(
           state.copyWith(
             state: AuthStates.error,
@@ -158,7 +156,7 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
         );
       },
       (res) {
-        unawaited(sl.crashlytics.log('Verification email sent'));
+        AppLogger.breadcrumb('Verification email sent');
         emit(state.copyWith(state: AuthStates.loaded));
       },
     );
@@ -170,13 +168,13 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
 
   // sign out
   Future<void> signOut({String? error}) async {
-    sl.crashlytics.log('User signing out...');
+    AppLogger.breadcrumb('User signing out...');
     emit(state.copyWith(state: AuthStates.loading));
     final signOutUseCase = sl<SignOutUseCase>();
     final result = await signOutUseCase.call(const NoParams());
     result.fold(
       (failure) {
-        unawaited(sl.crashlytics.log('Sign out failure: ${failure.message}'));
+        AppLogger.breadcrumb('Sign out failure: ${failure.message}');
         emit(
           state.copyWith(
             state: AuthStates.error,
@@ -186,9 +184,9 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
         );
       },
       (user) {
-        unawaited(sl.crashlytics.setUserIdentifier(''));
-        unawaited(sl.crashlytics.setCustomKey('is_authenticated', false));
-        unawaited(sl.crashlytics.log('Sign out successful, user cleared'));
+        AppLogger.setUserId('');
+        AppLogger.setCustomKey('is_authenticated', false);
+        AppLogger.breadcrumb('Sign out successful, user cleared');
         emit(
           state.copyWith(
             state: AuthStates.loaded,
@@ -217,8 +215,7 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
       emit(state.copyWith(user: user));
       sl.authService.updateUserInStorage(user);
     } on Exception catch (e, s) {
-      unawaited(sl.crashlytics
-          .recordError(e, s, reason: 'updateUserInStorage failed'));
+      AppLogger.e('updateUserInStorage failed', e, s);
     }
   }
 

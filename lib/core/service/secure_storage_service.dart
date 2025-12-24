@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:xpensemate/core/utils/app_logger.dart';
 
 /// Storage keys constants
 abstract class StorageKeys {
@@ -230,7 +231,9 @@ class SecureStorageService implements IStorageService {
         return;
       }
       for (final entry in allData.entries) {
-        final truncatedValue = entry.value.length > 20 ? '${entry.value.substring(0, 20)}...' : entry.value;
+        final truncatedValue = entry.value.length > 20
+            ? '${entry.value.substring(0, 20)}...'
+            : entry.value;
         _log('  ${entry.key}: $truncatedValue');
       }
     } on Exception catch (e, stackTrace) {
@@ -317,21 +320,14 @@ class SecureStorageService implements IStorageService {
     }
   }
 
-  /// Log message (only in debug mode)
+  /// Log message
   void _log(String message) {
-    if (kDebugMode) {
-      debugPrint('[SecureStorage] $message');
-    }
+    AppLogger.breadcrumb('[SecureStorage] $message');
   }
 
-  /// Log error with stack trace (only in debug mode)
+  /// Log error with stack trace
   void _logError(String message, Object error, [StackTrace? stackTrace]) {
-    if (kDebugMode) {
-      debugPrint('[SecureStorage] ❌ $message: $error');
-      if (stackTrace != null) {
-        debugPrint('[SecureStorage] Stack trace: $stackTrace');
-      }
-    }
+    AppLogger.e('[SecureStorage] $message', error, stackTrace);
   }
 
   /// Check if storage is initialized (useful for conditional logic)

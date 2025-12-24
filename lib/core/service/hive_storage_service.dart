@@ -61,6 +61,8 @@ class HiveStorageService implements StorageService {
     String? boxName,
   }) async {
     try {
+      AppLogger.breadcrumb(
+          'Hive Storage: put key $key in box ${boxName ?? _defaultBoxName}');
       final box = await _getBox(boxName);
       await box.put(key, value);
     } on Exception catch (e, stackTrace) {
@@ -110,6 +112,7 @@ class HiveStorageService implements StorageService {
   @override
   Future<void> clearAll() async {
     try {
+      AppLogger.breadcrumb('Hive Storage: clearing all boxes');
       for (final boxName in _openBoxes.keys) {
         final box = _openBoxes[boxName];
         if (box != null && box.isOpen) {

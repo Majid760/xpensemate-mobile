@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/core/widget/app_dialogs.dart';
 
 enum AppPermission {
@@ -107,8 +108,10 @@ class PermissionService {
       final proceed = await _showGenericRationaleDialog(
         context,
         permission,
-        title: rationaleTitle ?? '${_getPermissionName(permission)} Permission Required',
-        message: rationaleMessage ?? 'We need this permission to provide you with the best experience.',
+        title: rationaleTitle ??
+            '${_getPermissionName(permission)} Permission Required',
+        message: rationaleMessage ??
+            'We need this permission to provide you with the best experience.',
       );
       if (!proceed) {
         return PermissionResult(
@@ -122,10 +125,14 @@ class PermissionService {
     }
 
     // Request permission immediately after user agrees
+    AppLogger.breadcrumb(
+        'PermissionService: Requesting ${_getPermissionName(permission)}');
     final result = await requestPermission(permission);
-    
+
     // Debug logging
-    
+    AppLogger.breadcrumb(
+        'PermissionService: ${_getPermissionName(permission)} result - granted: ${result.isGranted}');
+
     // If permission is granted, clear the denied status
     if (result.isGranted) {
       await _clearPermissionDeniedStatus(permission);
@@ -133,7 +140,7 @@ class PermissionService {
       // If permission is denied but not permanently, mark it as user denied
       await _markPermissionAsUserDenied(permission);
     }
-    
+
     return result;
   }
 
@@ -184,7 +191,8 @@ class PermissionService {
       }
     }
 
-    final requestResults = await requestMultiplePermissions(permissionsToRequest);
+    final requestResults =
+        await requestMultiplePermissions(permissionsToRequest);
     for (final entry in requestResults.entries) {
       if (!entry.value.isGranted && !entry.value.isPermanentlyDenied) {
         await _markPermissionAsUserDenied(entry.key);
@@ -261,7 +269,8 @@ class PermissionService {
     return _mapPermissionStatus(status, appPermission);
   }
 
-  Future<PermissionResult> requestPermission(AppPermission appPermission) async {
+  Future<PermissionResult> requestPermission(
+      AppPermission appPermission) async {
     final permission = _permissionMap[appPermission];
     if (permission == null) {
       return PermissionResult(
@@ -272,9 +281,9 @@ class PermissionService {
         permission: appPermission,
       );
     }
-    
+
     final status = await permission.request();
-    
+
     final result = _mapPermissionStatus(status, appPermission);
     return result;
   }
@@ -315,15 +324,16 @@ class PermissionService {
       final result = await PermissionDialog.show(
         context,
         title: '$name Permission Required',
-        message: customMessage ?? 'Please enable $name permission from settings to use this feature.',
+        message: customMessage ??
+            'Please enable $name permission from settings to use this feature.',
         permission: appPermission,
         showSettings: true,
       );
-      
+
       if (result ?? false) {
         await openAppSettings();
       }
-      
+
       return checkPermission(appPermission);
     }
     return checkPermission(appPermission);
@@ -396,13 +406,14 @@ class PermissionService {
     final name = _getPermissionName(appPermission);
     return await showDialog<bool>(
           context: context,
-                      barrierDismissible: false,
-            builder: (_) => PermissionDialog(
-              title: '$name Permission Required',
-              message: customMessage ?? 'Please enable $name permission from settings to use this feature.',
-              permission: appPermission,
-              showSettings: true,
-            ),
+          barrierDismissible: false,
+          builder: (_) => PermissionDialog(
+            title: '$name Permission Required',
+            message: customMessage ??
+                'Please enable $name permission from settings to use this feature.',
+            permission: appPermission,
+            showSettings: true,
+          ),
         ) ??
         false;
   }
@@ -412,7 +423,8 @@ extension PermissionServiceExtensions on PermissionService {
   Future<Map<AppPermission, PermissionResult>> requestMediaPermissions() =>
       requestMultiplePermissions([AppPermission.camera, AppPermission.gallery]);
 
-  Future<Map<AppPermission, PermissionResult>> requestMediaPermissionsWhenNeeded({
+  Future<Map<AppPermission, PermissionResult>>
+      requestMediaPermissionsWhenNeeded({
     BuildContext? context,
   }) async {
     final results = <AppPermission, PermissionResult>{};

@@ -1,6 +1,6 @@
-
 // lib/core/router/route_observer.dart
 import 'package:flutter/material.dart';
+import 'package:xpensemate/core/utils/app_logger.dart';
 
 class AppRouteObserver extends NavigatorObserver {
   @override
@@ -23,8 +23,11 @@ class AppRouteObserver extends NavigatorObserver {
     }
   }
 
-  void _logNavigation(String action, Route<dynamic> route, Route<dynamic>? previousRoute) {
-    debugPrint('🧭 $action: ${route.settings.name} '
-        '${previousRoute != null ? 'from ${previousRoute.settings.name}' : ''}');
+  void _logNavigation(
+      String action, Route<dynamic> route, Route<dynamic>? previousRoute) {
+    final message = '🧭 $action: ${route.settings.name} '
+        '${previousRoute != null ? 'from ${previousRoute.settings.name}' : ''}';
+    debugPrint(message);
+    AppLogger.breadcrumb(message);
   }
 }

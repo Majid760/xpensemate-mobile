@@ -1,4 +1,4 @@
-// core/network/dio_network_client.dart
+import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:xpensemate/core/error/failures.dart';
@@ -153,9 +153,10 @@ final class NetworkClientImp implements NetworkClient {
         }
         return Right(apiResponse as T);
       } else {
+        AppLogger.breadcrumb('API Business Failure: ${apiResponse.message}');
         return Left(_handleApiError(apiResponse));
       }
-    } on DioException catch (e) {
+    } on DioException catch (e, s) {
       if (e.response?.data != null &&
           e.response?.data is Map<String, dynamic>) {
         try {
@@ -163,15 +164,22 @@ final class NetworkClientImp implements NetworkClient {
           final apiResponse = ApiResponse<dynamic>.fromJson(responseData, null);
 
           if (apiResponse.message.isNotEmpty) {
+            AppLogger.breadcrumb('API Error Response: ${apiResponse.message}');
             return Left(_handleApiError(apiResponse));
           }
-        } on Exception catch (parseError) {
-          logI("Failed to parse error response: $parseError");
+        } on Exception catch (e, s) {
+          logE('Network Request Failed: $e', e, s);
         }
       }
+
+      // Record connection/timeout errors as non-fatal errors in Crashlytics
+      if (e.type != DioExceptionType.cancel) {
+        logE('Network Request Failed: ${e.requestOptions.path}', e, s);
+      }
+
       return Left(_mapDioError(e));
-    } on Exception catch (e) {
-      logE("Failed to handle error: $e");
+    } on Exception catch (e, s) {
+      logE("Failed to handle error: $e", e, s);
       return Left(ServerFailure(message: e.toString()));
     }
   }

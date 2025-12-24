@@ -19,15 +19,23 @@ final class AuthInterceptor extends QueuedInterceptor {
   ) async {
     try {
       var accessToken = _authService.token;
+      AppLogger.breadcrumb(
+          'AuthInterceptor: Checking access token for request to ${options.path}');
       logI(
           "this is accesss token before checking => ${accessToken.isNotEmpty ? accessToken.substring(0, 6) : 'empty'}");
       if (accessToken.isEmpty) {
+        AppLogger.breadcrumb(
+            'AuthInterceptor: Access token empty, attempting to fetch from storage.');
         logI("error access token is empty, fetching from storage");
         scheduleMicrotask(_authService.getAccessToken);
         if (_authService.token.isNotEmpty) {
           accessToken = _authService.token;
+          AppLogger.breadcrumb(
+              'AuthInterceptor: Access token successfully fetched from storage.');
         } else {
           AppLogger.e('getAccessToken from storageg failed');
+          AppLogger.breadcrumb(
+              'AuthInterceptor: Failed to get access token from storage.');
         }
       }
       options.headers['Authorization'] = 'Bearer $accessToken';
@@ -57,7 +65,8 @@ final class AuthInterceptor extends QueuedInterceptor {
       );
       // Get the refresh token
       final refreshToken = _authService.userRefreshToken;
-      logI("refreshed token in storage => ${refreshToken.isNotEmpty ? refreshToken.substring(0, 6) : 'empty'}");
+      logI(
+          "refreshed token in storage => ${refreshToken.isNotEmpty ? refreshToken.substring(0, 6) : 'empty'}");
 
       if (refreshToken.isEmpty) AppLogger.e('No refresh token available');
 
@@ -68,20 +77,24 @@ final class AuthInterceptor extends QueuedInterceptor {
           NetworkConfigs.refreshToken,
           data: {'refreshToken': refreshToken},
         );
-        logI('RefreshToken response => : ${response.statusMessage} and status => ${response.statusCode}');
+        logI(
+            'RefreshToken response => : ${response.statusMessage} and status => ${response.statusCode}');
 
         if (response.statusCode == 200 && response.data != null) {
           // Parse the new token
-          final newToken = AuthTokenModel.fromJson(response.data as Map<String, dynamic>);
+          final newToken =
+              AuthTokenModel.fromJson(response.data as Map<String, dynamic>);
           // Save the new token using AuthService
           scheduleMicrotask(() => _authService.saveTokenToStorage(newToken));
           logI('Token refreshed successfully');
           // Update the request with the new token and retry
           final newOptions = err.requestOptions.copyWith();
-          newOptions.headers['Authorization'] = 'Bearer ${newToken.accessToken}';
+          newOptions.headers['Authorization'] =
+              'Bearer ${newToken.accessToken}';
           return handler.resolve(await dio.fetch(newOptions));
         } else {
-          logI('Failed to refresh token: ${response.statusMessage} and status => ${response.statusCode}');
+          logI(
+              'Failed to refresh token: ${response.statusMessage} and status => ${response.statusCode}');
         }
       } on Exception catch (refreshError) {
         AppLogger.e('Error refreshing token: $refreshError');

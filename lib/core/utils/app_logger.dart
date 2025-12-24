@@ -1,9 +1,10 @@
-// lib/core/logging/app_logger.dart
+import 'dart:async';
 import 'package:logger/logger.dart';
+import 'package:xpensemate/core/service/service_locator.dart';
 
 class AppLogger {
   static Logger? _logger;
-  
+
   // Initialize logger (call once in main())
   static void init({required bool isDebug}) {
     _logger = Logger(
@@ -14,9 +15,10 @@ class AppLogger {
     );
   }
 
-   static void log(String message, [dynamic error]) {
+  static void log(String message, [dynamic error]) {
     _logger?.d(message, error: error);
   }
+
   // Simple logging methods
   static void d(String message, [dynamic error]) {
     _logger?.d(message, error: error);
@@ -32,10 +34,17 @@ class AppLogger {
 
   static void e(String message, [dynamic error, StackTrace? stackTrace]) {
     _logger?.e(message, error: error, stackTrace: stackTrace);
+    // Automatically report to Crashlytics
+    unawaited(sl.crashlytics.recordError(
+      error ?? message,
+      stackTrace,
+      reason: message,
+    ));
   }
 
   // Tagged logging
-  static void tag(String tag, String message, {LogLevel level = LogLevel.info}) {
+  static void tag(String tag, String message,
+      {LogLevel level = LogLevel.info}) {
     final taggedMessage = '[$tag] $message';
     switch (level) {
       case LogLevel.debug:
@@ -54,7 +63,8 @@ class AppLogger {
   }
 
   // Network logging
-  static void network(String method, String url, {int? statusCode, dynamic error}) {
+  static void network(String method, String url,
+      {int? statusCode, dynamic error}) {
     final message = '$method $url ${statusCode != null ? '($statusCode)' : ''}';
     if (error != null || (statusCode != null && statusCode >= 400)) {
       e(message, error);
@@ -67,6 +77,12 @@ class AppLogger {
   static void userAction(String action, [Map<String, dynamic>? params]) {
     final message = 'User: $action${params != null ? ' $params' : ''}';
     i(message);
+    breadcrumb(message);
+  }
+
+  // Crashlytics Breadcrumb
+  static void breadcrumb(String message) {
+    unawaited(sl.crashlytics.log(message));
   }
 }
 
@@ -74,17 +90,22 @@ enum LogLevel { debug, info, warning, error }
 
 // Extension for easy logging on any class
 extension LogExt on Object {
-  void logD(String message) => AppLogger.tag(runtimeType.toString(), message, level: LogLevel.debug);
+  void logD(String message) =>
+      AppLogger.tag(runtimeType.toString(), message, level: LogLevel.debug);
   void logI(String message) => AppLogger.tag(runtimeType.toString(), message);
-  void logW(String message) => AppLogger.tag(runtimeType.toString(), message, level: LogLevel.warning);
-  void logE(String message, [dynamic error]) => AppLogger.tag(runtimeType.toString(), message, level: LogLevel.error);
+  void logW(String message) =>
+      AppLogger.tag(runtimeType.toString(), message, level: LogLevel.warning);
+  void logE(String message, [dynamic error, StackTrace? s]) =>
+      AppLogger.e('[$runtimeType] $message', error, s);
 }
-
 
 // extension for logger class
 extension LoggerExt on Logger {
-  void logD(String message) => AppLogger.tag(runtimeType.toString(), message, level: LogLevel.debug);
+  void logD(String message) =>
+      AppLogger.tag(runtimeType.toString(), message, level: LogLevel.debug);
   void logI(String message) => AppLogger.tag(runtimeType.toString(), message);
-  void logW(String message) => AppLogger.tag(runtimeType.toString(), message, level: LogLevel.warning);
-  void logE(String message, [dynamic error]) => AppLogger.tag(runtimeType.toString(), message, level: LogLevel.error);
+  void logW(String message) =>
+      AppLogger.tag(runtimeType.toString(), message, level: LogLevel.warning);
+  void logE(String message, [dynamic error, StackTrace? s]) =>
+      AppLogger.e('[$runtimeType] $message', error, s);
 }

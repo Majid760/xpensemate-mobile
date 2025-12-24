@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/core/widget/app_custom_dialog.dart';
 
 class AppUtils {
@@ -371,6 +372,7 @@ class AppUtils {
 
   /// Copy to clipboard
   static Future<void> copyToClipboard(String text) async {
+    AppLogger.breadcrumb('AppUtils: Copying text to clipboard');
     await Clipboard.setData(ClipboardData(text: text));
   }
 
@@ -392,31 +394,7 @@ class AppUtils {
     }
   }
 
-  // ============ LOGGER UTILS ============
-
-  /// Custom logger
-  static void log(
-    dynamic message, {
-    String tag = 'APP',
-    LogLevel level = LogLevel.info,
-  }) {
-    final timestamp = DateTime.now().toIso8601String();
-    final emoji = _getLogEmoji(level);
-    debugPrint('$emoji [$timestamp] [$tag] $message');
-  }
-
-  static String _getLogEmoji(LogLevel level) {
-    switch (level) {
-      case LogLevel.debug:
-        return '🐛';
-      case LogLevel.info:
-        return 'ℹ️';
-      case LogLevel.warning:
-        return '⚠️';
-      case LogLevel.error:
-        return '❌';
-    }
-  }
+  // Logger removed in favor of centralized AppLogger
 
   // ============ URL LAUNCHER UTILS ============
 
@@ -428,6 +406,7 @@ class AppUtils {
     BuildContext? context,
   }) async {
     try {
+      AppLogger.breadcrumb('AppUtils: Launching URL: $url');
       final uri = Uri.parse(url);
 
       if (await canLaunchUrl(uri)) {
@@ -699,8 +678,6 @@ class AppUtils {
 }
 
 // ============ ENUMS ============
-
-enum LogLevel { debug, info, warning, error }
 
 enum HapticFeedbackType {
   lightImpact,

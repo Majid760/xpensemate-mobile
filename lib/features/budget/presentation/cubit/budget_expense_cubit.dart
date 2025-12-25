@@ -116,6 +116,12 @@ class BudgetExpensesCubit extends Cubit<BudgetExpensesState> {
     // In a real implementation, you would call getBudgetSpecificExpenses with the new query
     // For now, we'll just update the state and re-apply filters
     _searchQuery = query;
+    if (query.isNotEmpty) {
+      AppLogger.userAction(
+        'search_budget_expenses',
+        {'query_length': query.length},
+      );
+    }
     if (state.originalBudgetGoals != null) {
       final filteredExpenses =
           _applyFilters(state.originalBudgetGoals!.expenses);
@@ -128,6 +134,7 @@ class BudgetExpensesCubit extends Cubit<BudgetExpensesState> {
   // Update payment method filter
   void updatePaymentMethodFilter(String method) {
     _paymentMethodFilter = method;
+    AppLogger.userAction('filter_budget_expenses', {'payment_method': method});
     if (state.originalBudgetGoals != null) {
       final filteredExpenses =
           _applyFilters(state.originalBudgetGoals!.expenses);

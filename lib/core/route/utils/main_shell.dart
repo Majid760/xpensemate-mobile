@@ -33,7 +33,8 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
     vsync: this,
   );
 
-  late final Animation<double> _fabAnimation = Tween<double>(begin: 0, end: 1).animate(
+  late final Animation<double> _fabAnimation =
+      Tween<double>(begin: 0, end: 1).animate(
     CurvedAnimation(parent: _fabAnimationController, curve: Curves.easeOut),
   );
 
@@ -100,13 +101,19 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
     }
     if (widget.customFabAction != null) {
       // find out which action to trigger based on current route
-      if (GoRouterState.of(context).matchedLocation.startsWith('/home/expense')) {
+      if (GoRouterState.of(context)
+          .matchedLocation
+          .startsWith('/home/expense')) {
         widget.customFabAction!(1);
         return;
-      } else if (GoRouterState.of(context).matchedLocation.startsWith('/home/budget')) {
+      } else if (GoRouterState.of(context)
+          .matchedLocation
+          .startsWith('/home/budget')) {
         widget.customFabAction!(3);
         return;
-      } else if (GoRouterState.of(context).matchedLocation.startsWith('/home/payment')) {
+      } else if (GoRouterState.of(context)
+          .matchedLocation
+          .startsWith('/home/payment')) {
         widget.customFabAction!(4);
         return;
       }
@@ -135,10 +142,13 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
 
     final current = _calculateSelectedIndex(context);
     if (current != index) {
-      _animationController.forward().then((_) => _animationController.reverse());
+      _animationController
+          .forward()
+          .then((_) => _animationController.reverse());
 
       // Navigate to the correct route based on the tab index
-      print('Index 2323: $index');
+      final tabName = _navItems[index].label;
+      AppLogger.userAction('nav_tab_click', {'tab_name': tabName});
       switch (index) {
         case 0: // Dashboard
           context.go('/home');
@@ -161,12 +171,17 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
 
   void _toggleFab() {
     setState(() => _isFabExpanded = !_isFabExpanded);
-    _isFabExpanded ? _fabAnimationController.forward() : _fabAnimationController.reverse();
+    AppLogger.userAction(
+      'fab_toggle',
+      {'action': _isFabExpanded ? 'open' : 'close'},
+    );
+    _isFabExpanded
+        ? _fabAnimationController.forward()
+        : _fabAnimationController.reverse();
   }
 
   void _onFabAction(FabAction action, int index) {
-    logI('FAB Action clicked - Index: $index');
-    logI('FAB Action route: ${action.route}');
+    AppLogger.userAction('fab_action_click', {'action_name': action.label});
 
     // Close the FAB menu
     _toggleFab();
@@ -330,15 +345,20 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
                           Icon(
                             item.icon,
                             size: 24,
-                            color: selected ? const Color(0xFF6366F1) : Colors.grey.shade600,
+                            color: selected
+                                ? const Color(0xFF6366F1)
+                                : Colors.grey.shade600,
                           ),
                           const SizedBox(height: 2),
                           Text(
                             item.label,
                             style: TextStyle(
                               fontSize: 10,
-                              fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-                              color: selected ? const Color(0xFF6366F1) : Colors.grey.shade600,
+                              fontWeight:
+                                  selected ? FontWeight.w600 : FontWeight.w500,
+                              color: selected
+                                  ? const Color(0xFF6366F1)
+                                  : Colors.grey.shade600,
                             ),
                           ),
                         ],

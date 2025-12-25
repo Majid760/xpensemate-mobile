@@ -8,6 +8,7 @@ import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit
 import 'package:xpensemate/features/dashboard/presentation/widgets/product_analytics_bar_chart.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/section_header_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/weekly_summary_cards.dart';
+import 'package:xpensemate/core/widget/custom_app_loader.dart';
 
 class ProductAnalyticsWidget extends StatefulWidget {
   const ProductAnalyticsWidget({super.key});
@@ -168,7 +169,7 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
         height: 200,
         padding: EdgeInsets.all(context.lg),
         child: Center(
-          child: CircularProgressIndicator(
+          child: CustomAppLoader(
             color: context.primaryColor,
             strokeWidth: 2,
           ),

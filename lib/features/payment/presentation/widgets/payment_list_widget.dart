@@ -5,6 +5,7 @@ import 'package:xpensemate/features/budget/presentation/widgets/no_more_widget.d
 import 'package:xpensemate/features/payment/domain/entities/payment_entity.dart';
 import 'package:xpensemate/features/payment/presentation/cubit/payment_cubit.dart';
 import 'package:xpensemate/features/payment/presentation/widgets/payment_card_widget.dart';
+import 'package:xpensemate/core/widget/custom_app_loader.dart';
 
 class PaymentListWidget extends StatefulWidget {
   const PaymentListWidget({
@@ -55,12 +56,12 @@ class _PaymentListWidgetState extends State<PaymentListWidget> {
             ),
             firstPageProgressIndicatorBuilder: (_) => const Padding(
               padding: EdgeInsets.all(16),
-              child: Center(child: CircularProgressIndicator.adaptive()),
+              child: Center(child: CustomAppLoader()),
             ),
             newPageProgressIndicatorBuilder: (_) => const Center(
               child: Padding(
                 padding: EdgeInsets.all(16),
-                child: CircularProgressIndicator.adaptive(),
+                child: CustomAppLoader(),
               ),
             ),
             firstPageErrorIndicatorBuilder: (_) => ErrorStateSectionWidget(

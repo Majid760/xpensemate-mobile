@@ -12,6 +12,7 @@ import 'package:xpensemate/features/budget/presentation/cubit/budget_expense_sta
 import 'package:xpensemate/features/budget/presentation/widgets/expandable_expense_header.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/expense_card.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/search_filter.dart';
+import 'package:xpensemate/core/widget/custom_app_loader.dart';
 
 class ExpenseScreen extends StatefulWidget {
   const ExpenseScreen({super.key, required this.budgetGoal});
@@ -75,7 +76,7 @@ class _ExpenseScreenState extends State<ExpenseScreen>
           builder: (context, state) {
             // Show loading indicator when initially loading
             if (state.isInitialLoading) {
-              return const Center(child: CircularProgressIndicator.adaptive());
+              return const Center(child: CustomAppLoader());
             }
 
             // Show error message if there's an error and no data
@@ -241,8 +242,7 @@ class _ExpenseScreenState extends State<ExpenseScreen>
                   const SliverToBoxAdapter(
                     child: Padding(
                       padding: EdgeInsets.all(AppSpacing.md),
-                      child:
-                          Center(child: CircularProgressIndicator.adaptive()),
+                      child: Center(child: CustomAppLoader()),
                     ),
                   ),
 

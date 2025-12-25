@@ -10,6 +10,7 @@ import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_sta
 import 'package:xpensemate/features/profile/presentation/pages/profile_page.dart';
 import 'package:xpensemate/features/profile/presentation/widgets/footer_widget.dart';
 import 'package:xpensemate/features/profile/presentation/widgets/menu_item_widget.dart';
+import 'package:xpensemate/core/widget/custom_app_loader.dart';
 
 class ModernContent extends StatelessWidget {
   const ModernContent({
@@ -33,7 +34,7 @@ class ModernContent extends StatelessWidget {
       return const Center(
         child: Padding(
           padding: EdgeInsets.all(32),
-          child: CircularProgressIndicator(),
+          child: CustomAppLoader(),
         ),
       );
     }

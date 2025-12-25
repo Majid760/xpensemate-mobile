@@ -11,6 +11,7 @@ import 'package:xpensemate/features/dashboard/presentation/widgets/section_heade
 import 'package:xpensemate/features/dashboard/presentation/widgets/spending_trend_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/total_expenses_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/weekly_insights_widget.dart';
+import 'package:xpensemate/core/widget/custom_app_loader.dart';
 
 class WeeklyFinancialOverviewWidget extends StatelessWidget {
   const WeeklyFinancialOverviewWidget({
@@ -85,7 +86,7 @@ class _LoadingStateSection extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(
+            CustomAppLoader(
               color: context.primaryColor,
               strokeWidth: 3,
             ),

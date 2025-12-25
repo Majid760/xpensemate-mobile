@@ -7,6 +7,7 @@ import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
+import 'package:xpensemate/core/widget/custom_app_loader.dart';
 import 'package:xpensemate/features/auth/presentation/widgets/custom_text_form_field.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/budgets_list_entity.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
@@ -124,7 +125,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
         validators: [
           Validators.required,
           Validators.maxLength(100),
-          Validators.minLength(2)
+          Validators.minLength(2),
         ],
       ),
       'amount': FormControl<String>(
@@ -471,7 +472,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
     );
 
     // Add available budgets - use budget name as value but store budget ID internally
-    if (_budgets?.budgets.isNotEmpty == true) {
+    if (_budgets?.budgets.isNotEmpty ?? false) {
       items.addAll(
         _budgets!.budgets.map(
           (budget) => DropdownMenuItem<String>(
@@ -635,7 +636,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
                             textInputAction: TextInputAction.next,
                             inputFormatters: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d*\.?\d*$')),
+                                RegExp(r'^\d*\.?\d*$'),
+                              ),
                             ],
                             validationMessages: {
                               'required': (error) => l10n.fieldRequired,
@@ -704,11 +706,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
                                   validationMessages: {
                                     'required': (error) => l10n.fieldRequired,
                                   },
-                                  showErrors: (control) {
-                                    final hasError = control.hasError == true;
-                                    final touched = control.touched == true;
-                                    return hasError && touched;
-                                  },
+                                  showErrors: (control) =>
+                                      control.invalid && control.touched,
                                 ),
                               ],
                             ],
@@ -920,8 +919,9 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
                                     SizedBox(
                                       width: 20,
                                       height: 20,
-                                      child: CircularProgressIndicator(
+                                      child: CustomAppLoader(
                                         strokeWidth: 2,
+                                        size: 20,
                                         color: colorScheme.primary,
                                       ),
                                     ),

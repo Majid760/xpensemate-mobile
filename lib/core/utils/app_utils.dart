@@ -10,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/core/widget/app_custom_dialog.dart';
+import 'package:xpensemate/core/widget/custom_app_loader.dart';
 
 class AppUtils {
   AppUtils._(); // Prevent instantiation
@@ -352,7 +353,7 @@ class AppUtils {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const CircularProgressIndicator(),
+            const CustomAppLoader(),
             if (message != null) ...[
               const SizedBox(height: 16),
               Text(message),

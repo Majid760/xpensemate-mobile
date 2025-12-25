@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:xpensemate/core/widget/custom_app_loader.dart';
 
 class SocialButton extends StatefulWidget {
-
   const SocialButton({
     super.key,
     required this.onPressed,
@@ -34,14 +34,15 @@ class SocialButton extends StatefulWidget {
     double size = 24,
     String? tooltip = 'Continue with Google',
     bool isLoading = false,
-  }) => SocialButton(
-    key: key,
-    onPressed: onPressed,
-    iconAsset: 'assets/images/google.png',
-    tooltip: tooltip,
-    size: size,
-    isLoading: isLoading,
-  );
+  }) =>
+      SocialButton(
+        key: key,
+        onPressed: onPressed,
+        iconAsset: 'assets/images/google.png',
+        tooltip: tooltip,
+        size: size,
+        isLoading: isLoading,
+      );
 
   static SocialButton facebook({
     Key? key,
@@ -49,15 +50,16 @@ class SocialButton extends StatefulWidget {
     double size = 24,
     String? tooltip = 'Continue with Facebook',
     bool isLoading = false,
-  }) => SocialButton(
-    key: key,
-    onPressed: onPressed,
-    iconAsset: 'assets/images/facebook.png',
-    tooltip: tooltip,
-    size: size,
-    hoverColor: const Color(0xFF1877F2).withValues(alpha: 0.08),
-    isLoading: isLoading,
-  );
+  }) =>
+      SocialButton(
+        key: key,
+        onPressed: onPressed,
+        iconAsset: 'assets/images/facebook.png',
+        tooltip: tooltip,
+        size: size,
+        hoverColor: const Color(0xFF1877F2).withValues(alpha: 0.08),
+        isLoading: isLoading,
+      );
 
   static SocialButton apple({
     Key? key,
@@ -65,15 +67,16 @@ class SocialButton extends StatefulWidget {
     double size = 24,
     String? tooltip = 'Continue with Apple',
     bool isLoading = false,
-  }) => SocialButton(
-    key: key,
-    onPressed: onPressed,
-    iconAsset: 'assets/images/apple.png',
-    tooltip: tooltip,
-    size: size,
-    hoverColor: Colors.black.withValues(alpha: 0.06),
-    isLoading: isLoading,
-  );
+  }) =>
+      SocialButton(
+        key: key,
+        onPressed: onPressed,
+        iconAsset: 'assets/images/apple.png',
+        tooltip: tooltip,
+        size: size,
+        hoverColor: Colors.black.withValues(alpha: 0.06),
+        isLoading: isLoading,
+      );
 
   static SocialButton github({
     Key? key,
@@ -81,15 +84,16 @@ class SocialButton extends StatefulWidget {
     double size = 24,
     String? tooltip = 'Continue with GitHub',
     bool isLoading = false,
-  }) => SocialButton(
-    key: key,
-    onPressed: onPressed,
-    iconAsset: 'assets/images/github.png',
-    tooltip: tooltip,
-    size: size,
-    hoverColor: Colors.black.withValues(alpha: 0.06),
-    isLoading: isLoading,
-  );
+  }) =>
+      SocialButton(
+        key: key,
+        onPressed: onPressed,
+        iconAsset: 'assets/images/github.png',
+        tooltip: tooltip,
+        size: size,
+        hoverColor: Colors.black.withValues(alpha: 0.06),
+        isLoading: isLoading,
+      );
 
   @override
   State<SocialButton> createState() => _SocialButtonState();
@@ -110,22 +114,26 @@ class _SocialButtonState extends State<SocialButton>
       duration: const Duration(milliseconds: 150),
       vsync: this,
     );
-    
+
     _scaleAnimation = Tween<double>(
       begin: 1,
       end: 0.95,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ),);
-    
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
     _elevationAnimation = Tween<double>(
       begin: 0,
       end: 4,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ),);
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOut,
+      ),
+    );
   }
 
   @override
@@ -171,11 +179,12 @@ class _SocialButtonState extends State<SocialButton>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     final backgroundColor = widget.backgroundColor ?? colorScheme.surface;
     final borderColor = widget.borderColor ?? colorScheme.outlineVariant;
-    final hoverColor = widget.hoverColor ?? colorScheme.primary.withValues(alpha: 0.08);
-    
+    final hoverColor =
+        widget.hoverColor ?? colorScheme.primary.withValues(alpha: 0.08);
+
     return MouseRegion(
       onEnter: _handleHoverEnter,
       onExit: _handleHoverExit,
@@ -187,39 +196,39 @@ class _SocialButtonState extends State<SocialButton>
         child: AnimatedBuilder(
           animation: _animationController,
           builder: (context, child) => Transform.scale(
-              scale: _scaleAnimation.value,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeInOut,
-                padding: widget.padding ?? const EdgeInsets.all(16),
-                decoration: BoxDecoration(
+            scale: _scaleAnimation.value,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+              padding: widget.padding ?? const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: _isHovered
+                    ? Color.lerp(backgroundColor, hoverColor, 0.8)
+                    : backgroundColor,
+                borderRadius: BorderRadius.circular(widget.borderRadius),
+                border: Border.all(
                   color: _isHovered
-                      ? Color.lerp(backgroundColor, hoverColor, 0.8)
-                      : backgroundColor,
-                  borderRadius: BorderRadius.circular(widget.borderRadius),
-                  border: Border.all(
-                    color: _isHovered
-                        ? borderColor.withValues(alpha: 0.6)
-                        : borderColor,
-                  ),
-                  boxShadow: [
-                    if (_isHovered && !widget.isLoading)
-                      BoxShadow(
-                        color: colorScheme.shadow.withValues(alpha: 0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    if (_isPressed && !widget.isLoading)
-                      BoxShadow(
-                        color: colorScheme.shadow.withValues(alpha: 0.2),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                  ],
+                      ? borderColor.withValues(alpha: 0.6)
+                      : borderColor,
                 ),
-                child: _buildButtonContent(),
+                boxShadow: [
+                  if (_isHovered && !widget.isLoading)
+                    BoxShadow(
+                      color: colorScheme.shadow.withValues(alpha: 0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  if (_isPressed && !widget.isLoading)
+                    BoxShadow(
+                      color: colorScheme.shadow.withValues(alpha: 0.2),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                ],
               ),
+              child: _buildButtonContent(),
             ),
+          ),
         ),
       ),
     );
@@ -230,11 +239,10 @@ class _SocialButtonState extends State<SocialButton>
       return SizedBox(
         width: widget.size,
         height: widget.size,
-        child: CircularProgressIndicator(
+        child: CustomAppLoader(
+          size: widget.size,
           strokeWidth: 2,
-          valueColor: AlwaysStoppedAnimation<Color>(
-            Theme.of(context).colorScheme.primary,
-          ),
+          color: Theme.of(context).colorScheme.primary,
         ),
       );
     }

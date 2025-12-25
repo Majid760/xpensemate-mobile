@@ -6,6 +6,7 @@ import 'package:xpensemate/features/budget/presentation/widgets/no_more_widget.d
 import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
 import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
 import 'package:xpensemate/features/expense/presentation/widgets/expense_card_widget.dart';
+import 'package:xpensemate/core/widget/custom_app_loader.dart';
 
 class ExpenseListWidget extends StatefulWidget {
   const ExpenseListWidget({
@@ -71,12 +72,12 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget> {
             ),
             firstPageProgressIndicatorBuilder: (_) => const Padding(
               padding: EdgeInsets.all(16),
-              child: Center(child: CircularProgressIndicator.adaptive()),
+              child: Center(child: CustomAppLoader()),
             ),
             newPageProgressIndicatorBuilder: (_) => const Center(
               child: Padding(
                 padding: EdgeInsets.all(16),
-                child: CircularProgressIndicator.adaptive(),
+                child: CustomAppLoader(),
               ),
             ),
             firstPageErrorIndicatorBuilder: (_) => ErrorStateSectionWidget(

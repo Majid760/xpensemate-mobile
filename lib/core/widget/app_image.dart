@@ -5,7 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
-import 'package:xpensemate/core/theme/colors/app_colors.dart';
+import 'package:xpensemate/core/widget/custom_app_loader.dart';
 
 enum ImageType {
   network,
@@ -460,10 +460,10 @@ class AppImage extends StatelessWidget {
             shape == ImageShape.circle ? BoxShape.circle : BoxShape.rectangle,
       ),
       child: Center(
-        child: CircularProgressIndicator.adaptive(
+        child: CustomAppLoader(
+          size: 24,
           strokeWidth: 2,
-          valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
-          backgroundColor: AppColors.primary.withValues(alpha: .2),
+          color: null, // Will use primary color by default or context theme
         ),
       ),
     );

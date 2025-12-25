@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
+import 'package:xpensemate/core/widget/custom_app_loader.dart';
 
 class AppButton extends StatefulWidget {
   const AppButton._({
@@ -70,21 +71,21 @@ class AppButton extends StatefulWidget {
         context,
         child,
         wrappedOnPressed,
-          backgroundColor,
-          textColor,
-          hasShadow,
-          borderRadius,
-          padding,
-          isFullWidth,
-          minWidth,
-          height,
-          elevation,
-          enabled,
-          isLoading,
-          animationDuration ?? const Duration(milliseconds: 200),
-          scaleOnTap,
-          hoverEffect,
-        ),
+        backgroundColor,
+        textColor,
+        hasShadow,
+        borderRadius,
+        padding,
+        isFullWidth,
+        minWidth,
+        height,
+        elevation,
+        enabled,
+        isLoading,
+        animationDuration ?? const Duration(milliseconds: 200),
+        scaleOnTap,
+        hoverEffect,
+      ),
       isLoading: isLoading,
       isFullWidth: isFullWidth,
       padding: padding,
@@ -148,21 +149,21 @@ class AppButton extends StatefulWidget {
         context,
         child,
         wrappedOnPressed,
-          backgroundColor,
-          textColor,
-          hasShadow,
-          borderRadius,
-          padding,
-          isFullWidth,
-          minWidth,
-          height,
-          elevation,
-          enabled,
-          isLoading,
-          animationDuration ?? const Duration(milliseconds: 200),
-          scaleOnTap,
-          hoverEffect,
-        ),
+        backgroundColor,
+        textColor,
+        hasShadow,
+        borderRadius,
+        padding,
+        isFullWidth,
+        minWidth,
+        height,
+        elevation,
+        enabled,
+        isLoading,
+        animationDuration ?? const Duration(milliseconds: 200),
+        scaleOnTap,
+        hoverEffect,
+      ),
       isLoading: isLoading,
       isFullWidth: isFullWidth,
       padding: padding,
@@ -225,20 +226,20 @@ class AppButton extends StatefulWidget {
         context,
         child,
         wrappedOnPressed,
-          backgroundColor,
-          textColor,
-          borderRadius,
-          padding,
-          isFullWidth,
-          minWidth,
-          height,
-          borderColor,
-          enabled,
-          isLoading,
-          animationDuration ?? const Duration(milliseconds: 200),
-          scaleOnTap,
-          hoverEffect,
-        ),
+        backgroundColor,
+        textColor,
+        borderRadius,
+        padding,
+        isFullWidth,
+        minWidth,
+        height,
+        borderColor,
+        enabled,
+        isLoading,
+        animationDuration ?? const Duration(milliseconds: 200),
+        scaleOnTap,
+        hoverEffect,
+      ),
       isLoading: isLoading,
       isFullWidth: isFullWidth,
       padding: padding,
@@ -301,19 +302,19 @@ class AppButton extends StatefulWidget {
         context,
         child,
         wrappedOnPressed,
-          backgroundColor,
-          textColor,
-          borderRadius,
-          padding,
-          isFullWidth,
-          minWidth,
-          height,
-          enabled,
-          isLoading,
-          animationDuration ?? const Duration(milliseconds: 200),
-          scaleOnTap,
-          hoverEffect,
-        ),
+        backgroundColor,
+        textColor,
+        borderRadius,
+        padding,
+        isFullWidth,
+        minWidth,
+        height,
+        enabled,
+        isLoading,
+        animationDuration ?? const Duration(milliseconds: 200),
+        scaleOnTap,
+        hoverEffect,
+      ),
       isLoading: isLoading,
       isFullWidth: isFullWidth,
       padding: padding,
@@ -378,22 +379,22 @@ class AppButton extends StatefulWidget {
         text,
         leadingIcon,
         wrappedOnPressed,
-          backgroundColor,
-          textColor,
-          hasShadow,
-          borderRadius,
-          padding,
-          isFullWidth,
-          minWidth,
-          height,
-          elevation,
-          textStyle,
-          enabled,
-          isLoading,
-          animationDuration ?? const Duration(milliseconds: 200),
-          scaleOnTap,
-          hoverEffect,
-        ),
+        backgroundColor,
+        textColor,
+        hasShadow,
+        borderRadius,
+        padding,
+        isFullWidth,
+        minWidth,
+        height,
+        elevation,
+        textStyle,
+        enabled,
+        isLoading,
+        animationDuration ?? const Duration(milliseconds: 200),
+        scaleOnTap,
+        hoverEffect,
+      ),
       isLoading: isLoading,
       isFullWidth: isFullWidth,
       padding: padding,
@@ -457,21 +458,21 @@ class AppButton extends StatefulWidget {
         text,
         leadingIcon,
         wrappedOnPressed,
-          backgroundColor,
-          textColor,
-          borderRadius,
-          padding,
-          isFullWidth,
-          minWidth,
-          height,
-          borderColor,
-          textStyle,
-          enabled,
-          isLoading,
-          animationDuration ?? const Duration(milliseconds: 200),
-          scaleOnTap,
-          hoverEffect,
-        ),
+        backgroundColor,
+        textColor,
+        borderRadius,
+        padding,
+        isFullWidth,
+        minWidth,
+        height,
+        borderColor,
+        textStyle,
+        enabled,
+        isLoading,
+        animationDuration ?? const Duration(milliseconds: 200),
+        scaleOnTap,
+        hoverEffect,
+      ),
       isLoading: isLoading,
       isFullWidth: isFullWidth,
       padding: padding,
@@ -551,9 +552,8 @@ class AppButton extends StatefulWidget {
     );
 
     // If gradient is disabled or button is disabled, use solid color
-    final bgColor = !enabled || isLoading
-        ? (backgroundColor ?? colorScheme.primary)
-        : null;
+    final bgColor =
+        !enabled || isLoading ? (backgroundColor ?? colorScheme.primary) : null;
 
     return Material(
       color: Colors.transparent,
@@ -589,7 +589,8 @@ class AppButton extends StatefulWidget {
             borderRadius: BorderRadius.circular(borderRadius),
             child: Container(
               width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
+              padding: EdgeInsets.symmetric(
+                  horizontal: context.lg, vertical: context.md),
               child: Center(child: child),
             ),
           ),
@@ -627,13 +628,15 @@ class AppButton extends StatefulWidget {
         disabledBackgroundColor: colorScheme.surfaceContainerHighest,
         disabledForegroundColor: colorScheme.onSurfaceVariant,
         elevation: hasShadow ? (elevation ?? 2) : 0,
-        shadowColor: hasShadow ? colorScheme.shadow.withValues(alpha: 0.15) : null,
+        shadowColor:
+            hasShadow ? colorScheme.shadow.withValues(alpha: 0.15) : null,
         overlayColor: colorScheme.onSecondary.withValues(alpha: 0.1),
         animationDuration: animationDuration,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        padding: padding ?? EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
+        padding: padding ??
+            EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           height,
@@ -680,7 +683,8 @@ class AppButton extends StatefulWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        padding: padding ?? EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
+        padding: padding ??
+            EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           height,
@@ -722,7 +726,8 @@ class AppButton extends StatefulWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        padding: padding ?? EdgeInsets.symmetric(horizontal: context.md, vertical: context.sm),
+        padding: padding ??
+            EdgeInsets.symmetric(horizontal: context.md, vertical: context.sm),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           height,
@@ -764,11 +769,10 @@ class AppButton extends StatefulWidget {
           ? SizedBox(
               width: 18,
               height: 18,
-              child: CircularProgressIndicator.adaptive(
+              child: CustomAppLoader(
+                size: 18,
                 strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  colorScheme.onPrimary,
-                ),
+                color: colorScheme.onPrimary,
               ),
             )
           : leadingIcon,
@@ -779,13 +783,15 @@ class AppButton extends StatefulWidget {
         disabledBackgroundColor: colorScheme.surfaceContainerHighest,
         disabledForegroundColor: colorScheme.onSurfaceVariant,
         elevation: hasShadow ? (elevation ?? 2) : 0,
-        shadowColor: hasShadow ? colorScheme.shadow.withValues(alpha: 0.15) : null,
+        shadowColor:
+            hasShadow ? colorScheme.shadow.withValues(alpha: 0.15) : null,
         overlayColor: colorScheme.onPrimary.withValues(alpha: 0.1),
         animationDuration: animationDuration,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        padding: padding ?? EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
+        padding: padding ??
+            EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           height,
@@ -852,7 +858,8 @@ class AppButton extends StatefulWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        padding: padding ?? EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
+        padding: padding ??
+            EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           height,
@@ -885,10 +892,12 @@ class _AppButtonState extends State<AppButton>
     _scaleAnimation = Tween<double>(
       begin: 1,
       end: 0.95,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ),);
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOut,
+      ),
+    );
   }
 
   @override
@@ -922,22 +931,22 @@ class _AppButtonState extends State<AppButton>
   @override
   Widget build(BuildContext context) {
     final child = _buildButtonChild(context);
-    
+
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, childWidget) => Transform.scale(
-          scale: _scaleAnimation.value,
-          child: GestureDetector(
-            onTapDown: _onTapDown,
-            onTapUp: _onTapUp,
-            onTapCancel: _onTapCancel,
-            child: MouseRegion(
-              onEnter: (_) => _onHover(true),
-              onExit: (_) => _onHover(false),
-              child: widget.buttonBuilder(context, childWidget!),
-            ),
+        scale: _scaleAnimation.value,
+        child: GestureDetector(
+          onTapDown: _onTapDown,
+          onTapUp: _onTapUp,
+          onTapCancel: _onTapCancel,
+          child: MouseRegion(
+            onEnter: (_) => _onHover(true),
+            onExit: (_) => _onHover(false),
+            child: widget.buttonBuilder(context, childWidget!),
           ),
         ),
+      ),
       child: child,
     );
   }

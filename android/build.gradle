@@ -1,14 +1,14 @@
 buildscript {
-    ext.kotlin_version = '1.9.0'  // Updated Kotlin version
+    ext.kotlin_version = '2.1.0'
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.0.2'  // More stable AGP version
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.gms:google-services:4.4.0'
-
+        // Classpaths are managed in settings.gradle, keeping this empty or minimal if needed generally.
+        // However, for Flutter projects, sometimes the buildscript block is still used for specific legacy configs.
+        // Given settings.gradle usage, we can often simplify this. But to be safe and avoid "plugin not found" if the template relies on it:
+        // We will remove the explicit classpaths here as they are in settings.gradle.
     }
 }
 

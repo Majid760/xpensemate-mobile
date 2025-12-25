@@ -37,10 +37,12 @@ class FirebaseCrashlyticsService implements CrashlyticsService {
     FirebaseCrashlytics? crashlytics,
     Logger? logger,
   })  : _crashlytics = crashlytics ?? FirebaseCrashlytics.instance,
-        _logger = logger ?? Logger();
+        _logger = logger ?? Logger(),
+        _kDebugMode = !kDebugMode;
 
   final FirebaseCrashlytics _crashlytics;
   final Logger _logger;
+  final bool _kDebugMode;
 
   @override
   Future<void> init() async {
@@ -53,7 +55,7 @@ class FirebaseCrashlyticsService implements CrashlyticsService {
       return true;
     };
 
-    if (kDebugMode) {
+    if (_kDebugMode) {
       // Force disable Crashlytics collection while doing every day development.
       // Temporarily toggle this to true if you want to test crash reporting in your app.
       await _crashlytics.setCrashlyticsCollectionEnabled(false);
@@ -73,7 +75,7 @@ class FirebaseCrashlyticsService implements CrashlyticsService {
     dynamic reason,
   }) async {
     try {
-      if (kDebugMode) {
+      if (_kDebugMode) {
         _logger.e(
           'Error caught (Debug Mode): $exception',
           error: exception,
@@ -94,7 +96,7 @@ class FirebaseCrashlyticsService implements CrashlyticsService {
   @override
   Future<void> log(String message) async {
     try {
-      if (kDebugMode) {
+      if (_kDebugMode) {
         _logger.d('Crashlytics Log: $message');
         // We generally don't send simple logs to Crashlytics in debug, but we can if testing.
       }

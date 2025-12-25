@@ -9,17 +9,22 @@ import 'package:xpensemate/core/route/utils/error_page.dart';
 import 'package:xpensemate/core/route/utils/main_shell.dart';
 import 'package:xpensemate/core/route/utils/route_constants.dart';
 import 'package:xpensemate/core/route/utils/router_middleware_guard.dart';
+import 'package:xpensemate/core/service/analytics_service.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/budget_goal_list.dart';
 import 'package:xpensemate/features/expense/presentation/pages/expense_page.dart';
 import 'package:xpensemate/features/payment/presentation/pages/payment_page.dart';
 
 class AppRouter {
-  AppRouter(this._authCubit, this._routeGuards);
+  AppRouter(this._authCubit, this._routeGuards, this._analyticsService);
   final AuthCubit _authCubit;
   final RouteGuards _routeGuards;
+  final AnalyticsService _analyticsService;
 
   late final GoRouter router = GoRouter(
+    observers: [
+      _analyticsService.observer,
+    ],
     debugLogDiagnostics: true,
     initialLocation: RouteConstants.home,
     refreshListenable: _authCubit,

@@ -9,7 +9,7 @@ import 'package:xpensemate/core/network/network_contracts.dart';
 import 'package:xpensemate/core/network/network_info.dart';
 import 'package:xpensemate/core/service/analytics_service.dart';
 import 'package:xpensemate/core/service/crashlytics_service.dart';
-import 'package:xpensemate/core/service/firebase_analytics_service.dart';
+import 'package:xpensemate/core/service/analytics_service.dart';
 import 'package:xpensemate/core/service/hive_storage_service.dart';
 import 'package:xpensemate/core/service/permission_service.dart';
 import 'package:xpensemate/core/service/secure_storage_service.dart';
@@ -86,7 +86,7 @@ Future<void> initLocator() async {
     sl.registerLazySingleton<AnalyticsService>(
       () => FirebaseAnalyticsService.instance,
     );
-    AppLogger.init(isDebug: kDebugMode);
+    AppLogger.init(isDebug: !kDebugMode);
 
     // Initialize SecureStorageService first
     await SecureStorageService.instance.initialize();

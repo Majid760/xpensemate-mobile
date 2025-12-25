@@ -62,6 +62,7 @@ class WeeklyFinancialOverviewWidget extends StatelessWidget {
                   ErrorStateSectionWidget(
                     errorMsg: errorMessage,
                     onRetry: onRetry,
+                    height: 400,
                   )
                 else if (weeklyStats != null)
                   _LoadedContentSection(weeklyStats: weeklyStats!)

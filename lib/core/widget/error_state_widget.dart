@@ -83,7 +83,7 @@ class _ErrorStateSectionWidgetState extends State<ErrorStateSectionWidget>
             scale: _scaleAnimation,
             child: Container(
               width: context.screenWidth,
-              height: widget.height ?? double.infinity,
+              height: widget.height,
               padding: const EdgeInsets.symmetric(
                 vertical: 16,
                 horizontal: 8,

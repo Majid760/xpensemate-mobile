@@ -13,11 +13,11 @@ import 'package:xpensemate/features/dashboard/presentation/widgets/weekly_financ
 import 'package:xpensemate/features/profile/presentation/pages/profile_page.dart';
 
 class DashboardPage extends StatefulWidget {
-  DashboardPage({
+  const DashboardPage({
     super.key,
     this.onProfileTap,
   });
-  void Function()? onProfileTap;
+  final void Function()? onProfileTap;
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();

@@ -73,11 +73,22 @@ class AppLogger {
     }
   }
 
+  // Analytics logging
+  static void analyticsEvent(String name, [Map<String, Object>? params]) {
+    unawaited(sl.analytics.logEvent(name: name, parameters: params));
+  }
+
   // User action logging
   static void userAction(String action, [Map<String, dynamic>? params]) {
     final message = 'User: $action${params != null ? ' $params' : ''}';
     i(message);
     breadcrumb(message);
+    // Log to Firebase Analytics
+    final eventName = action.replaceAll(' ', '_').toLowerCase();
+    unawaited(sl.analytics.logEvent(
+      name: eventName,
+      parameters: params?.map((key, value) => MapEntry(key, value as Object)),
+    ));
   }
 
   // Crashlytics Breadcrumb
@@ -85,14 +96,22 @@ class AppLogger {
     unawaited(sl.crashlytics.log(message));
   }
 
-  // Crashlytics User Identifier
+  // User Identifier
   static void setUserId(String identifier) {
     unawaited(sl.crashlytics.setUserIdentifier(identifier));
+    unawaited(sl.analytics.setUserId(identifier));
   }
 
   // Crashlytics Custom Key
   static void setCustomKey(String key, Object value) {
     unawaited(sl.crashlytics.setCustomKey(key, value));
+  }
+
+  // Reset all analytics/crashlytics data
+  static void reset() {
+    breadcrumb('Resetting logger data...');
+    setUserId('');
+    unawaited(sl.analytics.resetAnalyticsData());
   }
 }
 

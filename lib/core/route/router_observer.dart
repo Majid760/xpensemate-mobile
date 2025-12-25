@@ -1,5 +1,7 @@
 // lib/core/router/route_observer.dart
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 
 class AppRouteObserver extends NavigatorObserver {
@@ -25,9 +27,19 @@ class AppRouteObserver extends NavigatorObserver {
 
   void _logNavigation(
       String action, Route<dynamic> route, Route<dynamic>? previousRoute) {
-    final message = '🧭 $action: ${route.settings.name} '
-        '${previousRoute != null ? 'from ${previousRoute.settings.name}' : ''}';
+    final routeName = route.settings.name;
+    final prevRouteName = previousRoute?.settings.name;
+
+    final message = '🧭 $action: ${routeName ?? 'undefined'} '
+        '${prevRouteName != null ? 'from $prevRouteName' : ''}';
     debugPrint(message);
     AppLogger.breadcrumb(message);
+
+    // Track screen view in analytics
+    // If it's a POP, the current active screen becomes the previous one
+    final screenToTrack = action == 'POP' ? prevRouteName : routeName;
+    if (screenToTrack != null) {
+      unawaited(sl.analytics.setCurrentScreen(screenName: screenToTrack));
+    }
   }
 }

@@ -94,6 +94,10 @@ class ProfileCubit extends Cubit<ProfileState> {
         );
       }, (user) {
         AppLogger.breadcrumb('Profile update successful');
+        AppLogger.userAction('update_profile', {
+          'has_image': data['profilePhotoUrl'] != null,
+          'fields_count': data.length,
+        });
         emit(state.copyWith(user: user, isUpdating: false, message: 'updated'));
         // after update at in server side we need to update user in local storage
         _authCubit.updateUser(user);
@@ -125,6 +129,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         },
         (url) {
           AppLogger.breadcrumb('Image upload successful');
+          AppLogger.userAction('update_profile_image');
           if (url != null && url.isNotEmpty) uploadedUrl = url;
         },
       );

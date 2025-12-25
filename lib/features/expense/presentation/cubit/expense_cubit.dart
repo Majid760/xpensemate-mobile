@@ -237,6 +237,10 @@ class ExpenseCubit extends Cubit<ExpenseState> {
           ),
         );
       }, (updatedExpense) async {
+        AppLogger.userAction('update_expense', {
+          'expense_id': updatedExpense.id,
+          'amount': updatedExpense.amount,
+        });
         AppLogger.breadcrumb('Update expense success');
         // Recalculate stats after successful update
         unawaited(_recalculateExpenseStats());
@@ -281,6 +285,11 @@ class ExpenseCubit extends Cubit<ExpenseState> {
           );
         },
         (createdExpense) async {
+          AppLogger.userAction('create_expense', {
+            'amount': expense.amount,
+            'category': expense.categoryName,
+            'budget_id': expense.budgetGoalId ?? '',
+          });
           AppLogger.breadcrumb('Create expense success');
           final pages = _pagingController.value.pages;
           if (pages != null && pages.isNotEmpty) {
@@ -330,6 +339,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
           );
         },
         (success) async {
+          AppLogger.userAction('delete_expense', {'expense_id': expenseId});
           AppLogger.breadcrumb('Delete expense success');
           // Remove from all pages
           final pages = _pagingController.value.pages ?? [];

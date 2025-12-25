@@ -7,7 +7,9 @@ import 'package:xpensemate/core/localization/locale_manager.dart';
 import 'package:xpensemate/core/network/network_client.dart';
 import 'package:xpensemate/core/network/network_contracts.dart';
 import 'package:xpensemate/core/network/network_info.dart';
+import 'package:xpensemate/core/service/analytics_service.dart';
 import 'package:xpensemate/core/service/crashlytics_service.dart';
+import 'package:xpensemate/core/service/firebase_analytics_service.dart';
 import 'package:xpensemate/core/service/hive_storage_service.dart';
 import 'package:xpensemate/core/service/permission_service.dart';
 import 'package:xpensemate/core/service/secure_storage_service.dart';
@@ -74,6 +76,16 @@ final sl = GetIt.instance;
 Future<void> initLocator() async {
   try {
     // Initialize services
+
+    // Crashlytics Service
+    sl.registerLazySingleton<CrashlyticsService>(
+      FirebaseCrashlyticsService.new,
+    );
+
+    // Analytics Service
+    sl.registerLazySingleton<AnalyticsService>(
+      () => FirebaseAnalyticsService.instance,
+    );
     AppLogger.init(isDebug: kDebugMode);
 
     // Initialize SecureStorageService first
@@ -98,11 +110,6 @@ Future<void> initLocator() async {
     // Permission Service
     sl.registerLazySingleton<PermissionService>(
       PermissionService.new,
-    );
-
-    // Crashlytics Service
-    sl.registerLazySingleton<CrashlyticsService>(
-      FirebaseCrashlyticsService.new,
     );
 
     // ---------- Secure Storage Service ----------
@@ -281,4 +288,5 @@ extension ServiceLocatorExtension on GetIt {
   // services
   AuthService get authService => this<AuthService>();
   CrashlyticsService get crashlytics => this<CrashlyticsService>();
+  AnalyticsService get analytics => this<AnalyticsService>();
 }

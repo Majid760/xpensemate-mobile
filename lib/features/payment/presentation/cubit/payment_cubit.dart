@@ -104,6 +104,9 @@ class PaymentCubit extends Cubit<PaymentState> {
         },
         (stats) {
           AppLogger.breadcrumb('Fetch payment stats success');
+          AppLogger.userAction('filter_payment_stats', {
+            'filter': filterValue.name,
+          });
           emit(
             state.copyWith(
               paymentStats: stats,
@@ -166,6 +169,12 @@ class PaymentCubit extends Cubit<PaymentState> {
         );
       }, (updatedPayment) async {
         AppLogger.breadcrumb('Update payment success');
+        AppLogger.userAction('update_payment', {
+          'id': payment.id,
+          'amount': payment.amount,
+          'type': payment.paymentType,
+          'name': payment.name,
+        });
         emit(
           state.copyWith(
             status: PaymentStatus.loaded,
@@ -207,6 +216,11 @@ class PaymentCubit extends Cubit<PaymentState> {
         },
         (createdPayment) async {
           AppLogger.breadcrumb('Create payment success');
+          AppLogger.userAction('create_payment', {
+            'amount': payment.amount,
+            'type': payment.paymentType,
+            'name': payment.name,
+          });
           final pages = _pagingController.value.pages ?? [];
           if (pages.isNotEmpty) {
             final updatedPages = List<List<PaymentEntity>>.from(pages);
@@ -255,6 +269,7 @@ class PaymentCubit extends Cubit<PaymentState> {
         },
         (success) async {
           AppLogger.breadcrumb('Delete payment success');
+          AppLogger.userAction('delete_payment', {'id': paymentId});
           // Remove from all pages
           final pages = _pagingController.value.pages ?? [];
           final updatedPages = <List<PaymentEntity>>[];

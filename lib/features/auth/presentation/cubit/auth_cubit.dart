@@ -1,11 +1,12 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:xpensemate/core/route/utils/route_constants.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
-import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/core/usecase/usecase.dart';
+import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/features/auth/domain/entities/user.dart';
 import 'package:xpensemate/features/auth/domain/usecases/cases_export.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_state.dart';
@@ -63,6 +64,7 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
         );
       },
       (user) {
+        AppLogger.userAction('login_success', {'user_id': user.id});
         AppLogger.setUserId(user.id);
         AppLogger.setCustomKey('is_authenticated', true);
         AppLogger.breadcrumb('Login successful for user: ${user.id}');
@@ -101,6 +103,7 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
         );
       },
       (user) {
+        AppLogger.userAction('registration_success', {'email': email});
         AppLogger.breadcrumb('Registration successful');
         emit(
           state.copyWith(
@@ -184,8 +187,8 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
         );
       },
       (user) {
-        AppLogger.setUserId('');
-        AppLogger.setCustomKey('is_authenticated', false);
+        AppLogger.userAction('sign_out');
+        AppLogger.reset();
         AppLogger.breadcrumb('Sign out successful, user cleared');
         emit(
           state.copyWith(

@@ -290,6 +290,12 @@ class PermissionService {
     final status = await permission.request();
 
     final result = _mapPermissionStatus(status, appPermission);
+    AppLogger.analyticsEvent('permission_result', {
+      'permission': appPermission.name,
+      'status': result.isGranted
+          ? 'granted'
+          : (result.isPermanentlyDenied ? 'permanently_denied' : 'denied'),
+    });
     AppLogger.breadcrumb(
         'PermissionService: ${appPermission.name} request result: ${result.isGranted}');
     return result;
@@ -316,7 +322,14 @@ class PermissionService {
       final appPermission = validAppPermissions[i];
       final permission = permissions[i];
       final status = statuses[permission] ?? PermissionStatus.denied;
-      results[appPermission] = _mapPermissionStatus(status, appPermission);
+      final result = _mapPermissionStatus(status, appPermission);
+      AppLogger.analyticsEvent('permission_result', {
+        'permission': appPermission.name,
+        'status': result.isGranted
+            ? 'granted'
+            : (result.isPermanentlyDenied ? 'permanently_denied' : 'denied'),
+      });
+      results[appPermission] = result;
     }
     return results;
   }

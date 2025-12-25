@@ -106,6 +106,10 @@ class BudgetCubit extends Cubit<BudgetState> {
           );
         },
         (createdGoal) async {
+          AppLogger.userAction('create_budget_goal', {
+            'budget_name': createdGoal.name,
+            'amount': createdGoal.amount,
+          });
           AppLogger.breadcrumb('Create budget goal success');
           pagingController.value = pagingController.value.copyWith(
             pages: [
@@ -162,6 +166,10 @@ class BudgetCubit extends Cubit<BudgetState> {
           );
         },
         (updatedGoal) async {
+          AppLogger.userAction('update_budget_goal', {
+            'budget_id': updatedGoal.id,
+            'amount': updatedGoal.amount,
+          });
           AppLogger.breadcrumb('Update budget goal success');
           // Create new pages list with updated item
           var pages = <List<BudgetGoalEntity>>[];
@@ -224,6 +232,7 @@ class BudgetCubit extends Cubit<BudgetState> {
           );
         },
         (_) async {
+          AppLogger.userAction('delete_budget_goal', {'budget_id': id});
           AppLogger.breadcrumb('Delete budget goal success');
           // Update paging controller pages by removing the deleted goal
           var pages = <List<BudgetGoalEntity>>[];

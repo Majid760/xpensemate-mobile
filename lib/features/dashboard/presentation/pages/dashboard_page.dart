@@ -23,8 +23,7 @@ class DashboardPage extends StatefulWidget {
   State<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _DashboardPageState extends State<DashboardPage>
-    with TickerProviderStateMixin {
+class _DashboardPageState extends State<DashboardPage> with TickerProviderStateMixin {
   late AnimationController _fadeController;
   late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
@@ -77,22 +76,19 @@ class _DashboardPageState extends State<DashboardPage>
         drawerScrimColor: Colors.transparent,
         body: BlocListener<DashboardCubit, DashboardState>(
           listenWhen: (previous, current) =>
-              previous.state != current.state ||
+              // previous.state != current.state ||
               previous.message != current.message,
           listener: (context, state) {
             if (state.message != null && state.message!.isNotEmpty) {
               AppSnackBar.show(
                 context: context,
                 message: state.message!,
-                type: state.state == DashboardStates.error
-                    ? SnackBarType.error
-                    : SnackBarType.success,
+                type: state.state == DashboardStates.error ? SnackBarType.error : SnackBarType.success,
               );
             }
           },
           child: RefreshIndicator(
-            onRefresh: () async =>
-                context.read<DashboardCubit>().loadDashboardData(),
+            onRefresh: () async => context.read<DashboardCubit>().loadDashboardData(),
             color: context.colorScheme.primary,
             child: CustomScrollView(
               physics: const BouncingScrollPhysics(),
@@ -104,10 +100,8 @@ class _DashboardPageState extends State<DashboardPage>
                 SliverToBoxAdapter(
                   child: BlocBuilder<DashboardCubit, DashboardState>(
                     buildWhen: (previous, current) =>
-                        previous.weeklyStats != current.weeklyStats ||
-                        previous.state != current.state,
-                    builder: (context, state) =>
-                        DashboardHeaderWidget(state: state),
+                        previous.weeklyStats != current.weeklyStats || previous.state != current.state,
+                    builder: (context, state) => DashboardHeaderWidget(state: state),
                   ),
                 ),
 
@@ -128,26 +122,18 @@ class _DashboardPageState extends State<DashboardPage>
                                   previous.weeklyStats != current.weeklyStats ||
                                   previous.state != current.state ||
                                   previous.message != current.message,
-                              builder: (context, state) =>
-                                  WeeklyFinancialOverviewWidget(
+                              builder: (context, state) => WeeklyFinancialOverviewWidget(
                                 weeklyStats: state.weeklyStats,
-                                isLoading:
-                                    state.state == DashboardStates.loading,
-                                errorMessage:
-                                    state.state == DashboardStates.error
-                                        ? state.message
-                                        : null,
-                                onRetry: () => context
-                                    .read<DashboardCubit>()
-                                    .loadDashboardData(),
+                                isLoading: state.state == DashboardStates.loading,
+                                errorMessage: state.state == DashboardStates.error ? state.message : null,
+                                onRetry: () => context.read<DashboardCubit>().loadDashboardData(),
                               ),
                             ),
 
                             SizedBox(height: context.lg),
 
                             // Active Budget Section
-                            BlocSelector<DashboardCubit, DashboardState,
-                                BudgetGoalsEntity?>(
+                            BlocSelector<DashboardCubit, DashboardState, BudgetGoalsEntity?>(
                               selector: (state) => state.budgetGoals,
                               builder: (context, budgetGoals) {
                                 if (budgetGoals != null) {
@@ -192,7 +178,18 @@ class DashboardPageWrapper extends StatefulWidget {
 }
 
 class _DashboardPageWrapperState extends State<DashboardPageWrapper> {
-  final _drawerController = AwesomeDrawerBarController();
+  late final AwesomeDrawerBarController _drawerController;
+  @override
+  void initState() {
+    super.initState();
+    _drawerController = AwesomeDrawerBarController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) => AwesomeDrawerBar(
         controller: _drawerController,
@@ -211,8 +208,7 @@ class _DashboardPageWrapperState extends State<DashboardPageWrapper> {
           },
         ),
         menuScreen: ProfilePage(
-          onBackTap: () =>
-              (_drawerController.close as void Function()?)?.call(),
+          onBackTap: () => (_drawerController.close as void Function()?)?.call(),
         ),
       );
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/features/auth/data/datasources/auth_local_storage.dart';
 import 'package:xpensemate/features/auth/data/models/auth_token_model.dart';
@@ -118,14 +119,14 @@ class AuthService {
   // get the user tokens from storage
   Future<void> fetchTokenFromStorage() async {
     try {
-      print('fetching tokens ----.....');
       await Future.wait([
         getAccessToken(),
         getRefreshToken(),
       ]);
       if (accessToken.isNotEmpty && refreshToken.isNotEmpty) {
-        print("access token wowowoow ==> ${accessToken.substring(0, 10)}");
-        print("refresh token wowowoow ==> ${refreshToken.substring(0, 10)}");
+        if (kDebugMode) {
+          logI('AuthService: User tokens fetched from storage');
+        }
       }
     } on Exception catch (e) {
       logE('AuthService: Error getting user tokens from storage: $e');

@@ -36,8 +36,7 @@ class PaymentPageContent extends StatefulWidget {
   State<PaymentPageContent> createState() => _PaymentPageContentState();
 }
 
-class _PaymentPageContentState extends State<PaymentPageContent>
-    with TickerProviderStateMixin {
+class _PaymentPageContentState extends State<PaymentPageContent> with TickerProviderStateMixin {
   late ScrollController _scrollController;
 
   @override
@@ -80,19 +79,15 @@ class _PaymentPageContentState extends State<PaymentPageContent>
   }
 
   @override
-  Widget build(BuildContext context) =>
-      BlocListener<PaymentCubit, PaymentState>(
+  Widget build(BuildContext context) => BlocListener<PaymentCubit, PaymentState>(
         listenWhen: (previous, current) =>
-            (previous.message != current.message && current.message != null) ||
-            (previous != current),
+            (previous.message != current.message && current.message != null) || (previous != current),
         listener: (context, state) {
           if (state.message != null && state.message!.isNotEmpty) {
             AppSnackBar.show(
               context: context,
               message: state.message ?? "",
-              type: state.status == PaymentStatus.error
-                  ? SnackBarType.error
-                  : SnackBarType.success,
+              type: state.status == PaymentStatus.error ? SnackBarType.error : SnackBarType.success,
             );
           }
         },
@@ -109,8 +104,7 @@ class _PaymentPageContentState extends State<PaymentPageContent>
                 selector: (state) => state.filterValue,
                 builder: (context, filterValue) => CustomAppBar(
                   defaultPeriod: filterValue,
-                  onChanged: (value) =>
-                      context.paymentCubit.fetchPaymentStats(value),
+                  onChanged: (value) => context.paymentCubit.fetchPaymentStats(value),
                 ),
               ),
               BlocBuilder<PaymentCubit, PaymentState>(
@@ -136,8 +130,7 @@ class _PaymentPageContentState extends State<PaymentPageContent>
                         delay: const Duration(milliseconds: 800),
                       );
                     },
-                    onSearchCleared: () =>
-                        context.paymentCubit.refreshPayments(),
+                    onSearchCleared: () => context.paymentCubit.refreshPayments(),
                   ),
                 ),
               ),
@@ -168,6 +161,7 @@ void addPayment({
   void Function(PaymentEntity)? onSave,
 }) {
   final screenHeight = MediaQuery.of(context).size.height;
+
   AppBottomSheet.show<void>(
     context: context,
     title: 'Add Payment',

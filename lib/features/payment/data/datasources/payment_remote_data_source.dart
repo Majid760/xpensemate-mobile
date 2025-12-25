@@ -98,7 +98,6 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
   Future<Either<Failure, PaymentStatsEntity>> getPaymentStats({
     String? filterQuery,
   }) {
-    print("this is filterQuery $filterQuery");
     final queryParams = <String, dynamic>{
       'period': filterQuery ?? FilterValue.monthly.toString(),
     };

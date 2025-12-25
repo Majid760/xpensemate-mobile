@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:xpensemate/core/route/utils/router_extension.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/features/budget/presentation/pages/budget_page.dart';
-
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:xpensemate/features/expense/presentation/pages/expense_page.dart';
 import 'package:xpensemate/features/payment/presentation/pages/payment_page.dart';
@@ -34,8 +33,7 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
     vsync: this,
   );
 
-  late final Animation<double> _fabAnimation =
-      Tween<double>(begin: 0, end: 1).animate(
+  late final Animation<double> _fabAnimation = Tween<double>(begin: 0, end: 1).animate(
     CurvedAnimation(parent: _fabAnimationController, curve: Curves.easeOut),
   );
 
@@ -102,19 +100,13 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
     }
     if (widget.customFabAction != null) {
       // find out which action to trigger based on current route
-      if (GoRouterState.of(context)
-          .matchedLocation
-          .startsWith('/home/expense')) {
+      if (GoRouterState.of(context).matchedLocation.startsWith('/home/expense')) {
         widget.customFabAction!(1);
         return;
-      } else if (GoRouterState.of(context)
-          .matchedLocation
-          .startsWith('/home/budget')) {
+      } else if (GoRouterState.of(context).matchedLocation.startsWith('/home/budget')) {
         widget.customFabAction!(3);
         return;
-      } else if (GoRouterState.of(context)
-          .matchedLocation
-          .startsWith('/home/payment')) {
+      } else if (GoRouterState.of(context).matchedLocation.startsWith('/home/payment')) {
         widget.customFabAction!(4);
         return;
       }
@@ -143,9 +135,7 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
 
     final current = _calculateSelectedIndex(context);
     if (current != index) {
-      _animationController
-          .forward()
-          .then((_) => _animationController.reverse());
+      _animationController.forward().then((_) => _animationController.reverse());
 
       // Navigate to the correct route based on the tab index
       print('Index 2323: $index');
@@ -171,9 +161,7 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
 
   void _toggleFab() {
     setState(() => _isFabExpanded = !_isFabExpanded);
-    _isFabExpanded
-        ? _fabAnimationController.forward()
-        : _fabAnimationController.reverse();
+    _isFabExpanded ? _fabAnimationController.forward() : _fabAnimationController.reverse();
   }
 
   void _onFabAction(FabAction action, int index) {
@@ -342,20 +330,15 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
                           Icon(
                             item.icon,
                             size: 24,
-                            color: selected
-                                ? const Color(0xFF6366F1)
-                                : Colors.grey.shade600,
+                            color: selected ? const Color(0xFF6366F1) : Colors.grey.shade600,
                           ),
                           const SizedBox(height: 2),
                           Text(
                             item.label,
                             style: TextStyle(
                               fontSize: 10,
-                              fontWeight:
-                                  selected ? FontWeight.w600 : FontWeight.w500,
-                              color: selected
-                                  ? const Color(0xFF6366F1)
-                                  : Colors.grey.shade600,
+                              fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                              color: selected ? const Color(0xFF6366F1) : Colors.grey.shade600,
                             ),
                           ),
                         ],

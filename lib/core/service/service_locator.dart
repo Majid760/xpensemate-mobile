@@ -1,5 +1,4 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,7 +8,6 @@ import 'package:xpensemate/core/network/network_contracts.dart';
 import 'package:xpensemate/core/network/network_info.dart';
 import 'package:xpensemate/core/service/analytics_service.dart';
 import 'package:xpensemate/core/service/crashlytics_service.dart';
-import 'package:xpensemate/core/service/analytics_service.dart';
 import 'package:xpensemate/core/service/hive_storage_service.dart';
 import 'package:xpensemate/core/service/permission_service.dart';
 import 'package:xpensemate/core/service/secure_storage_service.dart';

@@ -25,7 +25,7 @@ class AppRouter {
     observers: [
       _analyticsService.observer,
     ],
-    debugLogDiagnostics: true,
+    // debugLogDiagnostics: true,
     initialLocation: RouteConstants.home,
     refreshListenable: _authCubit,
     redirect: _routeGuards.globalRedirect,

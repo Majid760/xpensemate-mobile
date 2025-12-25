@@ -134,6 +134,5 @@ class FirebaseCrashlyticsService implements CrashlyticsService {
   }
 
   @override
-  bool get isCrashlyticsCollectionEnabled =>
-      _crashlytics.isCrashlyticsCollectionEnabled;
+  bool get isCrashlyticsCollectionEnabled => _crashlytics.isCrashlyticsCollectionEnabled;
 }

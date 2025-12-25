@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:logger/logger.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
 
@@ -35,16 +36,21 @@ class AppLogger {
   static void e(String message, [dynamic error, StackTrace? stackTrace]) {
     _logger?.e(message, error: error, stackTrace: stackTrace);
     // Automatically report to Crashlytics
-    unawaited(sl.crashlytics.recordError(
-      error ?? message,
-      stackTrace,
-      reason: message,
-    ));
+    unawaited(
+      sl.crashlytics.recordError(
+        error ?? message,
+        stackTrace,
+        reason: message,
+      ),
+    );
   }
 
   // Tagged logging
-  static void tag(String tag, String message,
-      {LogLevel level = LogLevel.info}) {
+  static void tag(
+    String tag,
+    String message, {
+    LogLevel level = LogLevel.info,
+  }) {
     final taggedMessage = '[$tag] $message';
     switch (level) {
       case LogLevel.debug:
@@ -63,14 +69,31 @@ class AppLogger {
   }
 
   // Network logging
-  static void network(String method, String url,
-      {int? statusCode, dynamic error}) {
+  static void network(
+    String method,
+    String url, {
+    int? statusCode,
+    dynamic error,
+  }) {
     final message = '$method $url ${statusCode != null ? '($statusCode)' : ''}';
     if (error != null || (statusCode != null && statusCode >= 400)) {
       e(message, error);
     } else {
       i(message);
     }
+
+    // Log to Analytics
+    unawaited(
+      sl.analytics.logEvent(
+        name: 'network_request',
+        parameters: {
+          'method': method,
+          'url': url,
+          if (statusCode != null) 'status_code': statusCode,
+          if (error != null) 'error': error.toString(),
+        },
+      ),
+    );
   }
 
   // Analytics logging
@@ -85,10 +108,12 @@ class AppLogger {
     breadcrumb(message);
     // Log to Firebase Analytics
     final eventName = action.replaceAll(' ', '_').toLowerCase();
-    unawaited(sl.analytics.logEvent(
-      name: eventName,
-      parameters: params?.map((key, value) => MapEntry(key, value as Object)),
-    ));
+    unawaited(
+      sl.analytics.logEvent(
+        name: eventName,
+        parameters: params?.map((key, value) => MapEntry(key, value as Object)),
+      ),
+    );
   }
 
   // Crashlytics Breadcrumb

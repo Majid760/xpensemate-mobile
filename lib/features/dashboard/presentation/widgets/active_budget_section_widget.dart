@@ -5,6 +5,7 @@ import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/budget_goals_entity.dart';
+import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/section_header_widget.dart';
 
 class ActiveBudgetSectionWidget extends StatelessWidget {
@@ -161,7 +162,7 @@ class BudgetCard extends StatelessWidget {
         ? (goal.currentSpending / goal.setBudget).clamp(0.0, 1.0)
         : 0.0;
     final remaining = goal.setBudget - goal.currentSpending;
-    final status = _getBudgetStatus(progress);
+    final status = _getBudgetStatus(progress, context);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -227,29 +228,29 @@ class BudgetCard extends StatelessWidget {
     );
   }
 
-  _BudgetStatusData _getBudgetStatus(double progress) {
+  _BudgetStatusData _getBudgetStatus(double progress, BuildContext context) {
     if (progress >= 1.0) {
-      return const _BudgetStatusData(
+      return _BudgetStatusData(
         label: 'overBudget',
-        color: Color(0xFFEF4444),
+        color: Theme.of(context).colorScheme.error,
         icon: Icons.warning_rounded,
       );
     } else if (progress >= 0.8) {
       return const _BudgetStatusData(
         label: 'nearLimit',
-        color: Color(0xFFF59E0B),
+        color: AppColors.warning,
         icon: Icons.warning_amber_rounded,
       );
     } else if (progress >= 0.5) {
-      return const _BudgetStatusData(
+      return _BudgetStatusData(
         label: 'moderate',
-        color: Color(0xFF6366F1),
+        color: Theme.of(context).colorScheme.primary,
         icon: Icons.trending_up_rounded,
       );
     } else {
       return const _BudgetStatusData(
         label: 'onTrack',
-        color: Color(0xFF10B981),
+        color: AppColors.success,
         icon: Icons.check_circle_rounded,
       );
     }
@@ -321,7 +322,7 @@ class _PriorityBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final data = _getPriorityData(priority.toLowerCase());
+    final data = _getPriorityData(priority.toLowerCase(), context);
 
     return Container(
       padding: EdgeInsets.symmetric(
@@ -359,25 +360,25 @@ class _PriorityBadge extends StatelessWidget {
     );
   }
 
-  _PriorityInfo _getPriorityData(String priority) {
+  _PriorityInfo _getPriorityData(String priority, BuildContext context) {
     switch (priority) {
       case 'high':
-        return const _PriorityInfo(
+        return _PriorityInfo(
           label: 'HIGH',
-          color: Color(0xFFEF4444),
+          color: Theme.of(context).colorScheme.error,
           icon: Icons.priority_high_rounded,
         );
       case 'medium':
-        return const _PriorityInfo(
+        return _PriorityInfo(
           label: 'MED',
-          color: Color(0xFF6366F1),
+          color: Theme.of(context).colorScheme.primary,
           icon: Icons.remove_rounded,
         );
       case 'low':
       default:
         return const _PriorityInfo(
           label: 'LOW',
-          color: Color(0xFF10B981),
+          color: AppColors.success,
           icon: Icons.trending_down_rounded,
         );
     }
@@ -572,7 +573,7 @@ class _AmountSection extends StatelessWidget {
               child: _AmountItem(
                 label: 'Budget',
                 amount: total,
-                color: const Color(0xFF6366F1),
+                color: Theme.of(context).colorScheme.primary,
                 icon: Icons.savings_rounded,
                 isCompact: isCompact,
               ),

@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/network/network_configs.dart';
+import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
+import 'package:xpensemate/core/widget/custom_app_loader.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_state.dart';
 import 'package:xpensemate/features/profile/presentation/pages/profile_page.dart';
 import 'package:xpensemate/features/profile/presentation/widgets/footer_widget.dart';
 import 'package:xpensemate/features/profile/presentation/widgets/menu_item_widget.dart';
-import 'package:xpensemate/core/widget/custom_app_loader.dart';
 
 class ModernContent extends StatelessWidget {
   const ModernContent({
@@ -98,7 +99,7 @@ class ModernContent extends StatelessWidget {
                 icon: Icons.language_rounded,
                 title: context.l10n.language,
                 subtitle: context.l10n.choosePreferredLanguage,
-                color: const Color(0xFF8B5CF6),
+                color: context.colorScheme.primary,
                 onTap: () => onComingSoon(context.l10n.language),
               ),
             ),
@@ -116,21 +117,21 @@ class ModernContent extends StatelessWidget {
           icon: Icons.person_outline_rounded,
           title: context.l10n.editProfile,
           subtitle: context.l10n.updatePersonalInfo,
-          color: const Color(0xFF3B82F6),
+          color: context.colorScheme.secondary,
           onTap: () => onComingSoon(context.l10n.edit),
         ),
         MenuItemData(
           icon: Icons.security_rounded,
           title: context.l10n.privacySecurity,
           subtitle: context.l10n.managePrivacySettings,
-          color: const Color(0xFF10B981),
+          color: AppColors.success,
           onTap: () => _launchPrivacyPolicy(context),
         ),
         MenuItemData(
           icon: Icons.notifications_outlined,
           title: context.l10n.notifications,
           subtitle: context.l10n.configureNotifications,
-          color: const Color(0xFFF59E0B),
+          color: AppColors.warning,
           onTap: () => onComingSoon(context.l10n.notifications),
         ),
       ];
@@ -140,21 +141,21 @@ class ModernContent extends StatelessWidget {
           icon: Icons.help_outline_rounded,
           title: 'Terms & Conditions',
           subtitle: 'Read our terms and conditions',
-          color: const Color(0xFF06B6D4),
+          color: AppColors.info,
           onTap: () => _launchTermsAndConditions(context),
         ),
         MenuItemData(
           icon: Icons.info_outline_rounded,
           title: context.l10n.about,
           subtitle: context.l10n.learnMoreAboutExpenseTracker,
-          color: const Color(0xFF84CC16),
+          color: context.colorScheme.tertiary,
           onTap: () => _launchAboutPage(context),
         ),
         MenuItemData(
           icon: Icons.logout_rounded,
           title: context.l10n.signOut,
           subtitle: context.l10n.logoutFromAccount,
-          color: const Color(0xFFEF4444),
+          color: context.colorScheme.error,
           onTap: onLogoutTap,
           isDestructive: true,
         ),

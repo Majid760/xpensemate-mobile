@@ -16,7 +16,7 @@ abstract class ProfileRoutes {
             GoRoute(
               path: 'settings',
               name: RouteNames.settings,
-              builder: (context, state) => const SettingPage(),
+              builder: (context, state) => const SettingsPage(),
             ),
             GoRoute(
               path: 'edit',

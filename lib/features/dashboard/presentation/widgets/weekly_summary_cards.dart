@@ -88,8 +88,9 @@ class _WeeklySummaryCardsState extends State<WeeklySummaryCards>
         title: 'TOTAL SPENT',
         value: CurrencyFormatter.format(widget.summary.totalSpent),
         icon: Icons.attach_money_rounded,
-        iconColor: AppColors.primary,
-        backgroundColor: AppColors.primaryContainer.withValues(alpha: 0.3),
+        iconColor: context.colorScheme.primary,
+        backgroundColor:
+            context.colorScheme.primaryContainer.withValues(alpha: 0.3),
       ),
       _SummaryCardData(
         title: 'DAILY\nAVERAGE',
@@ -259,7 +260,7 @@ class WeeklySummaryHorizontalCards extends StatelessWidget {
         title: 'TOTAL SPENT',
         value: CurrencyFormatter.format(summary.totalSpent),
         icon: Icons.attach_money_rounded,
-        iconColor: AppColors.primary,
+        iconColor: context.colorScheme.primary,
       ),
       _HorizontalSummaryItem(
         title: 'DAILY AVERAGE',
@@ -355,7 +356,7 @@ class _HorizontalSummaryCard extends StatelessWidget {
                 color: context.colorScheme.onSurface,
               ),
             ),
-            SizedBox(height: 2),
+            const SizedBox(height: 2),
             Text(
               item.title,
               style: context.textTheme.bodySmall?.copyWith(

@@ -637,9 +637,9 @@ class _ProgressSectionState extends State<ProgressSection> {
       case 'achieved':
         return AppColors.success;
       case 'failed':
-        return AppColors.error;
+        return context.colorScheme.error;
       case 'terminated':
-        return AppColors.onSurfaceVariant;
+        return context.colorScheme.onSurfaceVariant;
       case 'other':
         return AppColors.warning;
       default:

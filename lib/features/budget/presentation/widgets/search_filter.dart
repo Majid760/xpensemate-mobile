@@ -106,20 +106,27 @@ class _SearchAndFilterBarState extends State<SearchAndFilterBar>
                         padding: const EdgeInsets.all(15),
                         decoration: BoxDecoration(
                           color: _isFilterVisible
-                              ? const Color(0xFF6C63FF)
-                              : Colors.grey[200]!,
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: _isFilterVisible
-                                ? const Color(0xFF6C63FF)
-                                : Colors.grey[200]!,
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).colorScheme.outlineVariant,
                           ),
                           boxShadow: [
                             BoxShadow(
                               color: _isFilterVisible
-                                  ? const Color(0xFF6C63FF)
+                                  ? Theme.of(context)
+                                      .colorScheme
+                                      .primary
                                       .withValues(alpha: 0.3)
-                                  : Colors.black.withValues(alpha: 0.05),
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .shadow
+                                      .withValues(alpha: 0.05),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
@@ -128,8 +135,8 @@ class _SearchAndFilterBarState extends State<SearchAndFilterBar>
                         child: Icon(
                           Icons.filter_list,
                           color: _isFilterVisible
-                              ? Colors.white
-                              : Colors.grey[600],
+                              ? Theme.of(context).colorScheme.onPrimary
+                              : Theme.of(context).colorScheme.onSurfaceVariant,
                           size: 20,
                         ),
                       ),
@@ -152,13 +159,13 @@ class _SearchAndFilterBarState extends State<SearchAndFilterBar>
                       onTap: _toggleFilter,
                       child: Container(
                         padding: const EdgeInsets.all(8),
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF6C63FF),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.close,
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.onPrimary,
                           size: 20,
                         ),
                       ),
@@ -274,16 +281,26 @@ class FilterChip extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0xFF6C63FF) : Colors.white,
+            color: isSelected
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: isSelected ? const Color(0xFF6C63FF) : Colors.grey[200]!,
+              color: isSelected
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.outlineVariant,
             ),
             boxShadow: [
               BoxShadow(
                 color: isSelected
-                    ? const Color(0xFF6C63FF).withValues(alpha: 0.3)
-                    : Colors.black.withValues(alpha: 0.05),
+                    ? Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: 0.3)
+                    : Theme.of(context)
+                        .colorScheme
+                        .shadow
+                        .withValues(alpha: 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),
@@ -292,7 +309,9 @@ class FilterChip extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected ? Colors.white : Colors.grey[700],
+              color: isSelected
+                  ? Theme.of(context).colorScheme.onPrimary
+                  : Theme.of(context).colorScheme.onSurface,
               fontSize: 14,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
             ),

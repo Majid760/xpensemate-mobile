@@ -7,7 +7,7 @@ import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/route/utils/router_extension.dart';
 import 'package:xpensemate/core/service/permission_service.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
-import 'package:xpensemate/core/theme/colors/app_colors.dart';
+
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_custom_dialog.dart';
 import 'package:xpensemate/core/widget/app_dialogs.dart';
@@ -43,12 +43,6 @@ class _ProfilePageState extends State<ProfilePage>
   double _titleProgress = 0;
 
   bool isDarkMode = false;
-
-  static const _gradientColors = [
-    AppColors.primary,
-    AppColors.secondary,
-    AppColors.tertiary,
-  ];
 
   @override
   void initState() {
@@ -126,12 +120,16 @@ class _ProfilePageState extends State<ProfilePage>
         builder: (context, profileState) => Scaffold(
           backgroundColor: context.colorScheme.surface,
           body: DecoratedBox(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: _gradientColors,
-                stops: [0.0, 0.5, 1.0],
+                colors: [
+                  context.colorScheme.primary,
+                  context.colorScheme.secondary,
+                  context.colorScheme.tertiary,
+                ],
+                stops: const [0.0, 0.5, 1.0],
               ),
             ),
             child: CustomScrollView(
@@ -237,7 +235,9 @@ class _ProfilePageState extends State<ProfilePage>
         await AppDialogs.showImagePicker(
           context: currentContext,
           onImageSelected: (file) {
-            currentContext.profileCubit.updateProfileImage(file!);
+            if (file != null) {
+              currentContext.profileCubit.updateProfileImage(file);
+            }
           },
         );
       }
@@ -339,16 +339,16 @@ class _FlexibleSpace extends StatelessWidget {
   @override
   Widget build(BuildContext context) => FlexibleSpaceBar(
         background: DecoratedBox(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                AppColors.primary,
-                AppColors.secondary,
-                AppColors.tertiary,
+                context.colorScheme.primary,
+                context.colorScheme.secondary,
+                context.colorScheme.tertiary,
               ],
-              stops: [0.0, 0.5, 1.0],
+              stops: const [0.0, 0.5, 1.0],
             ),
           ),
           child: SafeArea(
@@ -373,15 +373,15 @@ class _FlexibleSpace extends StatelessWidget {
                       height: topBarHeight + 20,
                       child: Opacity(
                         opacity: titleProgress,
-                        child: const DecoratedBox(
+                        child: DecoratedBox(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
-                                AppColors.primary,
-                                AppColors.secondary,
-                                AppColors.tertiary,
+                                context.colorScheme.primary,
+                                context.colorScheme.secondary,
+                                context.colorScheme.tertiary,
                               ],
                             ),
                           ),
@@ -485,13 +485,13 @@ class _CompactProfileImage extends StatelessWidget {
           height: 32,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            gradient: const LinearGradient(
+            gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                AppColors.primary,
-                AppColors.secondary,
-                AppColors.tertiary,
+                context.colorScheme.primary,
+                context.colorScheme.secondary,
+                context.colorScheme.tertiary,
               ],
             ),
           ),

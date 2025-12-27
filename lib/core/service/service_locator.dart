@@ -233,7 +233,8 @@ Future<void> initLocator() async {
     sl.registerLazySingleton(() => GetSinglePaymentUseCase(sl()));
 
     // ---------- Presentation Layer ----------
-    sl.registerFactory(() => ProfileCubit(sl()));
+    sl.registerFactory(() => ProfileCubit(sl(), sl()));
+
     sl.registerFactory(
       () => DashboardCubit(sl(), sl(), sl(), sl(), sl(), sl()),
     );

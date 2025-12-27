@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:xpensemate/features/auth/domain/entities/user.dart';
 
 enum ProfileStatus {
@@ -12,7 +13,6 @@ enum ProfileStatus {
 }
 
 class ProfileState extends Equatable {
-
   const ProfileState({
     this.status = ProfileStatus.initial,
     this.user,
@@ -20,6 +20,7 @@ class ProfileState extends Equatable {
     this.isProfileComplete = false,
     this.isUpdating = false,
     this.imageFile,
+    this.themeMode = ThemeMode.system,
   });
   final ProfileStatus status;
   final UserEntity? user;
@@ -27,6 +28,7 @@ class ProfileState extends Equatable {
   final bool isProfileComplete;
   final bool isUpdating;
   final File? imageFile;
+  final ThemeMode themeMode;
 
   ProfileState copyWith({
     ProfileStatus? status,
@@ -35,15 +37,17 @@ class ProfileState extends Equatable {
     bool? isProfileComplete,
     bool? isUpdating,
     File? imageFile,
-
-  }) => ProfileState(
-      status: status ?? this.status,
-      user: user ?? this.user,
-      imageFile: imageFile ?? this.imageFile,
-      message: message ?? this.message,
-      isProfileComplete: isProfileComplete ?? this.isProfileComplete,
-      isUpdating: isUpdating ?? this.isUpdating,
-    );
+    ThemeMode? themeMode,
+  }) =>
+      ProfileState(
+        status: status ?? this.status,
+        user: user ?? this.user,
+        imageFile: imageFile ?? this.imageFile,
+        message: message ?? this.message,
+        isProfileComplete: isProfileComplete ?? this.isProfileComplete,
+        isUpdating: isUpdating ?? this.isUpdating,
+        themeMode: themeMode ?? this.themeMode,
+      );
 
   @override
   List<Object?> get props => [
@@ -53,6 +57,7 @@ class ProfileState extends Equatable {
         message,
         isProfileComplete,
         isUpdating,
+        themeMode,
       ];
 
   String get displayName => user?.name?.isNotEmpty ?? false

@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
+import 'package:xpensemate/core/service/storage_service.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
+
 import 'package:xpensemate/features/auth/domain/entities/user.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:xpensemate/features/profile/domain/usecases/update_profile_image_usecase.dart';
@@ -11,13 +13,17 @@ import 'package:xpensemate/features/profile/domain/usecases/update_profile_useca
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
-  ProfileCubit(this._authCubit) : super(const ProfileState()) {
+  ProfileCubit(this._authCubit, this._storageService)
+      : super(const ProfileState()) {
     AppLogger.breadcrumb('Initializing ProfileCubit...');
     _initializeProfile();
     _listenToAuthChanges();
+    _loadTheme();
   }
 
   final AuthCubit _authCubit;
+  final StorageService _storageService;
+  static const String _themeStorageKey = 'app_theme_mode';
 
   /// Initialize profile with current user data from AuthCubit
   void _initializeProfile() {
@@ -167,6 +173,53 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   /// Clear any error messages
   void clearError() => emit(state.copyWith());
+
+  /// Toggle between light and dark mode
+  Future<void> toggleTheme({required bool isDark}) async {
+    final newMode = isDark ? ThemeMode.dark : ThemeMode.light;
+    emit(state.copyWith(themeMode: newMode));
+    await _saveTheme(newMode);
+  }
+
+  /// Set a specific theme mode
+  Future<void> setTheme(ThemeMode mode) async {
+    if (state.themeMode != mode) {
+      emit(state.copyWith(themeMode: mode));
+      await _saveTheme(mode);
+    }
+  }
+
+  /// Load persisted theme
+  Future<void> _loadTheme() async {
+    try {
+      final savedThemeString = await _storageService.get<String>(
+        key: _themeStorageKey,
+      );
+
+      if (savedThemeString != null) {
+        final mode = ThemeMode.values.firstWhere(
+          (e) => e.toString() == savedThemeString,
+          orElse: () => ThemeMode.system,
+        );
+        emit(state.copyWith(themeMode: mode));
+      }
+    } on Exception catch (e) {
+      // If error occurs, fallback to system default (initial state)
+      debugPrint('Error loading theme: $e');
+    }
+  }
+
+  /// Save theme to storage
+  Future<void> _saveTheme(ThemeMode mode) async {
+    try {
+      await _storageService.put<String>(
+        key: _themeStorageKey,
+        value: mode.toString(),
+      );
+    } on Exception catch (e) {
+      debugPrint('Error saving theme: $e');
+    }
+  }
 }
 
 /// Extension to easily access ProfileCubit in widgets

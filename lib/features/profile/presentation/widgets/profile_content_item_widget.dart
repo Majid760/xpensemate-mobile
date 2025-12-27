@@ -103,6 +103,15 @@ class ModernContent extends StatelessWidget {
                 onTap: () => onComingSoon(context.l10n.language),
               ),
             ),
+            _ModernMenuItem(
+              data: MenuItemData(
+                icon: Icons.widgets,
+                title: context.l10n.addWidgets,
+                subtitle: context.l10n.addWidgetsDescription,
+                color: context.colorScheme.primary,
+                onTap: () => onComingSoon(context.l10n.addWidgets),
+              ),
+            ),
           ],
         ),
         SizedBox(height: context.lg),

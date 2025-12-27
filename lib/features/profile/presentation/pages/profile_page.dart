@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
+
 import 'package:xpensemate/core/route/utils/router_extension.dart';
 import 'package:xpensemate/core/service/permission_service.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
-
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_custom_dialog.dart';
 import 'package:xpensemate/core/widget/app_dialogs.dart';
@@ -41,8 +41,6 @@ class _ProfilePageState extends State<ProfilePage>
   final ScrollController _scrollController = ScrollController();
   bool _showUserName = false;
   double _titleProgress = 0;
-
-  bool isDarkMode = false;
 
   @override
   void initState() {
@@ -209,9 +207,11 @@ class _ProfilePageState extends State<ProfilePage>
                           onComingSoon: (str) => showEditProfile(
                             context,
                           ),
-                          isDarkMode: isDarkMode,
+                          isDarkMode: profileState.themeMode == ThemeMode.dark,
                           onThemeChanged: (bool value) {
-                            setState(() => isDarkMode = value);
+                            context
+                                .read<ProfileCubit>()
+                                .toggleTheme(isDark: value);
                             HapticFeedback.selectionClick();
                           },
                         ),

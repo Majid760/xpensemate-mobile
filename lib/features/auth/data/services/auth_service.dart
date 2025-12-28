@@ -106,7 +106,6 @@ class AuthService {
   /// // save the user token to storage
   Future<void> saveTokenToStorage(AuthTokenModel token) async {
     try {
-      print('storng tokens wowo => ${token.toJson()}');
       await _localDataSource.storeTokens(token);
       accessToken = token.accessToken;
       refreshToken = token.refreshToken ?? '';
@@ -170,7 +169,7 @@ class AuthService {
         refreshToken = token;
       }
       if (refreshToken.isNotEmpty) {
-        print("refresh token wowowoow ==> ${refreshToken.substring(0, 10)}");
+        logI("refresh token wowowoow ==> ${refreshToken.substring(0, 10)}");
       }
       return token;
     } on Exception catch (e) {

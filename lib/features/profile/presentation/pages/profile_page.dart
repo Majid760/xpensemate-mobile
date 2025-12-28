@@ -204,9 +204,7 @@ class _ProfilePageState extends State<ProfilePage>
                               if (context.mounted) context.goToLogin();
                             },
                           ),
-                          onComingSoon: (str) => showEditProfile(
-                            context,
-                          ),
+                          onComingSoon: (str) => showEditProfile(context),
                           isDarkMode: profileState.themeMode == ThemeMode.dark,
                           onThemeChanged: (bool value) {
                             context

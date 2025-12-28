@@ -20,6 +20,7 @@ import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit
 import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
 import 'package:xpensemate/features/payment/presentation/cubit/payment_cubit.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
+import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_state.dart';
 import 'package:xpensemate/firebase_options.dart';
 import 'package:xpensemate/l10n/app_localizations.dart';
 
@@ -97,41 +98,44 @@ class MyApp extends StatelessWidget {
         child: Builder(
           builder: (context) {
             final authCubit = context.read<AuthCubit>();
-            return GestureDetector(
-              onTap: AppUtils.unFocus,
-              child: MaterialApp.router(
-                title: 'ExpenseTracker',
-                theme: AppTheme.lightTheme,
-                darkTheme: AppTheme.darkTheme,
-                debugShowCheckedModeBanner: false,
-                // themeMode: ThemeMode.system, // Follows system setting
-                // Localization configuration
-                routerConfig: AppRouter(
-                  authCubit,
-                  RouteGuards(authCubit),
-                  sl.analytics,
-                ).router,
-                localizationsDelegates: const [
-                  AppLocalizations.delegate,
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate,
-                ],
-                supportedLocales: SupportedLocales.supportedLocales,
-                locale: LocaleManager().currentLocale,
-                // Locale resolution
-                localeResolutionCallback: (locale, supportedLocales) {
-                  // If the current device locale is supported, use it
-                  if (locale != null) {
-                    for (final supportedLocale in supportedLocales) {
-                      if (supportedLocale.languageCode == locale.languageCode) {
-                        return supportedLocale;
+            return BlocSelector<ProfileCubit, ProfileState, ThemeMode>(
+              selector: (state) => state.themeMode,
+              builder: (context, themeMode) => GestureDetector(
+                onTap: AppUtils.unFocus,
+                child: MaterialApp.router(
+                  title: 'ExpenseTracker',
+                  theme: AppTheme.lightTheme,
+                  darkTheme: AppTheme.darkTheme,
+                  themeMode: themeMode,
+                  debugShowCheckedModeBanner: false,
+                  routerConfig: AppRouter(
+                    authCubit,
+                    RouteGuards(authCubit),
+                    sl.analytics,
+                  ).router,
+                  localizationsDelegates: const [
+                    AppLocalizations.delegate,
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
+                  ],
+                  supportedLocales: SupportedLocales.supportedLocales,
+                  locale: LocaleManager().currentLocale,
+                  // Locale resolution
+                  localeResolutionCallback: (locale, supportedLocales) {
+                    // If the current device locale is supported, use it
+                    if (locale != null) {
+                      for (final supportedLocale in supportedLocales) {
+                        if (supportedLocale.languageCode ==
+                            locale.languageCode) {
+                          return supportedLocale;
+                        }
                       }
                     }
-                  }
-                  // Fallback to first supported locale (English)
-                  return supportedLocales.first;
-                },
+                    // Fallback to first supported locale (English)
+                    return supportedLocales.first;
+                  },
+                ),
               ),
             );
           },

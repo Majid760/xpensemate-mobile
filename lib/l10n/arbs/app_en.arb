@@ -205,6 +205,9 @@
   "notifications": "Notifications",
   "configureNotifications": "Configure your notifications",
 
+  "addWidgets": "Add Widgets",
+  "addWidgetsDescription": "Add widgets to your home screen to make it easier to access your most used features.",  
+
   "choosePreferredLanguage": "Choose your preferred language",
   "darkMode": "Dark Mode",
   "switchBetweenLightAndDarkTheme": "Switch between light and dark theme",

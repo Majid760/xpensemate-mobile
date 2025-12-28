@@ -360,6 +360,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get configureNotifications => 'Configure your notifications';
 
   @override
+  String get addWidgets => 'Add Widgets';
+
+  @override
+  String get addWidgetsDescription => 'Add widgets to your home screen to make it easier to access your most used features.';
+
+  @override
   String get choosePreferredLanguage => 'Choose your preferred language';
 
   @override

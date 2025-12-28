@@ -759,6 +759,18 @@ abstract class AppLocalizations {
   /// **'Configure your notifications'**
   String get configureNotifications;
 
+  /// No description provided for @addWidgets.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Widgets'**
+  String get addWidgets;
+
+  /// No description provided for @addWidgetsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Add widgets to your home screen to make it easier to access your most used features.'**
+  String get addWidgetsDescription;
+
   /// No description provided for @choosePreferredLanguage.
   ///
   /// In en, this message translates to:

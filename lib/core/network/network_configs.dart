@@ -2,24 +2,27 @@
 /// Do **not** import this in domain or presentation code.
 class NetworkConfigs {
   // ------------------------------------------------------------------
-  //  Environment – switch via dart-define or flavor
+  //  Environment Configuration
   // ------------------------------------------------------------------
-  static const _env = String.fromEnvironment('ENV', defaultValue: 'dev');
-
-  static String get baseUrl => switch (_env) {
-        'prod' => 'http://192.168.15.148:5001/api/v1',
-        'stg' => 'http://192.168.15.148:5001/api/v1',
-        _ => 'http://192.168.0.100:5001/api/v1', // dev
-      };
+  static const String baseUrl = String.fromEnvironment(
+    'BASE_URL',
+    defaultValue: 'http://192.168.0.100:5001/api/v1',
+  );
 
   // ------------------------------------------------------------------
   //  Auth & Global headers
   // ------------------------------------------------------------------
   static const String apiToken =
       String.fromEnvironment('API_TOKEN'); // empty in dev
-  static const String apiKey = '337de965aa1699e2f780c62520e1d695';
-  static const String googleAuthClientId =
-      '803273612959-eqvf0ftg1hc1m9ba34mpk0ku7i351313.apps.googleusercontent.com';
+  static const String apiKey = String.fromEnvironment(
+    'API_KEY',
+    defaultValue: '337de965aa1699e2f780c62520e1d695',
+  );
+  static const String googleAuthClientId = String.fromEnvironment(
+    'GOOGLE_AUTH_CLIENT_ID',
+    defaultValue:
+        '803273612959-eqvf0ftg1hc1m9ba34mpk0ku7i351313.apps.googleusercontent.com',
+  );
 
   // ------------------------------------------------------------------
   //  End-points (relative to baseUrl)
@@ -100,14 +103,25 @@ class NetworkConfigs {
   // ------------------------------------------------------------------
   //  Static Pages URLs
   // ------------------------------------------------------------------
-  static String get aboutUrl => "http://192.168.0.104:3000/about";
+  static const String aboutUrl = String.fromEnvironment(
+    'ABOUT_URL',
+    defaultValue: 'http://192.168.0.104:3000/about',
+  );
 
-  static String get privacyPolicyUrl => "http://192.168.0.104:3000/privacy";
+  static const String privacyPolicyUrl = String.fromEnvironment(
+    'PRIVACY_POLICY_URL',
+    defaultValue: 'http://192.168.0.104:3000/privacy',
+  );
 
-  static String get termsAndConditionsUrl =>
-      "http://192.168.0.104:3000/terms&conditions";
+  static const String termsAndConditionsUrl = String.fromEnvironment(
+    'TERMS_CONDITIONS_URL',
+    defaultValue: 'http://192.168.0.104:3000/terms&conditions',
+  );
 
-  static String get helpSupportUrl => "http://192.168.0.104:3000/help&support";
+  static const String helpSupportUrl = String.fromEnvironment(
+    'HELP_SUPPORT_URL',
+    defaultValue: 'http://192.168.0.104:3000/help&support',
+  );
 
   // ---------------------------------------------------------- -------
   //  Timeouts & Retry

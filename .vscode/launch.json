@@ -5,27 +5,46 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "xpensemate 2",
+            "name": "xpensemate 2 (dev)",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "args": [
+                "--dart-define-from-file=config/env.dev.json"
+            ]
+        },
+        {
+            "name": "xpensemate 2 (staging)",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--dart-define-from-file=config/env.stg.json"
+            ]
+        },
+        {
+            "name": "xpensemate 2 (production)",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--dart-define-from-file=config/env.prod.json"
+            ]
         },
         {
             "name": "xpensemate 2 (profile mode)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "profile"
+            "flutterMode": "profile",
+            "args": [
+                "--dart-define-from-file=config/env.dev.json"
+            ]
         },
         {
             "name": "xpensemate 2 (release mode)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "release"
-        },
-        {
-            "name": "Flutter (lib/features/budget/presentation/widgets/expense_stats_header.dart)",
-            "type": "dart",
-            "request": "launch",
-            "program": "lib/features/budget/presentation/widgets/expense_stats_header.dart"
+            "flutterMode": "release",
+            "args": [
+                "--dart-define-from-file=config/env.dev.json"
+            ]
         }
     ]
 }

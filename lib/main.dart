@@ -33,16 +33,12 @@ void main() async {
       );
       // Initialize services locator/dependency injection
       await initLocator();
-
       // Initialize Crashlytics
       await sl.crashlytics.init();
-
       // Initialize Hive Storage
       await sl<StorageService>().init();
-
       // Initialize auth cubit after service locator is ready
       await sl<AuthCubit>().initializeAuth();
-
       runApp(const MyApp());
     },
     (error, stack) {
@@ -126,8 +122,7 @@ class MyApp extends StatelessWidget {
                     // If the current device locale is supported, use it
                     if (locale != null) {
                       for (final supportedLocale in supportedLocales) {
-                        if (supportedLocale.languageCode ==
-                            locale.languageCode) {
+                        if (supportedLocale.languageCode == locale.languageCode) {
                           return supportedLocale;
                         }
                       }

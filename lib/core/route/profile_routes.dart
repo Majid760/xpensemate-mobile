@@ -11,7 +11,7 @@ abstract class ProfileRoutes {
           path: RouteConstants.profile,
           name: RouteNames.profile,
           redirect: RouteGuards.requireAuth,
-          builder: (context, state) => ProfilePage(),
+          builder: (context, state) => const ProfilePage(),
           routes: [
             GoRoute(
               path: 'settings',
@@ -21,7 +21,7 @@ abstract class ProfileRoutes {
             GoRoute(
               path: 'edit',
               name: RouteNames.editProfile,
-              builder: (context, state) => ProfilePage(),
+              builder: (context, state) => const ProfilePage(),
             ),
           ],
         ),

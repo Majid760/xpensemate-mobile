@@ -13,10 +13,12 @@ class RouteUtils {
   }
 
   /// Extract route parameters safely
-  static String? getPathParameter(GoRouterState state, String paramName) => state.pathParameters[paramName];
+  static String? getPathParameter(GoRouterState state, String paramName) =>
+      state.pathParameters[paramName];
 
   /// Extract query parameters safely
-  static String? getQueryParameter(GoRouterState state, String paramName) => state.uri.queryParameters[paramName];
+  static String? getQueryParameter(GoRouterState state, String paramName) =>
+      state.uri.queryParameters[paramName];
 
   /// Build route with parameters
   static String buildRoute(String path, Map<String, String> params) {
@@ -51,50 +53,55 @@ class RouteAnimations {
     BuildContext context,
     GoRouterState state,
     Widget child,
-  ) => CustomTransitionPage<T>(
-      key: state.pageKey,
-      child: child,
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        const begin = Offset(1, 0);
-        const end = Offset.zero;
-        const curve = Curves.ease;
+  ) =>
+      CustomTransitionPage<T>(
+        key: state.pageKey,
+        child: child,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1, 0);
+          const end = Offset.zero;
+          const curve = Curves.ease;
 
-        final tween = Tween(begin: begin, end: end).chain(
-          CurveTween(curve: curve),
-        );
+          final tween = Tween(begin: begin, end: end).chain(
+            CurveTween(curve: curve),
+          );
 
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
-      },
-    );
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+      );
 
   /// Fade transition
   static Page<T> fadeTransition<T extends Object?>(
     BuildContext context,
     GoRouterState state,
     Widget child,
-  ) => CustomTransitionPage<T>(
-      key: state.pageKey,
-      child: child,
-      transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(
+  ) =>
+      CustomTransitionPage<T>(
+        key: state.pageKey,
+        child: child,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(
           opacity: animation,
           child: child,
         ),
-    );
+      );
 
   /// Scale transition
   static Page<T> scaleTransition<T extends Object?>(
     BuildContext context,
     GoRouterState state,
     Widget child,
-  ) => CustomTransitionPage<T>(
-      key: state.pageKey,
-      child: child,
-      transitionsBuilder: (context, animation, secondaryAnimation, child) => ScaleTransition(
+  ) =>
+      CustomTransitionPage<T>(
+        key: state.pageKey,
+        child: child,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            ScaleTransition(
           scale: animation,
           child: child,
         ),
-    );
+      );
 }

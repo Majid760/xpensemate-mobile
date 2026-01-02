@@ -16,12 +16,11 @@ class NetworkConfigs {
       String.fromEnvironment('API_TOKEN'); // empty in dev
   static const String apiKey = String.fromEnvironment(
     'API_KEY',
-    defaultValue: '337de965aa1699e2f780c62520e1d695',
+    defaultValue: 'no_default_api_key',
   );
   static const String googleAuthClientId = String.fromEnvironment(
     'GOOGLE_AUTH_CLIENT_ID',
-    defaultValue:
-        '803273612959-eqvf0ftg1hc1m9ba34mpk0ku7i351313.apps.googleusercontent.com',
+    defaultValue: 'no_default_google_auth_client_id',
   );
 
   // ------------------------------------------------------------------

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:xpensemate/core/widget/custom_app_loader.dart';
 import 'package:xpensemate/core/widget/error_state_widget.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/no_more_widget.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_entity.dart';
 import 'package:xpensemate/features/payment/presentation/cubit/payment_cubit.dart';
 import 'package:xpensemate/features/payment/presentation/widgets/payment_card_widget.dart';
-import 'package:xpensemate/core/widget/custom_app_loader.dart';
 
 class PaymentListWidget extends StatefulWidget {
   const PaymentListWidget({
@@ -37,8 +37,7 @@ class _PaymentListWidgetState extends State<PaymentListWidget> {
   @override
   Widget build(BuildContext context) => PagingListener(
         controller: context.paymentCubit.pagingController,
-        builder: (context, pagingState, fetchNextPage) =>
-            PagedSliverList<int, PaymentEntity>.separated(
+        builder: (context, pagingState, fetchNextPage) => PagedSliverList<int, PaymentEntity>.separated(
           state: pagingState,
           fetchNextPage: fetchNextPage,
           builderDelegate: PagedChildBuilderDelegate<PaymentEntity>(
@@ -65,14 +64,12 @@ class _PaymentListWidgetState extends State<PaymentListWidget> {
               ),
             ),
             firstPageErrorIndicatorBuilder: (_) => ErrorStateSectionWidget(
-              errorMsg: (pagingState.error ?? 'Error while loading payments!')
-                  .toString(),
+              errorMsg: (pagingState.error ?? 'Error while loading payments!').toString(),
               onRetry: context.paymentCubit.pagingController.refresh,
             ),
             newPageErrorIndicatorBuilder: (_) => ErrorStateSectionWidget(
               onRetry: () => fetchNextPage,
-              errorMsg: (pagingState.error ?? 'Error while loading payments!')
-                  .toString(),
+              errorMsg: (pagingState.error ?? 'Error while loading payments!').toString(),
             ),
             noMoreItemsIndicatorBuilder: (_) => const Padding(
               padding: EdgeInsets.only(top: 32),

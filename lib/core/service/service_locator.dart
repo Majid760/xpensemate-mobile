@@ -64,6 +64,7 @@ import 'package:xpensemate/features/profile/domain/repositories/profile_reposito
 import 'package:xpensemate/features/profile/domain/usecases/update_profile_image_usecase.dart';
 import 'package:xpensemate/features/profile/domain/usecases/update_profile_usecase.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
+import 'package:xpensemate/features/onboarding/presentation/cubit/onboarding_cubit.dart';
 
 /// Global, lazy singleton
 final sl = GetIt.instance;
@@ -242,6 +243,7 @@ Future<void> initLocator() async {
     sl.registerFactory(() => BudgetCubit(sl(), sl(), sl(), sl(), sl()));
     sl.registerFactory(() => BudgetExpensesCubit(sl()));
     sl.registerFactory(() => PaymentCubit(sl(), sl(), sl(), sl(), sl()));
+    sl.registerFactory(() => OnboardingCubit(sl()));
 
     AppLogger.i('Service locator initialized successfully');
   } on Exception catch (e) {
@@ -284,6 +286,7 @@ extension ServiceLocatorExtension on GetIt {
   BudgetCubit get budgetCubit => this<BudgetCubit>();
   BudgetExpensesCubit get budgetExpensesCubit => this<BudgetExpensesCubit>();
   PaymentCubit get paymentCubit => this<PaymentCubit>();
+  OnboardingCubit get onboardingCubit => this<OnboardingCubit>();
   // services
   AuthService get authService => this<AuthService>();
   CrashlyticsService get crashlytics => this<CrashlyticsService>();

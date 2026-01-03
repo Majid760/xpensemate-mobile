@@ -471,7 +471,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logoutConfirmationMessage => 'Are you sure to want to logout?';
 
   @override
-  String get seeDetail => 'See More';
+  String get seeDetail => 'See Detail';
 
   @override
   String get selectImage => 'Select Image';
@@ -657,7 +657,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get of12 => 'of';
 
   @override
-  String get budget => 'Budget Goals';
+  String get budget => 'Budget';
 
   @override
   String get expenses => 'expenses';
@@ -816,11 +816,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get overview => 'Overview';
 
   @override
-  String get budgetStatistics => 'Insight';
+  String get budgetStatistics => 'Budget Statistics';
 
   @override
   String periodBudgetStatistics(String period) {
-    return ' Statistics';
+    return '$period Budget Statistics';
   }
 
   @override
@@ -864,4 +864,67 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noDeadlines => 'No deadlines';
+
+  @override
+  String get onboardingTitle1 => 'Track Your Expenses';
+
+  @override
+  String get onboardingDesc1 => 'Keep track of every penny you spend and manage your finances with ease.';
+
+  @override
+  String get onboardingTitle2 => 'Set Smart Budgets';
+
+  @override
+  String get onboardingDesc2 => 'Create budgets for different categories and stay on track with your financial goals.';
+
+  @override
+  String get onboardingTitle3 => 'Gain Financial Insights';
+
+  @override
+  String get onboardingDesc3 => 'Visualize your spending habits with detailed charts and reports.';
+
+  @override
+  String get getStarted => 'Get Started';
+
+  @override
+  String get skip => 'Skip';
+
+  @override
+  String get premiumTitle => 'Upgrade to Premium';
+
+  @override
+  String get premiumSubtitle => 'Unlock the full potential of Xpensemate';
+
+  @override
+  String get featureUnlimitedBudgets => 'Unlimited Budgets';
+
+  @override
+  String get featureAdvancedAnalytics => 'Advanced Analytics';
+
+  @override
+  String get featureDataExport => 'Data Export (PDF/CSV)';
+
+  @override
+  String get featureCloudSync => 'Cloud Sync & Backup';
+
+  @override
+  String get monthly => 'Monthly';
+
+  @override
+  String get yearly => 'Yearly';
+
+  @override
+  String get subscribeNow => 'Subscribe Now';
+
+  @override
+  String get restorePurchases => 'Restore Purchases';
+
+  @override
+  String get termsOfService => 'Terms of Service';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get bestValue => 'Best Value';
 }

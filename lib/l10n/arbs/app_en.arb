@@ -682,5 +682,30 @@
   "noDeadlines": "No deadlines",
   "@noDeadlines": {
     "description": "Text shown when there are no deadlines"
-  }
+  },
+
+  "@@onboarding_section": "Onboarding flow strings",
+  "onboardingTitle1": "Track Your Expenses",
+  "onboardingDesc1": "Keep track of every penny you spend and manage your finances with ease.",
+  "onboardingTitle2": "Set Smart Budgets",
+  "onboardingDesc2": "Create budgets for different categories and stay on track with your financial goals.",
+  "onboardingTitle3": "Gain Financial Insights",
+  "onboardingDesc3": "Visualize your spending habits with detailed charts and reports.",
+  "getStarted": "Get Started",
+  "skip": "Skip",
+
+  "@@subscription_section": "Subscription and Paywall strings",
+  "premiumTitle": "Upgrade to Premium",
+  "premiumSubtitle": "Unlock the full potential of Xpensemate",
+  "featureUnlimitedBudgets": "Unlimited Budgets",
+  "featureAdvancedAnalytics": "Advanced Analytics",
+  "featureDataExport": "Data Export (PDF/CSV)",
+  "featureCloudSync": "Cloud Sync & Backup",
+  "monthly": "Monthly",
+  "yearly": "Yearly",
+  "subscribeNow": "Subscribe Now",
+  "restorePurchases": "Restore Purchases",
+  "termsOfService": "Terms of Service",
+  "privacyPolicy": "Privacy Policy",
+  "bestValue": "Best Value"
 }

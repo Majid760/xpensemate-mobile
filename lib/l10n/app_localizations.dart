@@ -984,7 +984,7 @@ abstract class AppLocalizations {
   /// No description provided for @seeDetail.
   ///
   /// In en, this message translates to:
-  /// **'See More'**
+  /// **'See Detail'**
   String get seeDetail;
 
   /// No description provided for @selectImage.
@@ -1344,7 +1344,7 @@ abstract class AppLocalizations {
   /// Budget label
   ///
   /// In en, this message translates to:
-  /// **'Budget Goals'**
+  /// **'Budget'**
   String get budget;
 
   /// Expenses label
@@ -1662,13 +1662,13 @@ abstract class AppLocalizations {
   /// Subtitle for the budget statistics section
   ///
   /// In en, this message translates to:
-  /// **'Insight'**
+  /// **'Budget Statistics'**
   String get budgetStatistics;
 
   /// Subtitle for the budget statistics section with period
   ///
   /// In en, this message translates to:
-  /// **' Statistics'**
+  /// **'{period} Budget Statistics'**
   String periodBudgetStatistics(String period);
 
   /// Label for total budget goals count
@@ -1754,6 +1754,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No deadlines'**
   String get noDeadlines;
+
+  /// No description provided for @onboardingTitle1.
+  ///
+  /// In en, this message translates to:
+  /// **'Track Your Expenses'**
+  String get onboardingTitle1;
+
+  /// No description provided for @onboardingDesc1.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep track of every penny you spend and manage your finances with ease.'**
+  String get onboardingDesc1;
+
+  /// No description provided for @onboardingTitle2.
+  ///
+  /// In en, this message translates to:
+  /// **'Set Smart Budgets'**
+  String get onboardingTitle2;
+
+  /// No description provided for @onboardingDesc2.
+  ///
+  /// In en, this message translates to:
+  /// **'Create budgets for different categories and stay on track with your financial goals.'**
+  String get onboardingDesc2;
+
+  /// No description provided for @onboardingTitle3.
+  ///
+  /// In en, this message translates to:
+  /// **'Gain Financial Insights'**
+  String get onboardingTitle3;
+
+  /// No description provided for @onboardingDesc3.
+  ///
+  /// In en, this message translates to:
+  /// **'Visualize your spending habits with detailed charts and reports.'**
+  String get onboardingDesc3;
+
+  /// No description provided for @getStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get getStarted;
+
+  /// No description provided for @skip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get skip;
+
+  /// No description provided for @premiumTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Premium'**
+  String get premiumTitle;
+
+  /// No description provided for @premiumSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock the full potential of Xpensemate'**
+  String get premiumSubtitle;
+
+  /// No description provided for @featureUnlimitedBudgets.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited Budgets'**
+  String get featureUnlimitedBudgets;
+
+  /// No description provided for @featureAdvancedAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced Analytics'**
+  String get featureAdvancedAnalytics;
+
+  /// No description provided for @featureDataExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Export (PDF/CSV)'**
+  String get featureDataExport;
+
+  /// No description provided for @featureCloudSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud Sync & Backup'**
+  String get featureCloudSync;
+
+  /// No description provided for @monthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get monthly;
+
+  /// No description provided for @yearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get yearly;
+
+  /// No description provided for @subscribeNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe Now'**
+  String get subscribeNow;
+
+  /// No description provided for @restorePurchases.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Purchases'**
+  String get restorePurchases;
+
+  /// No description provided for @termsOfService.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get termsOfService;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @bestValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Value'**
+  String get bestValue;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

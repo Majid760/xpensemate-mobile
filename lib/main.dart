@@ -106,7 +106,7 @@ class MyApp extends StatelessWidget {
                   debugShowCheckedModeBanner: false,
                   routerConfig: AppRouter(
                     authCubit,
-                    RouteGuards(authCubit),
+                    RouteGuards(authCubit, sl<StorageService>()),
                     sl.analytics,
                   ).router,
                   localizationsDelegates: const [
@@ -122,7 +122,8 @@ class MyApp extends StatelessWidget {
                     // If the current device locale is supported, use it
                     if (locale != null) {
                       for (final supportedLocale in supportedLocales) {
-                        if (supportedLocale.languageCode == locale.languageCode) {
+                        if (supportedLocale.languageCode ==
+                            locale.languageCode) {
                           return supportedLocale;
                         }
                       }

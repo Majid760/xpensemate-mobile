@@ -14,6 +14,10 @@ import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/budget_goal_list.dart';
 import 'package:xpensemate/features/expense/presentation/pages/expense_page.dart';
 import 'package:xpensemate/features/payment/presentation/pages/payment_page.dart';
+import 'package:xpensemate/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:xpensemate/features/payment/presentation/pages/subscription_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:xpensemate/core/service/service_locator.dart';
 
 class AppRouter {
   AppRouter(this._authCubit, this._routeGuards, this._analyticsService);
@@ -28,7 +32,7 @@ class AppRouter {
     // debugLogDiagnostics: true,
     initialLocation: RouteConstants.home,
     refreshListenable: _authCubit,
-    redirect: _routeGuards.globalRedirect,
+    redirect: _routeGuards.globalRedirectAsync,
     errorBuilder: (context, state) => ErrorPage(error: state.error),
     routes: [
       // Splash Routess
@@ -36,6 +40,21 @@ class AppRouter {
         path: RouteConstants.splash,
         name: RouteNames.splash,
         builder: (context, state) => const SplashPage(),
+      ),
+
+      GoRoute(
+        path: RouteConstants.onboarding,
+        name: RouteNames.onboarding,
+        builder: (context, state) => BlocProvider(
+          create: (context) => sl.onboardingCubit,
+          child: const OnboardingPage(),
+        ),
+      ),
+
+      GoRoute(
+        path: RouteConstants.subscription,
+        name: RouteNames.subscription,
+        builder: (context, state) => const SubscriptionPage(),
       ),
 
       // Auth Routes

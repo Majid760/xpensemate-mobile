@@ -1,39 +1,51 @@
 // lib/core/router/route_guards.dart
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:xpensemate/core/route/utils/route_constants.dart';
+import 'package:xpensemate/core/service/storage_service.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
 
 class RouteGuards {
-  RouteGuards(this._authCubit);
+  RouteGuards(this._authCubit, this._storageService);
   final AuthCubit _authCubit;
+  final StorageService _storageService;
 
-  String? globalRedirect(BuildContext context, GoRouterState state) {
+  Future<String?> globalRedirectAsync(
+      BuildContext context, GoRouterState state) async {
     final isLoggedIn = _authCubit.state.isAuthenticated;
     final isLoginRoute = _isAuthRoute(state.matchedLocation);
     final isSplashRoute = state.matchedLocation == RouteConstants.splash;
-    final isEmailVerified = _authCubit.state.user?.isEmailVerified ?? false;
 
-    // if (!isEmailVerified) {
-    //   return RouteConstants.emailVerify;
-    // }s
-    // Handle splash screen logic
-    if (isSplashRoute) {
-      return null; // Let splash screen handle the redirect
+    // Onboarding check
+    final isOnboardingDone =
+        await _storageService.get<bool>(key: 'onboarding_completed') ?? false;
+    final isOnboardingRoute =
+        state.matchedLocation == RouteConstants.onboarding;
+
+    if (!isOnboardingDone && !isOnboardingRoute && !isSplashRoute) {
+      return RouteConstants.onboarding;
     }
 
-    // Redirect to login if not authenticated and trying to access protected routes
-    if (!isLoggedIn && !isLoginRoute) {
+    if (isOnboardingDone && isOnboardingRoute) {
+      return RouteConstants
+          .login; // Or RouteConstants.subscription if we want to force valid flow
+    }
+
+    if (isSplashRoute) {
+      return null;
+    }
+
+    if (!isLoggedIn && !isLoginRoute && !isOnboardingRoute) {
+      // Allow subscription page? Maybe.
+      if (state.matchedLocation == RouteConstants.subscription) return null;
       return RouteConstants.login;
     }
 
-    // Redirect to home if authenticated and trying to access auth routes
     if (isLoggedIn && isLoginRoute) {
       return RouteConstants.home;
     }
 
-    return null; // No redirect needed
+    return null;
   }
 
   bool _isAuthRoute(String location) {

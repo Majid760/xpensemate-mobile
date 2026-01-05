@@ -90,31 +90,38 @@ class _ExpandableStatsCardState extends State<ExpandableStatsCard>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              context.overview,
-                              style: (context.textTheme.titleMedium ??
-                                      const TextStyle())
-                                  .copyWith(
-                                color: context.colorScheme.onPrimary
-                                    .withValues(alpha: 0.7),
-                                letterSpacing: 0.5,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                context.overview,
+                                style: (context.textTheme.titleMedium ??
+                                        const TextStyle())
+                                    .copyWith(
+                                  color: context.colorScheme.onPrimary
+                                      .withValues(alpha: 0.7),
+                                  letterSpacing: 0.5,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            ),
-                            const SizedBox(height: AppSpacing.xs),
-                            Text(
-                              '${widget.period.capitalize} ${context.budgetStatistics}',
-                              style: (context.textTheme.headlineSmall ??
-                                      const TextStyle())
-                                  .copyWith(
-                                color: context.colorScheme.onPrimary,
-                                fontWeight: FontWeight.bold,
+                              const SizedBox(height: AppSpacing.xs),
+                              Text(
+                                '${widget.period.capitalize} ${context.budgetStatistics}',
+                                style: (context.textTheme.headlineSmall ??
+                                        const TextStyle())
+                                    .copyWith(
+                                  color: context.colorScheme.onPrimary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
+                        const SizedBox(width: AppSpacing.md),
                         AnimatedRotation(
                           turns: isExpanded ? 0.5 : 0,
                           duration: const Duration(milliseconds: 400),

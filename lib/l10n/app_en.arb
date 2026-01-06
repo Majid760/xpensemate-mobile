@@ -715,5 +715,9 @@
   "restorePurchases": "Restore Purchases",
   "termsOfService": "Terms of Service",
   "privacyPolicy": "Privacy Policy",
-  "bestValue": "Best Value"
+  "bestValue": "Best Value",
+  "payment": "Payment",
+  "addExpense": "Add Expense",
+  "addBudget": "Add Budget",
+  "addPayment": "Add Payment"
 }

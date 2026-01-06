@@ -140,7 +140,7 @@ class _FinancialOverviewCardState extends State<FinancialOverviewCard>
                                 context.l10n.overview,
                                 style: context.textTheme.titleMedium?.copyWith(
                                   color: context.colorScheme.onPrimary
-                                      .withValues(alpha: 0.7),
+                                      .withValues(alpha: 1),
                                   letterSpacing: 0.5,
                                 ),
                               ),

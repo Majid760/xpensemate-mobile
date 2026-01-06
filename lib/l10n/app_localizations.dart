@@ -1892,6 +1892,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Best Value'**
   String get bestValue;
+
+  /// No description provided for @payment.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment'**
+  String get payment;
+
+  /// No description provided for @addExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Expense'**
+  String get addExpense;
+
+  /// No description provided for @addBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Budget'**
+  String get addBudget;
+
+  /// No description provided for @addPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Payment'**
+  String get addPayment;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

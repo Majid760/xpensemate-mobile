@@ -933,4 +933,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bestValue => 'Best Value';
+
+  @override
+  String get payment => 'Payment';
+
+  @override
+  String get addExpense => 'Add Expense';
+
+  @override
+  String get addBudget => 'Add Budget';
+
+  @override
+  String get addPayment => 'Add Payment';
 }

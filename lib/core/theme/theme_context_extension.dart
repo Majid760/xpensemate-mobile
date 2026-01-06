@@ -13,6 +13,12 @@ extension ThemeContext on BuildContext {
   Color get backgroundColor => colorScheme.surface;
   Color get surfaceColor => colorScheme.surface;
   Color get errorColor => colorScheme.error;
+  Color get tertiaryColor => colorScheme.tertiary;
+  Color get onPrimaryColor => colorScheme.onPrimary;
+  Color get onSecondaryColor => colorScheme.onSecondary;
+  Color get onTertiaryColor => colorScheme.onTertiary;
+  Color get onSurfaceColor => colorScheme.onSurface;
+  Color get onErrorColor => colorScheme.onError;
 
   // Text style shortcuts
   TextStyle? get headlineLarge => textTheme.headlineLarge;

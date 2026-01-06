@@ -2,7 +2,9 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/route/utils/router_extension.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/features/budget/presentation/pages/budget_page.dart';
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
@@ -41,43 +43,47 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
   bool _isFabExpanded = false;
 
   /* ---------- data ---------- */
-  final _navItems = const [
-    NavItem(icon: Icons.dashboard_rounded, label: 'Dashboard', route: '/home'),
-    NavItem(
-      icon: Icons.account_balance_wallet_rounded,
-      label: 'Expense',
-      route: '/home/expense',
-    ),
-    NavItem(icon: Icons.add, label: 'Add', route: ''),
-    NavItem(
-      icon: Icons.payment_rounded,
-      label: 'Budget',
-      route: '/home/budget',
-    ),
-    NavItem(
-      icon: Icons.currency_exchange_rounded,
-      label: 'Payment',
-      route: '/home/payment',
-    ),
-  ];
+  List<NavItem> get _navItems => [
+        NavItem(
+          icon: Icons.dashboard_rounded,
+          label: context.l10n.dashboard,
+          route: '/home',
+        ),
+        NavItem(
+          icon: Icons.account_balance_wallet_rounded,
+          label: context.l10n.expense,
+          route: '/home/expense',
+        ),
+        NavItem(icon: Icons.add, label: context.l10n.add, route: ''),
+        NavItem(
+          icon: Icons.payment_rounded,
+          label: context.l10n.budget,
+          route: '/home/budget',
+        ),
+        NavItem(
+          icon: Icons.currency_exchange_rounded,
+          label: context.l10n.payment,
+          route: '/home/payment',
+        ),
+      ];
 
-  final _fabActions = const [
-    FabAction(
-      icon: Icons.receipt_long_rounded,
-      label: 'Add Expense',
-      route: '/home/expense',
-    ),
-    FabAction(
-      icon: Icons.account_balance_wallet_rounded,
-      label: 'Add Budget',
-      route: '/home/budget',
-    ),
-    FabAction(
-      icon: Icons.payment_rounded,
-      label: 'Add Payment',
-      route: '/home/payment',
-    ),
-  ];
+  List<FabAction> get _fabActions => [
+        FabAction(
+          icon: Icons.receipt_long_rounded,
+          label: context.l10n.addExpense,
+          route: '/home/expense',
+        ),
+        FabAction(
+          icon: Icons.account_balance_wallet_rounded,
+          label: context.l10n.addBudget,
+          route: '/home/budget',
+        ),
+        FabAction(
+          icon: Icons.payment_rounded,
+          label: context.l10n.addPayment,
+          route: '/home/payment',
+        ),
+      ];
 
   /* ---------- helpers ---------- */
   int _calculateSelectedIndex(BuildContext context) {
@@ -100,7 +106,7 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
       return;
     }
     if (widget.customFabAction != null) {
-      // find out which action to trigger based on current route
+      // Find out which action to trigger based on current route
       if (GoRouterState.of(context)
           .matchedLocation
           .startsWith('/home/expense')) {
@@ -117,8 +123,6 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
         widget.customFabAction!(4);
         return;
       }
-      // widget.customFabAction!(0);
-      // return;
     }
 
     // Default behavior - toggle FAB
@@ -153,7 +157,7 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
         case 0: // Dashboard
           context.go('/home');
           break;
-        case 1: // expense
+        case 1: // Expense
           context.go('/home/expense');
           break;
         case 3: // Budget
@@ -163,9 +167,6 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
           context.go('/home/payment');
           break;
       }
-
-      // Reset navigation flag after a delay
-      Future.delayed(const Duration(milliseconds: 500), () {});
     }
   }
 
@@ -231,7 +232,7 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
         );
         break;
       default:
-        context.goToProfile(); // fallback
+        context.goToProfile(); // Fallback
     }
 
     _toggleFab();
@@ -244,7 +245,6 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  /* ---------- build ---------- */
   /* ---------- build ---------- */
   @override
   Widget build(BuildContext context) {
@@ -266,7 +266,7 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
                 onTap: _toggleFab,
                 behavior: HitTestBehavior.opaque,
                 child: Container(
-                  color: Colors.black.withValues(alpha: 0.3),
+                  color: context.colorScheme.scrim.withValues(alpha: 0.3),
                 ),
               ),
             ),
@@ -315,16 +315,19 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
           clipBehavior: Clip.none,
           alignment: Alignment.center,
           children: [
-            // curved background
+            // Curved background
             Positioned(
               top: 4,
               child: CustomPaint(
                 size: Size(MediaQuery.of(context).size.width, 80),
-                painter: CurvedBottomBarPainter(),
+                painter: CurvedBottomBarPainter(
+                  color: context.colorScheme.surface,
+                  shadowColor: context.colorScheme.shadow,
+                ),
               ),
             ),
 
-            // navigation items
+            // Navigation items
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -346,19 +349,18 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
                             item.icon,
                             size: 24,
                             color: selected
-                                ? const Color(0xFF6366F1)
-                                : Colors.grey.shade600,
+                                ? context.primaryColor
+                                : context.colorScheme.onSurfaceVariant,
                           ),
-                          const SizedBox(height: 2),
+                          SizedBox(height: context.xs),
                           Text(
                             item.label,
-                            style: TextStyle(
-                              fontSize: 10,
+                            style: context.textTheme.labelSmall?.copyWith(
                               fontWeight:
                                   selected ? FontWeight.w600 : FontWeight.w500,
                               color: selected
-                                  ? const Color(0xFF6366F1)
-                                  : Colors.grey.shade600,
+                                  ? context.primaryColor
+                                  : context.colorScheme.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -383,18 +385,17 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
               height: 56,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(28),
-                gradient: const LinearGradient(
+                gradient: LinearGradient(
                   colors: [
-                    Color(0xFF6366F1),
-                    Color(0xFF8B5CF6),
-                    Color(0xFFA855F7),
+                    context.primaryColor,
+                    context.tertiaryColor,
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF6366F1).withValues(alpha: 0.35),
+                    color: context.primaryColor.withValues(alpha: 0.35),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -409,7 +410,7 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
                   child: Center(
                     child: Icon(
                       _isFabExpanded ? Icons.close : Icons.add,
-                      color: Colors.white,
+                      color: context.colorScheme.onPrimary,
                       size: 28,
                     ),
                   ),
@@ -464,24 +465,27 @@ class _ArcActionButton extends StatelessWidget {
                   height: 44,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(22),
-                    gradient: const LinearGradient(
+                    gradient: LinearGradient(
                       colors: [
-                        Color(0xFF6366F1),
-                        Color(0xFF8B5CF6),
-                        Color(0xFFA855F7),
+                        context.primaryColor,
+                        context.tertiaryColor,
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF6366F1).withValues(alpha: 0.3),
+                        color: context.primaryColor.withValues(alpha: 0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
                     ],
                   ),
-                  child: Icon(action.icon, color: Colors.white, size: 20),
+                  child: Icon(
+                    action.icon,
+                    color: context.colorScheme.onPrimary,
+                    size: 20,
+                  ),
                 ),
               ),
             ),
@@ -494,14 +498,22 @@ class _ArcActionButton extends StatelessWidget {
 
 /* ---------- curved painter ---------- */
 class CurvedBottomBarPainter extends CustomPainter {
+  final Color color;
+  final Color shadowColor;
+
+  CurvedBottomBarPainter({
+    required this.color,
+    required this.shadowColor,
+  });
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white
+      ..color = color
       ..style = PaintingStyle.fill;
 
     final shadowPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.1)
+      ..color = shadowColor.withValues(alpha: 0.05)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
 
     final path = Path()

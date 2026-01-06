@@ -8,7 +8,6 @@ import 'package:xpensemate/core/theme/colors/light_colors.dart';
 import 'package:xpensemate/core/theme/input_styles.dart';
 import 'package:xpensemate/core/theme/theme_constant.dart';
 
-
 class AppTheme {
   // Prevent instantiation
   AppTheme._();
@@ -17,7 +16,7 @@ class AppTheme {
         useMaterial3: true,
         colorScheme: LightColors.colorScheme,
         textTheme: AppTypography.textTheme,
-      
+
         // Component themes
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: AppButtonStyles.elevatedButton,
@@ -32,7 +31,7 @@ class AppTheme {
           style: AppButtonStyles.textButton,
         ),
         inputDecorationTheme: AppInputStyles.inputDecorationTheme,
-      
+
         // App Bar
         appBarTheme: AppBarTheme(
           centerTitle: true,
@@ -42,7 +41,7 @@ class AppTheme {
           foregroundColor: LightColors.colorScheme.onSurface,
           systemOverlayStyle: SystemUiOverlayStyle.dark,
         ),
-        
+
         // Card
         // cardTheme: CardTheme(
         //   elevation: ThemeConstants.elevationLow,
@@ -51,7 +50,7 @@ class AppTheme {
         //   ),
         //   margin: const EdgeInsets.all(AppSpacing.sm),
         // ),
-        
+
         // Divider
         dividerTheme: DividerThemeData(
           space: AppSpacing.sm,
@@ -65,7 +64,7 @@ class AppTheme {
         useMaterial3: true,
         colorScheme: DarkColors.colorScheme,
         textTheme: AppTypography.textTheme,
-        
+
         // Component themes
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: AppButtonStyles.elevatedButton,
@@ -80,7 +79,6 @@ class AppTheme {
           style: AppButtonStyles.textButton,
         ),
         inputDecorationTheme: AppInputStyles.inputDecorationTheme,
-        
         // App Bar
         appBarTheme: AppBarTheme(
           centerTitle: true,
@@ -90,7 +88,7 @@ class AppTheme {
           foregroundColor: DarkColors.colorScheme.onSurface,
           systemOverlayStyle: SystemUiOverlayStyle.light,
         ),
-        
+
         // Card
         // cardTheme: CardTheme(
         //   elevation: ThemeConstants.elevationLow,
@@ -99,7 +97,7 @@ class AppTheme {
         //   ),
         //   margin: const EdgeInsets.all(AppSpacing.sm),
         // ),
-        
+
         // Divider
         dividerTheme: DividerThemeData(
           space: AppSpacing.sm,

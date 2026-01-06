@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 
 class DarkColors {
   static ColorScheme get colorScheme => const ColorScheme.dark(
+        primary: AppDarkColors.primary,
         primaryContainer: AppDarkColors.primaryContainer,
         onPrimaryContainer: AppDarkColors.onPrimaryContainer,
+        onPrimary: AppDarkColors.onPrimary,
+        onTertiaryContainer: AppDarkColors.onTertiaryContainer,
         secondaryContainer: AppDarkColors.secondaryContainer,
         onSecondaryContainer: AppDarkColors.onSecondaryContainer,
         tertiary: AppDarkColors.tertiary,
         onTertiary: AppDarkColors.warningContainer,
         tertiaryContainer: AppDarkColors.tertiaryContainer,
-        onTertiaryContainer: AppDarkColors.warning,
         errorContainer: AppDarkColors.errorContainer,
         onErrorContainer: AppDarkColors.onErrorContainer,
         onSurface: AppDarkColors.onSurface,
@@ -40,10 +42,12 @@ abstract class AppDarkColors {
   static const Color background = Color(0xFF121212);
 
   // Text colors
-  static const Color onPrimary = Color(0xFF000000);
+  static const Color onPrimary = Color.fromARGB(255, 0, 0, 0);
   static const Color onPrimaryContainer = Color(0xFFEFDDFF);
   static const Color onSecondary = Color(0xFF000000);
   static const Color onSecondaryContainer = Color(0xFF9FF2E5);
+  static const Color onTertiary = Color(0xFF000000);
+  static const Color onTertiaryContainer = Color(0xFF633B48);
   static const Color onSurface = Color(0xFFE6E1E5);
   static const Color onSurfaceVariant = Color(0xFFCAC4D0);
   static const Color onBackground = Color(0xFFE6E1E5);

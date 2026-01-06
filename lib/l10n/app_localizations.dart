@@ -1425,6 +1425,18 @@ abstract class AppLocalizations {
   /// **'Spent This Week'**
   String get spentThisWeek;
 
+  /// Budget status when progress is moderate
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate'**
+  String get moderate;
+
+  /// Abbreviated label for Medium priority
+  ///
+  /// In en, this message translates to:
+  /// **'Med'**
+  String get mediumPriorityAbbr;
+
   /// Title for active budgets section
   ///
   /// In en, this message translates to:

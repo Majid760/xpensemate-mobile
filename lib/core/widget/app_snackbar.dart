@@ -10,14 +10,15 @@ class AppSnackBar {
     SnackBarType type = SnackBarType.info,
   }) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    final colorScheme = Theme.of(context).colorScheme;
 
     final theme = Theme.of(context);
 
     // Define the primary button gradient
-    const primaryGradient = LinearGradient(
+    final primaryGradient = LinearGradient(
       colors: [
-        Color(0xFF6366F1), // indigo-500
-        Color(0xFFA855F7), // purple-500
+        colorScheme.primary,
+        colorScheme.primaryContainer,
       ],
       begin: Alignment.bottomLeft,
       end: Alignment.topRight,

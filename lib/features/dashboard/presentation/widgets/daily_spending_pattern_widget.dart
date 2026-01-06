@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
-import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/weekly_stats_entity.dart';
 
@@ -47,7 +46,7 @@ class _DailySpendingPatternWidgetState extends State<DailySpendingPatternWidget>
       ),
     );
 
-    // Delay animation slightly
+    // Delay animation slightly as per original code
     Future.delayed(const Duration(milliseconds: 400), () {
       if (mounted) _animationController.forward();
     });
@@ -55,7 +54,7 @@ class _DailySpendingPatternWidgetState extends State<DailySpendingPatternWidget>
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(AppSpacing.md),
+        padding: EdgeInsets.all(context.md),
         decoration: BoxDecoration(
           color: context.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
@@ -75,7 +74,7 @@ class _DailySpendingPatternWidgetState extends State<DailySpendingPatternWidget>
           children: [
             // Header
             const _HeaderRow(),
-            const SizedBox(height: AppSpacing.md),
+            SizedBox(height: context.md),
 
             // Bar Chart
             _AnimatedBarChart(
@@ -98,7 +97,7 @@ class _HeaderRow extends StatelessWidget {
             color: context.primaryColor,
             size: 18,
           ),
-          const SizedBox(width: AppSpacing.xs),
+          SizedBox(width: context.xs),
           Expanded(
             child: Text(
               context.l10n.dailySpendingPattern,
@@ -171,7 +170,7 @@ class _BarChart extends StatelessWidget {
 
         return Expanded(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+            padding: EdgeInsets.symmetric(horizontal: context.xs),
             child: _BarColumn(
               day: day,
               index: index,
@@ -221,7 +220,7 @@ class _BarColumn extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: AppSpacing.xs),
+          SizedBox(height: context.xs),
 
           // Day label
           Text(
@@ -251,10 +250,19 @@ class _BarColumn extends StatelessWidget {
       final weekday = dateTime.weekday;
 
       // Adjust for different week start (Monday = 1, Sunday = 7)
-      final adjustedIndex = (weekday + 5) % 7; // Convert to our array index
+      // The original array was [Tue, Wed, Thu, Fri, Sat, Sun, Mon]
+      // weekday: Mon=1 ... Sun=7.
+      // If we want index 0 to be Tue (weekday 2), index 6 to be Mon (weekday 1).
+      // (weekday - 2) % 7?
+      // Mon(1): (1-2)=-1 -> 6. Correct.
+      // Tue(2): (2-2)=0. Correct.
+      // Sun(7): (7-2)=5. Correct.
+      final adjustedIndex = (weekday - 2) % 7;
+      // Dart % operator can return negative.
+      final safeIndex = adjustedIndex < 0 ? adjustedIndex + 7 : adjustedIndex;
 
-      if (adjustedIndex < weekdayAbbreviations.length) {
-        return weekdayAbbreviations[adjustedIndex];
+      if (safeIndex < weekdayAbbreviations.length) {
+        return weekdayAbbreviations[safeIndex];
       }
     } on Exception catch (_) {
       // Fallback to index-based abbreviation
@@ -280,7 +288,7 @@ class _EmptyChart extends StatelessWidget {
               size: 32,
               color: context.colorScheme.onSurfaceVariant,
             ),
-            const SizedBox(height: AppSpacing.sm),
+            SizedBox(height: context.sm),
             Text(
               context.l10n.noSpendingData,
               style: context.textTheme.bodySmall?.copyWith(

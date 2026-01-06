@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
-import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_image.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/notification_button_widget.dart';
 
 class AppBarWidget extends StatelessWidget {
   const AppBarWidget({super.key, this.onProfileTap});
-  final void Function()? onProfileTap;
+  final VoidCallback? onProfileTap;
 
   @override
   Widget build(BuildContext context) => SliverAppBar(
@@ -17,11 +16,9 @@ class AppBarWidget extends StatelessWidget {
         leading: Builder(
           builder: (BuildContext builderContext) => UnconstrainedBox(
             child: Padding(
-              padding: const EdgeInsets.only(left: 8),
+              padding: EdgeInsets.only(left: context.sm),
               child: InkWell(
-                onTap: () {
-                  onProfileTap?.call();
-                },
+                onTap: onProfileTap,
                 child: AppImage.network(
                   sl.authService.currentUser?.profilePhotoUrl ?? '',
                   height: 50,
@@ -32,7 +29,7 @@ class AppBarWidget extends StatelessWidget {
                   ),
                   shadows: [
                     BoxShadow(
-                      color: const Color(0xFF6366F1).withValues(alpha: 0.3),
+                      color: context.colorScheme.primary.withValues(alpha: 0.3),
                       blurRadius: 9,
                       offset: const Offset(0, 5),
                     ),
@@ -49,18 +46,21 @@ class AppBarWidget extends StatelessWidget {
         toolbarHeight: 60,
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: AppSpacing.md),
+            padding: EdgeInsets.only(right: context.md),
             child: DecoratedBox(
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                gradient: LinearGradient(
+                  colors: [
+                    context.colorScheme.primary,
+                    context.colorScheme.tertiary,
+                  ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF6366F1).withValues(alpha: 0.3),
+                    color: context.colorScheme.primary.withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),

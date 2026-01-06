@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:xpensemate/core/theme/app_spacing.dart';
+import 'package:xpensemate/core/utils/app_logger.dart';
 
 class AnimatedDashboardContent extends StatefulWidget {
   const AnimatedDashboardContent({
@@ -25,6 +27,7 @@ class _AnimatedDashboardContentState extends State<AnimatedDashboardContent>
   @override
   void initState() {
     super.initState();
+    AppLogger.breadcrumb('Initializing AnimatedDashboardContent');
     _initializeEntranceAnimations();
     _startEntranceAnimation();
   }
@@ -69,6 +72,7 @@ class _AnimatedDashboardContentState extends State<AnimatedDashboardContent>
 
   @override
   void dispose() {
+    AppLogger.breadcrumb('Disposing AnimatedDashboardContent');
     _entranceController.dispose();
     super.dispose();
   }
@@ -77,7 +81,7 @@ class _AnimatedDashboardContentState extends State<AnimatedDashboardContent>
   Widget build(BuildContext context) => AnimatedBuilder(
         animation: _entranceController,
         builder: (context, child) => Transform.translate(
-          offset: Offset(0, 50 * (1 - _slideAnimation.value)),
+          offset: Offset(0, AppSpacing.xxl * (1 - _slideAnimation.value)),
           child: Transform.scale(
             scale: _scaleAnimation.value,
             child: Opacity(

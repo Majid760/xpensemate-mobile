@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 
-// ==================== Main Dashboard Header ====================
 class DashboardHeaderWidget extends StatelessWidget {
   const DashboardHeaderWidget({
     super.key,
@@ -13,7 +14,7 @@ class DashboardHeaderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+        padding: EdgeInsets.symmetric(horizontal: context.md),
         child: FinancialOverviewCard(state: state),
       );
 }
@@ -101,14 +102,14 @@ class _FinancialOverviewCardState extends State<FinancialOverviewCard>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Theme.of(context).primaryColor,
-              Theme.of(context).colorScheme.secondary,
+              context.colorScheme.primary,
+              context.colorScheme.secondary,
             ],
           ),
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
+              color: context.colorScheme.primary.withValues(alpha: 0.5),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
@@ -117,11 +118,12 @@ class _FinancialOverviewCardState extends State<FinancialOverviewCard>
         child: ClipRRect(
           borderRadius: BorderRadius.circular(24),
           child: Material(
-            color: Colors.transparent,
+            color: context.colorScheme.primary,
             child: InkWell(
               onTap: _toggleExpanded,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
+                padding: EdgeInsets.fromLTRB(
+                    context.sm1, context.sm1, context.sm1, context.sm),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -135,26 +137,21 @@ class _FinancialOverviewCardState extends State<FinancialOverviewCard>
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'Overview',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                      color:
-                                          Colors.white.withValues(alpha: 0.7),
-                                      letterSpacing: 0.5,
-                                    ),
+                                context.l10n.overview,
+                                style: context.textTheme.titleMedium?.copyWith(
+                                  color: context.colorScheme.onPrimary
+                                      .withValues(alpha: 0.7),
+                                  letterSpacing: 0.5,
+                                ),
                               ),
-                              const SizedBox(height: 4),
+                              SizedBox(height: context.xs / 2),
                               Text(
-                                'Weekly Insights',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineSmall
-                                    ?.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                context.l10n.weeklyInsights,
+                                style:
+                                    context.textTheme.headlineSmall?.copyWith(
+                                  color: context.colorScheme.onPrimary,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ],
                           ),
@@ -168,17 +165,19 @@ class _FinancialOverviewCardState extends State<FinancialOverviewCard>
                             child: Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.2),
+                                color: context.colorScheme.onPrimary
+                                    .withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.3),
+                                  color: context.colorScheme.onPrimary
+                                      .withValues(alpha: 0.3),
                                 ),
                               ),
                               child: Icon(
                                 _isBalanceVisible
                                     ? Icons.visibility_outlined
                                     : Icons.visibility_off_outlined,
-                                color: Colors.white,
+                                color: context.colorScheme.onPrimary,
                                 size: 22,
                               ),
                             ),
@@ -186,7 +185,7 @@ class _FinancialOverviewCardState extends State<FinancialOverviewCard>
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: context.md),
 
                     // Quick Stats Row - Always Visible
                     _QuickStatsRow(
@@ -196,7 +195,7 @@ class _FinancialOverviewCardState extends State<FinancialOverviewCard>
                       isBalanceVisible: _isBalanceVisible,
                     ),
 
-                    const SizedBox(height: 16),
+                    SizedBox(height: context.md),
 
                     // Expand/Collapse Button - Centered Below Stats
                     Center(
@@ -204,9 +203,9 @@ class _FinancialOverviewCardState extends State<FinancialOverviewCard>
                         turns: _isExpanded ? 0.5 : 0,
                         duration: const Duration(milliseconds: 400),
                         curve: Curves.easeInOutCubic,
-                        child: const Icon(
+                        child: Icon(
                           Icons.keyboard_arrow_down_rounded,
-                          color: Colors.white,
+                          color: context.colorScheme.onPrimary,
                           size: 24,
                         ),
                       ),
@@ -218,25 +217,29 @@ class _FinancialOverviewCardState extends State<FinancialOverviewCard>
                       axisAlignment: -1,
                       child: Column(
                         children: [
-                          const SizedBox(height: 16),
+                          SizedBox(height: context.md),
                           // Divider
                           Container(
                             height: 1,
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  Colors.white.withValues(alpha: 0),
-                                  Colors.white.withValues(alpha: 0.3),
-                                  Colors.white.withValues(alpha: 0),
+                                  context.colorScheme.onPrimary
+                                      .withValues(alpha: 0),
+                                  context.colorScheme.onPrimary
+                                      .withValues(alpha: 0.3),
+                                  context.colorScheme.onPrimary
+                                      .withValues(alpha: 0),
                                 ],
                               ),
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: context.md),
                           // Bottom Insights - 2 Column Layout
                           _WeeklyInsightsSection(
                             availableBalance: availableBalance,
-                            highlyActiveBudgetGoal: "woow",
+                            highlyActiveBudgetGoal:
+                                "woow", // TODO: Replace with real data if available
                             isBalanceVisible: _isBalanceVisible,
                           ),
                         ],
@@ -276,13 +279,13 @@ class _QuickStatsRow extends StatelessWidget {
               value: isBalanceVisible
                   ? AppUtils.formatLargeNumber(weeklyBudget)
                   : '••••••',
-              label: 'Budget',
+              label: context.l10n.budget,
             ),
           ),
           Container(
             width: 1,
             height: 40,
-            color: Colors.white.withValues(alpha: 0.2),
+            color: context.colorScheme.onPrimary.withValues(alpha: 0.2),
           ),
           Expanded(
             child: _QuickStatItem(
@@ -290,13 +293,13 @@ class _QuickStatsRow extends StatelessWidget {
               value: isBalanceVisible
                   ? AppUtils.formatLargeNumber(totalSpent)
                   : '••••••',
-              label: 'Spent',
+              label: context.l10n.spent,
             ),
           ),
           Container(
             width: 1,
             height: 40,
-            color: Colors.white.withValues(alpha: 0.2),
+            color: context.colorScheme.onPrimary.withValues(alpha: 0.2),
           ),
           Expanded(
             child: _QuickStatItem(
@@ -304,7 +307,7 @@ class _QuickStatsRow extends StatelessWidget {
               value: isBalanceVisible
                   ? AppUtils.formatLargeNumber(availableBalance)
                   : '••••••',
-              label: 'Left',
+              label: context.l10n.remaining,
             ),
           ),
         ],
@@ -330,16 +333,16 @@ class _QuickStatItem extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
+              color: context.colorScheme.onPrimary.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: Colors.white, size: 24),
+            child: Icon(icon, color: context.colorScheme.onPrimary, size: 24),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: context.sm),
           Text(
             value,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: context.colorScheme.onPrimary,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -347,11 +350,11 @@ class _QuickStatItem extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: context.xs / 2),
           Text(
             label,
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.8),
+              color: context.colorScheme.onPrimary.withValues(alpha: 0.8),
               fontSize: 11,
             ),
             textAlign: TextAlign.center,
@@ -380,24 +383,25 @@ class _WeeklyInsightsSection extends StatelessWidget {
           Expanded(
             child: _InsightCard(
               icon: Icons.account_balance_rounded,
-              title: 'Remaining Balance',
+              title:
+                  'Remaining Balance', // TODO: Localize or use budgetStatistics
               value: isBalanceVisible
                   ? AppUtils.formatLargeNumber(availableBalance)
                   : '••••••',
               subtitle: availableBalance > 0
-                  ? "You're doing great!"
-                  : 'Budget exceeded',
+                  ? "You're doing great!" // TODO: Localize
+                  : 'Budget exceeded', // TODO: Localize
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: context.sm1),
           Expanded(
             child: _InsightCard(
               icon: Icons.flag_rounded,
-              title: 'Most Active Goal',
-              value: 'No goals',
+              title: 'Most Active Goal', // TODO: Localize
+              value: 'No goals', // TODO: Localize
               subtitle: highlyActiveBudgetGoal != null
-                  ? '23 days used'
-                  : 'Create a budget goal',
+                  ? '23 days used' // TODO: Localize
+                  : 'Create a budget goal', // TODO: Localize
             ),
           ),
         ],
@@ -464,10 +468,12 @@ class _InsightCardState extends State<_InsightCard>
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: _isHovered ? 0.25 : 0.2),
+                color: context.colorScheme.onPrimary
+                    .withValues(alpha: _isHovered ? 0.25 : 0.2),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: _isHovered ? 0.4 : 0.3),
+                  color: context.colorScheme.onPrimary
+                      .withValues(alpha: _isHovered ? 0.4 : 0.3),
                   width: 1.5,
                 ),
                 boxShadow: [
@@ -488,13 +494,14 @@ class _InsightCardState extends State<_InsightCard>
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.3),
+                          color: context.colorScheme.onPrimary
+                              .withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(
                           widget.icon,
                           size: 18,
-                          color: Colors.white,
+                          color: context.colorScheme.onPrimary,
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -504,7 +511,8 @@ class _InsightCardState extends State<_InsightCard>
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.9),
+                            color: context.colorScheme.onPrimary
+                                .withValues(alpha: 0.9),
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.5,
@@ -513,24 +521,25 @@ class _InsightCardState extends State<_InsightCard>
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: context.sm1),
                   Text(
                     widget.value,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: context.colorScheme.onPrimary,
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 0.3,
                       height: 1.2,
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  SizedBox(height: context.xs + 2),
                   Text(
                     widget.subtitle,
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.75),
+                      color:
+                          context.colorScheme.onPrimary.withValues(alpha: 0.75),
                       fontSize: 11,
                     ),
                     maxLines: 1,

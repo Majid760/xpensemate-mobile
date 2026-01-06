@@ -497,6 +497,14 @@
   "@spentThisWeek": {
     "description": "Label for amount spent in current week"
   },
+  "moderate": "Moderate",
+  "@moderate": {
+    "description": "Budget status when progress is moderate"
+  },
+  "mediumPriorityAbbr": "Med",
+  "@mediumPriorityAbbr": {
+    "description": "Abbreviated label for Medium priority"
+  },
 
   "@@active_budget_section": "Active budget section related strings",
   "activeBudgets": "Active Budgets",

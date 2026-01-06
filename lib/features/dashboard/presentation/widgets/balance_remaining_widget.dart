@@ -1,7 +1,9 @@
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/weekly_stats_entity.dart';
@@ -42,6 +44,11 @@ class _BalanceRemainingWidgetState extends State<BalanceRemainingWidget>
     );
 
     final progressPercentage = _calculateProgressPercentage();
+
+    AppLogger.d(
+      'BalanceRemaining: Budget=${widget.weeklyStats.weeklyBudget}, Balance=${widget.weeklyStats.balanceLeft}, CalculatedPer=$progressPercentage',
+    );
+
     _progressAnimation = Tween<double>(
       begin: 0,
       end: progressPercentage,
@@ -52,27 +59,24 @@ class _BalanceRemainingWidgetState extends State<BalanceRemainingWidget>
       ),
     );
 
-    _animationController.forward();
+    // Initial delay for entrance animation
+    Future.delayed(const Duration(milliseconds: 200), () {
+      if (mounted) _animationController.forward();
+    });
   }
 
   double _calculateProgressPercentage() {
-    // Match web implementation:
-    // percentage = max > 0 ? Math.min((Math.abs(value) / max) * 100, 100) : 0
-    print("this is f=> ${widget.weeklyStats.balanceLeft}");
-    print("this is   dailyAverage => ${widget.weeklyStats.dailyAverage}");
-    print("this is   weeklyBudget => ${widget.weeklyStats.weeklyBudget}");
-    print("this is   weeklyTotal => ${widget.weeklyStats.weekTotal}");
-    print("this is   dailyAverage => ${widget.weeklyStats.dailyAverage}");
-
-    // If weeklyBudget is 0 or negative, show no progress
     if (widget.weeklyStats.weeklyBudget <= 0) {
+      if (widget.weeklyStats.balanceLeft > 0) {
+        return 1; // 100% if positive balance but no budget
+      }
       return 0;
     }
 
-    // Calculate percentage based on absolute value of balanceLeft, capped at 100%
-    // This matches the web implementation
-    final absBalanceLeft = widget.weeklyStats.balanceLeft.abs();
-    return (absBalanceLeft / widget.weeklyStats.weeklyBudget).clamp(0.0, 1.0);
+    if (widget.weeklyStats.balanceLeft <= 0) return 0;
+
+    return (widget.weeklyStats.balanceLeft / widget.weeklyStats.weeklyBudget)
+        .clamp(0.0, 1.0);
   }
 
   @override
@@ -217,8 +221,6 @@ class _CircularProgressContent extends StatelessWidget {
     double progressValue,
     WeeklyStatsEntity stats,
   ) {
-    // Match web implementation: percentage display calculation
-    // If we have a budget, calculate absolute percentage
     if (stats.weeklyBudget > 0) {
       final absPercentage =
           ((stats.balanceLeft.abs() / stats.weeklyBudget) * 100)

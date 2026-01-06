@@ -3,7 +3,6 @@ import 'dart:math' as math;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
-import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/product_weekly_analytics_entity.dart';
@@ -210,9 +209,9 @@ class _ProductAnalyticsBarChartState extends State<ProductAnalyticsBarChart>
               begin: Alignment.bottomCenter,
               end: Alignment.topCenter,
               colors: [
-                AppColors.primary.withValues(alpha: 0.7),
-                AppColors.primary,
-                AppColors.primary.withValues(alpha: 0.9),
+                context.primaryColor.withValues(alpha: 0.7),
+                context.primaryColor,
+                context.primaryColor.withValues(alpha: 0.9),
               ],
               stops: const [0.0, 0.5, 1.0],
             ),

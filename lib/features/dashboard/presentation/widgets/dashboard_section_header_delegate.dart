@@ -84,10 +84,9 @@ class DashboardSectionHeaderDelegate extends SliverPersistentHeaderDelegate {
   double get minExtent => height;
 
   @override
-  bool shouldRebuild(covariant DashboardSectionHeaderDelegate oldDelegate) {
-    return oldDelegate.title != title ||
-        oldDelegate.icon != icon ||
-        oldDelegate.action != action ||
-        oldDelegate.child != child;
-  }
+  bool shouldRebuild(covariant DashboardSectionHeaderDelegate oldDelegate) =>
+      oldDelegate.title != title ||
+      oldDelegate.icon != icon ||
+      oldDelegate.action != action ||
+      oldDelegate.child != child;
 }

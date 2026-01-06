@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 
@@ -33,7 +34,7 @@ class _FinancialOverviewCardWidgetState
     final availableBalance = weeklyStats?.balanceLeft ?? 0.0;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(context.md),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -80,7 +81,7 @@ class _FinancialOverviewCardWidgetState
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: context.xs / 2),
                   Row(
                     children: [
                       Text(
@@ -93,7 +94,7 @@ class _FinancialOverviewCardWidgetState
                           letterSpacing: -1,
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: context.sm),
                       IconButton(
                         icon: Icon(
                           _isBalanceVisible
@@ -110,9 +111,9 @@ class _FinancialOverviewCardWidgetState
               const Spacer(),
               // Growth percentage
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.sm1,
+                  vertical: context.sm,
                 ),
                 decoration: BoxDecoration(
                   color: context.colorScheme.onPrimary.withValues(alpha: 0.2),
@@ -145,7 +146,7 @@ class _FinancialOverviewCardWidgetState
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AppSpacing.md1),
           // Reordered: Spent This Week and Available
           Row(
             children: [
@@ -162,7 +163,7 @@ class _FinancialOverviewCardWidgetState
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: context.xs / 2),
                     Text(
                       _isBalanceVisible
                           ? '\$${totalSpent.toStringAsFixed(0)}'
@@ -181,7 +182,7 @@ class _FinancialOverviewCardWidgetState
                 width: 1,
                 color: context.colorScheme.onPrimary.withValues(alpha: 0.3),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: context.md),
               // Available
               Expanded(
                 child: Column(
@@ -195,7 +196,7 @@ class _FinancialOverviewCardWidgetState
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: context.xs / 2),
                     Text(
                       _isBalanceVisible
                           ? '\$${availableBalance.toStringAsFixed(0)}'

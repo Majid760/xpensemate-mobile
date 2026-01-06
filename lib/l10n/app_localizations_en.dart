@@ -699,6 +699,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get spentThisWeek => 'Spent This Week';
 
   @override
+  String get moderate => 'Moderate';
+
+  @override
+  String get mediumPriorityAbbr => 'Med';
+
+  @override
   String get activeBudgets => 'Active Budgets';
 
   @override

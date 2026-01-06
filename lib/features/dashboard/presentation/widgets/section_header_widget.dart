@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 
 class SectionHeaderWidget extends StatelessWidget {
@@ -18,7 +17,7 @@ class SectionHeaderWidget extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: AppColors.primary,
+            color: context.primaryColor,
             size: 24,
           ),
           SizedBox(width: context.sm),

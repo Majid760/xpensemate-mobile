@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
@@ -74,7 +75,7 @@ class _WeeklySummaryCardsState extends State<WeeklySummaryCards>
         .toList();
 
     // Start animations with staggered delays
-    for (int i = 0; i < _animationControllers.length; i++) {
+    for (var i = 0; i < _animationControllers.length; i++) {
       Future.delayed(Duration(milliseconds: 500 + (i * 150)), () {
         if (mounted) _animationControllers[i].forward();
       });
@@ -85,7 +86,7 @@ class _WeeklySummaryCardsState extends State<WeeklySummaryCards>
   Widget build(BuildContext context) {
     final summaryData = [
       _SummaryCardData(
-        title: 'TOTAL SPENT',
+        title: context.l10n.totalSpent.toUpperCase(),
         value: CurrencyFormatter.format(widget.summary.totalSpent),
         icon: Icons.attach_money_rounded,
         iconColor: context.colorScheme.primary,
@@ -93,21 +94,21 @@ class _WeeklySummaryCardsState extends State<WeeklySummaryCards>
             context.colorScheme.primaryContainer.withValues(alpha: 0.3),
       ),
       _SummaryCardData(
-        title: 'DAILY\nAVERAGE',
+        title: context.l10n.dailyAverage.toUpperCase(),
         value: CurrencyFormatter.format(widget.summary.dailyAverage),
         icon: Icons.trending_up_rounded,
         iconColor: AppColors.success,
         backgroundColor: AppColors.successContainer.withValues(alpha: 0.3),
       ),
       _SummaryCardData(
-        title: 'HIGHEST DAY',
+        title: context.l10n.highestDay.toUpperCase(),
         value: CurrencyFormatter.format(widget.summary.highestDay),
         icon: Icons.calendar_today_rounded,
         iconColor: AppColors.warning,
         backgroundColor: AppColors.warningContainer.withValues(alpha: 0.3),
       ),
       _SummaryCardData(
-        title: 'LOWEST DAY',
+        title: context.l10n.lowestDay.toUpperCase(),
         value: CurrencyFormatter.format(widget.summary.lowestDay),
         icon: Icons.show_chart_rounded,
         iconColor: AppColors.info,
@@ -175,13 +176,12 @@ class _SummaryCard extends StatelessWidget {
   final _SummaryCardData data;
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) => DecoratedBox(
         decoration: BoxDecoration(
           color: context.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: context.colorScheme.outline.withValues(alpha: 0.1),
-            width: 1,
           ),
           boxShadow: [
             BoxShadow(
@@ -257,25 +257,25 @@ class WeeklySummaryHorizontalCards extends StatelessWidget {
   Widget build(BuildContext context) {
     final summaryItems = [
       _HorizontalSummaryItem(
-        title: 'TOTAL SPENT',
+        title: context.l10n.totalSpent.toUpperCase(),
         value: CurrencyFormatter.format(summary.totalSpent),
         icon: Icons.attach_money_rounded,
         iconColor: context.colorScheme.primary,
       ),
       _HorizontalSummaryItem(
-        title: 'DAILY AVERAGE',
+        title: context.l10n.dailyAverage.toUpperCase(),
         value: CurrencyFormatter.format(summary.dailyAverage),
         icon: Icons.trending_up_rounded,
         iconColor: AppColors.success,
       ),
       _HorizontalSummaryItem(
-        title: 'HIGHEST DAY',
+        title: context.l10n.highestDay.toUpperCase(),
         value: CurrencyFormatter.format(summary.highestDay),
         icon: Icons.calendar_today_rounded,
         iconColor: AppColors.warning,
       ),
       _HorizontalSummaryItem(
-        title: 'LOWEST DAY',
+        title: context.l10n.lowestDay.toUpperCase(),
         value: CurrencyFormatter.format(summary.lowestDay),
         icon: Icons.show_chart_rounded,
         iconColor: AppColors.info,

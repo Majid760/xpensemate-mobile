@@ -49,6 +49,14 @@ extension ThemeContext on BuildContext {
   double get md => AppSpacing.md;
   double get lg => AppSpacing.lg;
   double get xl => AppSpacing.xl;
+  double get xxl => AppSpacing.xxl;
+  double get xxxl => AppSpacing.xxxl;
+
+  // Icon size shortcuts
+  double get iconXs => AppSpacing.iconXs;
+  double get iconSm => AppSpacing.iconSm;
+  double get iconMd => AppSpacing.iconMd;
+  double get iconLg => AppSpacing.iconLg;
 
   // Responsive helpers
   bool get isMobile => screenWidth < 600;

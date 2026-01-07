@@ -807,3 +807,9 @@ extension DateTimeExtension on DateTime {
   /// Check if date is today
   bool get isToday => AppUtils.isToday(this);
 }
+
+extension NumExtension on num {
+  /// Spacing helpers
+  Widget get heightBox => SizedBox(height: toDouble());
+  Widget get widthBox => SizedBox(width: toDouble());
+}

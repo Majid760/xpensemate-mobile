@@ -12,7 +12,6 @@ class AppBarWidget extends StatelessWidget {
   Widget build(BuildContext context) => SliverAppBar(
         pinned: true,
         elevation: 0,
-        leadingWidth: 70,
         leading: Builder(
           builder: (BuildContext builderContext) => UnconstrainedBox(
             child: Padding(
@@ -21,15 +20,15 @@ class AppBarWidget extends StatelessWidget {
                 onTap: onProfileTap,
                 child: AppImage.network(
                   sl.authService.currentUser?.profilePhotoUrl ?? '',
-                  height: 50,
-                  width: 50,
+                  height: context.xxl,
+                  width: context.xxl,
                   border: Border.all(
                     width: 2,
-                    color: context.colorScheme.primary,
+                    color: context.primaryColor,
                   ),
                   shadows: [
                     BoxShadow(
-                      color: context.colorScheme.primary.withValues(alpha: 0.3),
+                      color: context.primaryColor.withValues(alpha: 0.3),
                       blurRadius: 9,
                       offset: const Offset(0, 5),
                     ),
@@ -51,16 +50,16 @@ class AppBarWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    context.colorScheme.primary,
+                    context.primaryColor,
                     context.colorScheme.tertiary,
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(context.md),
                 boxShadow: [
                   BoxShadow(
-                    color: context.colorScheme.primary.withValues(alpha: 0.3),
+                    color: context.primaryColor.withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),

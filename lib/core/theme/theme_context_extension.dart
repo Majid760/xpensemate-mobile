@@ -19,6 +19,7 @@ extension ThemeContext on BuildContext {
   Color get onTertiaryColor => colorScheme.onTertiary;
   Color get onSurfaceColor => colorScheme.onSurface;
   Color get onErrorColor => colorScheme.onError;
+  Color get outlineColor => colorScheme.outline;
 
   // Text style shortcuts
   TextStyle? get headlineLarge => textTheme.headlineLarge;
@@ -47,6 +48,7 @@ extension ThemeContext on BuildContext {
   double get sm1 => AppSpacing.sm1;
 
   double get md => AppSpacing.md;
+  double get md1 => AppSpacing.md1;
   double get lg => AppSpacing.lg;
   double get xl => AppSpacing.xl;
   double get xxl => AppSpacing.xxl;

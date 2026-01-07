@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/utils/app_utils.dart';
 
 class AnimatedSectionHeader extends StatefulWidget {
   const AnimatedSectionHeader({
@@ -8,13 +10,13 @@ class AnimatedSectionHeader extends StatefulWidget {
     this.icon,
     this.onSearchChanged,
     this.onSearchCleared,
-    this.searchHint = 'Search...',
+    this.searchHint,
   });
 
   final String title;
   final Widget? icon;
   final ValueChanged<String>? onSearchChanged;
-  final String searchHint;
+  final String? searchHint;
   final VoidCallback? onSearchCleared;
 
   @override
@@ -105,14 +107,14 @@ class _AnimatedSectionHeaderState extends State<AnimatedSectionHeader>
   Widget build(BuildContext context) => AnimatedBuilder(
         animation: _animationController,
         builder: (context, child) {
-          final screenWidth = MediaQuery.of(context).size.width;
-          const buttonWidth = 48.0;
+          final screenWidth = context.screenWidth;
+          final buttonWidth = context.xxl;
           final maxSearchWidth =
-              screenWidth - buttonWidth - 45; // 32 for padding
+              screenWidth - buttonWidth - (context.md * 2 + context.sm1);
           final currentSearchWidth = maxSearchWidth * _widthAnimation.value;
 
           return SizedBox(
-            height: 50,
+            height: 50, // Standard header height
             child: Row(
               children: [
                 // Left side - Icon and Title (fades out when search expands)
@@ -128,26 +130,14 @@ class _AnimatedSectionHeaderState extends State<AnimatedSectionHeader>
                             return Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                if (hasSpaceForIcon)
-                                  widget.icon ??
-                                      Icon(
-                                        Icons.receipt_long_rounded,
-                                        color: Theme.of(context).primaryColor,
-                                        size: 24,
-                                      ),
-                                if (hasSpaceForIcon) const SizedBox(width: 8),
+                                if (hasSpaceForIcon) context.sm.widthBox,
                                 Flexible(
                                   child: Text(
                                     widget.title,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurface,
-                                        ),
+                                    style: context.headlineSmall?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: context.onSurfaceColor,
+                                    ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -173,17 +163,15 @@ class _AnimatedSectionHeaderState extends State<AnimatedSectionHeader>
                             decoration: BoxDecoration(
                               color: context.colorScheme.surfaceContainer
                                   .withValues(alpha: 0.7),
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(context.md),
                               border: Border.all(
-                                color: Theme.of(context)
-                                    .primaryColor
-                                    .withValues(alpha: 0.3),
+                                color:
+                                    context.primaryColor.withValues(alpha: 0.3),
                                 width: 1.5,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Theme.of(context)
-                                      .primaryColor
+                                  color: context.primaryColor
                                       .withValues(alpha: 0.15),
                                   blurRadius: 12,
                                   offset: const Offset(0, 4),
@@ -193,65 +181,64 @@ class _AnimatedSectionHeaderState extends State<AnimatedSectionHeader>
                             child: TextField(
                               controller: _searchController,
                               focusNode: _focusNode,
-                              style: Theme.of(context).textTheme.bodyMedium,
+                              style: context.bodyMedium,
                               decoration: InputDecoration(
-                                fillColor: Theme.of(context)
-                                    .colorScheme
-                                    .surfaceContainerHighest
+                                fillColor: context
+                                    .colorScheme.surfaceContainerHighest
                                     .withValues(alpha: 0.4),
-                                hintText: widget.searchHint,
+                                hintText: widget.searchHint ??
+                                    context.l10n.searchHint,
                                 hintStyle: TextStyle(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurface
+                                  color: context.onSurfaceColor
                                       .withValues(alpha: 0.5),
                                 ),
                                 prefixIcon: Icon(
                                   Icons.search,
-                                  color: Theme.of(context).primaryColor,
-                                  size: 20,
+                                  color: context.primaryColor,
+                                  size: context.iconSm,
                                 ),
                                 suffixIcon: _searchController.text.isNotEmpty
                                     ? IconButton(
                                         icon: Icon(
                                           Icons.clear,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurface
+                                          color: context.onSurfaceColor
                                               .withValues(alpha: 0.6),
-                                          size: 20,
+                                          size: context.iconSm,
                                         ),
                                         onPressed: _clearSearch,
                                         splashRadius: 20,
                                       )
                                     : null,
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius:
+                                      BorderRadius.circular(context.sm1),
                                   borderSide: BorderSide(
-                                    color: context.colorScheme.outline
-                                        .withValues(alpha: 0.2),
+                                    color: context.colorScheme.primary
+                                        .withValues(alpha: 0.4),
                                     width: 1.5,
                                   ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius:
+                                      BorderRadius.circular(context.sm1),
                                   borderSide: BorderSide(
-                                    color: context.colorScheme.outline
-                                        .withValues(alpha: 0.2),
+                                    color: context.colorScheme.primary
+                                        .withValues(alpha: 0.4),
                                     width: 1.5,
                                   ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius:
+                                      BorderRadius.circular(context.sm1),
                                   borderSide: BorderSide(
-                                    color: context.colorScheme.outline
-                                        .withValues(alpha: 0.8),
+                                    color: context.colorScheme.primary
+                                        .withValues(alpha: 0.4),
                                     width: 2,
                                   ),
                                 ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: context.md,
+                                  vertical: context.sm1,
                                 ),
                               ),
                             ),
@@ -260,7 +247,7 @@ class _AnimatedSectionHeaderState extends State<AnimatedSectionHeader>
                       : const SizedBox.shrink(),
                 ),
 
-                const SizedBox(width: 8),
+                context.sm.widthBox,
 
                 // Search/Close Button (always on the right)
                 Container(
@@ -268,9 +255,9 @@ class _AnimatedSectionHeaderState extends State<AnimatedSectionHeader>
                   height: 48,
                   decoration: BoxDecoration(
                     color: _isSearchExpanded
-                        ? Theme.of(context).colorScheme.errorContainer
-                        : Theme.of(context).primaryColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
+                        ? context.colorScheme.errorContainer
+                        : context.primaryColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(context.sm1),
                   ),
                   child: IconButton(
                     icon: AnimatedSwitcher(
@@ -288,14 +275,16 @@ class _AnimatedSectionHeaderState extends State<AnimatedSectionHeader>
                         _isSearchExpanded ? Icons.close : Icons.search,
                         key: ValueKey<bool>(_isSearchExpanded),
                         color: _isSearchExpanded
-                            ? Theme.of(context).colorScheme.error
-                            : Theme.of(context).primaryColor,
+                            ? context.colorScheme.error
+                            : context.primaryColor,
                         size: 22,
                       ),
                     ),
                     onPressed: _toggleSearch,
-                    tooltip: _isSearchExpanded ? 'Close search' : 'Search',
-                    splashRadius: 24,
+                    tooltip: _isSearchExpanded
+                        ? context.l10n.closeSearch
+                        : context.l10n.search,
+                    splashRadius: context.lg,
                   ),
                 ),
               ],

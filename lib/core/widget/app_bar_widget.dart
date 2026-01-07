@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:xpensemate/core/enums.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/utils/app_utils.dart';
 
 class CustomAppBar extends StatelessWidget {
   const CustomAppBar({super.key, this.onChanged, required this.defaultPeriod});
@@ -21,15 +22,18 @@ class CustomAppBar extends StatelessWidget {
           Container(
             margin: EdgeInsets.only(right: context.md),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+              gradient: LinearGradient(
+                colors: [
+                  context.primaryColor,
+                  context.colorScheme.secondary,
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(context.md),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF6366F1).withValues(alpha: 0.3),
+                  color: context.primaryColor.withValues(alpha: 0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -38,7 +42,7 @@ class CustomAppBar extends StatelessWidget {
             child: Material(
               color: Colors.transparent,
               child: InkWell(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(context.md),
                 onTap: () => showModalBottomSheet<void>(
                   context: context,
                   backgroundColor: Colors.transparent,
@@ -47,12 +51,12 @@ class CustomAppBar extends StatelessWidget {
                     onChanged: onChanged,
                   ),
                 ),
-                child: const Padding(
-                  padding: EdgeInsets.all(12),
+                child: Padding(
+                  padding: EdgeInsets.all(context.sm1),
                   child: Icon(
                     Icons.tune_rounded,
-                    color: Colors.white,
-                    size: 24,
+                    color: context.onPrimaryColor,
+                    size: context.iconMd,
                   ),
                 ),
               ),
@@ -92,12 +96,12 @@ class _FilterDropdownSheetViewState extends State<FilterDropdownSheetView> {
         },
         {
           'value': FilterValue.quarterly,
-          'label': context.l10n.quarterInsight,
+          'label': context.l10n.quarterlyInsights,
           'icon': Icons.calendar_view_month_rounded,
         },
         {
           'value': FilterValue.yearly,
-          'label': context.l10n.yearlyInsight,
+          'label': context.l10n.yearlyInsights,
           'icon': Icons.calendar_today_rounded,
         },
       ];
@@ -116,44 +120,48 @@ class _FilterDropdownSheetViewState extends State<FilterDropdownSheetView> {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: context.colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(context.lg)),
       ),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              margin: const EdgeInsets.only(top: 12),
-              width: 40,
-              height: 4,
+              margin: EdgeInsets.only(top: context.sm1),
+              width: context.xxl,
+              height: context.xs,
               decoration: BoxDecoration(
-                color: Colors.grey.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(2),
+                color: context.outlineColor.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(context.xs),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(context.md1),
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(10),
+                    padding: EdgeInsets.all(context.sm),
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFFEADDFF), Color(0xFFE8DEF8)],
+                      gradient: LinearGradient(
+                        colors: [
+                          context.primaryColor.withValues(alpha: 0.2),
+                          context.colorScheme.secondary.withValues(alpha: 0.2),
+                        ],
                       ),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(context.sm1),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.filter_list_rounded,
-                      color: Color(0xFF6366F1),
-                      size: 24,
+                      color: context.primaryColor,
+                      size: context.iconMd,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  context.sm.widthBox,
                   Text(
-                    context.l10n.overview, // Using a localized string directly
+                    context.l10n.overview,
                     style: context.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
+                      color: context.onSurfaceColor,
                     ),
                   ),
                 ],
@@ -163,21 +171,27 @@ class _FilterDropdownSheetViewState extends State<FilterDropdownSheetView> {
               final isSelected = (item['value']! as FilterValue).name ==
                   widget.defaultPeriod.name;
               return Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                margin: EdgeInsets.symmetric(
+                  horizontal: context.md,
+                  vertical: context.xs,
+                ),
                 decoration: BoxDecoration(
                   gradient: isSelected
-                      ? const LinearGradient(
-                          colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                      ? LinearGradient(
+                          colors: [
+                            context.primaryColor,
+                            context.colorScheme.secondary,
+                          ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         )
                       : null,
                   color: isSelected ? null : Colors.transparent,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(context.md),
                   border: Border.all(
                     color: isSelected
                         ? Colors.transparent
-                        : Colors.grey.withValues(alpha: 0.2),
+                        : context.outlineColor.withValues(alpha: 0.2),
                   ),
                 ),
                 child: Material(
@@ -189,37 +203,37 @@ class _FilterDropdownSheetViewState extends State<FilterDropdownSheetView> {
                       widget.onChanged?.call(item['value']! as FilterValue);
                     },
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 16,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: context.md,
+                        vertical: context.sm1,
                       ),
                       child: Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(8),
+                            padding: EdgeInsets.all(context.sm),
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? Colors.white.withValues(alpha: 0.2)
-                                  : const Color(0xFFEADDFF)
-                                      .withValues(alpha: 0.5),
-                              borderRadius: BorderRadius.circular(10),
+                                  ? context.onPrimaryColor
+                                      .withValues(alpha: 0.2)
+                                  : context.primaryColor.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(context.sm),
                             ),
                             child: Icon(
                               item['icon']! as IconData,
                               color: isSelected
-                                  ? Colors.white
-                                  : const Color(0xFF6366F1),
-                              size: 20,
+                                  ? context.onPrimaryColor
+                                  : context.primaryColor,
+                              size: context.iconSm,
                             ),
                           ),
-                          const SizedBox(width: 16),
+                          context.md.widthBox,
                           Expanded(
                             child: Text(
                               item['label']! as String,
                               style: context.textTheme.bodyLarge?.copyWith(
                                 color: isSelected
-                                    ? Colors.white
-                                    : context.textTheme.bodyLarge?.color,
+                                    ? context.onPrimaryColor
+                                    : context.onSurfaceColor,
                                 fontWeight: isSelected
                                     ? FontWeight.w600
                                     : FontWeight.normal,
@@ -228,15 +242,16 @@ class _FilterDropdownSheetViewState extends State<FilterDropdownSheetView> {
                           ),
                           if (isSelected)
                             Container(
-                              padding: const EdgeInsets.all(4),
+                              padding: EdgeInsets.all(context.xs),
                               decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
+                                color: context.onPrimaryColor,
+                                borderRadius:
+                                    BorderRadius.circular(context.sm1),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.check_rounded,
-                                color: Color(0xFF6366F1),
-                                size: 16,
+                                color: context.primaryColor,
+                                size: context.iconXs,
                               ),
                             ),
                         ],
@@ -246,7 +261,7 @@ class _FilterDropdownSheetViewState extends State<FilterDropdownSheetView> {
                 ),
               );
             }),
-            const SizedBox(height: 20),
+            context.md1.heightBox,
           ],
         ),
       ),

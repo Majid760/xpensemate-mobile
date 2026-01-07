@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
+import 'package:xpensemate/core/widget/stat_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 
 class DashboardHeaderWidget extends StatelessWidget {
@@ -341,9 +342,8 @@ class _QuickStatItem extends StatelessWidget {
           SizedBox(height: context.sm),
           Text(
             value,
-            style: TextStyle(
+            style: context.textTheme.titleMedium?.copyWith(
               color: context.colorScheme.onPrimary,
-              fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
             maxLines: 1,
@@ -353,9 +353,8 @@ class _QuickStatItem extends StatelessWidget {
           SizedBox(height: context.xs / 2),
           Text(
             label,
-            style: TextStyle(
+            style: context.textTheme.labelSmall?.copyWith(
               color: context.colorScheme.onPrimary.withValues(alpha: 0.8),
-              fontSize: 11,
             ),
             textAlign: TextAlign.center,
             maxLines: 1,
@@ -381,174 +380,30 @@ class _WeeklyInsightsSection extends StatelessWidget {
   Widget build(BuildContext context) => Row(
         children: [
           Expanded(
-            child: _InsightCard(
+            child: StatsWidgetCard(
               icon: Icons.account_balance_rounded,
-              title:
-                  'Remaining Balance', // TODO: Localize or use budgetStatistics
               value: isBalanceVisible
                   ? AppUtils.formatLargeNumber(availableBalance)
                   : '••••••',
+              label: context.l10n.balanceRemaining,
               subtitle: availableBalance > 0
-                  ? "You're doing great!" // TODO: Localize
-                  : 'Budget exceeded', // TODO: Localize
+                  ? context.l10n.doingGreat
+                  : context.l10n.budgetExceeded,
             ),
           ),
           SizedBox(width: context.sm1),
           Expanded(
-            child: _InsightCard(
+            child: StatsWidgetCard(
               icon: Icons.flag_rounded,
-              title: 'Most Active Goal', // TODO: Localize
-              value: 'No goals', // TODO: Localize
+              value: context.l10n.noBudgetsActive,
+              label: context.l10n.mostActiveGoal,
               subtitle: highlyActiveBudgetGoal != null
-                  ? '23 days used' // TODO: Localize
-                  : 'Create a budget goal', // TODO: Localize
+                  ? context.l10n.daysUsed(
+                      23,
+                    ) // TODO: Get actual days from highlyActiveBudgetGoal
+                  : context.l10n.budgetGoalsEmptySubtitle,
             ),
           ),
         ],
-      );
-}
-
-// ==================== Insight Card ====================
-class _InsightCard extends StatefulWidget {
-  const _InsightCard({
-    required this.icon,
-    required this.title,
-    required this.value,
-    required this.subtitle,
-  });
-
-  final IconData icon;
-  final String title;
-  final String value;
-  final String subtitle;
-
-  @override
-  State<_InsightCard> createState() => _InsightCardState();
-}
-
-class _InsightCardState extends State<_InsightCard>
-    with SingleTickerProviderStateMixin {
-  bool _isHovered = false;
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 200),
-      vsync: this,
-    );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.02).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => MouseRegion(
-        onEnter: (_) {
-          setState(() => _isHovered = true);
-          _controller.forward();
-        },
-        onExit: (_) {
-          setState(() => _isHovered = false);
-          _controller.reverse();
-        },
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) => Transform.scale(
-            scale: _scaleAnimation.value,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: context.colorScheme.onPrimary
-                    .withValues(alpha: _isHovered ? 0.25 : 0.2),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: context.colorScheme.onPrimary
-                      .withValues(alpha: _isHovered ? 0.4 : 0.3),
-                  width: 1.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color:
-                        Colors.black.withValues(alpha: _isHovered ? 0.15 : 0.1),
-                    blurRadius: _isHovered ? 12 : 8,
-                    offset: Offset(0, _isHovered ? 6 : 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: context.colorScheme.onPrimary
-                              .withValues(alpha: 0.3),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Icon(
-                          widget.icon,
-                          size: 18,
-                          color: context.colorScheme.onPrimary,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          widget.title.toUpperCase(),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: context.colorScheme.onPrimary
-                                .withValues(alpha: 0.9),
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: context.sm1),
-                  Text(
-                    widget.value,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: context.colorScheme.onPrimary,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.3,
-                      height: 1.2,
-                    ),
-                  ),
-                  SizedBox(height: context.xs + 2),
-                  Text(
-                    widget.subtitle,
-                    style: TextStyle(
-                      color:
-                          context.colorScheme.onPrimary.withValues(alpha: 0.75),
-                      fontSize: 11,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
       );
 }

@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:xpensemate/core/enums.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
+import 'package:xpensemate/core/widget/stat_widget.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_stats_entity.dart';
 
 class ExpenseStatsWidget extends StatefulWidget {
-  const ExpenseStatsWidget(
-      {super.key, required this.stats, required this.filter});
+  const ExpenseStatsWidget({
+    super.key,
+    required this.stats,
+    required this.filter,
+  });
+
   final ExpenseStatsEntity? stats;
   final FilterValue filter;
 
@@ -41,7 +47,7 @@ class _ExpenseStatsWidgetState extends State<ExpenseStatsWidget>
   }
 
   void _toggleExpanded() {
-    HapticFeedback.lightImpact();
+    AppUtils.hapticFeedback();
     setState(() {
       isExpanded = !isExpanded;
       if (isExpanded) {
@@ -55,20 +61,25 @@ class _ExpenseStatsWidgetState extends State<ExpenseStatsWidget>
   @override
   Widget build(BuildContext context) => SliverToBoxAdapter(
         child: Container(
-          margin: const EdgeInsets.all(16),
+          margin: EdgeInsets.fromLTRB(
+            context.md,
+            context.xs,
+            context.md,
+            context.md,
+          ),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Theme.of(context).primaryColor,
-                Theme.of(context).colorScheme.secondary,
+                context.primaryColor,
+                context.secondaryColor,
               ],
             ),
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
+                color: context.primaryColor.withValues(alpha: 0.3),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -77,11 +88,11 @@ class _ExpenseStatsWidgetState extends State<ExpenseStatsWidget>
           child: ClipRRect(
             borderRadius: BorderRadius.circular(24),
             child: Material(
-              color: Colors.transparent,
+              color: context.primaryColor,
               child: InkWell(
                 onTap: _toggleExpanded,
                 child: Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: EdgeInsets.all(context.lg),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -89,53 +100,55 @@ class _ExpenseStatsWidgetState extends State<ExpenseStatsWidget>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Overview',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                      color:
-                                          Colors.white.withValues(alpha: 0.7),
-                                      letterSpacing: 0.5,
-                                    ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                '${widget.filter.name.capitalize} Insights',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineSmall
-                                    ?.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              ),
-                            ],
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  context.l10n.overview,
+                                  style:
+                                      context.textTheme.titleMedium?.copyWith(
+                                    color: context.onPrimaryColor
+                                        .withValues(alpha: 0.7),
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                                SizedBox(height: context.xs),
+                                Text(
+                                  widget.filter
+                                      .getLocalizedInsightsTitle(context),
+                                  style:
+                                      context.textTheme.headlineSmall?.copyWith(
+                                    color: context.onPrimaryColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
                           ),
                           AnimatedRotation(
                             turns: isExpanded ? 0.5 : 0,
                             duration: const Duration(milliseconds: 400),
                             curve: Curves.easeInOutCubic,
                             child: Container(
-                              padding: const EdgeInsets.all(10),
+                              padding: EdgeInsets.all(context.sm),
                               decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.2),
+                                color: context.onPrimaryColor
+                                    .withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.keyboard_arrow_down_rounded,
-                                color: Colors.white,
+                                color: context.onPrimaryColor,
                                 size: 24,
                               ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: context.lg),
                       // Quick Stats Row (Abstract - Always Visible)
                       _QuickStatsRow(stats: widget.stats),
                       // Expandable Detailed Section
@@ -144,20 +157,21 @@ class _ExpenseStatsWidgetState extends State<ExpenseStatsWidget>
                         axisAlignment: -1,
                         child: Column(
                           children: [
-                            const SizedBox(height: 20),
+                            SizedBox(height: context.lg),
                             Container(
                               height: 1,
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [
-                                    Colors.white.withValues(alpha: 0),
-                                    Colors.white.withValues(alpha: 0.3),
-                                    Colors.white.withValues(alpha: 0),
+                                    context.onPrimaryColor.withValues(alpha: 0),
+                                    context.onPrimaryColor
+                                        .withValues(alpha: 0.3),
+                                    context.onPrimaryColor.withValues(alpha: 0),
                                   ],
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 20),
+                            SizedBox(height: context.lg),
                             _DetailedStatsGrid(stats: widget.stats),
                           ],
                         ),
@@ -184,37 +198,32 @@ class _QuickStatsRow extends StatelessWidget {
             child: _QuickStatItem(
               icon: Icons.account_balance_wallet_rounded,
               value: CurrencyFormatter.format(stats?.totalSpent ?? 0),
-              label: 'Total Spent',
-              iconBg: Colors.white.withValues(alpha: 0.2),
+              label: context.l10n.totalSpent,
             ),
           ),
-          Container(
-            width: 1,
-            height: 40,
-            color: Colors.white.withValues(alpha: 0.2),
-          ),
+          _buildDivider(),
           Expanded(
             child: _QuickStatItem(
               icon: Icons.calendar_today_rounded,
               value: CurrencyFormatter.format(stats?.dailyAverage ?? 0),
-              label: 'Daily Average',
-              iconBg: Colors.white.withValues(alpha: 0.2),
+              label: context.l10n.dailyAverage,
             ),
           ),
-          Container(
-            width: 1,
-            height: 40,
-            color: Colors.white.withValues(alpha: 0.2),
-          ),
+          _buildDivider(),
           Expanded(
             child: _QuickStatItem(
               icon: Icons.local_fire_department_rounded,
               value: '${stats?.trackingStreak ?? 0}',
-              label: 'Streak',
-              iconBg: Colors.white.withValues(alpha: 0.2),
+              label: context.l10n.streak,
             ),
           ),
         ],
+      );
+
+  Widget _buildDivider() => Container(
+        width: 1,
+        height: 40,
+        color: Colors.white.withValues(alpha: 0.2),
       );
 }
 
@@ -223,42 +232,39 @@ class _QuickStatItem extends StatelessWidget {
     required this.icon,
     required this.value,
     required this.label,
-    required this.iconBg,
   });
+
   final IconData icon;
   final String value;
   final String label;
-  final Color iconBg;
 
   @override
   Widget build(BuildContext context) => Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: EdgeInsets.all(context.sm),
             decoration: BoxDecoration(
-              color: iconBg,
+              color: context.onPrimaryColor.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: Colors.white, size: 24),
+            child: Icon(icon, color: context.onPrimaryColor, size: 24),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: context.xs),
           Text(
             value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
+            style: context.textTheme.titleMedium?.copyWith(
+              color: context.onPrimaryColor,
               fontWeight: FontWeight.bold,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: context.xs / 2),
           Text(
             label,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.8),
-              fontSize: 11,
+            style: context.textTheme.labelSmall?.copyWith(
+              color: context.onPrimaryColor.withValues(alpha: 0.8),
             ),
             textAlign: TextAlign.center,
             maxLines: 1,
@@ -279,191 +285,48 @@ class _DetailedStatsGrid extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: _StatsCard(
+                child: StatsWidgetCard(
                   icon: Icons.attach_money_rounded,
                   value: CurrencyFormatter.format(stats?.totalSpent ?? 0),
-                  label: 'Total Spent',
-                  subtitle: 'Total spent in  period',
+                  label: context.l10n.totalSpent,
+                  subtitle: context.l10n.totalSpentSubtitle,
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: context.sm),
               Expanded(
-                child: _StatsCard(
+                child: StatsWidgetCard(
                   icon: Icons.bar_chart_rounded,
                   value: CurrencyFormatter.format(stats?.dailyAverage ?? 0),
-                  label: 'Daily Average',
-                  subtitle: 'Average spent per day',
+                  label: context.l10n.dailyAverage,
+                  subtitle: context.l10n.dailyAverageSubtitle,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: context.sm),
           Row(
             children: [
               Expanded(
-                child: _StatsCard(
+                child: StatsWidgetCard(
                   icon: Icons.trending_up_rounded,
                   value:
                       '${(stats?.spendingVelocityPercent ?? 0).toStringAsFixed(1)}%',
-                  label: 'Spending Velocity',
-                  subtitle: stats?.spendingVelocityMessage ?? 'No data',
+                  label: context.l10n.spendingVelocity,
+                  subtitle: stats?.spendingVelocityMessage ??
+                      context.l10n.noDataAvailable,
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: context.sm),
               Expanded(
-                child: _StatsCard(
+                child: StatsWidgetCard(
                   icon: Icons.local_fire_department_rounded,
                   value: '${stats?.trackingStreak ?? 0}',
-                  label: 'Tracking Streak',
-                  subtitle: 'Consecutive days',
+                  label: context.l10n.trackingStreak,
+                  subtitle: context.l10n.consecutiveDays,
                 ),
               ),
             ],
           ),
         ],
-      );
-}
-
-class _StatsCard extends StatefulWidget {
-  const _StatsCard({
-    required this.icon,
-    required this.value,
-    required this.label,
-    required this.subtitle,
-  });
-
-  final IconData icon;
-  final String value;
-  final String label;
-  final String subtitle;
-
-  @override
-  State<_StatsCard> createState() => _StatsCardState();
-}
-
-class _StatsCardState extends State<_StatsCard>
-    with SingleTickerProviderStateMixin {
-  bool _isHovered = false;
-  late AnimationController _controller;
-  late Animation<double> _translateAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _translateAnimation = Tween<double>(begin: 0, end: -2).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _handleHoverEnter(PointerEvent event) {
-    setState(() => _isHovered = true);
-    _controller.forward();
-  }
-
-  void _handleHoverExit(PointerEvent event) {
-    setState(() => _isHovered = false);
-    _controller.reverse();
-  }
-
-  @override
-  Widget build(BuildContext context) => MouseRegion(
-        onEnter: _handleHoverEnter,
-        onExit: _handleHoverExit,
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) => Transform.translate(
-            offset: Offset(0, _isHovered ? _translateAnimation.value : 0),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.35),
-                  width: 1.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.3),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          widget.icon,
-                          size: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          widget.value,
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.95),
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.3,
-                            height: 1.2,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    widget.label.toUpperCase(),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.95),
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.5,
-                      height: 1.2,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    widget.subtitle,
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.8),
-                      fontSize: 11,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
       );
 }

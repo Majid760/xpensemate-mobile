@@ -546,7 +546,7 @@ abstract class AppLocalizations {
   /// No description provided for @budgetGoalsEmptySubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Create your first budget goal to get started'**
+  /// **'Create a budget goal'**
   String get budgetGoalsEmptySubtitle;
 
   /// No description provided for @budgetGoalsAllLoaded.
@@ -1218,7 +1218,7 @@ abstract class AppLocalizations {
   /// Title for weekly insights section
   ///
   /// In en, this message translates to:
-  /// **'Weekly Insights'**
+  /// **'Weekly Financial Overview'**
   String get weeklyInsights;
 
   /// Label for the day with highest spending
@@ -1272,20 +1272,20 @@ abstract class AppLocalizations {
   /// Title for monthly insight section
   ///
   /// In en, this message translates to:
-  /// **'Monthly Insight'**
+  /// **'Monthly Insights'**
   String get monthlyInsight;
 
-  /// Title for quarterly insight section
+  /// Title for quarterly insights section
   ///
   /// In en, this message translates to:
-  /// **'Quarterly Insight'**
-  String get quarterInsight;
+  /// **'Quarterly Insights'**
+  String get quarterlyInsights;
 
-  /// Title for yearly insight section
+  /// Title for yearly insights section
   ///
   /// In en, this message translates to:
-  /// **'Yearly Insight'**
-  String get yearlyInsight;
+  /// **'Yearly Insights'**
+  String get yearlyInsights;
 
   /// Title for spending trend line chart
   ///
@@ -1446,7 +1446,7 @@ abstract class AppLocalizations {
   /// Message when no active budgets are available
   ///
   /// In en, this message translates to:
-  /// **'No active budgets'**
+  /// **'No goals'**
   String get noBudgetsActive;
 
   /// Button text to create a new budget
@@ -1464,13 +1464,13 @@ abstract class AppLocalizations {
   /// Label for remaining budget amount
   ///
   /// In en, this message translates to:
-  /// **'remaining'**
+  /// **'Remaining'**
   String get remaining;
 
   /// Label for spent amount
   ///
   /// In en, this message translates to:
-  /// **'spent'**
+  /// **'Spent'**
   String get spent;
 
   /// High priority label
@@ -1916,6 +1916,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add Payment'**
   String get addPayment;
+
+  /// No description provided for @editExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Expense'**
+  String get editExpense;
+
+  /// No description provided for @addCustomCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'+ Add Custom Category'**
+  String get addCustomCategory;
+
+  /// No description provided for @noBudgetGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'No Budget Goal'**
+  String get noBudgetGoal;
+
+  /// No description provided for @pleaseFillRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill out all required fields'**
+  String get pleaseFillRequired;
+
+  /// No description provided for @failedToLoadBudgets.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load budgets'**
+  String get failedToLoadBudgets;
+
+  /// No description provided for @noExpensesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Expense found!'**
+  String get noExpensesFound;
+
+  /// No description provided for @errorLoadingExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Error while loading expenses!'**
+  String get errorLoadingExpenses;
+
+  /// No description provided for @noMoreExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'No more expenses!'**
+  String get noMoreExpenses;
+
+  /// No description provided for @streak.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak'**
+  String get streak;
+
+  /// No description provided for @spendingVelocity.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending Velocity'**
+  String get spendingVelocity;
+
+  /// No description provided for @trackingStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracking Streak'**
+  String get trackingStreak;
+
+  /// No description provided for @consecutiveDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Consecutive days'**
+  String get consecutiveDays;
+
+  /// No description provided for @totalSpentSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Total spent in period'**
+  String get totalSpentSubtitle;
+
+  /// No description provided for @dailyAverageSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily average in period'**
+  String get dailyAverageSubtitle;
+
+  /// No description provided for @insights.
+  ///
+  /// In en, this message translates to:
+  /// **'Insights'**
+  String get insights;
+
+  /// No description provided for @doingGreat.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re doing great!'**
+  String get doingGreat;
+
+  /// No description provided for @budgetExceeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget exceeded'**
+  String get budgetExceeded;
+
+  /// No description provided for @mostActiveGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Active Goal'**
+  String get mostActiveGoal;
+
+  /// No description provided for @search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get search;
+
+  /// No description provided for @searchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search...'**
+  String get searchHint;
+
+  /// No description provided for @closeSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Close search'**
+  String get closeSearch;
+
+  /// Number of days a goal has been active
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day used} other{{count} days used}}'**
+  String daysUsed(int count);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

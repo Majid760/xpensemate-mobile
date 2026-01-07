@@ -391,17 +391,17 @@
   "@thisWeek": {
     "description": "Time period label for current week"
   },
-  "monthlyInsight": "Monthly Insight",
+  "monthlyInsight": "Monthly Insights",
   "@monthlyInsight": {
     "description": "Title for monthly insight section"
   },
-  "quarterInsight": "Quarterly Insight",
-  "@quarterInsight": {
-    "description": "Title for quarterly insight section"
+  "quarterlyInsights": "Quarterly Insights",
+  "@quarterlyInsights": {
+    "description": "Title for quarterly insights section"
   },
-  "yearlyInsight": "Yearly Insight",
-  "@yearlyInsight": {
-    "description": "Title for yearly insight section"
+  "yearlyInsights": "Yearly Insights",
+  "@yearlyInsights": {
+    "description": "Title for yearly insights section"
   },
   "spendingTrend": "Spending Trend",
   "@spendingTrend": {
@@ -719,5 +719,44 @@
   "payment": "Payment",
   "addExpense": "Add Expense",
   "addBudget": "Add Budget",
-  "addPayment": "Add Payment"
+  "addPayment": "Add Payment",
+  "editExpense": "Edit Expense",
+  "addCustomCategory": "+ Add Custom Category",
+  "noBudgetGoal": "No Budget Goal",
+  "pleaseFillRequired": "Please fill out all required fields",
+  "failedToLoadBudgets": "Failed to load budgets",
+  "noExpensesFound": "No Expense found!",
+  "errorLoadingExpenses": "Error while loading expenses!",
+  "noMoreExpenses": "No more expenses!",
+  "streak": "Streak",
+  "spendingVelocity": "Spending Velocity",
+  "trackingStreak": "Tracking Streak",
+  "consecutiveDays": "Consecutive days",
+  "totalSpentSubtitle": "Total spent in period",
+  "dailyAverageSubtitle": "Daily average in period",
+  "insights": "Insights",
+  "doingGreat": "You're doing great!",
+  "budgetExceeded": "Budget exceeded",
+  "mostActiveGoal": "Most Active Goal",
+  "balanceRemaining": "Balance Remaining",
+  "noBudgetsActive": "No goals",
+  "budgetGoalsEmptySubtitle": "Create a budget goal",
+  "budget": "Budget",
+  "spent": "Spent",
+  "remaining": "Remaining",
+  "overview": "Overview",
+  "weeklyInsights": "Weekly Financial Overview",
+  "search": "Search",
+  "searchHint": "Search...",
+  "closeSearch": "Close search",
+  "daysUsed": "{count, plural, =1{1 day used} other{{count} days used}}",
+  "@daysUsed": {
+    "description": "Number of days a goal has been active",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  }
 }

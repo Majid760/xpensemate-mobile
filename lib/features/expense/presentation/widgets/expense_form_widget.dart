@@ -5,6 +5,7 @@ import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/core/widget/custom_app_loader.dart';
@@ -208,7 +209,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
         });
         AppSnackBar.show(
           context: context,
-          message: 'Failed to load budgets: $error',
+          message: '${context.l10n.failedToLoadBudgets}: $error',
         );
       }
     }
@@ -228,7 +229,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
       );
       _form.control('budgetGoalId').value = matchingBudget.name;
     } on Exception catch (_) {
-      debugPrint(
+      AppLogger.e(
         'Warning: Budget with ID "$budgetGoalId" not found in budget list',
       );
       _form.control('budgetGoalId').value = 'NO_BUDGET';
@@ -280,7 +281,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
       if (!_form.valid) {
         AppSnackBar.show(
           context: context,
-          message: "Please fill out all required fields",
+          message: context.l10n.pleaseFillRequired,
           type: SnackBarType.error,
         );
         _form.markAllAsTouched();
@@ -324,7 +325,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
           // Otherwise, set a generic error
           _form
               .control('amount')
-              .setErrors({'pattern': 'Please enter a valid amount'});
+              .setErrors({'pattern': context.l10n.invalidAmount});
           return;
         }
       }
@@ -345,8 +346,8 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
           budgetGoalId = matchingBudget?.id;
         } on Exception catch (_) {
           // If no matching budget found, log warning and set to null
-          debugPrint(
-            'Warning: Selected budget "$selectedBudgetId" not found in budget list',
+          AppLogger.e(
+            'Selected budget "$selectedBudgetId" not found in budget list',
           );
           budgetGoalId = null;
         }
@@ -388,21 +389,21 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
 
   List<DropdownMenuItem<String>> _buildCategoryDropdownItems() {
     final items = <DropdownMenuItem<String>>[];
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
 
     // Add "Add Custom Category" option at the top
     items.add(
       DropdownMenuItem<String>(
         value: 'ADD_CUSTOM_CATEGORY',
         child: Container(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.md,
-            AppSpacing.sm,
-            AppSpacing.md,
+          padding: EdgeInsets.fromLTRB(
+            context.md,
+            context.sm,
+            context.md,
             0,
           ),
           child: Text(
-            '+ Add Custom Category',
+            context.l10n.addCustomCategory,
             style: TextStyle(
               color: colorScheme.primary,
               fontWeight: FontWeight.bold,
@@ -430,9 +431,9 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
             (category) => DropdownMenuItem<String>(
               value: category,
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                  vertical: AppSpacing.xs,
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.md,
+                  vertical: context.xs,
                 ),
                 child: Text(
                   category,
@@ -451,7 +452,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
 
   List<DropdownMenuItem<String>> _buildBudgetDropdownItems() {
     final items = <DropdownMenuItem<String>>[];
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
 
     // Add "No Budget" option
     items.add(
@@ -459,12 +460,12 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
         value:
             'NO_BUDGET', // Use a special value instead of null for better handling
         child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
+          padding: EdgeInsets.symmetric(
+            horizontal: context.md,
+            vertical: context.sm,
           ),
           child: Text(
-            'No Budget Goal',
+            context.l10n.noBudgetGoal,
             style: context.textTheme.bodyMedium,
           ),
         ),
@@ -478,9 +479,9 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
           (budget) => DropdownMenuItem<String>(
             value: budget.name, // Display value is the budget name
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.sm,
+              padding: EdgeInsets.symmetric(
+                horizontal: context.md,
+                vertical: context.sm,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -494,7 +495,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
                     ),
                   ),
                   if (budget.detail.isNotEmpty) ...[
-                    const SizedBox(height: AppSpacing.xs),
+                    SizedBox(height: context.xs),
                     Text(
                       budget.detail,
                       style: TextStyle(
@@ -517,16 +518,16 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
   }
 
   List<DropdownMenuItem<String>> _buildPaymentMethodDropdownItems() {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
 
     return _paymentMethods
         .map(
           (method) => DropdownMenuItem<String>(
             value: method,
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.md,
+              padding: EdgeInsets.symmetric(
+                horizontal: context.md,
+                vertical: context.md,
               ),
               child: Text(
                 method,

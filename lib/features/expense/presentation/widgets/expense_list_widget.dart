@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/widget/custom_app_loader.dart';
 import 'package:xpensemate/core/widget/error_state_widget.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/no_more_widget.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
 import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
 import 'package:xpensemate/features/expense/presentation/widgets/expense_card_widget.dart';
-import 'package:xpensemate/core/widget/custom_app_loader.dart';
 
 class ExpenseListWidget extends StatefulWidget {
   const ExpenseListWidget({
@@ -57,7 +59,7 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget> {
             animateTransitions: true,
             transitionDuration: const Duration(milliseconds: 400),
             itemBuilder: (context, expense, index) => Padding(
-              padding: const EdgeInsets.only(bottom: 4),
+              padding: EdgeInsets.only(bottom: context.xs),
               child: ExpenseCardWidget(
                 key: ValueKey(expense.id),
                 shouldAnimate: _shouldAnimate,
@@ -68,21 +70,21 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget> {
             ),
             noItemsFoundIndicatorBuilder: (context) => ErrorStateSectionWidget(
               onRetry: () => context.expenseCubit.pagingController.refresh(),
-              errorMsg: 'No Expense found!',
+              errorMsg: context.l10n.noExpensesFound,
             ),
-            firstPageProgressIndicatorBuilder: (_) => const Padding(
-              padding: EdgeInsets.all(16),
-              child: Center(child: CustomAppLoader()),
+            firstPageProgressIndicatorBuilder: (_) => Padding(
+              padding: EdgeInsets.all(context.md),
+              child: const Center(child: CustomAppLoader()),
             ),
-            newPageProgressIndicatorBuilder: (_) => const Center(
+            newPageProgressIndicatorBuilder: (_) => Center(
               child: Padding(
-                padding: EdgeInsets.all(16),
-                child: CustomAppLoader(),
+                padding: EdgeInsets.all(context.md),
+                child: const CustomAppLoader(),
               ),
             ),
             firstPageErrorIndicatorBuilder: (_) => ErrorStateSectionWidget(
               errorMsg: (context.expenseCubit.pagingController.error ??
-                      'Error while loading expenses!')
+                      context.l10n.errorLoadingExpenses)
                   .toString(),
               onRetry: context.expenseCubit.pagingController.refresh,
             ),
@@ -90,12 +92,12 @@ class _ExpenseListWidgetState extends State<ExpenseListWidget> {
               onRetry: () =>
                   context.expenseCubit.pagingController.fetchNextPage(),
               errorMsg: (context.expenseCubit.pagingController.error ??
-                      'Error while loading expenses!')
+                      context.l10n.errorLoadingExpenses)
                   .toString(),
             ),
-            noMoreItemsIndicatorBuilder: (_) => const Padding(
-              padding: EdgeInsets.only(top: 32),
-              child: AllCaughtUpWidget(title: 'No more expenses!'),
+            noMoreItemsIndicatorBuilder: (_) => Padding(
+              padding: EdgeInsets.only(top: context.xl),
+              child: AllCaughtUpWidget(title: context.l10n.noMoreExpenses),
             ),
           ),
         ),

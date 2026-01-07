@@ -234,7 +234,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get budgetGoalsEmptyTitle => 'No budget goals yet';
 
   @override
-  String get budgetGoalsEmptySubtitle => 'Create your first budget goal to get started';
+  String get budgetGoalsEmptySubtitle => 'Create a budget goal';
 
   @override
   String get budgetGoalsAllLoaded => 'All budget goals loaded';
@@ -594,7 +594,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get weeklyFinancialOverview => 'Weekly Financial Overview';
 
   @override
-  String get weeklyInsights => 'Weekly Insights';
+  String get weeklyInsights => 'Weekly Financial Overview';
 
   @override
   String get highestDay => 'Highest Day';
@@ -621,13 +621,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get thisWeek => 'this week';
 
   @override
-  String get monthlyInsight => 'Monthly Insight';
+  String get monthlyInsight => 'Monthly Insights';
 
   @override
-  String get quarterInsight => 'Quarterly Insight';
+  String get quarterlyInsights => 'Quarterly Insights';
 
   @override
-  String get yearlyInsight => 'Yearly Insight';
+  String get yearlyInsights => 'Yearly Insights';
 
   @override
   String get spendingTrend => 'Spending Trend';
@@ -708,7 +708,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get activeBudgets => 'Active Budgets';
 
   @override
-  String get noBudgetsActive => 'No active budgets';
+  String get noBudgetsActive => 'No goals';
 
   @override
   String get createBudget => 'Create Budget';
@@ -717,10 +717,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get budgetProgress => 'Budget Progress';
 
   @override
-  String get remaining => 'remaining';
+  String get remaining => 'Remaining';
 
   @override
-  String get spent => 'spent';
+  String get spent => 'Spent';
 
   @override
   String get highPriority => 'High';
@@ -945,4 +945,78 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addPayment => 'Add Payment';
+
+  @override
+  String get editExpense => 'Edit Expense';
+
+  @override
+  String get addCustomCategory => '+ Add Custom Category';
+
+  @override
+  String get noBudgetGoal => 'No Budget Goal';
+
+  @override
+  String get pleaseFillRequired => 'Please fill out all required fields';
+
+  @override
+  String get failedToLoadBudgets => 'Failed to load budgets';
+
+  @override
+  String get noExpensesFound => 'No Expense found!';
+
+  @override
+  String get errorLoadingExpenses => 'Error while loading expenses!';
+
+  @override
+  String get noMoreExpenses => 'No more expenses!';
+
+  @override
+  String get streak => 'Streak';
+
+  @override
+  String get spendingVelocity => 'Spending Velocity';
+
+  @override
+  String get trackingStreak => 'Tracking Streak';
+
+  @override
+  String get consecutiveDays => 'Consecutive days';
+
+  @override
+  String get totalSpentSubtitle => 'Total spent in period';
+
+  @override
+  String get dailyAverageSubtitle => 'Daily average in period';
+
+  @override
+  String get insights => 'Insights';
+
+  @override
+  String get doingGreat => 'You\'re doing great!';
+
+  @override
+  String get budgetExceeded => 'Budget exceeded';
+
+  @override
+  String get mostActiveGoal => 'Most Active Goal';
+
+  @override
+  String get search => 'Search';
+
+  @override
+  String get searchHint => 'Search...';
+
+  @override
+  String get closeSearch => 'Close search';
+
+  @override
+  String daysUsed(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days used',
+      one: '1 day used',
+    );
+    return '$_temp0';
+  }
 }

@@ -25,7 +25,7 @@ class CustomAppBar extends StatelessWidget {
               gradient: LinearGradient(
                 colors: [
                   context.primaryColor,
-                  context.colorScheme.secondary,
+                  context.colorScheme.tertiary,
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -180,7 +180,7 @@ class _FilterDropdownSheetViewState extends State<FilterDropdownSheetView> {
                       ? LinearGradient(
                           colors: [
                             context.primaryColor,
-                            context.colorScheme.secondary,
+                            context.colorScheme.tertiary,
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,

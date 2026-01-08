@@ -498,13 +498,12 @@ class _ArcActionButton extends StatelessWidget {
 
 /* ---------- curved painter ---------- */
 class CurvedBottomBarPainter extends CustomPainter {
-  final Color color;
-  final Color shadowColor;
-
   CurvedBottomBarPainter({
     required this.color,
     required this.shadowColor,
   });
+  final Color color;
+  final Color shadowColor;
 
   @override
   void paint(Canvas canvas, Size size) {

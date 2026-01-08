@@ -59,7 +59,7 @@ abstract class AppDarkColors {
   static const Color onErrorContainer = Color(0xFFFFDAD6);
 
   // Outline
-  static const Color outline = Color(0xFF938F99);
+  static const Color outline = Color.fromARGB(255, 179, 140, 238);
   static const Color outlineVariant = Color(0xFF49454F);
 
   // Additional semantic colors

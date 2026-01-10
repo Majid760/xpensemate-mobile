@@ -95,7 +95,8 @@ class MyApp extends StatelessWidget {
           builder: (context) {
             final authCubit = context.read<AuthCubit>();
             return BlocSelector<ProfileCubit, ProfileState, ThemeMode>(
-              selector: (state) => state.themeMode,
+              selector: (state) =>
+                  state is ProfileLoaded ? state.themeMode : ThemeMode.system,
               builder: (context, themeMode) => GestureDetector(
                 onTap: AppUtils.unFocus,
                 child: MaterialApp.router(

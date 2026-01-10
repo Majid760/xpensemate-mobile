@@ -33,32 +33,36 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<Either<Failure, String?>> updateProfileImage({
     required File imageFile,
   }) async {
-    final formData = FormData();
-    final fileName = path.basename(imageFile.path);
-    // Set appropriate content type based on file extension
-    final fileExtension = path.extension(fileName).toLowerCase();
-    final contentType = _getContentTypeFromExtension(fileExtension);
-    final multipartFile = await MultipartFile.fromFile(
-      imageFile.path,
-      filename: fileName,
-      contentType: contentType,
-    );
-    formData.files.add(MapEntry('photo', multipartFile));
-    final response = await _client.post(
-      NetworkConfigs
-          .updateProfilePhoto, // Use /settings/upload-profile endpoint
-      data: formData,
-      fromJson: (Map<String, dynamic> json) => json, // Return raw JSON,
-      options: Options(
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      ),
-    );
-    return response.fold(
-      (failure) async => Left(failure),
-      (json) async => Right(json['url'] as String?),
-    );
+    try {
+      final formData = FormData();
+      final fileName = path.basename(imageFile.path);
+      // Set appropriate content type based on file extension
+      final fileExtension = path.extension(fileName).toLowerCase();
+      final contentType = _getContentTypeFromExtension(fileExtension);
+      final multipartFile = await MultipartFile.fromFile(
+        imageFile.path,
+        filename: fileName,
+        contentType: contentType,
+      );
+      formData.files.add(MapEntry('photo', multipartFile));
+      final response = await _client.post(
+        NetworkConfigs
+            .updateProfilePhoto, // Use /settings/upload-profile endpoint
+        data: formData,
+        fromJson: (Map<String, dynamic> json) => json, // Return raw JSON,
+        options: Options(
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        ),
+      );
+      return response.fold(
+        (failure) async => Left(failure),
+        (json) async => Right(json['url'] as String?),
+      );
+    } on Exception catch (e) {
+      return Left(e.toFailure());
+    }
   }
 
 // Helper method - can be placed at the top of your class or in a utils file

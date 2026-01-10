@@ -40,7 +40,8 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
   void initState() {
     super.initState();
     final profileCubit = context.profileCubit;
-    final user = profileCubit.state.user;
+    final state = profileCubit.state;
+    final user = state is ProfileLoaded ? state.user : null;
 
     // Parse date from string if available
     DateTime? parsedDate;
@@ -267,147 +268,157 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
   }
 
   @override
-  Widget build(BuildContext context) =>
-      BlocConsumer<ProfileCubit, ProfileState>(
-        listener: (context, state) {
-          if (state.status == ProfileStatus.error &&
-              state.message != null &&
-              state.message!.isNotEmpty) {
-            AppSnackBar.show(
-              context: context,
-              message: state.message!,
-              type: SnackBarType.error,
-            );
-          }
-          if (state.status == ProfileStatus.loaded &&
-              (state.message?.isNotEmpty ?? false)) {
-            AppSnackBar.show(
-              context: context,
-              message: context.l10n.profileUpdatedSuccessfully,
-              type: SnackBarType.success,
-            );
-            Navigator.pop(context);
-          }
-        },
-        builder: (context, state) => FadeTransition(
-          opacity: _fadeAnimation,
-          child: SlideTransition(
-            position: _slideAnimation,
-            child: ReactiveForm(
-              formGroup: _form,
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  children: [
-                    Center(
-                      child: ProfileImageWidget(
-                        imageFile: state.imageFile,
-                        imageUrl:
-                            context.profileCubit.state.user?.profilePhotoUrl,
-                        onImageTap: () {
-                          AppDialogs.showImagePicker(
-                            context: context,
-                            onImageSelected: (file) {
-                              if (file != null) {
-                                context.profileCubit.setImageFile(file);
-                              }
+  Widget build(BuildContext context) => MultiBlocListener(
+        listeners: [
+          BlocListener<ProfileCubit, ProfileState>(
+            listenWhen: (previous, current) =>
+                current is ProfileError || current is ProfileLoaded,
+            listener: (context, state) {
+              if (state is ProfileError) {
+                AppSnackBar.show(
+                  context: context,
+                  message: state.message,
+                  type: SnackBarType.error,
+                );
+              } else if (state is ProfileLoaded && state.message != null) {
+                AppSnackBar.show(
+                  context: context,
+                  message: state.message!,
+                  type: SnackBarType.success,
+                );
+                Navigator.pop(context);
+              }
+            },
+          ),
+        ],
+        child: BlocBuilder<ProfileCubit, ProfileState>(
+          buildWhen: (previous, current) =>
+              current is ProfileLoaded || current is ProfileLoading,
+          builder: (context, state) {
+            final loadedState = state is ProfileLoaded ? state : null;
+
+            return FadeTransition(
+              opacity: _fadeAnimation,
+              child: SlideTransition(
+                position: _slideAnimation,
+                child: ReactiveForm(
+                  formGroup: _form,
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      children: [
+                        Center(
+                          child: ProfileImageWidget(
+                            imageFile: loadedState?.imageFile,
+                            imageUrl: loadedState?.user.profilePhotoUrl,
+                            onImageTap: () {
+                              AppDialogs.showImagePicker(
+                                context: context,
+                                onImageSelected: (file) {
+                                  if (file != null) {
+                                    context.profileCubit.setImageFile(file);
+                                  }
+                                },
+                              );
                             },
-                          );
-                        },
-                      ),
+                          ),
+                        ),
+                        SizedBox(height: context.xl),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: context.md),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ReactiveAppField(
+                                formControlName: 'name',
+                                labelText: context.l10n.fullName,
+                                hintText: context.l10n.hintName,
+                                prefixIcon: const Icon(
+                                  Icons.person_outline_rounded,
+                                  size: 20,
+                                ),
+                                validationMessages: {
+                                  'required': (error) =>
+                                      context.l10n.nameIsRequired,
+                                  'minLength': (error) =>
+                                      context.l10n.nameMustBeAtLeast4Characters,
+                                },
+                              ),
+                              SizedBox(height: context.lg),
+                              ReactiveAppField(
+                                formControlName: 'contactNumber',
+                                labelText: context.l10n.phoneNumber,
+                                fieldType: FieldType.phone,
+                                hintText: context.l10n.enterPhoneNumber,
+                                prefixIcon:
+                                    const Icon(Icons.phone_outlined, size: 20),
+                                validationMessages: {
+                                  'phoneValidation': (error) => context
+                                      .l10n.phoneNumberMustBeAtLeast10Digits,
+                                },
+                              ),
+                              SizedBox(height: context.lg),
+                              ReactiveAppField(
+                                formControlName: 'dob',
+                                labelText: context.l10n.dateOfBirth,
+                                hintText: context.l10n.selectDateOfBirth,
+                                readOnly: true,
+                                onTap: _selectDate,
+                                prefixIcon: const Icon(
+                                  Icons.calendar_today_rounded,
+                                  size: 20,
+                                ),
+                                validationMessages: {
+                                  'required': (error) =>
+                                      'Date of birth is required',
+                                },
+                              ),
+                              SizedBox(height: context.lg),
+                              ReactiveAppField(
+                                formControlName: 'gender',
+                                labelText: context.l10n.gender,
+                                fieldType: FieldType.dropdown,
+                                hintText: context.l10n.selectGender,
+                                prefixIcon: const Icon(Icons.person_4_rounded,
+                                    size: 20),
+                                onDropdownChanged: (value) {
+                                  HapticFeedback.selectionClick();
+                                },
+                              ),
+                              SizedBox(height: context.lg),
+                              ReactiveAppField(
+                                formControlName: 'about',
+                                labelText: context.l10n.about,
+                                fieldType: FieldType.textarea,
+                                hintText: context.l10n.enterYourBio,
+                                maxLines: 3,
+                                maxLength: 150,
+                                fillColor: context
+                                    .colorScheme.surfaceContainerHighest
+                                    .withValues(alpha: 0.7),
+                              ),
+                              SizedBox(height: context.xl),
+                              AppButton.primary(
+                                text: context.l10n.save,
+                                isLoading: loadedState?.isUpdating ?? false,
+                                textStyle:
+                                    context.textTheme.titleMedium?.copyWith(
+                                  color: context.colorScheme.onPrimary,
+                                ),
+                                onPressed: () =>
+                                    _handleSave(context.profileCubit),
+                              ),
+                              SizedBox(height: context.md),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(height: context.xl),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: context.md),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ReactiveAppField(
-                            formControlName: 'name',
-                            labelText: context.l10n.fullName,
-                            hintText: context.l10n.hintName,
-                            prefixIcon: const Icon(
-                              Icons.person_outline_rounded,
-                              size: 20,
-                            ),
-                            validationMessages: {
-                              'required': (error) =>
-                                  context.l10n.nameIsRequired,
-                              'minLength': (error) =>
-                                  context.l10n.nameMustBeAtLeast4Characters,
-                            },
-                          ),
-                          SizedBox(height: context.lg),
-                          ReactiveAppField(
-                            formControlName: 'contactNumber',
-                            labelText: context.l10n.phoneNumber,
-                            fieldType: FieldType.phone,
-                            hintText: context.l10n.enterPhoneNumber,
-                            prefixIcon:
-                                const Icon(Icons.phone_outlined, size: 20),
-                            validationMessages: {
-                              'phoneValidation': (error) =>
-                                  context.l10n.phoneNumberMustBeAtLeast10Digits,
-                            },
-                          ),
-                          SizedBox(height: context.lg),
-                          ReactiveAppField(
-                            formControlName: 'dob',
-                            labelText: context.l10n.dateOfBirth,
-                            hintText: context.l10n.selectDateOfBirth,
-                            readOnly: true,
-                            onTap: _selectDate,
-                            prefixIcon: const Icon(
-                              Icons.calendar_today_rounded,
-                              size: 20,
-                            ),
-                            validationMessages: {
-                              'required': (error) =>
-                                  'Date of birth is required',
-                            },
-                          ),
-                          SizedBox(height: context.lg),
-                          ReactiveAppField(
-                            formControlName: 'gender',
-                            labelText: context.l10n.gender,
-                            fieldType: FieldType.dropdown,
-                            hintText: context.l10n.selectGender,
-                            prefixIcon:
-                                const Icon(Icons.person_4_rounded, size: 20),
-                            onDropdownChanged: (value) {
-                              HapticFeedback.selectionClick();
-                            },
-                          ),
-                          SizedBox(height: context.lg),
-                          ReactiveAppField(
-                            formControlName: 'about',
-                            labelText: context.l10n.about,
-                            fieldType: FieldType.textarea,
-                            hintText: context.l10n.enterYourBio,
-                            maxLines: 3,
-                            maxLength: 150,
-                            fillColor: context
-                                .colorScheme.surfaceContainerHighest
-                                .withValues(alpha: 0.7),
-                          ),
-                          SizedBox(height: context.xl),
-                          AppButton.primary(
-                            text: context.l10n.save,
-                            isLoading: state.isUpdating,
-                            textStyle: context.textTheme.titleMedium?.copyWith(
-                              color: context.colorScheme.onPrimary,
-                            ),
-                            onPressed: () => _handleSave(context.profileCubit),
-                          ),
-                          SizedBox(height: context.md),
-                        ],
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       );
 }

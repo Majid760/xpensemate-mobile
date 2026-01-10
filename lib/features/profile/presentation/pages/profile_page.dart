@@ -9,6 +9,7 @@ import 'package:xpensemate/core/route/utils/router_extension.dart';
 import 'package:xpensemate/core/service/permission_service.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/widget/app_button.dart';
 import 'package:xpensemate/core/widget/app_custom_dialog.dart';
 import 'package:xpensemate/core/widget/app_dialogs.dart';
 import 'package:xpensemate/core/widget/app_image.dart';
@@ -105,121 +106,168 @@ class _ProfilePageState extends State<ProfilePage>
 
   @override
   Widget build(BuildContext context) =>
-      BlocConsumer<ProfileCubit, ProfileState>(
+      BlocListener<ProfileCubit, ProfileState>(
         listener: (context, state) {
-          if (state.status == ProfileStatus.error && state.message != null) {
+          if (state is ProfileError) {
+            AppSnackBar.show(
+              context: context,
+              message: state.message,
+              type: SnackBarType.error,
+            );
+          } else if (state is ProfileLoaded && state.message != null) {
             AppSnackBar.show(
               context: context,
               message: state.message!,
-              type: SnackBarType.error,
+              type: state.message == 'updated'
+                  ? SnackBarType.success
+                  : SnackBarType.info,
             );
+            context.profileCubit.clearError();
           }
         },
-        builder: (context, profileState) => Scaffold(
-          backgroundColor: context.colorScheme.surface,
-          body: DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  context.colorScheme.primary,
-                  context.colorScheme.secondary,
-                  context.colorScheme.tertiary,
-                ],
-                stops: const [0.0, 0.5, 1.0],
-              ),
-            ),
-            child: CustomScrollView(
-              controller: _scrollController,
-              physics: const BouncingScrollPhysics(),
-              slivers: [
-                SliverAppBar(
-                  expandedHeight: 250,
-                  pinned: true,
-                  elevation: 0,
-                  backgroundColor: Colors.transparent,
-                  centerTitle: true,
-                  title: _AppBarTitle(
-                    displayName: context.profileCubit.displayName,
-                    progress: _titleProgress,
+        child: BlocBuilder<ProfileCubit, ProfileState>(
+          buildWhen: (previous, current) =>
+              current is ProfileLoaded ||
+              current is ProfileLoading ||
+              current is ProfileError,
+          builder: (context, state) {
+            if (state is ProfileLoading) {
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (state is ProfileError) {
+              return Scaffold(
+                body: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(state.message),
+                      SizedBox(height: context.md),
+                      AppButton.primary(
+                        text: 'Retry',
+                        onPressed: () => context.profileCubit.updateProfile({}),
+                      ),
+                    ],
                   ),
-                  leading: Padding(
-                    padding: EdgeInsets.only(left: context.md),
-                    child: GestureDetector(
-                      onTap: widget.onBackTap,
-                      child: Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        color: context.colorScheme.onPrimary,
+                ),
+              );
+            }
+
+            if (state is! ProfileLoaded) {
+              return const Scaffold(
+                body: Center(child: Text('User session not found')),
+              );
+            }
+
+            final profileState = state;
+            return Scaffold(
+              backgroundColor: context.colorScheme.surface,
+              body: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      context.colorScheme.primary,
+                      context.colorScheme.secondary,
+                      context.colorScheme.tertiary,
+                    ],
+                    stops: const [0.0, 0.5, 1.0],
+                  ),
+                ),
+                child: CustomScrollView(
+                  controller: _scrollController,
+                  physics: const BouncingScrollPhysics(),
+                  slivers: [
+                    SliverAppBar(
+                      expandedHeight: 250,
+                      pinned: true,
+                      elevation: 0,
+                      backgroundColor: Colors.transparent,
+                      centerTitle: true,
+                      title: _AppBarTitle(
+                        displayName: profileState.displayName,
+                        progress: _titleProgress,
+                      ),
+                      leading: Padding(
+                        padding: EdgeInsets.only(left: context.md),
+                        child: GestureDetector(
+                          onTap: widget.onBackTap,
+                          child: Icon(
+                            Icons.arrow_back_ios_new_rounded,
+                            color: context.colorScheme.onPrimary,
+                          ),
+                        ),
+                      ),
+                      actions: [
+                        Padding(
+                          padding: EdgeInsets.only(right: context.md),
+                          child: _AppBarActions(
+                            progress: _titleProgress,
+                            profileState: profileState,
+                            onEditTap: () => showEditProfile(context),
+                          ),
+                        ),
+                      ],
+                      flexibleSpace: _FlexibleSpace(
+                        profileState: profileState,
+                        fadeAnimation: _fadeAnimation,
+                        slideAnimation: _slideAnimation,
+                        titleProgress: _titleProgress,
+                        onCameraTap: () => _handleImagePicker(context),
                       ),
                     ),
-                  ),
-                  actions: [
-                    Padding(
-                      padding: EdgeInsets.only(right: context.md),
-                      child: _AppBarActions(
-                        progress: _titleProgress,
-                        profileState: profileState,
-                        onEditTap: () => showEditProfile(
-                          context,
+                    SliverToBoxAdapter(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: context.colorScheme.surface,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(32),
+                            topRight: Radius.circular(32),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: context.colorScheme.shadow
+                                  .withValues(alpha: 0.1),
+                              blurRadius: 20,
+                              offset: const Offset(0, -5),
+                            ),
+                          ],
+                        ),
+                        child: FadeTransition(
+                          opacity: _fadeAnimation,
+                          child: SlideTransition(
+                            position: _slideAnimation,
+                            child: ModernContent(
+                              profileState: profileState,
+                              onLogoutTap: () => AppCustomDialogs.showLogout(
+                                context: context,
+                                onConfirm: () async {
+                                  await context.authCubit.signOut();
+                                  if (context.mounted) context.goToLogin();
+                                },
+                              ),
+                              onComingSoon: (str) => showEditProfile(context),
+                              isDarkMode:
+                                  profileState.themeMode == ThemeMode.dark,
+                              onThemeChanged: (bool value) {
+                                context
+                                    .read<ProfileCubit>()
+                                    .toggleTheme(isDark: value);
+                                HapticFeedback.selectionClick();
+                              },
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ],
-                  flexibleSpace: _FlexibleSpace(
-                    profileState: profileState,
-                    fadeAnimation: _fadeAnimation,
-                    slideAnimation: _slideAnimation,
-                    titleProgress: _titleProgress,
-                    onCameraTap: () => _handleImagePicker(context),
-                  ),
                 ),
-                SliverToBoxAdapter(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: context.colorScheme.surface,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(32),
-                        topRight: Radius.circular(32),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color:
-                              context.colorScheme.shadow.withValues(alpha: 0.1),
-                          blurRadius: 20,
-                          offset: const Offset(0, -5),
-                        ),
-                      ],
-                    ),
-                    child: FadeTransition(
-                      opacity: _fadeAnimation,
-                      child: SlideTransition(
-                        position: _slideAnimation,
-                        child: ModernContent(
-                          profileState: profileState,
-                          onLogoutTap: () => AppCustomDialogs.showLogout(
-                            context: context,
-                            onConfirm: () async {
-                              await context.authCubit.signOut();
-                              if (context.mounted) context.goToLogin();
-                            },
-                          ),
-                          onComingSoon: (str) => showEditProfile(context),
-                          isDarkMode: profileState.themeMode == ThemeMode.dark,
-                          onThemeChanged: (bool value) {
-                            context
-                                .read<ProfileCubit>()
-                                .toggleTheme(isDark: value);
-                            HapticFeedback.selectionClick();
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       );
 
@@ -425,7 +473,8 @@ class _FloatingProfileImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayName = context.profileCubit.displayName;
+    if (profileState is! ProfileLoaded) return const SizedBox.shrink();
+    final loadedState = profileState as ProfileLoaded;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -433,14 +482,14 @@ class _FloatingProfileImage extends StatelessWidget {
         Stack(
           children: [
             ProfileImageWidget(
-              imageUrl: context.profileCubit.state.user?.profilePhotoUrl,
+              imageUrl: loadedState.user.profilePhotoUrl,
               showEditButton: false,
             ),
           ],
         ),
         SizedBox(height: context.sm),
         Text(
-          displayName,
+          loadedState.displayName,
           textAlign: TextAlign.center,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -461,58 +510,63 @@ class _CompactProfileImage extends StatelessWidget {
   final ProfileState profileState;
 
   @override
-  Widget build(BuildContext context) => Container(
-        padding: EdgeInsets.all(context.xs),
-        decoration: BoxDecoration(
-          color: context.colorScheme.onPrimary.withValues(alpha: 0.2),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: context.colorScheme.onPrimary.withValues(alpha: 0.3),
-            width: 1.5,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: context.colorScheme.shadow.withValues(alpha: 0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+  Widget build(BuildContext context) {
+    if (profileState is! ProfileLoaded) return const SizedBox.shrink();
+    final loadedState = profileState as ProfileLoaded;
+
+    return Container(
+      padding: EdgeInsets.all(context.xs),
+      decoration: BoxDecoration(
+        color: context.colorScheme.onPrimary.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: context.colorScheme.onPrimary.withValues(alpha: 0.3),
+          width: 1.5,
         ),
-        child: Container(
-          width: 32,
-          height: 32,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                context.colorScheme.primary,
-                context.colorScheme.secondary,
-                context.colorScheme.tertiary,
-              ],
-            ),
+        boxShadow: [
+          BoxShadow(
+            color: context.colorScheme.shadow.withValues(alpha: 0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(1.5),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
+        ],
+      ),
+      child: Container(
+        width: 32,
+        height: 32,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              context.colorScheme.primary,
+              context.colorScheme.secondary,
+              context.colorScheme.tertiary,
+            ],
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(1.5),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.5),
+              color: context.colorScheme.onPrimary,
+            ),
+            child: Hero(
+              tag: 'profilePic',
+              child: ClipRRect(
                 borderRadius: BorderRadius.circular(8.5),
-                color: context.colorScheme.onPrimary,
-              ),
-              child: Hero(
-                tag: 'profilePic',
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8.5),
-                  child: AppImage.network(
-                    profileState.user?.profilePhotoUrl ?? '',
-                  ),
+                child: AppImage.network(
+                  loadedState.user.profilePhotoUrl ?? '',
                 ),
               ),
             ),
           ),
         ),
-      );
+      ),
+    );
+  }
 }
 
 class ThemeToggle extends StatelessWidget {

@@ -31,7 +31,7 @@ class ModernContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (profileState.status == ProfileStatus.loading) {
+    if (profileState is ProfileLoading) {
       return const Center(
         child: Padding(
           padding: EdgeInsets.all(32),
@@ -40,7 +40,7 @@ class ModernContent extends StatelessWidget {
       );
     }
 
-    if (profileState.user == null) {
+    if (profileState is! ProfileLoaded) {
       return Center(
         child: Padding(
           padding: EdgeInsets.all(context.xl),
@@ -58,8 +58,7 @@ class ModernContent extends StatelessWidget {
               ),
               SizedBox(height: context.md),
               ElevatedButton(
-                onPressed: () {},
-                // onPressed: () => context.profileCubit.refreshProfile(),
+                onPressed: () => context.profileCubit.updateProfile({}),
                 child: const Text('Retry'),
               ),
             ],
@@ -218,7 +217,9 @@ class _UserInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = profileState.user!;
+    if (profileState is! ProfileLoaded) return const SizedBox.shrink();
+    final loadedState = profileState as ProfileLoaded;
+    final user = loadedState.user;
 
     return Container(
       padding: EdgeInsets.symmetric(vertical: context.lg),
@@ -258,8 +259,10 @@ class UserInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = profileState.user!;
-    final displayName = context.profileCubit.displayName;
+    if (profileState is! ProfileLoaded) return const SizedBox.shrink();
+    final loadedState = profileState as ProfileLoaded;
+    final user = loadedState.user;
+    final displayName = loadedState.displayName;
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: context.lg),
@@ -295,7 +298,7 @@ class UserInfoCard extends StatelessWidget {
               ),
             ),
           ),
-          if (!profileState.isProfileComplete) ...[
+          if (!loadedState.isProfileComplete) ...[
             SizedBox(height: context.md),
             Container(
               padding: EdgeInsets.symmetric(

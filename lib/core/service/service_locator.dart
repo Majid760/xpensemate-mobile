@@ -63,7 +63,9 @@ import 'package:xpensemate/features/payment/presentation/cubit/payment_cubit.dar
 import 'package:xpensemate/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:xpensemate/features/profile/data/repositories/profile_repository_impl.dart';
 import 'package:xpensemate/features/profile/domain/repositories/profile_repository.dart';
+import 'package:xpensemate/features/profile/domain/usecases/get_theme_usecase.dart';
 import 'package:xpensemate/features/profile/domain/usecases/profile_use_cases_holder.dart';
+import 'package:xpensemate/features/profile/domain/usecases/save_theme_usecase.dart';
 import 'package:xpensemate/features/profile/domain/usecases/update_profile_image_usecase.dart';
 import 'package:xpensemate/features/profile/domain/usecases/update_profile_usecase.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
@@ -174,7 +176,7 @@ Future<void> initLocator() async {
     );
 
     sl.registerLazySingleton<ProfileRepository>(
-      () => ProfileRepositoryImpl(sl(), sl()),
+      () => ProfileRepositoryImpl(sl(), sl(), sl()),
     );
     sl.registerLazySingleton<DashboardRepository>(
       () => DashboardRepositoryImpl(sl()),
@@ -200,6 +202,8 @@ Future<void> initLocator() async {
     sl.registerLazySingleton(() => SendVerificationEmailUseCase(sl()));
     sl.registerLazySingleton(() => UpdateProfileUseCase(sl()));
     sl.registerLazySingleton(() => UpdateProfileImageUseCase(sl()));
+    sl.registerLazySingleton(() => GetThemeUseCase(sl()));
+    sl.registerLazySingleton(() => SaveThemeUseCase(sl()));
     // dashboard use cases
     sl.registerLazySingleton(() => GetWeeklyStatsUseCase(sl()));
     sl.registerLazySingleton(() => GetBudgetsUseCase(sl()));
@@ -248,12 +252,13 @@ Future<void> initLocator() async {
       () => ProfileUseCasesHolder(
         updateProfileUseCase: sl(),
         updateProfileImageUseCase: sl(),
+        getThemeUseCase: sl(),
+        saveThemeUseCase: sl(),
       ),
     );
     sl.registerFactory(() => AuthCubit(sl()));
     sl.registerFactory(
       () => ProfileCubit(
-        sl(),
         sl(),
         sl(),
       ),

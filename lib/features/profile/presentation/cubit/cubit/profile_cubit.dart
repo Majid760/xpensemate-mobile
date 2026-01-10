@@ -2,18 +2,19 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/service/storage_service.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
-
 import 'package:xpensemate/features/auth/domain/entities/user.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:xpensemate/features/auth/presentation/cubit/auth_state.dart';
+import 'package:xpensemate/features/profile/domain/usecases/profile_use_cases_holder.dart';
 import 'package:xpensemate/features/profile/domain/usecases/update_profile_image_usecase.dart';
 import 'package:xpensemate/features/profile/domain/usecases/update_profile_usecase.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
-  ProfileCubit(this._authCubit, this._storageService)
+  ProfileCubit(
+      this._authCubit, this._storageService, this._profileUseCasesHolder)
       : super(const ProfileState()) {
     AppLogger.breadcrumb('Initializing ProfileCubit...');
     _initializeProfile();
@@ -21,13 +22,16 @@ class ProfileCubit extends Cubit<ProfileState> {
     _loadTheme();
   }
 
+  final ProfileUseCasesHolder _profileUseCasesHolder;
   final AuthCubit _authCubit;
   final StorageService _storageService;
   static const String _themeStorageKey = 'app_theme_mode';
 
   /// Initialize profile with current user data from AuthCubit
   void _initializeProfile() {
-    final currentUser = _authCubit.user;
+    final currentUser = _authCubit.state is AuthAuthenticated
+        ? (_authCubit.state as AuthAuthenticated).user
+        : null;
     if (currentUser != null) {
       emit(
         state.copyWith(
@@ -49,7 +53,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   /// Listen to authentication state changes
   void _listenToAuthChanges() {
     _authCubit.stream.listen((authState) {
-      if (authState.isAuthenticated && authState.user != null) {
+      if (authState is AuthAuthenticated) {
         // Update profile when auth state changes
         emit(
           state.copyWith(
@@ -58,7 +62,7 @@ class ProfileCubit extends Cubit<ProfileState> {
             isProfileComplete: _isProfileComplete(authState.user!),
           ),
         );
-      } else if (!authState.isAuthenticated) {
+      } else if (authState is AuthUnauthenticated) {
         // Clear profile data when user logs out
         emit(const ProfileState());
       }
@@ -87,8 +91,8 @@ class ProfileCubit extends Cubit<ProfileState> {
       }
       // update the text data
       if (photoUrl != null) data["profilePhotoUrl"] = photoUrl;
-      final rslt =
-          await sl<UpdateProfileUseCase>().call(UpdateProfileParams(data));
+      final rslt = await _profileUseCasesHolder.updateProfileUseCase
+          .call(UpdateProfileParams(data));
       rslt.fold((failure) {
         AppLogger.breadcrumb('Profile update failed: ${failure.message}');
         emit(
@@ -105,8 +109,6 @@ class ProfileCubit extends Cubit<ProfileState> {
           'fields_count': data.length,
         });
         emit(state.copyWith(user: user, isUpdating: false, message: 'updated'));
-        // after update at in server side we need to update user in local storage
-        _authCubit.updateUser(user);
       });
     } on Exception catch (e, s) {
       AppLogger.e('updateProfile failed', e, s);
@@ -126,8 +128,8 @@ class ProfileCubit extends Cubit<ProfileState> {
     AppLogger.breadcrumb('Uploading profile image...');
     String? uploadedUrl;
     try {
-      final result = await sl<UpdateProfileImageUseCase>()
-          .call(UpdateProfileImageParams(imageFile: state.imageFile!));
+      final result = await _profileUseCasesHolder.updateProfileImageUseCase
+          .call(UpdateProfileImageParams(imageFile: file));
       result.fold(
         (failure) {
           AppLogger.breadcrumb('Image upload failed: ${failure.message}');

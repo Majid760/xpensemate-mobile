@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
-import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/utils/assset_path.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
 import 'package:xpensemate/core/widget/app_image.dart';
@@ -64,17 +63,17 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           onPressed: () => context.pop(),
         ),
       ),
-      body: BlocConsumer<AuthCubit, AuthState>(
+      body: BlocListener<AuthCubit, AuthState>(
+        listenWhen: (_, state) =>
+            state is AuthError || state is AuthUnauthenticated,
         listener: (context, state) {
-          if (state.state == AuthStates.error &&
-              state.errorMessage != null &&
-              state.errorMessage!.isNotEmpty) {
+          if (state is AuthError) {
             AppSnackBar.show(
               context: context,
-              message: state.errorMessage ?? l10n.errorGeneric,
+              message: state.message,
               type: SnackBarType.error,
             );
-          } else if (state.state == AuthStates.loaded) {
+          } else if (state is AuthUnauthenticated) {
             AppSnackBar.show(
               context: context,
               message: l10n.resetPasswordSuccess,
@@ -88,7 +87,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             });
           }
         },
-        builder: (context, state) => SafeArea(
+        child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) => SingleChildScrollView(
               child: ConstrainedBox(
@@ -148,13 +147,17 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           const SizedBox(height: AppSpacing.xxl),
 
                           // Reset Password Button
-                          AppButton.primary(
-                            onPressed: state.state == AuthStates.loading
-                                ? null
-                                : _submitForm,
-                            text: l10n.resetPassword,
-                            isLoading: state.state == AuthStates.loading,
-                            textColor: colorScheme.onPrimary,
+                          BlocBuilder<AuthCubit, AuthState>(
+                            buildWhen: (_, state) => state is AuthLoading,
+                            builder: (context, state) {
+                              final isLoading = state is AuthLoading;
+                              return AppButton.primary(
+                                onPressed: isLoading ? null : _submitForm,
+                                text: l10n.resetPassword,
+                                isLoading: isLoading,
+                                textColor: colorScheme.onPrimary,
+                              );
+                            },
                           ),
                           const Spacer(),
 

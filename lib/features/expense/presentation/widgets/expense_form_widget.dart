@@ -1007,7 +1007,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
                         child: AppButton.secondary(
                           onPressed: widget.onCancel,
                           text: l10n.cancel.toUpperCase(),
-                          textColor: Colors.white,
+                          textColor: context.colorScheme.onPrimary,
                         ),
                       ),
                     if (widget.onCancel != null)
@@ -1017,7 +1017,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
                         onPressed: _submitForm,
                         text: (widget.expense == null ? l10n.add : l10n.save)
                             .toUpperCase(),
-                        textColor: Colors.white,
+                        textColor: context.colorScheme.onPrimary,
                       ),
                     ),
                   ],

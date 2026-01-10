@@ -4,6 +4,9 @@ import 'package:xpensemate/core/network/network_info.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/core/utils/network_mixin.dart';
 import 'package:xpensemate/features/auth/data/datasources/auth_remote_data_source.dart';
+import 'package:xpensemate/features/auth/data/models/auth_token_model.dart';
+import 'package:xpensemate/features/auth/data/models/user_model.dart';
+import 'package:xpensemate/features/auth/data/services/auth_service.dart';
 import 'package:xpensemate/features/auth/domain/entities/auth_token.dart';
 import 'package:xpensemate/features/auth/domain/entities/user.dart';
 import 'package:xpensemate/features/auth/domain/repositories/auth_repository.dart';
@@ -14,24 +17,33 @@ class AuthRepositoryImpl
   AuthRepositoryImpl(
     this.remoteDataSource,
     this.networkInfo,
+    this.authService,
   );
   final AuthRemoteDataSource remoteDataSource;
   @override
   final NetworkInfoService networkInfo;
+  final AuthService authService;
 
-  /// Get current user
   @override
-  Future<Either<Failure, UserEntity>> getCurrentUser() async =>
-      withNetworkCheck(() async {
-        final result = await remoteDataSource.getCurrentUser();
-        return result.fold(
-          left,
-          (user) {
-            user.toEntity();
-            return right(user.toEntity());
-          },
-        );
-      });
+  Future<Either<Failure, UserEntity>> getCurrentUser() async {
+    final localUser = await authService.fetchUserFromStorage();
+    if (networkInfo.isConnect || localUser == null) {
+      final remoteResult = await remoteDataSource.getCurrentUser();
+      return remoteResult.fold(
+        (failure) {
+          if (localUser != null) return Right(localUser);
+          return Left(failure);
+        },
+        (userModel) async {
+          final entity = userModel.toEntity();
+          await authService.saveUserToStorage(entity);
+          return Right(entity);
+        },
+      );
+    }
+
+    return Right(localUser);
+  }
 
   /// Sign in with email and password
   @override
@@ -45,13 +57,21 @@ class AuthRepositoryImpl
           email: email,
           password: password,
         );
-        return result.fold(
-          left,
-          (userModel) => right(userModel.toEntity()),
+        return await result.fold(
+          (failure) async => Left(failure),
+          (data) async {
+            final (UserModel userModel, AuthTokenModel tokenModel) = data;
+            final userEntity = userModel.toEntity();
+            await Future.wait([
+              authService.saveTokenToStorage(tokenModel),
+              authService.saveUserToStorage(userEntity),
+            ]);
+            return Right(userEntity);
+          },
         );
       });
     } on Exception catch (e) {
-      logE("thissi excepiton occurs $e");
+      logE("Exception occurs at signInWithEmailAndPassword $e");
       return left(e.toFailure() as AuthenticationFailure);
     }
   }
@@ -75,6 +95,7 @@ class AuthRepositoryImpl
         (_) => right(null),
       );
     } on Exception catch (e) {
+      logE("Exception occurs at registerWithEmailAndPassword $e");
       return left(e.toFailure() as AuthenticationFailure);
     }
   }
@@ -87,9 +108,17 @@ class AuthRepositoryImpl
       return withNetworkCheck(() async {
         final result =
             await remoteDataSource.signInWithGoogle(credential: credential);
-        return result.fold(
-          left,
-          (user) => right(user.toEntity()),
+        return await result.fold(
+          (failure) async => Left(failure),
+          (data) async {
+            final (UserModel userModel, AuthTokenModel tokenModel) = data;
+            final userEntity = userModel.toEntity();
+
+            await authService.saveTokenToStorage(tokenModel);
+            await authService.saveUserToStorage(userEntity);
+
+            return Right(userEntity);
+          },
         );
       });
     } on Exception catch (e) {
@@ -104,9 +133,17 @@ class AuthRepositoryImpl
     try {
       return withNetworkCheck(() async {
         final result = await remoteDataSource.signInWithApple();
-        return result.fold(
-          left,
-          (user) => right(user.toEntity()),
+        return await result.fold(
+          (failure) async => Left(failure),
+          (data) async {
+            final (UserModel userModel, AuthTokenModel tokenModel) = data;
+            final userEntity = userModel.toEntity();
+
+            await authService.saveTokenToStorage(tokenModel);
+            await authService.saveUserToStorage(userEntity);
+
+            return Right(userEntity);
+          },
         );
       });
     } on Exception catch (e) {
@@ -119,10 +156,13 @@ class AuthRepositoryImpl
   @override
   Future<Either<Failure, void>> signOut() async {
     try {
+      // Clear local data first
+      await authService.clearUserData();
+
       final result = await remoteDataSource.logout();
       return result.fold(
-        left,
-        (_) => right(null),
+        Left.new,
+        (_) => const Right(null),
       );
     } on Exception catch (e) {
       logE("thissi excepiton occurs $e");
@@ -136,9 +176,12 @@ class AuthRepositoryImpl
     try {
       return withNetworkCheck(() async {
         final result = await remoteDataSource.refreshToken(refreshToken);
-        return result.fold(
-          left,
-          (token) => right(token.toEntity()),
+        return await result.fold(
+          (failure) async => Left(failure),
+          (tokenModel) async {
+            await authService.saveTokenToStorage(tokenModel);
+            return Right(tokenModel.toEntity());
+          },
         );
       });
     } on Exception catch (e) {

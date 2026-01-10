@@ -16,6 +16,9 @@ class AuthService {
   }
 
   final AuthLocalDataSource _localDataSource;
+  final _userStreamController = StreamController<UserEntity?>.broadcast();
+
+  Stream<UserEntity?> get userStream => _userStreamController.stream;
 
   static UserEntity? _currentUser;
   static bool _isAuthenticated = false;
@@ -51,10 +54,12 @@ class AuthService {
       if (userEntity == null || userEntity.isEmpty) {
         _currentUser = null;
         _isAuthenticated = false;
+        _userStreamController.add(null);
         return null;
       } else {
         _currentUser = userEntity;
         _isAuthenticated = true;
+        _userStreamController.add(userEntity);
         return userEntity;
       }
     } on Exception catch (e) {
@@ -68,6 +73,8 @@ class AuthService {
     try {
       await _localDataSource.storeUser(userEntity);
       _currentUser = userEntity;
+      _isAuthenticated = true;
+      _userStreamController.add(userEntity);
     } on Exception catch (e) {
       logE('AuthService: Error saving user to storage: $e');
       rethrow;
@@ -94,6 +101,7 @@ class AuthService {
       ]);
       _currentUser = null;
       _isAuthenticated = false;
+      _userStreamController.add(null);
       logI('AuthService: User data cleared');
     } on Exception catch (e) {
       logE('AuthService: Error clearing user data: $e');

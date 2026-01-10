@@ -81,15 +81,17 @@ class _RegisterPageState extends State<RegisterPage> {
     final textTheme = theme.textTheme;
 
     return Scaffold(
-      body: BlocConsumer<AuthCubit, AuthState>(
+      body: BlocListener<AuthCubit, AuthState>(
+        listenWhen: (_, state) =>
+            state is AuthError || state is AuthUnauthenticated,
         listener: (context, state) {
-          if (state.state == AuthStates.error) {
+          if (state is AuthError) {
             AppSnackBar.show(
               context: context,
-              message: state.errorMessage ?? l10n.errorGeneric,
+              message: state.message,
               type: SnackBarType.error,
             );
-          } else if (state.state == AuthStates.loaded) {
+          } else if (state is AuthUnauthenticated) {
             AppDialogs.showTopSnackBar(
               context,
               message: l10n.registerSuccess,
@@ -101,9 +103,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       .toLowerCase() ??
                   '',
             );
-          } else {}
+          }
         },
-        builder: (context, state) => SafeArea(
+        child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) => SingleChildScrollView(
               child: ConstrainedBox(
@@ -204,7 +206,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                   .withValues(alpha: 0.6),
                             ),
                             validationMessages: {
-                              'required': (error) => '${l10n.confirmPassword} is required',
+                              'required': (error) =>
+                                  '${l10n.confirmPassword} is required',
                               'passwordMismatch': (error) =>
                                   context.l10n.passwordsDoNotMatch,
                               'mustMatch': (error) =>
@@ -213,13 +216,17 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           const SizedBox(height: AppSpacing.xxl),
                           // Register Button
-                          AppButton.primary(
-                            onPressed: state.state == AuthStates.loading
-                                ? null
-                                : _submitForm,
-                            text: l10n.register.toUpperCase(),
-                            textColor: colorScheme.onPrimary,
-                            isLoading: state.state == AuthStates.loading,
+                          BlocBuilder<AuthCubit, AuthState>(
+                            buildWhen: (_, state) => state is AuthLoading,
+                            builder: (context, state) {
+                              final isLoading = state is AuthLoading;
+                              return AppButton.primary(
+                                onPressed: isLoading ? null : _submitForm,
+                                text: l10n.register.toUpperCase(),
+                                textColor: colorScheme.onPrimary,
+                                isLoading: isLoading,
+                              );
+                            },
                           ),
 
                           const Spacer(),

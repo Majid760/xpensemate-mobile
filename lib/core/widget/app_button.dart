@@ -12,11 +12,11 @@ class AppButton extends StatefulWidget {
     this.isLoading = false,
     this.isFullWidth = true,
     this.padding,
-    this.height = 48,
+    this.height,
     this.minWidth,
     this.backgroundColor,
     this.textColor,
-    this.borderRadius = 12,
+    this.borderRadius,
     this.leadingIcon,
     this.trailingIcon,
     this.hasShadow = true,
@@ -37,11 +37,11 @@ class AppButton extends StatefulWidget {
     bool isLoading = false,
     bool isFullWidth = true,
     EdgeInsetsGeometry? padding,
-    double height = 48,
+    double? height,
     double? minWidth,
     Color? backgroundColor,
     Color? textColor,
-    double borderRadius = 12,
+    double? borderRadius,
     Widget? leadingIcon,
     Widget? trailingIcon,
     bool hasShadow = true,
@@ -115,11 +115,11 @@ class AppButton extends StatefulWidget {
     bool isLoading = false,
     bool isFullWidth = true,
     EdgeInsetsGeometry? padding,
-    double height = 48,
+    double? height,
     double? minWidth,
     Color? backgroundColor,
     Color? textColor,
-    double borderRadius = 12,
+    double? borderRadius,
     Widget? leadingIcon,
     Widget? trailingIcon,
     bool hasShadow = false,
@@ -193,11 +193,11 @@ class AppButton extends StatefulWidget {
     bool isLoading = false,
     bool isFullWidth = true,
     EdgeInsetsGeometry? padding,
-    double height = 48,
+    double? height,
     double? minWidth,
     Color? backgroundColor,
     Color? textColor,
-    double borderRadius = 12,
+    double? borderRadius,
     Widget? leadingIcon,
     Widget? trailingIcon,
     Color? borderColor,
@@ -269,11 +269,11 @@ class AppButton extends StatefulWidget {
     bool isLoading = false,
     bool isFullWidth = false,
     EdgeInsetsGeometry? padding,
-    double height = 48,
+    double? height,
     double? minWidth,
     Color? backgroundColor,
     Color? textColor,
-    double borderRadius = 12,
+    double? borderRadius,
     Widget? leadingIcon,
     Widget? trailingIcon,
     Color? borderColor,
@@ -345,11 +345,11 @@ class AppButton extends StatefulWidget {
     bool isLoading = false,
     bool isFullWidth = false,
     EdgeInsetsGeometry? padding,
-    double height = 48,
+    double? height,
     double? minWidth,
     Color? backgroundColor,
     Color? textColor,
-    double borderRadius = 12,
+    double? borderRadius,
     Widget? trailingIcon,
     bool hasShadow = true,
     Color? borderColor,
@@ -425,11 +425,11 @@ class AppButton extends StatefulWidget {
     bool isLoading = false,
     bool isFullWidth = false,
     EdgeInsetsGeometry? padding,
-    double height = 48,
+    double? height,
     double? minWidth,
     Color? backgroundColor,
     Color? textColor,
-    double borderRadius = 12,
+    double? borderRadius,
     Widget? trailingIcon,
     Color? borderColor,
     double? elevation,
@@ -504,7 +504,7 @@ class AppButton extends StatefulWidget {
   final double? minWidth;
   final Color? backgroundColor;
   final Color? textColor;
-  final double borderRadius;
+  final double? borderRadius;
   final Widget? leadingIcon;
   final Widget? trailingIcon;
   final bool hasShadow;
@@ -527,11 +527,11 @@ class AppButton extends StatefulWidget {
     Color? backgroundColor,
     Color? textColor,
     bool hasShadow,
-    double borderRadius,
+    double? borderRadius,
     EdgeInsetsGeometry? padding,
     bool isFullWidth,
     double? minWidth,
-    double height,
+    double? height,
     double? elevation,
     bool enabled,
     bool isLoading,
@@ -540,18 +540,18 @@ class AppButton extends StatefulWidget {
     bool hoverEffect,
   ) {
     final colorScheme = context.colorScheme;
+    final effectiveHeight = height ?? context.xxl;
+    final effectiveRadius = borderRadius ?? context.sm1;
 
-    // Use system theme colors for gradient
     final gradient = LinearGradient(
       colors: [
         colorScheme.primary,
-        colorScheme.secondary,
+        colorScheme.tertiary,
       ],
       begin: Alignment.bottomLeft,
       end: Alignment.topRight,
     );
 
-    // If gradient is disabled or button is disabled, use solid color
     final bgColor =
         !enabled || isLoading ? (backgroundColor ?? colorScheme.primary) : null;
 
@@ -561,12 +561,12 @@ class AppButton extends StatefulWidget {
         width: isFullWidth ? double.infinity : null,
         constraints: BoxConstraints(
           minWidth: minWidth ?? 0,
-          minHeight: height,
+          minHeight: effectiveHeight,
         ),
         decoration: enabled && !isLoading
             ? BoxDecoration(
                 gradient: gradient,
-                borderRadius: BorderRadius.circular(borderRadius),
+                borderRadius: BorderRadius.circular(effectiveRadius),
                 boxShadow: hasShadow && enabled
                     ? [
                         BoxShadow(
@@ -579,18 +579,20 @@ class AppButton extends StatefulWidget {
               )
             : BoxDecoration(
                 color: bgColor,
-                borderRadius: BorderRadius.circular(borderRadius),
+                borderRadius: BorderRadius.circular(effectiveRadius),
               ),
         child: Material(
           color: Colors.transparent,
-          borderRadius: BorderRadius.circular(borderRadius),
+          borderRadius: BorderRadius.circular(effectiveRadius),
           child: InkWell(
             onTap: (enabled && !isLoading) ? onPressed : null,
-            borderRadius: BorderRadius.circular(borderRadius),
+            borderRadius: BorderRadius.circular(effectiveRadius),
             child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(
-                  horizontal: context.lg, vertical: context.md),
+              width: isFullWidth ? double.infinity : null,
+              constraints: BoxConstraints(minHeight: effectiveHeight),
+              padding: padding ??
+                  EdgeInsets.symmetric(
+                      horizontal: context.lg, vertical: context.md),
               child: Center(child: child),
             ),
           ),
@@ -606,11 +608,11 @@ class AppButton extends StatefulWidget {
     Color? backgroundColor,
     Color? textColor,
     bool hasShadow,
-    double borderRadius,
+    double? borderRadius,
     EdgeInsetsGeometry? padding,
     bool isFullWidth,
     double? minWidth,
-    double height,
+    double? height,
     double? elevation,
     bool enabled,
     bool isLoading,
@@ -619,11 +621,14 @@ class AppButton extends StatefulWidget {
     bool hoverEffect,
   ) {
     final colorScheme = context.colorScheme;
+    final effectiveHeight = height ?? context.xxl;
+    final effectiveRadius = borderRadius ?? context.sm1;
 
     return ElevatedButton(
       onPressed: (enabled && !isLoading) ? onPressed : null,
       style: ElevatedButton.styleFrom(
-        backgroundColor: backgroundColor ?? colorScheme.secondary,
+        backgroundColor:
+            backgroundColor ?? colorScheme.tertiary.withValues(alpha: 0.8),
         foregroundColor: textColor ?? colorScheme.onSecondary,
         disabledBackgroundColor: colorScheme.surfaceContainerHighest,
         disabledForegroundColor: colorScheme.onSurfaceVariant,
@@ -633,13 +638,13 @@ class AppButton extends StatefulWidget {
         overlayColor: colorScheme.onSecondary.withValues(alpha: 0.1),
         animationDuration: animationDuration,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(borderRadius),
+          borderRadius: BorderRadius.circular(effectiveRadius),
         ),
         padding: padding ??
             EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
-          height,
+          effectiveHeight,
         ),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
@@ -647,18 +652,17 @@ class AppButton extends StatefulWidget {
     );
   }
 
-  // Using OutlinedButton for outline buttons
   static Widget _buildOutlineButton(
     BuildContext context,
     Widget child,
     VoidCallback? onPressed,
     Color? backgroundColor,
     Color? textColor,
-    double borderRadius,
+    double? borderRadius,
     EdgeInsetsGeometry? padding,
     bool isFullWidth,
     double? minWidth,
-    double height,
+    double? height,
     Color? borderColor,
     bool enabled,
     bool isLoading,
@@ -667,11 +671,13 @@ class AppButton extends StatefulWidget {
     bool hoverEffect,
   ) {
     final colorScheme = context.colorScheme;
+    final effectiveHeight = height ?? context.xxl;
+    final effectiveRadius = borderRadius ?? context.sm1;
 
     return OutlinedButton(
       onPressed: (enabled && !isLoading) ? onPressed : null,
       style: OutlinedButton.styleFrom(
-        backgroundColor: backgroundColor ?? colorScheme.surfaceContainer,
+        backgroundColor: backgroundColor ?? Colors.transparent,
         foregroundColor: textColor ?? colorScheme.onSurface,
         disabledForegroundColor: colorScheme.onSurfaceVariant,
         overlayColor: colorScheme.primary.withValues(alpha: 0.08),
@@ -681,13 +687,13 @@ class AppButton extends StatefulWidget {
           width: 1.5,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(borderRadius),
+          borderRadius: BorderRadius.circular(effectiveRadius),
         ),
         padding: padding ??
             EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
-          height,
+          effectiveHeight,
         ),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
@@ -695,18 +701,17 @@ class AppButton extends StatefulWidget {
     );
   }
 
-  // Using TextButton for text buttons
   static Widget _buildTextButton(
     BuildContext context,
     Widget child,
     VoidCallback? onPressed,
     Color? backgroundColor,
     Color? textColor,
-    double borderRadius,
+    double? borderRadius,
     EdgeInsetsGeometry? padding,
     bool isFullWidth,
     double? minWidth,
-    double height,
+    double? height,
     bool enabled,
     bool isLoading,
     Duration animationDuration,
@@ -714,6 +719,8 @@ class AppButton extends StatefulWidget {
     bool hoverEffect,
   ) {
     final colorScheme = context.colorScheme;
+    final effectiveHeight = height ?? context.xxl;
+    final effectiveRadius = borderRadius ?? context.sm1;
 
     return TextButton(
       onPressed: (enabled && !isLoading) ? onPressed : null,
@@ -724,13 +731,13 @@ class AppButton extends StatefulWidget {
         overlayColor: colorScheme.primary.withValues(alpha: 0.08),
         animationDuration: animationDuration,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(borderRadius),
+          borderRadius: BorderRadius.circular(effectiveRadius),
         ),
         padding: padding ??
             EdgeInsets.symmetric(horizontal: context.md, vertical: context.sm),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
-          height,
+          effectiveHeight,
         ),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
@@ -738,7 +745,6 @@ class AppButton extends StatefulWidget {
     );
   }
 
-  // Using ElevatedButton.icon for icon buttons
   static Widget _buildIconButton(
     BuildContext context,
     String text,
@@ -747,11 +753,11 @@ class AppButton extends StatefulWidget {
     Color? backgroundColor,
     Color? textColor,
     bool hasShadow,
-    double borderRadius,
+    double? borderRadius,
     EdgeInsetsGeometry? padding,
     bool isFullWidth,
     double? minWidth,
-    double height,
+    double? height,
     double? elevation,
     TextStyle? textStyle,
     bool enabled,
@@ -762,6 +768,8 @@ class AppButton extends StatefulWidget {
   ) {
     final colorScheme = context.colorScheme;
     final textTheme = context.textTheme;
+    final effectiveHeight = height ?? context.xxl;
+    final effectiveRadius = borderRadius ?? context.sm1;
 
     return ElevatedButton.icon(
       onPressed: (enabled && !isLoading) ? onPressed : null,
@@ -772,7 +780,7 @@ class AppButton extends StatefulWidget {
               child: CustomAppLoader(
                 size: 18,
                 strokeWidth: 2,
-                color: colorScheme.onPrimary,
+                color: textColor ?? colorScheme.onPrimary,
               ),
             )
           : leadingIcon,
@@ -788,13 +796,13 @@ class AppButton extends StatefulWidget {
         overlayColor: colorScheme.onPrimary.withValues(alpha: 0.1),
         animationDuration: animationDuration,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(borderRadius),
+          borderRadius: BorderRadius.circular(effectiveRadius),
         ),
         padding: padding ??
             EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
-          height,
+          effectiveHeight,
         ),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         textStyle: textStyle ??
@@ -806,7 +814,6 @@ class AppButton extends StatefulWidget {
     );
   }
 
-  // Using OutlinedButton.icon for icon outline buttons
   static Widget _buildIconOutlineButton(
     BuildContext context,
     String text,
@@ -814,11 +821,11 @@ class AppButton extends StatefulWidget {
     VoidCallback? onPressed,
     Color? backgroundColor,
     Color? textColor,
-    double borderRadius,
+    double? borderRadius,
     EdgeInsetsGeometry? padding,
     bool isFullWidth,
     double? minWidth,
-    double height,
+    double? height,
     Color? borderColor,
     TextStyle? textStyle,
     bool enabled,
@@ -829,6 +836,8 @@ class AppButton extends StatefulWidget {
   ) {
     final colorScheme = context.colorScheme;
     final textTheme = context.textTheme;
+    final effectiveHeight = height ?? context.xxl;
+    final effectiveRadius = borderRadius ?? context.sm1;
 
     return OutlinedButton.icon(
       onPressed: (enabled && !isLoading) ? onPressed : null,
@@ -836,17 +845,16 @@ class AppButton extends StatefulWidget {
           ? SizedBox(
               width: 18,
               height: 18,
-              child: CircularProgressIndicator.adaptive(
+              child: CustomAppLoader(
+                size: 18,
                 strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  colorScheme.primary,
-                ),
+                color: textColor ?? colorScheme.primary,
               ),
             )
           : leadingIcon,
       label: Text(text),
       style: OutlinedButton.styleFrom(
-        backgroundColor: backgroundColor ?? colorScheme.surfaceContainer,
+        backgroundColor: backgroundColor ?? Colors.transparent,
         foregroundColor: textColor ?? colorScheme.onSurface,
         disabledForegroundColor: colorScheme.onSurfaceVariant,
         overlayColor: colorScheme.primary.withValues(alpha: 0.08),
@@ -856,13 +864,13 @@ class AppButton extends StatefulWidget {
           width: 1.5,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(borderRadius),
+          borderRadius: BorderRadius.circular(effectiveRadius),
         ),
         padding: padding ??
             EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
-          height,
+          effectiveHeight,
         ),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         textStyle: textStyle ??
@@ -879,7 +887,6 @@ class _AppButtonState extends State<AppButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
-  // Removed unused state fields to satisfy lints and keep code clean
 
   @override
   void initState() {
@@ -924,10 +931,6 @@ class _AppButtonState extends State<AppButton>
     }
   }
 
-  void _onHover(bool isHovered) {
-    // Hover flag was unused; keep handler for future extensibility
-  }
-
   @override
   Widget build(BuildContext context) {
     final child = _buildButtonChild(context);
@@ -941,8 +944,6 @@ class _AppButtonState extends State<AppButton>
           onTapUp: _onTapUp,
           onTapCancel: _onTapCancel,
           child: MouseRegion(
-            onEnter: (_) => _onHover(true),
-            onExit: (_) => _onHover(false),
             child: widget.buttonBuilder(context, childWidget!),
           ),
         ),
@@ -959,9 +960,10 @@ class _AppButtonState extends State<AppButton>
       return SizedBox(
         width: 22,
         height: 22,
-        child: CircularProgressIndicator.adaptive(
+        child: CustomAppLoader(
+          size: 22,
           strokeWidth: 2.4,
-          valueColor: AlwaysStoppedAnimation<Color>(colorScheme.onPrimary),
+          color: widget.textColor ?? colorScheme.onPrimary,
         ),
       );
     }
@@ -972,7 +974,7 @@ class _AppButtonState extends State<AppButton>
       children: [
         if (widget.leadingIcon != null) ...[
           widget.leadingIcon!,
-          SizedBox(width: context.xs),
+          context.xs.widthBox,
         ],
         Text(
           widget.text,
@@ -984,7 +986,7 @@ class _AppButtonState extends State<AppButton>
               ),
         ),
         if (widget.trailingIcon != null) ...[
-          SizedBox(width: context.xs),
+          context.xs.widthBox,
           widget.trailingIcon!,
         ],
       ],

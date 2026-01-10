@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/route/utils/router_extension.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
-import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/utils/assset_path.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
@@ -32,17 +32,10 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
     _form = FormGroup({
       'email': FormControl<String>(
-        validators: [
-          Validators.required,
-          Validators.email,
-        ],
+        validators: [Validators.required, Validators.email],
       ),
       'password': FormControl<String>(
-        validators: [
-          Validators.required,
-          Validators.minLength(6),
-          //special character including
-        ],
+        validators: [Validators.required, Validators.minLength(6)],
       ),
     });
   }
@@ -53,16 +46,16 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  Future<void> _submitForm() async {
-    // Mark all fields as touched to trigger validation display
+  Future<void> _submit() async {
     _form.markAllAsTouched();
-    // Check if form is valid
     if (!_form.valid) return;
 
-    // Form is valid, proceed with login
+    final email = (_form.control('email').value as String).trim();
+    final password = _form.control('password').value as String;
+
     await context.read<AuthCubit>().loginWithEmail(
-          email: (_form.control('email').value as String?)?.trim() ?? '',
-          password: _form.control('password').value as String? ?? '',
+          email: email,
+          password: password,
         );
   }
 
@@ -70,33 +63,30 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colors = theme.colorScheme;
     final textTheme = theme.textTheme;
 
     return Scaffold(
-      body: BlocConsumer<AuthCubit, AuthState>(
+      body: BlocListener<AuthCubit, AuthState>(
+        listenWhen: (_, state) =>
+            state is AuthError || state is AuthAuthenticated,
         listener: (context, state) {
-          if (state.state == AuthStates.error &&
-              state.errorMessage != null &&
-              state.errorMessage!.isNotEmpty) {
-            AppLogger.e(state.stackTrace.toString());
-
+          if (state is AuthError) {
             AppSnackBar.show(
               context: context,
-              message: state.errorMessage ?? l10n.errorGeneric,
+              message: state.message,
               type: SnackBarType.error,
             );
-          } else if (state.state == AuthStates.loaded) {
+          }
+          if (state is AuthAuthenticated) {
             context.goToHome();
           }
         },
-        builder: (context, state) => SafeArea(
+        child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) => SingleChildScrollView(
               child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight,
-                ),
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: IntrinsicHeight(
                   child: Padding(
                     padding: const EdgeInsets.all(AppSpacing.md),
@@ -105,162 +95,107 @@ class _LoginPageState extends State<LoginPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          // Logo and Welcome Text
                           const SizedBox(height: AppSpacing.lg),
                           AppImage.asset(
                             AssetPaths.logo,
                             height: 64,
-                            color: colorScheme.primary,
+                            color: colors.primary,
                           ),
                           const SizedBox(height: AppSpacing.lg),
                           Text(
                             l10n.welcomeBack,
+                            textAlign: TextAlign.center,
                             style: textTheme.headlineMedium?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: colorScheme.onSurface,
                             ),
-                            textAlign: TextAlign.center,
                           ),
-
                           const SizedBox(height: AppSpacing.xl),
-                          // Email Field
                           ReactiveAppField(
                             formControlName: 'email',
                             labelText: l10n.email,
                             fieldType: FieldType.email,
                             hintText: l10n.hintEmail,
-                            textInputAction: TextInputAction.next,
                             prefixIcon: Icon(
                               Icons.email_outlined,
-                              color: colorScheme.onSurfaceVariant
+                              color: colors.onSurfaceVariant
                                   .withValues(alpha: 0.6),
                             ),
                             validationMessages: {
-                              'required': (error) => l10n.emailRequired,
-                              'email': (error) => l10n.invalidEmail,
+                              'required': (_) => l10n.emailRequired,
+                              'email': (_) => l10n.invalidEmail,
                             },
                           ),
                           const SizedBox(height: AppSpacing.lg),
-                          // Password Field
                           ReactiveAppField(
                             formControlName: 'password',
                             labelText: l10n.password,
                             fieldType: FieldType.password,
                             hintText: l10n.hintPassword,
-                            textInputAction: TextInputAction.done,
                             prefixIcon: Icon(
-                              Icons.lock_outline_rounded,
-                              color: colorScheme.onSurfaceVariant
+                              Icons.lock_outline,
+                              color: colors.onSurfaceVariant
                                   .withValues(alpha: 0.6),
                             ),
                             validationMessages: {
-                              'required': (error) => l10n.passwordRequired,
-                              'minLength': (error) => l10n.passwordTooShort,
+                              'required': (_) => l10n.passwordRequired,
+                              'minLength': (_) => l10n.passwordTooShort,
                             },
                           ),
                           const SizedBox(height: AppSpacing.sm),
-
-                          // Forgot Password
                           Align(
                             alignment: Alignment.centerRight,
                             child: AppButton.textButton(
                               text: l10n.forgotPassword,
-                              textColor: colorScheme.primary,
-                              padding: EdgeInsets.zero,
-                              onPressed: () {
-                                context.pushForgotPasword();
-                              },
+                              onPressed: context.pushForgotPasword,
                             ),
                           ),
-
-                          const SizedBox(height: AppSpacing.md1),
-
-                          // Sign In Button
-                          AppButton.primary(
-                            text: l10n.login.toUpperCase(),
-                            onPressed: () => AppUtils.throttle(_submitForm),
-                            textColor: colorScheme.onPrimary,
-                            isLoading: state.state == AuthStates.loading,
+                          const SizedBox(height: AppSpacing.md),
+                          BlocBuilder<AuthCubit, AuthState>(
+                            buildWhen: (_, state) => state is AuthLoading,
+                            builder: (context, state) => AppButton.primary(
+                              text: l10n.login.toUpperCase(),
+                              isLoading: state is AuthLoading,
+                              onPressed: () => AppUtils.throttle(_submit),
+                            ),
                           ),
-
                           const SizedBox(height: AppSpacing.lg),
-                          // Divider with "or"
                           Row(
                             children: [
                               Expanded(
-                                child: Divider(
-                                  color: colorScheme.outlineVariant,
-                                  thickness: 1,
-                                ),
+                                child: Divider(color: colors.outlineVariant),
                               ),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: AppSpacing.md,
                                 ),
-                                child: Text(
-                                  l10n.or,
-                                  style: textTheme.bodySmall?.copyWith(
-                                    color: colorScheme.onSurfaceVariant,
-                                  ),
-                                ),
+                                child: Text(l10n.or),
                               ),
                               Expanded(
-                                child: Divider(
-                                  color: colorScheme.outlineVariant,
-                                  thickness: 1,
-                                ),
+                                child: Divider(color: colors.outlineVariant),
                               ),
                             ],
                           ),
                           const SizedBox(height: AppSpacing.lg),
-
-                          // Social Login Buttons
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              // Google Button
-                              SocialButton.google(
-                                onPressed: () {
-                                  // context.read<AuthCubit>().loginWithGoogle();
-                                },
-                              ),
+                              SocialButton.google(onPressed: () {}),
                               const SizedBox(width: 16),
-                              // Apple Button
                               if (Platform.isIOS)
-                                SocialButton.apple(
-                                  onPressed: () {
-                                    // context.read<AuthCubit>().loginWithApple();
-                                  },
-                                ),
+                                SocialButton.apple(onPressed: () {}),
                             ],
                           ),
                           const Spacer(),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              bottom: AppSpacing.baseUnit,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  l10n.dontHaveAccount,
-                                  style: textTheme.bodyMedium?.copyWith(
-                                    color: colorScheme.onSurfaceVariant,
-                                  ),
-                                ),
-                                const SizedBox(width: AppSpacing.xs),
-                                AppButton.textButton(
-                                  text: l10n.register,
-                                  textColor: colorScheme.primary,
-                                  onPressed: () {
-                                    context.pushRegister();
-                                  },
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: AppSpacing.sm,
-                                  ),
-                                ),
-                              ],
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(l10n.dontHaveAccount),
+                              const SizedBox(width: AppSpacing.xs),
+                              AppButton.textButton(
+                                text: l10n.register,
+                                onPressed: context.pushRegister,
+                              ),
+                            ],
                           ),
                         ],
                       ),

@@ -1,240 +1,142 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:xpensemate/core/route/utils/route_constants.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/usecase/usecase.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/features/auth/domain/entities/user.dart';
-import 'package:xpensemate/features/auth/domain/usecases/cases_export.dart';
+import 'package:xpensemate/features/auth/domain/usecases/forgot_password_usercase.dart';
+import 'package:xpensemate/features/auth/domain/usecases/sign_in_usecase.dart';
+import 'package:xpensemate/features/auth/domain/usecases/sign_up_usecase.dart';
+import 'package:xpensemate/features/auth/domain/usecases/use_cases_holder.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
-  AuthCubit() : super(const AuthState()) {
-    // Don't initialize auth immediately, let it be initialized when needed
+  AuthCubit(
+    this._useCasesHolder,
+  ) : super(const AuthInitial()) {
+    _userSubscription = sl.authService.userStream.listen((user) {
+      if (user != null) {
+        AppLogger.setUserId(user.id);
+        AppLogger.setCustomKey('is_authenticated', true);
+        emit(AuthAuthenticated(user));
+      } else {
+        AppLogger.setCustomKey('is_authenticated', false);
+        emit(const AuthUnauthenticated());
+      }
+    });
   }
 
-  /// Initialize auth - should be called during app startup
+  final AuthUseCasesHolder _useCasesHolder;
+  late final StreamSubscription<UserEntity?> _userSubscription;
+
+  bool get isAuthenticated => state is AuthAuthenticated;
+
   Future<void> initializeAuth() async {
-    // Ensure AuthService is initialized first
     if (!sl.authService.isInitialized) {
       await sl.authService.initializeService();
     }
 
     final user = sl.authService.currentUser;
+
     if (user != null) {
       AppLogger.setUserId(user.id);
       AppLogger.setCustomKey('is_authenticated', true);
-      AppLogger.breadcrumb('User session restored: ${user.id}');
+      emit(AuthAuthenticated(user));
     } else {
       AppLogger.setCustomKey('is_authenticated', false);
+      emit(const AuthUnauthenticated());
     }
-
-    emit(
-      state.copyWith(
-        state: AuthStates.loaded,
-        isAuthenticated: sl.authService.isAuthenticated,
-        user: user,
-      ),
-    );
   }
 
-  /// login with email
   Future<void> loginWithEmail({
     required String email,
     required String password,
   }) async {
-    AppLogger.breadcrumb('User starting login process...');
-    emit(state.copyWith(state: AuthStates.loading, errorMessage: ''));
-    final loginUseCase = sl<SignInWithEmailUseCase>();
-    final result = await loginUseCase.call(
+    emit(const AuthLoading());
+
+    final result = await _useCasesHolder.signInWithEmailUseCase.call(
       SignInWithEmailUseCaseParams(email: email, password: password),
     );
+
     result.fold(
       (failure) {
-        AppLogger.breadcrumb('Login failed: ${failure.message}');
-        emit(
-          state.copyWith(
-            state: AuthStates.error,
-            errorMessage: failure.message,
-            isAuthenticated: false,
-          ),
-        );
+        AppLogger.breadcrumb('Login failed');
+        emit(AuthError(failure.message));
       },
       (user) {
-        AppLogger.userAction('login_success', {'user_id': user.id});
         AppLogger.setUserId(user.id);
         AppLogger.setCustomKey('is_authenticated', true);
-        AppLogger.breadcrumb('Login successful for user: ${user.id}');
-        emit(
-          state.copyWith(
-            state: AuthStates.loaded,
-            isAuthenticated: true,
-            user: user,
-          ),
-        );
+        emit(AuthAuthenticated(user));
       },
     );
   }
 
-  /// register with email
   Future<void> registerWithEmail({
     required String fullName,
     required String email,
     required String password,
   }) async {
-    AppLogger.breadcrumb('User starting registration...');
-    emit(state.copyWith(state: AuthStates.loading));
-    final registerUseCase = sl<SignUpUseCase>();
-    final result = await registerUseCase.call(
-      SignUpUseCaseParams(fullName: fullName, email: email, password: password),
+    emit(const AuthLoading());
+
+    final result = await _useCasesHolder.signUpUseCase.call(
+      SignUpUseCaseParams(
+        fullName: fullName,
+        email: email,
+        password: password,
+      ),
     );
+
     result.fold(
-      (failure) {
-        AppLogger.breadcrumb('Registration failed: ${failure.message}');
-        emit(
-          state.copyWith(
-            state: AuthStates.error,
-            isAuthenticated: false,
-            errorMessage: failure.message,
-          ),
-        );
-      },
-      (user) {
-        AppLogger.userAction('registration_success', {'email': email});
-        AppLogger.breadcrumb('Registration successful');
-        emit(
-          state.copyWith(
-            state: AuthStates.loaded,
-            isAuthenticated: false,
-          ),
-        );
-      },
+      (failure) => emit(AuthError(failure.message)),
+      (_) => emit(const AuthUnauthenticated()),
     );
   }
 
-  /// forgot password
   Future<void> forgotPassword({required String email}) async {
-    AppLogger.breadcrumb('User requested password reset');
-    emit(state.copyWith(state: AuthStates.loading, errorMessage: ''));
-    final forgotPasswordUseCase = sl<ForgotPasswordUseCase>();
-    final result = await forgotPasswordUseCase.call(
+    emit(const AuthLoading());
+
+    final result = await _useCasesHolder.forgotPasswordUseCase.call(
       ForgotPasswordUseCaseParams(email: email),
     );
+
     result.fold(
-      (failure) {
-        AppLogger.breadcrumb('Forgot password failed: ${failure.message}');
-        emit(
-          state.copyWith(
-            state: AuthStates.error,
-            errorMessage: failure.message,
-          ),
-        );
-      },
-      (user) {
-        AppLogger.breadcrumb('Forgot password email sent');
-        emit(state.copyWith(state: AuthStates.loaded));
-      },
+      (failure) => emit(AuthError(failure.message)),
+      (_) => emit(const AuthUnauthenticated()),
     );
   }
 
-  /// send verification email
-  Future<void> sendVerificationEmail({required String email}) async {
-    AppLogger.breadcrumb('User requested verification email');
-    emit(state.copyWith(state: AuthStates.loading));
-    final sendVerificationEmailUseCase = sl<SendVerificationEmailUseCase>();
-    final result = await sendVerificationEmailUseCase.call(
-      SendVerificationEmailUseCaseParams(email: email),
-    );
-    result.fold(
-      (failure) {
-        AppLogger.breadcrumb('Verification email failed: ${failure.message}');
-        emit(
-          state.copyWith(
-            state: AuthStates.error,
-            errorMessage: failure.message,
-          ),
-        );
-      },
-      (res) {
-        AppLogger.breadcrumb('Verification email sent');
-        emit(state.copyWith(state: AuthStates.loaded));
-      },
-    );
+  Future<void> updateUser(UserEntity user) async {
+    emit(AuthAuthenticated(user));
   }
 
-  // isAuthenticated
-  bool isAuthenticated() =>
-      (state.user != null) && (state.isAuthenticated == true);
-
-  // sign out
   Future<void> signOut({String? error}) async {
-    AppLogger.breadcrumb('User signing out...');
-    emit(state.copyWith(state: AuthStates.loading));
-    final signOutUseCase = sl<SignOutUseCase>();
-    final result = await signOutUseCase.call(const NoParams());
+    emit(const AuthLoading());
+
+    final result = await _useCasesHolder.signOutUseCase.call(const NoParams());
+
     result.fold(
-      (failure) {
-        AppLogger.breadcrumb('Sign out failure: ${failure.message}');
-        emit(
-          state.copyWith(
-            state: AuthStates.error,
-            errorMessage: failure.message,
-            isAuthenticated: false,
-          ),
-        );
-      },
-      (user) {
-        AppLogger.userAction('sign_out');
+      (failure) => emit(AuthError(failure.message)),
+      (_) {
         AppLogger.reset();
-        AppLogger.breadcrumb('Sign out successful, user cleared');
-        emit(
-          state.copyWith(
-            state: AuthStates.loaded,
-            errorMessage: error,
-            isAuthenticated: false,
-            user: null,
-          ),
-        );
+        emit(const AuthUnauthenticated());
       },
     );
   }
 
-  /// check auth status
-  Future<void> checkAuthStatus() async {
-    if (isAuthenticated()) {
-      emit(state.copyWith(state: AuthStates.loaded));
-    } else {
-      emit(state.copyWith(state: AuthStates.error));
-    }
-  }
-  // getter of user
-
-  UserEntity? get user => state.user;
-  void updateUser(UserEntity user) {
-    try {
-      emit(state.copyWith(user: user));
-      sl.authService.updateUserInStorage(user);
-    } on Exception catch (e, s) {
-      AppLogger.e('updateUserInStorage failed', e, s);
-    }
+  @override
+  Future<void> close() {
+    _userSubscription.cancel();
+    return super.close();
   }
 
-  void setIsAuthenticated({required bool isAuthenticated}) =>
-      emit(state.copyWith(isAuthenticated: isAuthenticated));
+  UserEntity? get currentUser =>
+      state is AuthAuthenticated ? (state as AuthAuthenticated).user : null;
 }
 
-// add ssome nice extensions to get the controller in ui/widget
+// extension for AuthCubit
 extension AuthCubitExtension on BuildContext {
+  /// don't get cubit directly from service locator
+  /// use this extension to get cubit (it will fetch the controller form tree)
   AuthCubit get authCubit => read<AuthCubit>();
-
-  /// Navigate to login page
-  void navigateToLogin() {
-    goRouter.go(RouteConstants.login);
-  }
-
-  /// Get GoRouter instance
-  GoRouter get goRouter => GoRouter.of(this);
 }

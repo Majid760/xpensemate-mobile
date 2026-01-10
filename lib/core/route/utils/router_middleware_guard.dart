@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:xpensemate/core/route/utils/route_constants.dart';
 import 'package:xpensemate/core/service/storage_service.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:xpensemate/features/auth/presentation/cubit/auth_state.dart';
 
 class RouteGuards {
   RouteGuards(this._authCubit, this._storageService);
@@ -11,8 +12,10 @@ class RouteGuards {
   final StorageService _storageService;
 
   Future<String?> globalRedirectAsync(
-      BuildContext context, GoRouterState state) async {
-    final isLoggedIn = _authCubit.state.isAuthenticated;
+    BuildContext context,
+    GoRouterState state,
+  ) async {
+    final isLoggedIn = _authCubit.state is AuthAuthenticated;
     final isLoginRoute = _isAuthRoute(state.matchedLocation);
     final isSplashRoute = state.matchedLocation == RouteConstants.splash;
 
@@ -60,7 +63,7 @@ class RouteGuards {
 
   static String? requireAuth(BuildContext context, GoRouterState state) {
     final authCubit = context.authCubit;
-    if (!authCubit.state.isAuthenticated) {
+    if (!authCubit.isAuthenticated) {
       return RouteConstants.login;
     }
     return null;
@@ -68,7 +71,7 @@ class RouteGuards {
 
   static String? requireGuest(BuildContext context, GoRouterState state) {
     final authCubit = context.authCubit;
-    if (authCubit.state.isAuthenticated) {
+    if (authCubit.isAuthenticated) {
       return RouteConstants.home;
     }
     return null;

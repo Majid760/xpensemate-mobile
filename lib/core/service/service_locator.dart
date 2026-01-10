@@ -19,6 +19,7 @@ import 'package:xpensemate/features/auth/data/repositories/auth_repository_impl.
 import 'package:xpensemate/features/auth/data/services/auth_service.dart';
 import 'package:xpensemate/features/auth/domain/repositories/auth_repository.dart';
 import 'package:xpensemate/features/auth/domain/usecases/cases_export.dart';
+import 'package:xpensemate/features/auth/domain/usecases/use_cases_holder.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:xpensemate/features/budget/data/datasources/budget_remote_data_source.dart';
 import 'package:xpensemate/features/budget/data/datasources/budget_remote_data_source_impl.dart';
@@ -48,6 +49,7 @@ import 'package:xpensemate/features/expense/domain/usecases/get_expenses_usecase
 import 'package:xpensemate/features/expense/domain/usecases/update_expense_usecase.dart';
 import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dart';
 import 'package:xpensemate/features/home/presentation/cubit/home_cubit.dart';
+import 'package:xpensemate/features/onboarding/presentation/cubit/onboarding_cubit.dart';
 import 'package:xpensemate/features/payment/data/datasources/payment_remote_data_source.dart';
 import 'package:xpensemate/features/payment/data/repositories/payment_repository_impl.dart';
 import 'package:xpensemate/features/payment/domain/repositories/payment_repository.dart';
@@ -61,10 +63,10 @@ import 'package:xpensemate/features/payment/presentation/cubit/payment_cubit.dar
 import 'package:xpensemate/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:xpensemate/features/profile/data/repositories/profile_repository_impl.dart';
 import 'package:xpensemate/features/profile/domain/repositories/profile_repository.dart';
+import 'package:xpensemate/features/profile/domain/usecases/profile_use_cases_holder.dart';
 import 'package:xpensemate/features/profile/domain/usecases/update_profile_image_usecase.dart';
 import 'package:xpensemate/features/profile/domain/usecases/update_profile_usecase.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
-import 'package:xpensemate/features/onboarding/presentation/cubit/onboarding_cubit.dart';
 
 /// Global, lazy singleton
 final sl = GetIt.instance;
@@ -139,14 +141,10 @@ Future<void> initLocator() async {
     );
 
     // ---------- Presentation Layer ----------
-    // Register AuthCubit as a lazy singleton
-    sl.registerLazySingleton<AuthCubit>(
-      AuthCubit.new,
-    );
 
     // ---------- Data sources ----------
     sl.registerLazySingleton<AuthRemoteDataSource>(
-      () => AuthRemoteDataSourceImpl(sl(), sl()),
+      () => AuthRemoteDataSourceImpl(sl()),
     );
     sl.registerLazySingleton<ProfileRemoteDataSource>(
       () => ProfileRemoteDataSourceImpl(sl()),
@@ -170,12 +168,13 @@ Future<void> initLocator() async {
     sl.registerLazySingleton<AuthRepository>(
       () => AuthRepositoryImpl(
         sl(),
-        sl(), // AuthLocalDataSource if  need for caching caching
+        sl(),
+        sl(),
       ),
     );
 
     sl.registerLazySingleton<ProfileRepository>(
-      () => ProfileRepositoryImpl(sl()),
+      () => ProfileRepositoryImpl(sl(), sl()),
     );
     sl.registerLazySingleton<DashboardRepository>(
       () => DashboardRepositoryImpl(sl()),
@@ -234,7 +233,31 @@ Future<void> initLocator() async {
     sl.registerLazySingleton(() => GetSinglePaymentUseCase(sl()));
 
     // ---------- Presentation Layer ----------
-    sl.registerFactory(() => ProfileCubit(sl(), sl()));
+    sl.registerLazySingleton(
+      () => AuthUseCasesHolder(
+        signInWithEmailUseCase: sl(),
+        signUpUseCase: sl(),
+        forgotPasswordUseCase: sl(),
+        signOutUseCase: sl(),
+        refreshTokenUseCase: sl(),
+        sendVerificationEmailUseCase: sl(),
+      ),
+    );
+
+    sl.registerLazySingleton(
+      () => ProfileUseCasesHolder(
+        updateProfileUseCase: sl(),
+        updateProfileImageUseCase: sl(),
+      ),
+    );
+    sl.registerFactory(() => AuthCubit(sl()));
+    sl.registerFactory(
+      () => ProfileCubit(
+        sl(),
+        sl(),
+        sl(),
+      ),
+    );
 
     sl.registerFactory(
       () => DashboardCubit(sl(), sl(), sl(), sl(), sl(), sl()),

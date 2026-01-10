@@ -1,9 +1,6 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
-
 import 'package:xpensemate/core/route/utils/router_extension.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/utils/assset_path.dart';
@@ -14,45 +11,54 @@ import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_state.dart';
 
-
 class EmailVerificationScreen extends StatefulWidget {
-  
   const EmailVerificationScreen({
     super.key,
     required this.email,
   });
+
   final String email;
 
   @override
-  State<EmailVerificationScreen> createState() => _EmailVerificationScreenState();
+  State<EmailVerificationScreen> createState() =>
+      _EmailVerificationScreenState();
 }
 
 class _EmailVerificationScreenState extends State<EmailVerificationScreen>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _animation;
+  late final AnimationController _animationController;
+  late final Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
+
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat(reverse: true);
-    
+
     _animation = Tween<double>(
       begin: 0.95,
       end: 1.05,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ),);
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOut,
+      ),
+    );
   }
 
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
+  }
+
+  void _onResendPressed(BuildContext context) {
+    // context.read<AuthCubit>().sed(
+    //       email: widget.email,
+    //     );
   }
 
   @override
@@ -63,30 +69,37 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
     final textTheme = theme.textTheme;
 
     return Scaffold(
-      body: BlocConsumer<AuthCubit, AuthState>(
+      body: BlocListener<AuthCubit, AuthState>(
+        listenWhen: (_, state) =>
+            state is AuthError || state is AuthAuthenticated,
         listener: (context, state) {
-          // Handle state changes if needed
-          if (state.state == AuthStates.loaded) {
-            AppDialogs.showTopSnackBar(context, message: '${l10n.verificationEmailSentTo} ${widget.email}', type: MessageType.success);
-          }else if (state.state == AuthStates.error) {
-            AppSnackBar.show(context:context, message:state.errorMessage ?? '' ,type: SnackBarType.error);
+          if (state is AuthAuthenticated) {
+            AppDialogs.showTopSnackBar(
+              context,
+              message: '${l10n.verificationEmailSentTo} ${widget.email}',
+              type: MessageType.success,
+            );
           }
-        
+
+          if (state is AuthError) {
+            AppSnackBar.show(
+              context: context,
+              message: state.message,
+              type: SnackBarType.error,
+            );
+          }
         },
-        builder: (context, state) => SafeArea(
+        child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) => SingleChildScrollView(
               child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight,
-                ),
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: IntrinsicHeight(
                   child: Padding(
                     padding: const EdgeInsets.all(AppSpacing.md),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // Logo and Title
                         const Spacer(),
                         AppImage.asset(
                           AssetPaths.logo,
@@ -103,8 +116,6 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: AppSpacing.lg),
-
-                        // Email Illustration
                         ScaleTransition(
                           scale: _animation,
                           child: Icon(
@@ -114,7 +125,6 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
                           ),
                         ),
                         const SizedBox(height: AppSpacing.xl),
-
                         Text(
                           '${l10n.verificationEmailSentTo} ${widget.email}',
                           style: textTheme.bodyLarge?.copyWith(
@@ -126,25 +136,27 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
                         Text(
                           l10n.verificationInstructions,
                           style: textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                            color: colorScheme.onSurfaceVariant
+                                .withValues(alpha: 0.7),
                           ),
                           textAlign: TextAlign.center,
                         ),
                         const Spacer(),
-
-                        // Resend Button
-                        AppButton.primary(
-                          onPressed: () async {
-                            await context.read<AuthCubit>().sendVerificationEmail(
-                                  email: widget.email,
-                                );
+                        BlocBuilder<AuthCubit, AuthState>(
+                          buildWhen: (_, state) => state is AuthLoading,
+                          builder: (context, state) {
+                            final isLoading = state is AuthLoading;
+                            return AppButton.primary(
+                              onPressed: isLoading
+                                  ? null
+                                  : () => _onResendPressed(context),
+                              text: l10n.resendVerificationEmail,
+                              isLoading: isLoading,
+                              textColor: colorScheme.onPrimary,
+                            );
                           },
-                          text: l10n.resendVerificationEmail,
-                          isLoading: state.state == AuthStates.loading,
-                          textColor: colorScheme.onPrimary,
                         ),
                         const SizedBox(height: AppSpacing.md),
-                        // Back to Login Button
                         AppButton.outline(
                           onPressed: () => context.goToLogin(),
                           text: l10n.backToLogin,

@@ -4,60 +4,60 @@ import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
 
-/// The translations for English (`en`).
-class AppLocalizationsEn extends AppLocalizations {
-  AppLocalizationsEn([String locale = 'en']) : super(locale);
+/// The translations for Spanish Castilian (`es`).
+class AppLocalizationsEs extends AppLocalizations {
+  AppLocalizationsEs([String locale = 'es']) : super(locale);
 
   @override
-  String get appTitle => 'Xpensemate';
+  String get appTitle => 'Mi Aplicación Flutter';
 
   @override
-  String get home => 'Home';
+  String get home => 'Inicio';
 
   @override
-  String get profile => 'Profile';
+  String get profile => 'Perfil';
 
   @override
-  String get settings => 'Settings';
+  String get settings => 'Configuración';
 
   @override
-  String get about => 'About';
+  String get about => 'Acerca de';
 
   @override
-  String get save => 'Save';
+  String get save => 'Guardar';
 
   @override
-  String get cancel => 'Cancel';
+  String get cancel => 'Cancelar';
 
   @override
-  String get delete => 'Delete';
+  String get delete => 'Eliminar';
 
   @override
-  String get edit => 'Edit';
+  String get edit => 'Editar';
 
   @override
-  String get add => 'Add';
+  String get add => 'Agregar';
 
   @override
-  String get confirm => 'Confirm';
+  String get confirm => 'Confirmar';
 
   @override
-  String get retry => 'Retry';
+  String get retry => 'Reintentar';
 
   @override
-  String get close => 'Close';
+  String get close => 'Cerrar';
 
   @override
-  String get next => 'Next';
+  String get next => 'Siguiente';
 
   @override
-  String get back => 'Back';
+  String get back => 'Atrás';
 
   @override
-  String get done => 'Done';
+  String get done => 'Hecho';
 
   @override
-  String get loading => 'Loading...';
+  String get loading => 'Cargando...';
 
   @override
   String get expenseLoaded => 'All expenses loaded successfully!';
@@ -90,16 +90,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get or => 'Or';
 
   @override
-  String get login => 'Login';
+  String get login => 'Iniciar Sesión';
 
   @override
-  String get logout => 'Logout';
+  String get logout => 'Cerrar Sesión';
 
   @override
-  String get register => 'Register';
+  String get register => 'Registrarse';
 
   @override
-  String get email => 'Email';
+  String get email => 'Correo Electrónico';
 
   @override
   String get dontHaveAccount => 'Don\'t have an account?';
@@ -108,10 +108,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hintEmail => 'email';
 
   @override
-  String get password => 'Password';
+  String get password => 'Contraseña';
 
   @override
-  String get confirmPassword => 'Confirm Password';
+  String get confirmPassword => 'Confirmar Contraseña';
 
   @override
   String get hintConfirmPassword => 'Re-enter password';
@@ -132,7 +132,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hintPassword => 'password';
 
   @override
-  String get forgotPassword => 'Forgot Password?';
+  String get forgotPassword => '¿Olvidaste tu contraseña?';
 
   @override
   String get forgotPasswordTitle => 'Reset Your Password';
@@ -152,10 +152,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rememberPassword => 'Remember your password?';
 
   @override
-  String get welcomeBack => 'Welcome Back!';
+  String get welcomeBack => '¡Bienvenido de vuelta!';
 
   @override
-  String get createAccount => 'Create Account';
+  String get createAccount => 'Crear Cuenta';
 
   @override
   String get verifyYourEmail => 'Verify Your Email';
@@ -183,16 +183,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passwordRequired => 'Password is required';
 
   @override
-  String get fieldRequired => 'This field is required';
+  String get fieldRequired => 'Este campo es obligatorio';
 
   @override
-  String get invalidEmail => 'Please enter a valid email';
+  String get invalidEmail => 'Por favor ingresa un correo válido';
 
   @override
-  String get passwordTooShort => 'Password must be at least 8 characters';
+  String get passwordTooShort =>
+      'La contraseña debe tener al menos 8 caracteres';
 
   @override
-  String get passwordsDoNotMatch => 'Passwords do not match';
+  String get passwordsDoNotMatch => 'Las contraseñas no coinciden';
 
   @override
   String get passwordMismatch => 'Passwords do not match';
@@ -215,16 +216,17 @@ class AppLocalizationsEn extends AppLocalizations {
       'Email verification failed. Please try again.';
 
   @override
-  String get errorGeneric => 'Something went wrong. Please try again.';
+  String get errorGeneric => 'Algo salió mal. Por favor intenta de nuevo.';
 
   @override
-  String get errorNetwork => 'Network error. Please check your connection.';
+  String get errorNetwork => 'Error de red. Por favor verifica tu conexión.';
 
   @override
-  String get errorTimeout => 'Request timeout. Please try again.';
+  String get errorTimeout =>
+      'Tiempo de espera agotado. Por favor intenta de nuevo.';
 
   @override
-  String get errorNotFound => 'Resource not found.';
+  String get errorNotFound => 'Recurso no encontrado.';
 
   @override
   String get budgetGoalsLoading => 'Loading...';
@@ -245,35 +247,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get budgetGoalsAllLoaded => 'All budget goals loaded';
 
   @override
-  String get saveSuccess => 'Saved successfully!';
+  String get saveSuccess => '¡Guardado exitosamente!';
 
   @override
-  String get deleteSuccess => 'Deleted successfully!';
+  String get deleteSuccess => '¡Eliminado exitosamente!';
 
   @override
-  String get updateSuccess => 'Updated successfully!';
+  String get updateSuccess => '¡Actualizado exitosamente!';
 
   @override
-  String get searchPlaceholder => 'Search...';
+  String get searchPlaceholder => 'Buscar...';
 
   @override
-  String get noDataAvailable => 'No data available';
+  String get noDataAvailable => 'No hay datos disponibles';
 
   @override
-  String get emptyListMessage => 'Nothing to show here yet';
+  String get emptyListMessage => 'Nada que mostrar aquí aún';
 
   @override
-  String get confirmDelete => 'Are you sure you want to delete this item?';
+  String get confirmDelete =>
+      '¿Estás seguro de que quieres eliminar este elemento?';
 
   @override
-  String get confirmLogout => 'Are you sure you want to logout?';
+  String get confirmLogout => '¿Estás seguro de que quieres cerrar sesión?';
 
   @override
-  String get deleteWarning => 'This action cannot be undone.';
+  String get deleteWarning => 'Esta acción no se puede deshacer.';
 
   @override
   String welcomeUser(String userName) {
-    return 'Welcome, $userName!';
+    return '¡Bienvenido, $userName!';
   }
 
   @override
@@ -281,9 +284,9 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count items',
-      one: '1 item',
-      zero: 'No items',
+      other: '$count elementos',
+      one: '1 elemento',
+      zero: 'Sin elementos',
     );
     return '$_temp0';
   }
@@ -293,26 +296,26 @@ class AppLocalizationsEn extends AppLocalizations {
     final intl.DateFormat dateDateFormat = intl.DateFormat.yMd(localeName);
     final String dateString = dateDateFormat.format(date);
 
-    return 'Last updated: $dateString';
+    return 'Última actualización: $dateString';
   }
 
   @override
-  String get themeMode => 'Theme Mode';
+  String get themeMode => 'Modo de Tema';
 
   @override
-  String get lightTheme => 'Light';
+  String get lightTheme => 'Claro';
 
   @override
-  String get darkTheme => 'Dark';
+  String get darkTheme => 'Oscuro';
 
   @override
-  String get systemTheme => 'System';
+  String get systemTheme => 'Sistema';
 
   @override
-  String get language => 'Language';
+  String get language => 'Idioma';
 
   @override
-  String get selectLanguage => 'Select Language';
+  String get selectLanguage => 'Seleccionar Idioma';
 
   @override
   String get selectCurrency => 'Select Currency';
@@ -321,7 +324,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get currency => 'Currency';
 
   @override
-  String get languageChanged => 'Language changed successfully';
+  String get languageChanged => 'Idioma cambiado exitosamente';
 
   @override
   String get totalSpent => 'Total Spent';
@@ -824,28 +827,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cumulative => 'cumulative';
 
   @override
-  String get goodMorning => 'Good Morning';
+  String get goodMorning => 'Buenos días';
 
   @override
-  String get goodAfternoon => 'Good Afternoon';
+  String get goodAfternoon => 'Buenas tardes';
 
   @override
-  String get goodEvening => 'Good Evening';
+  String get goodEvening => 'Buenas noches';
 
   @override
-  String get financialOverviewSubtitle => 'Here\'s your financial overview';
+  String get financialOverviewSubtitle => 'Aquí tienes tu resumen financiero';
 
   @override
-  String get totalBalance => 'Total Balance';
+  String get totalBalance => 'Balance total';
 
   @override
-  String get vsLastWeek => 'vs last week';
+  String get vsLastWeek => 'vs semana pasada';
 
   @override
-  String get available => 'Available';
+  String get available => 'Disponible';
 
   @override
-  String get spentThisWeek => 'Spent This Week';
+  String get spentThisWeek => 'Gastado esta semana';
 
   @override
   String get activeBudgets => 'Active Budgets';

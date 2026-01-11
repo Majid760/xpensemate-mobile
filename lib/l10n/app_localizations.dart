@@ -5,7 +5,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_ar.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
 
 // ignore_for_file: type=lint
 
@@ -61,7 +64,8 @@ import 'app_localizations_en.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale)
+      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -69,7 +73,8 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -81,7 +86,8 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
     delegate,
     GlobalMaterialLocalizations.delegate,
     GlobalCupertinoLocalizations.delegate,
@@ -90,7 +96,10 @@ abstract class AppLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
-    Locale('en')
+    Locale('ar'),
+    Locale('en'),
+    Locale('es'),
+    Locale('fr')
   ];
 
   /// The title of the application
@@ -663,6 +672,18 @@ abstract class AppLocalizations {
   /// **'Select Language'**
   String get selectLanguage;
 
+  /// No description provided for @selectCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Currency'**
+  String get selectCurrency;
+
+  /// No description provided for @currency.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get currency;
+
   /// No description provided for @languageChanged.
   ///
   /// In en, this message translates to:
@@ -981,6 +1002,252 @@ abstract class AppLocalizations {
   /// **'Are you sure to want to logout?'**
   String get logoutConfirmationMessage;
 
+  /// No description provided for @userSessionNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'User session not found'**
+  String get userSessionNotFound;
+
+  /// No description provided for @ageMinError.
+  ///
+  /// In en, this message translates to:
+  /// **'You must be at least 7 years old'**
+  String get ageMinError;
+
+  /// No description provided for @ageMaxError.
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot be more than 100 years old'**
+  String get ageMaxError;
+
+  /// No description provided for @dobRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of birth is required'**
+  String get dobRequired;
+
+  /// No description provided for @male.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get male;
+
+  /// No description provided for @female.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get female;
+
+  /// No description provided for @other.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get other;
+
+  /// No description provided for @receiveNotificationsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive app notifications'**
+  String get receiveNotificationsDesc;
+
+  /// No description provided for @transactionReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction Reminders'**
+  String get transactionReminders;
+
+  /// No description provided for @transactionRemindersDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily reminder to log expenses'**
+  String get transactionRemindersDesc;
+
+  /// No description provided for @budgetAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget Alerts'**
+  String get budgetAlerts;
+
+  /// No description provided for @budgetAlertsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert when approaching budget limit'**
+  String get budgetAlertsDesc;
+
+  /// No description provided for @biometricAuth.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric Authentication'**
+  String get biometricAuth;
+
+  /// No description provided for @useFingerprintOrFaceId.
+  ///
+  /// In en, this message translates to:
+  /// **'Use fingerprint or Face ID to unlock'**
+  String get useFingerprintOrFaceId;
+
+  /// No description provided for @appPermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'App Permissions'**
+  String get appPermissions;
+
+  /// No description provided for @appPermissionsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage app access permissions'**
+  String get appPermissionsDesc;
+
+  /// No description provided for @changePin.
+  ///
+  /// In en, this message translates to:
+  /// **'Change PIN'**
+  String get changePin;
+
+  /// No description provided for @changePinDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your security PIN'**
+  String get changePinDesc;
+
+  /// No description provided for @dataManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Management'**
+  String get dataManagement;
+
+  /// No description provided for @autoBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto Backup'**
+  String get autoBackup;
+
+  /// No description provided for @autoBackupDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically backup data daily'**
+  String get autoBackupDesc;
+
+  /// No description provided for @exportData.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Data'**
+  String get exportData;
+
+  /// No description provided for @exportDataDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Download your data as CSV or PDF'**
+  String get exportDataDesc;
+
+  /// No description provided for @importData.
+  ///
+  /// In en, this message translates to:
+  /// **'Import Data'**
+  String get importData;
+
+  /// No description provided for @importDataDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Import transactions from file'**
+  String get importDataDesc;
+
+  /// No description provided for @budgetAndCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget & Categories'**
+  String get budgetAndCategories;
+
+  /// No description provided for @defaultCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Categories'**
+  String get defaultCategories;
+
+  /// No description provided for @manageCategoriesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage expense categories'**
+  String get manageCategoriesDesc;
+
+  /// No description provided for @budgetPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget Period'**
+  String get budgetPeriod;
+
+  /// No description provided for @setBudgetCycleDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Set monthly or custom budget cycle'**
+  String get setBudgetCycleDesc;
+
+  /// No description provided for @recurringTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring Transactions'**
+  String get recurringTransactions;
+
+  /// No description provided for @manageRecurringDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage recurring expenses and income'**
+  String get manageRecurringDesc;
+
+  /// No description provided for @privacyPolicyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Read our privacy policy'**
+  String get privacyPolicyDesc;
+
+  /// No description provided for @termsOfServiceDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'View terms and conditions'**
+  String get termsOfServiceDesc;
+
+  /// No description provided for @appVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'App Version'**
+  String get appVersion;
+
+  /// No description provided for @clearAllData.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear All Data'**
+  String get clearAllData;
+
+  /// No description provided for @clearAllDataDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all transactions and reset app'**
+  String get clearAllDataDesc;
+
+  /// No description provided for @clearAllDataConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear All Data?'**
+  String get clearAllDataConfirmTitle;
+
+  /// No description provided for @clearAllDataConfirmDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently delete all your transactions, budgets, and settings. This action cannot be undone.'**
+  String get clearAllDataConfirmDesc;
+
+  /// No description provided for @deleteAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete All'**
+  String get deleteAll;
+
+  /// No description provided for @allDataCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'All data cleared'**
+  String get allDataCleared;
+
   /// No description provided for @seeDetail.
   ///
   /// In en, this message translates to:
@@ -1101,6 +1368,30 @@ abstract class AppLocalizations {
   /// **'We need gallery access to choose photos.'**
   String get galleryPermissionMessage;
 
+  /// No description provided for @storage.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage'**
+  String get storage;
+
+  /// No description provided for @allowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Allowed'**
+  String get allowed;
+
+  /// No description provided for @notAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Allowed'**
+  String get notAllowed;
+
+  /// No description provided for @biometrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometrics'**
+  String get biometrics;
+
   /// No description provided for @personalInformation.
   ///
   /// In en, this message translates to:
@@ -1112,24 +1403,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Day'**
   String get day;
-
-  /// No description provided for @male.
-  ///
-  /// In en, this message translates to:
-  /// **'Male'**
-  String get male;
-
-  /// No description provided for @female.
-  ///
-  /// In en, this message translates to:
-  /// **'Female'**
-  String get female;
-
-  /// No description provided for @other.
-  ///
-  /// In en, this message translates to:
-  /// **'Other'**
-  String get other;
 
   /// No description provided for @enterPhoneNumber.
   ///
@@ -1275,17 +1548,17 @@ abstract class AppLocalizations {
   /// **'Monthly Insights'**
   String get monthlyInsight;
 
-  /// Title for quarterly insights section
+  /// Title for quarterly insight section
   ///
   /// In en, this message translates to:
-  /// **'Quarterly Insights'**
-  String get quarterlyInsights;
+  /// **'Quarterly Insight'**
+  String get quarterInsight;
 
-  /// Title for yearly insights section
+  /// Title for yearly insight section
   ///
   /// In en, this message translates to:
-  /// **'Yearly Insights'**
-  String get yearlyInsights;
+  /// **'Yearly Insight'**
+  String get yearlyInsight;
 
   /// Title for spending trend line chart
   ///
@@ -1425,18 +1698,6 @@ abstract class AppLocalizations {
   /// **'Spent This Week'**
   String get spentThisWeek;
 
-  /// Budget status when progress is moderate
-  ///
-  /// In en, this message translates to:
-  /// **'Moderate'**
-  String get moderate;
-
-  /// Abbreviated label for Medium priority
-  ///
-  /// In en, this message translates to:
-  /// **'Med'**
-  String get mediumPriorityAbbr;
-
   /// Title for active budgets section
   ///
   /// In en, this message translates to:
@@ -1484,6 +1745,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Medium'**
   String get mediumPriority;
+
+  /// Abbreviated label for Medium priority
+  ///
+  /// In en, this message translates to:
+  /// **'Med'**
+  String get mediumPriorityAbbr;
 
   /// Low priority label
   ///
@@ -1947,6 +2214,24 @@ abstract class AppLocalizations {
   /// **'Failed to load budgets'**
   String get failedToLoadBudgets;
 
+  /// Title for quarterly insights section
+  ///
+  /// In en, this message translates to:
+  /// **'Quarterly Insights'**
+  String get quarterlyInsights;
+
+  /// Title for yearly insights section
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly Insights'**
+  String get yearlyInsights;
+
+  /// Budget status when progress is moderate
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate'**
+  String get moderate;
+
   /// No description provided for @noExpensesFound.
   ///
   /// In en, this message translates to:
@@ -2050,7 +2335,8 @@ abstract class AppLocalizations {
   String daysUsed(int count);
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -2059,24 +2345,29 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['en'].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      <String>['ar', 'en', 'es', 'fr'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
-
-
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'en': return AppLocalizationsEn();
+    case 'ar':
+      return AppLocalizationsAr();
+    case 'en':
+      return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
   }
 
   throw FlutterError(
-    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-    'an issue with the localizations generation tool. Please file an issue '
-    'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.'
-  );
+      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+      'an issue with the localizations generation tool. Please file an issue '
+      'on GitHub with a reproducible sample app and the gen-l10n configuration '
+      'that was used.');
 }

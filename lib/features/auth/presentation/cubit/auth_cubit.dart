@@ -58,7 +58,6 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
     final result = await _useCasesHolder.signInWithEmailUseCase.call(
       SignInWithEmailUseCaseParams(email: email, password: password),
     );
-
     result.fold(
       (failure) {
         AppLogger.breadcrumb('Login failed');

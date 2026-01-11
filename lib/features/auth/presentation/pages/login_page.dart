@@ -151,7 +151,9 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           const SizedBox(height: AppSpacing.md),
                           BlocBuilder<AuthCubit, AuthState>(
-                            buildWhen: (_, state) => state is AuthLoading,
+                            buildWhen: (previous, current) =>
+                                previous is AuthLoading ||
+                                current is AuthLoading,
                             builder: (context, state) => AppButton.primary(
                               text: l10n.login.toUpperCase(),
                               isLoading: state is AuthLoading,

@@ -106,14 +106,11 @@ class CustomFlexibleSpace extends StatelessWidget {
         background: DecoratedBox(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
               colors: [
                 context.colorScheme.primary,
-                context.colorScheme.secondary,
                 context.colorScheme.tertiary,
               ],
-              stops: const [0.0, 0.5, 1.0],
+              stops: const [0.0, 0.5],
             ),
           ),
           child: SafeArea(
@@ -145,7 +142,6 @@ class CustomFlexibleSpace extends StatelessWidget {
                               end: Alignment.bottomRight,
                               colors: [
                                 context.colorScheme.primary,
-                                context.colorScheme.secondary,
                                 context.colorScheme.tertiary,
                               ],
                             ),

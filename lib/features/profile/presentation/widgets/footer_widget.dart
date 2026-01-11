@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/colors/app_colors.dart';
@@ -30,8 +29,11 @@ class ModernFooter extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(context.sm),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppColors.primary, AppColors.secondary],
+                gradient: LinearGradient(
+                  colors: [
+                    context.colorScheme.primary,
+                    context.colorScheme.tertiary,
+                  ],
                 ),
                 borderRadius: BorderRadius.circular(14),
               ),

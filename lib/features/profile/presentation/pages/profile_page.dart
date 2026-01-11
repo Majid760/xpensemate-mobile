@@ -178,14 +178,11 @@ class _ProfilePageState extends State<ProfilePage>
             body: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
                   colors: [
                     colorScheme.primary,
-                    colorScheme.secondary,
                     colorScheme.tertiary,
                   ],
-                  stops: const [0.0, 0.5, 1.0],
+                  stops: const [0.0, 0.5],
                 ),
               ),
               child: CustomScrollView(

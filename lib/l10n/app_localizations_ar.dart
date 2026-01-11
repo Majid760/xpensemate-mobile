@@ -872,7 +872,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get mediumPriority => 'Medium';
 
   @override
-  String get mediumPriorityAbbr => 'Med';
+  String get mediumPriorityAbbr => 'متوسط';
 
   @override
   String get lowPriority => 'Low';

@@ -26,13 +26,14 @@ class PaymentStatsModel extends PaymentStatsEntity {
         averagePayment: (json['avgPayment'] as num?)?.toDouble() ?? 0.0,
         totalPayments: json['totalPayments'] as int,
         walletBalance: (json['walletBalance'] as num?)?.toDouble() ?? 0.0,
-        monthlyTrend:
-            (json['monthlyTrend'] as List).map((e) => MonthlyTrendModel.fromJson(e as Map<String, dynamic>)).toList(),
+        monthlyTrend: (json['monthlyTrend'] as List)
+            .map((e) => MonthlyTrendModel.fromJson(e as Map<String, dynamic>))
+            .toList(),
         revenueSources: (json['revenueSources'] as List)
             .map((e) => RevenueSourceModel.fromJson(e as Map<String, dynamic>))
             .toList(),
         periodGrowth: (json['periodGrowth'] as num?)?.toDouble() ?? 0.0,
-        topPayer: (json['topPayer'] as String) ?? '',
+        topPayer: (json['topPayer'] as String?) ?? '',
         topPayerAmount: (json['topPayerAmount'] as num?)?.toDouble() ?? 0.0,
       );
     } on Exception catch (_) {

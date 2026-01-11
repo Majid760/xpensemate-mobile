@@ -94,7 +94,8 @@ class PaymentCubit extends Cubit<PaymentState> {
       statsResult.fold(
         (failure) {
           AppLogger.breadcrumb(
-              'Fetch payment stats failed: ${failure.message}');
+            'Fetch payment stats failed: ${failure.message}',
+          );
           emit(
             state.copyWith(
               status: PaymentStatus.error,

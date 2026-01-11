@@ -3,12 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_custom_dropdown_widget.dart';
+import 'package:xpensemate/core/widget/custom_app_loader.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/product_weekly_analytics_entity.dart';
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/product_analytics_bar_chart.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/section_header_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/weekly_summary_cards.dart';
-import 'package:xpensemate/core/widget/custom_app_loader.dart';
 
 class ProductAnalyticsWidget extends StatefulWidget {
   const ProductAnalyticsWidget({super.key});
@@ -109,8 +109,10 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
                   ),
 
                   SizedBox(height: context.lg),
-
-                  if (state.state == DashboardStates.loading)
+                  // if analytics is not therre
+                  if (analytics.categoriesData.isEmpty)
+                    _buildNoDataState(context)
+                  else if (state.state == DashboardStates.loading)
                     _buildLoadingState(context)
                   else
                     _buildAnalyticsContent(context, analytics),
@@ -176,3 +178,14 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
         ),
       );
 }
+
+Widget _buildNoDataState(BuildContext context) => Container(
+      height: 200,
+      padding: EdgeInsets.all(context.lg),
+      child: Center(
+        child: Text(
+          context.l10n.noDataAvailable,
+          style: context.textTheme.bodyMedium,
+        ),
+      ),
+    );

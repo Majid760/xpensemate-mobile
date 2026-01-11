@@ -22,7 +22,7 @@ class DarkColors {
       );
 }
 
-abstract class AppDarkColors {
+final class AppDarkColors {
   // Brand colors
   static const Color primary = Color(0xFFBB86FC);
   static const Color primaryContainer = Color(0xFF3700B3);

@@ -218,9 +218,12 @@ class DashboardCubit extends Cubit<DashboardState> {
         _getProductWeeklyAnalyticsUseCase(const NoParams()),
       ]);
 
-      final weeklyStatsResult = results[0] as Either<Failure, WeeklyStatsEntity>;
-      final budgetGoalsResult = results[1] as Either<Failure, BudgetGoalsEntity>;
-      final productAnalyticsResult = results[2] as Either<Failure, ProductWeeklyAnalyticsEntity>;
+      final weeklyStatsResult =
+          results[0] as Either<Failure, WeeklyStatsEntity>;
+      final budgetGoalsResult =
+          results[1] as Either<Failure, BudgetGoalsEntity>;
+      final productAnalyticsResult =
+          results[2] as Either<Failure, ProductWeeklyAnalyticsEntity>;
 
       var newWeeklyStats = state.weeklyStats;
       var newBudgetGoals = state.budgetGoals;
@@ -268,7 +271,9 @@ class DashboardCubit extends Cubit<DashboardState> {
             weeklyStats: newWeeklyStats,
             budgetGoals: newBudgetGoals,
             productAnalytics: newProductAnalytics,
-            message: errors.isNotEmpty ? 'Some data failed to load: ${errors.join(", ")}' : null,
+            message: errors.isNotEmpty
+                ? 'Some data failed to load: ${errors.join(", ")}'
+                : null,
           ),
         );
       }

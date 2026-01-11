@@ -19,33 +19,28 @@ final class AuthInterceptor extends QueuedInterceptor {
   ) async {
     try {
       var accessToken = _authService.token;
-      AppLogger.breadcrumb(
-          'AuthInterceptor: Checking access token for request to ${options.path}');
       logI(
-          "this is accesss token before checking => ${accessToken.isNotEmpty ? accessToken.substring(0, 6) : 'empty'}");
+        "this is accesss token before checking => ${accessToken.isNotEmpty ? accessToken.substring(0, 6) : 'empty'}",
+      );
       if (accessToken.isEmpty) {
-        AppLogger.breadcrumb(
-            'AuthInterceptor: Access token empty, attempting to fetch from storage.');
         logI("error access token is empty, fetching from storage");
-        scheduleMicrotask(_authService.getAccessToken);
-        if (_authService.token.isNotEmpty) {
-          accessToken = _authService.token;
-          AppLogger.breadcrumb(
-              'AuthInterceptor: Access token successfully fetched from storage.');
+        // Await the token retrieval directly
+        final token = await _authService.getAccessToken();
+        if (token != null && token.isNotEmpty) {
+          accessToken = token;
+          logI("access token IS NOW NOT empty, fetched from storage");
         } else {
-          AppLogger.e('getAccessToken from storageg failed');
-          AppLogger.breadcrumb(
-              'AuthInterceptor: Failed to get access token from storage.');
+          logE('getAccessToken from storageg failed');
         }
       }
       options.headers['Authorization'] = 'Bearer $accessToken';
-      AppLogger.i(
+      logI(
         'AuthInterceptor attached token: ${accessToken.substring(0, (accessToken.length > 10 ? 10 : accessToken.length))}...',
       );
       handler.next(options);
     } on Exception catch (e) {
       // proceed without token
-      AppLogger.e('error while getting token=> $e');
+      logE('error while getting token=> $e');
       handler.next(options);
     }
   }
@@ -60,15 +55,16 @@ final class AuthInterceptor extends QueuedInterceptor {
       if (err.response?.statusCode != 401 && err.response?.statusCode != 403) {
         return handler.next(err);
       }
-      AppLogger.i(
+      logI(
         'Token expired or invalid (status ${err.response?.statusCode}), attempting to refresh...',
       );
       // Get the refresh token
       final refreshToken = _authService.userRefreshToken;
       logI(
-          "refreshed token in storage => ${refreshToken.isNotEmpty ? refreshToken.substring(0, 6) : 'empty'}");
+        "refreshed token in storage => ${refreshToken.isNotEmpty ? refreshToken.substring(0, 6) : 'empty'}",
+      );
 
-      if (refreshToken.isEmpty) AppLogger.e('No refresh token available');
+      if (refreshToken.isEmpty) logE('No refresh token available');
 
       // Attempt to refresh the token
       try {
@@ -78,7 +74,8 @@ final class AuthInterceptor extends QueuedInterceptor {
           data: {'refreshToken': refreshToken},
         );
         logI(
-            'RefreshToken response => : ${response.statusMessage} and status => ${response.statusCode}');
+          'RefreshToken response => : ${response.statusMessage} and status => ${response.statusCode}',
+        );
 
         if (response.statusCode == 200 && response.data != null) {
           // Parse the new token
@@ -94,7 +91,8 @@ final class AuthInterceptor extends QueuedInterceptor {
           return handler.resolve(await dio.fetch(newOptions));
         } else {
           logI(
-              'Failed to refresh token: ${response.statusMessage} and status => ${response.statusCode}');
+            'Failed to refresh token: ${response.statusMessage} and status => ${response.statusCode}',
+          );
         }
       } on Exception catch (refreshError) {
         AppLogger.e('Error refreshing token: $refreshError');

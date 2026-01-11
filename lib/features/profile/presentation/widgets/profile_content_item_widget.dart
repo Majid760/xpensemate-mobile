@@ -9,9 +9,9 @@ import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/widget/custom_app_loader.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_state.dart';
-import 'package:xpensemate/features/profile/presentation/pages/profile_page.dart';
 import 'package:xpensemate/features/profile/presentation/widgets/footer_widget.dart';
 import 'package:xpensemate/features/profile/presentation/widgets/menu_item_widget.dart';
+import 'package:xpensemate/features/profile/presentation/widgets/profile_widgets.dart';
 
 class ModernContent extends StatelessWidget {
   const ModernContent({

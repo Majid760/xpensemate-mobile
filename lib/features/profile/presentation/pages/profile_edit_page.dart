@@ -6,6 +6,7 @@ import 'package:reactive_forms/reactive_forms.dart';
 import 'package:reactive_phone_form_field/reactive_phone_form_field.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
 import 'package:xpensemate/core/widget/app_dialogs.dart';
@@ -88,16 +89,16 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
       // Map gender enum to display name
       switch (user.gender!.toLowerCase()) {
         case 'male':
-          parsedGender = 'Male';
+          parsedGender = context.l10n.male;
           break;
         case 'female':
-          parsedGender = 'Female';
+          parsedGender = context.l10n.female;
           break;
         case 'other':
-          parsedGender = 'Other';
+          parsedGender = context.l10n.other;
           break;
         default:
-          parsedGender = 'Other';
+          parsedGender = context.l10n.other;
       }
     }
 
@@ -216,7 +217,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
       if (selectedDate.isAfter(sevenYearsAgo) && mounted) {
         AppSnackBar.show(
           context: context,
-          message: 'You must be at least 7 years old',
+          message: context.l10n.ageMinError,
           type: SnackBarType.error,
         );
 
@@ -225,7 +226,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
       if (selectedDate.isBefore(hundredYearsAgo) && mounted) {
         AppSnackBar.show(
           context: context,
-          message: 'You cannot be more than 100 years old',
+          message: context.l10n.ageMaxError,
           type: SnackBarType.error,
         );
 
@@ -323,7 +324,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
                             },
                           ),
                         ),
-                        SizedBox(height: context.xl),
+                        context.xl.heightBox,
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: context.md),
                           child: Column(
@@ -344,7 +345,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
                                       context.l10n.nameMustBeAtLeast4Characters,
                                 },
                               ),
-                              SizedBox(height: context.lg),
+                              context.lg.heightBox,
                               ReactiveAppField(
                                 formControlName: 'contactNumber',
                                 labelText: context.l10n.phoneNumber,
@@ -357,7 +358,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
                                       .l10n.phoneNumberMustBeAtLeast10Digits,
                                 },
                               ),
-                              SizedBox(height: context.lg),
+                              context.lg.heightBox,
                               ReactiveAppField(
                                 formControlName: 'dob',
                                 labelText: context.l10n.dateOfBirth,
@@ -370,10 +371,10 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
                                 ),
                                 validationMessages: {
                                   'required': (error) =>
-                                      'Date of birth is required',
+                                      context.l10n.dobRequired,
                                 },
                               ),
-                              SizedBox(height: context.lg),
+                              context.lg.heightBox,
                               ReactiveAppField(
                                 formControlName: 'gender',
                                 labelText: context.l10n.gender,
@@ -385,7 +386,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
                                   HapticFeedback.selectionClick();
                                 },
                               ),
-                              SizedBox(height: context.lg),
+                              context.lg.heightBox,
                               ReactiveAppField(
                                 formControlName: 'about',
                                 labelText: context.l10n.about,
@@ -397,7 +398,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
                                     .colorScheme.surfaceContainerHighest
                                     .withValues(alpha: 0.7),
                               ),
-                              SizedBox(height: context.xl),
+                              context.xl.heightBox,
                               AppButton.primary(
                                 text: context.l10n.save,
                                 isLoading: loadedState?.isUpdating ?? false,
@@ -408,7 +409,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
                                 onPressed: () =>
                                     _handleSave(context.profileCubit),
                               ),
-                              SizedBox(height: context.md),
+                              context.md.heightBox,
                             ],
                           ),
                         ),

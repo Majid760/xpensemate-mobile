@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/route/utils/router_extension.dart';
-import 'package:xpensemate/core/theme/app_spacing.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/assset_path.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
 import 'package:xpensemate/core/widget/app_dialogs.dart';
@@ -52,6 +52,9 @@ class _RegisterPageState extends State<RegisterPage> {
           ],
         ),
       },
+      validators: [
+        Validators.mustMatch('password', 'confirmPassword'),
+      ],
     );
   }
 
@@ -74,190 +77,190 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final textTheme = theme.textTheme;
-
-    return Scaffold(
-      body: BlocListener<AuthCubit, AuthState>(
-        listenWhen: (_, state) =>
-            state is AuthError || state is AuthUnauthenticated,
-        listener: (context, state) {
-          if (state is AuthError) {
-            AppSnackBar.show(
-              context: context,
-              message: state.message,
-              type: SnackBarType.error,
-            );
-          } else if (state is AuthUnauthenticated) {
-            AppDialogs.showTopSnackBar(
-              context,
-              message: l10n.registerSuccess,
-              type: MessageType.info,
-            );
-            context.goToVerifyEmail(
-              email: (_form.control('email').value as String?)
-                      ?.trim()
-                      .toLowerCase() ??
-                  '',
-            );
-          }
-        },
-        child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) => SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight,
-                ),
-                child: IntrinsicHeight(
-                  child: Padding(
-                    padding: const EdgeInsets.all(AppSpacing.md),
-                    child: ReactiveForm(
-                      formGroup: _form,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // Logo and Welcome Text
-                          const SizedBox(height: AppSpacing.xl),
-                          AppImage.asset(
-                            AssetPaths.logo,
-                            height: 64,
-                            color: colorScheme.primary,
-                          ),
-                          const SizedBox(height: AppSpacing.lg),
-                          Text(
-                            l10n.registerNow,
-                            style: textTheme.headlineMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: colorScheme.onSurface,
+  Widget build(BuildContext context) => Scaffold(
+        body: BlocListener<AuthCubit, AuthState>(
+          listenWhen: (_, state) =>
+              state is AuthError || state is AuthUnauthenticated,
+          listener: (context, state) {
+            if (state is AuthError) {
+              AppSnackBar.show(
+                context: context,
+                message: state.message,
+                type: SnackBarType.error,
+              );
+            } else if (state is AuthUnauthenticated) {
+              AppDialogs.showTopSnackBar(
+                context,
+                message: context.l10n.registerSuccess,
+                type: MessageType.info,
+              );
+              context.goToVerifyEmail(
+                email: (_form.control('email').value as String?)
+                        ?.trim()
+                        .toLowerCase() ??
+                    '',
+              );
+            }
+          },
+          child: SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) => SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight,
+                  ),
+                  child: IntrinsicHeight(
+                    child: Padding(
+                      padding: EdgeInsets.all(context.md),
+                      child: ReactiveForm(
+                        formGroup: _form,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            // Logo and Welcome Text
+                            SizedBox(height: context.xl),
+                            AppImage.asset(
+                              AssetPaths.logo,
+                              height: 64,
+                              color: context.primaryColor,
                             ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: AppSpacing.xl),
-
-                          // Name Field
-                          ReactiveAppField(
-                            formControlName: 'name',
-                            labelText: l10n.name,
-                            hintText: l10n.hintName,
-                            textInputAction: TextInputAction.next,
-                            prefixIcon: Icon(
-                              Icons.person_outline_rounded,
-                              color: colorScheme.onSurfaceVariant
-                                  .withValues(alpha: 0.6),
+                            SizedBox(height: context.lg),
+                            Text(
+                              context.l10n.registerNow,
+                              style: context.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: context.onSurfaceColor,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                            validationMessages: {
-                              'required': (error) => l10n.nameIsRequired,
-                            },
-                          ),
-                          const SizedBox(height: AppSpacing.lg),
+                            SizedBox(height: context.xl),
 
-                          // Email Field
-                          ReactiveAppField(
-                            formControlName: 'email',
-                            labelText: l10n.email,
-                            fieldType: FieldType.email,
-                            hintText: l10n.hintEmail,
-                            textInputAction: TextInputAction.next,
-                            prefixIcon: Icon(
-                              Icons.email_outlined,
-                              color: colorScheme.onSurfaceVariant
-                                  .withValues(alpha: 0.6),
+                            // Name Field
+                            ReactiveAppField(
+                              formControlName: 'name',
+                              labelText: context.l10n.name,
+                              hintText: context.l10n.hintName,
+                              textInputAction: TextInputAction.next,
+                              prefixIcon: Icon(
+                                Icons.person_outline_rounded,
+                                color: context.colorScheme.onSurfaceVariant
+                                    .withValues(alpha: 0.6),
+                              ),
+                              validationMessages: {
+                                'required': (error) =>
+                                    context.l10n.nameIsRequired,
+                              },
                             ),
-                            validationMessages: {
-                              'required': (error) => l10n.emailRequired,
-                              'email': (error) => l10n.invalidEmail,
-                            },
-                          ),
-                          const SizedBox(height: AppSpacing.lg),
+                            SizedBox(height: context.lg),
 
-                          // Password Field
-                          ReactiveAppField(
-                            formControlName: 'password',
-                            labelText: l10n.password,
-                            fieldType: FieldType.password,
-                            hintText: l10n.hintPassword,
-                            textInputAction: TextInputAction.next,
-                            prefixIcon: Icon(
-                              Icons.lock_outline_rounded,
-                              color: colorScheme.onSurfaceVariant
-                                  .withValues(alpha: 0.6),
+                            // Email Field
+                            ReactiveAppField(
+                              formControlName: 'email',
+                              labelText: context.l10n.email,
+                              fieldType: FieldType.email,
+                              hintText: context.l10n.hintEmail,
+                              textInputAction: TextInputAction.next,
+                              prefixIcon: Icon(
+                                Icons.email_outlined,
+                                color: context.colorScheme.onSurfaceVariant
+                                    .withValues(alpha: 0.6),
+                              ),
+                              validationMessages: {
+                                'required': (error) =>
+                                    context.l10n.emailRequired,
+                                'email': (error) => context.l10n.invalidEmail,
+                              },
                             ),
-                            validationMessages: {
-                              'required': (error) => l10n.passwordRequired,
-                              'minLength': (error) => l10n.passwordTooShort,
-                            },
-                          ),
-                          const SizedBox(height: AppSpacing.lg),
+                            SizedBox(height: context.lg),
 
-                          // Confirm Password Field
-                          ReactiveAppField(
-                            formControlName: 'confirmPassword',
-                            labelText: l10n.confirmPassword,
-                            fieldType: FieldType.password,
-                            hintText: l10n.hintConfirmPassword,
-                            textInputAction: TextInputAction.done,
-                            prefixIcon: Icon(
-                              Icons.lock_outline_rounded,
-                              color: colorScheme.onSurfaceVariant
-                                  .withValues(alpha: 0.6),
+                            // Password Field
+                            ReactiveAppField(
+                              formControlName: 'password',
+                              labelText: context.l10n.password,
+                              fieldType: FieldType.password,
+                              hintText: context.l10n.hintPassword,
+                              textInputAction: TextInputAction.next,
+                              prefixIcon: Icon(
+                                Icons.lock_outline_rounded,
+                                color: context.colorScheme.onSurfaceVariant
+                                    .withValues(alpha: 0.6),
+                              ),
+                              validationMessages: {
+                                'required': (error) =>
+                                    context.l10n.passwordRequired,
+                                'minLength': (error) =>
+                                    context.l10n.passwordTooShort,
+                              },
                             ),
-                            validationMessages: {
-                              'required': (error) =>
-                                  '${l10n.confirmPassword} is required',
-                              'passwordMismatch': (error) =>
-                                  context.l10n.passwordsDoNotMatch,
-                              'mustMatch': (error) =>
-                                  context.l10n.passwordsDoNotMatch,
-                            },
-                          ),
-                          const SizedBox(height: AppSpacing.xxl),
-                          // Register Button
-                          BlocBuilder<AuthCubit, AuthState>(
-                            buildWhen: (_, state) => state is AuthLoading,
-                            builder: (context, state) {
-                              final isLoading = state is AuthLoading;
-                              return AppButton.primary(
-                                onPressed: isLoading ? null : _submitForm,
-                                text: l10n.register.toUpperCase(),
-                                textColor: colorScheme.onPrimary,
-                                isLoading: isLoading,
-                              );
-                            },
-                          ),
+                            SizedBox(height: context.lg),
 
-                          const Spacer(),
-
-                          // Already have an account? Login
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: AppSpacing.xxl,
+                            // Confirm Password Field
+                            ReactiveAppField(
+                              formControlName: 'confirmPassword',
+                              labelText: context.l10n.confirmPassword,
+                              fieldType: FieldType.password,
+                              hintText: context.l10n.hintConfirmPassword,
+                              textInputAction: TextInputAction.done,
+                              prefixIcon: Icon(
+                                Icons.lock_outline_rounded,
+                                color: context.colorScheme.onSurfaceVariant
+                                    .withValues(alpha: 0.6),
+                              ),
+                              validationMessages: {
+                                'required': (error) =>
+                                    context.l10n.confirmPasswordRequired,
+                                'passwordMismatch': (error) =>
+                                    context.l10n.passwordsDoNotMatch,
+                                'mustMatch': (error) =>
+                                    context.l10n.passwordsDoNotMatch,
+                              },
                             ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  l10n.alreadyHaveAccount,
-                                  style: textTheme.bodyMedium?.copyWith(
-                                    color: colorScheme.onSurfaceVariant,
+                            SizedBox(height: context.xxl),
+                            // Register Button
+                            BlocBuilder<AuthCubit, AuthState>(
+                              buildWhen: (_, state) => state is AuthLoading,
+                              builder: (context, state) {
+                                final isLoading = state is AuthLoading;
+                                return AppButton.primary(
+                                  onPressed: isLoading ? null : _submitForm,
+                                  text: context.l10n.register.toUpperCase(),
+                                  textColor: context.onPrimaryColor,
+                                  isLoading: isLoading,
+                                );
+                              },
+                            ),
+
+                            const Spacer(),
+
+                            // Already have an account? Login
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: context.xxl,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    context.l10n.alreadyHaveAccount,
+                                    style: context.bodyMedium?.copyWith(
+                                      color:
+                                          context.colorScheme.onSurfaceVariant,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: AppSpacing.xs),
-                                AppButton.textButton(
-                                  onPressed: () => context.pop(),
-                                  text: l10n.login,
-                                  textColor: colorScheme.primary,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: AppSpacing.sm,
+                                  SizedBox(width: context.xs),
+                                  AppButton.textButton(
+                                    onPressed: () => context.pop(),
+                                    text: context.l10n.login,
+                                    textColor: context.primaryColor,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: context.sm,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -266,7 +269,5 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           ),
         ),
-      ),
-    );
-  }
+      );
 }

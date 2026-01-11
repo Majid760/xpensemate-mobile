@@ -6,7 +6,7 @@ import 'package:reactive_forms/reactive_forms.dart';
 
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/route/utils/router_extension.dart';
-import 'package:xpensemate/core/theme/app_spacing.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/utils/assset_path.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
@@ -60,146 +60,157 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-    final textTheme = theme.textTheme;
-
-    return Scaffold(
-      body: BlocListener<AuthCubit, AuthState>(
-        listenWhen: (_, state) =>
-            state is AuthError || state is AuthAuthenticated,
-        listener: (context, state) {
-          if (state is AuthError) {
-            AppSnackBar.show(
-              context: context,
-              message: state.message,
-              type: SnackBarType.error,
-            );
-          }
-          if (state is AuthAuthenticated) {
-            context.goToHome();
-          }
-        },
-        child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) => SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: IntrinsicHeight(
-                  child: Padding(
-                    padding: const EdgeInsets.all(AppSpacing.md),
-                    child: ReactiveForm(
-                      formGroup: _form,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          const SizedBox(height: AppSpacing.lg),
-                          AppImage.asset(
-                            AssetPaths.logo,
-                            height: 64,
-                            color: colors.primary,
-                          ),
-                          const SizedBox(height: AppSpacing.lg),
-                          Text(
-                            l10n.welcomeBack,
-                            textAlign: TextAlign.center,
-                            style: textTheme.headlineMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
+  Widget build(BuildContext context) => Scaffold(
+        body: BlocListener<AuthCubit, AuthState>(
+          listenWhen: (_, state) =>
+              state is AuthError || state is AuthAuthenticated,
+          listener: (context, state) {
+            if (state is AuthError) {
+              AppSnackBar.show(
+                context: context,
+                message: state.message,
+                type: SnackBarType.error,
+              );
+            }
+            if (state is AuthAuthenticated) {
+              context.goToHome();
+            }
+          },
+          child: SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) => SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: IntrinsicHeight(
+                    child: Padding(
+                      padding: EdgeInsets.all(context.md),
+                      child: ReactiveForm(
+                        formGroup: _form,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            SizedBox(height: context.lg),
+                            AppImage.asset(
+                              AssetPaths.logo,
+                              height: 64,
+                              color: context.primaryColor,
                             ),
-                          ),
-                          const SizedBox(height: AppSpacing.xl),
-                          ReactiveAppField(
-                            formControlName: 'email',
-                            labelText: l10n.email,
-                            fieldType: FieldType.email,
-                            hintText: l10n.hintEmail,
-                            prefixIcon: Icon(
-                              Icons.email_outlined,
-                              color: colors.onSurfaceVariant
-                                  .withValues(alpha: 0.6),
-                            ),
-                            validationMessages: {
-                              'required': (_) => l10n.emailRequired,
-                              'email': (_) => l10n.invalidEmail,
-                            },
-                          ),
-                          const SizedBox(height: AppSpacing.lg),
-                          ReactiveAppField(
-                            formControlName: 'password',
-                            labelText: l10n.password,
-                            fieldType: FieldType.password,
-                            hintText: l10n.hintPassword,
-                            prefixIcon: Icon(
-                              Icons.lock_outline,
-                              color: colors.onSurfaceVariant
-                                  .withValues(alpha: 0.6),
-                            ),
-                            validationMessages: {
-                              'required': (_) => l10n.passwordRequired,
-                              'minLength': (_) => l10n.passwordTooShort,
-                            },
-                          ),
-                          const SizedBox(height: AppSpacing.sm),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: AppButton.textButton(
-                              text: l10n.forgotPassword,
-                              onPressed: context.pushForgotPasword,
-                            ),
-                          ),
-                          const SizedBox(height: AppSpacing.md),
-                          BlocBuilder<AuthCubit, AuthState>(
-                            buildWhen: (previous, current) =>
-                                previous is AuthLoading ||
-                                current is AuthLoading,
-                            builder: (context, state) => AppButton.primary(
-                              text: l10n.login.toUpperCase(),
-                              isLoading: state is AuthLoading,
-                              onPressed: () => AppUtils.throttle(_submit),
-                            ),
-                          ),
-                          const SizedBox(height: AppSpacing.lg),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Divider(color: colors.outlineVariant),
+                            SizedBox(height: context.lg),
+                            Text(
+                              context.l10n.welcomeBack,
+                              textAlign: TextAlign.center,
+                              style: context.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
                               ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: AppSpacing.md,
+                            ),
+                            SizedBox(height: context.xl),
+                            ReactiveAppField(
+                              formControlName: 'email',
+                              labelText: context.l10n.email,
+                              fieldType: FieldType.email,
+                              hintText: context.l10n.hintEmail,
+                              prefixIcon: Icon(
+                                Icons.email_outlined,
+                                color: context.colorScheme.onSurfaceVariant
+                                    .withValues(alpha: 0.6),
+                              ),
+                              validationMessages: {
+                                'required': (_) => context.l10n.emailRequired,
+                                'email': (_) => context.l10n.invalidEmail,
+                              },
+                            ),
+                            SizedBox(height: context.lg),
+                            ReactiveAppField(
+                              formControlName: 'password',
+                              labelText: context.l10n.password,
+                              fieldType: FieldType.password,
+                              hintText: context.l10n.hintPassword,
+                              prefixIcon: Icon(
+                                Icons.lock_outline,
+                                color: context.colorScheme.onSurfaceVariant
+                                    .withValues(alpha: 0.6),
+                              ),
+                              validationMessages: {
+                                'required': (_) =>
+                                    context.l10n.passwordRequired,
+                                'minLength': (_) =>
+                                    context.l10n.passwordTooShort,
+                              },
+                            ),
+                            SizedBox(height: context.sm),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: AppButton.textButton(
+                                text: context.l10n.forgotPassword,
+                                textColor: context.primaryColor,
+                                onPressed: context.pushForgotPasword,
+                              ),
+                            ),
+                            SizedBox(height: context.md),
+                            BlocBuilder<AuthCubit, AuthState>(
+                              buildWhen: (previous, current) =>
+                                  previous is AuthLoading ||
+                                  current is AuthLoading,
+                              builder: (context, state) => AppButton.primary(
+                                text: context.l10n.login.toUpperCase(),
+                                textColor: context.onPrimaryColor,
+                                isLoading: state is AuthLoading,
+                                onPressed: () => AppUtils.throttle(_submit),
+                              ),
+                            ),
+                            SizedBox(height: context.lg),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Divider(
+                                    color: context.outlineColor.withValues(
+                                      alpha: 0.5,
+                                    ),
+                                  ),
                                 ),
-                                child: Text(l10n.or),
-                              ),
-                              Expanded(
-                                child: Divider(color: colors.outlineVariant),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: AppSpacing.lg),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SocialButton.google(onPressed: () {}),
-                              const SizedBox(width: 16),
-                              if (Platform.isIOS)
-                                SocialButton.apple(onPressed: () {}),
-                            ],
-                          ),
-                          const Spacer(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(l10n.dontHaveAccount),
-                              const SizedBox(width: AppSpacing.xs),
-                              AppButton.textButton(
-                                text: l10n.register,
-                                onPressed: context.pushRegister,
-                              ),
-                            ],
-                          ),
-                        ],
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: context.md,
+                                  ),
+                                  child: Text(context.l10n.or),
+                                ),
+                                Expanded(
+                                  child: Divider(
+                                    color: context.outlineColor.withValues(
+                                      alpha: 0.5,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: context.lg),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SocialButton.google(onPressed: () {}),
+                                const SizedBox(width: 16),
+                                if (Platform.isIOS)
+                                  SocialButton.apple(onPressed: () {}),
+                              ],
+                            ),
+                            const Spacer(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(context.l10n.dontHaveAccount),
+                                SizedBox(width: context.xs),
+                                AppButton.textButton(
+                                  text: context.l10n.register,
+                                  textColor: context.primaryColor,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: context.sm,
+                                  ),
+                                  onPressed: context.pushRegister,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -208,7 +219,5 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
         ),
-      ),
-    );
-  }
+      );
 }

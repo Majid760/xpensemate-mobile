@@ -56,9 +56,27 @@ void main() async {
 }
 
 /// main app class
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   /// constructor of main app class
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late final AppRouter _appRouter;
+
+  @override
+  void initState() {
+    super.initState();
+    final authCubit = sl<AuthCubit>();
+    _appRouter = AppRouter(
+      authCubit,
+      RouteGuards(authCubit, sl<StorageService>()),
+      sl.analytics,
+    );
+  }
 
   @override
   Widget build(BuildContext context) => MultiBlocProvider(
@@ -73,15 +91,12 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<DashboardCubit>(
             create: (context) => sl.dashboardCubit,
-            lazy: false,
           ),
           BlocProvider<ExpenseCubit>(
             create: (context) => sl.expenseCubit,
-            lazy: false,
           ),
           BlocProvider<BudgetCubit>(
             create: (context) => sl.budgetCubit,
-            lazy: false,
           ),
           BlocProvider<BudgetExpensesCubit>(
             create: (context) => sl.budgetExpensesCubit,
@@ -92,50 +107,43 @@ class MyApp extends StatelessWidget {
           // Other cubits/blocs
         ],
         child: Builder(
-          builder: (context) {
-            final authCubit = context.read<AuthCubit>();
-            return BlocSelector<ProfileCubit, ProfileState, ThemeMode>(
-              selector: (state) =>
-                  state is ProfileLoaded ? state.themeMode : ThemeMode.system,
-              builder: (context, themeMode) => GestureDetector(
-                onTap: AppUtils.unFocus,
-                child: MaterialApp.router(
-                  title: 'ExpenseTracker',
-                  theme: AppTheme.lightTheme,
-                  darkTheme: AppTheme.darkTheme,
-                  themeMode: themeMode,
-                  debugShowCheckedModeBanner: false,
-                  routerConfig: AppRouter(
-                    authCubit,
-                    RouteGuards(authCubit, sl<StorageService>()),
-                    sl.analytics,
-                  ).router,
-                  localizationsDelegates: const [
-                    AppLocalizations.delegate,
-                    GlobalMaterialLocalizations.delegate,
-                    GlobalWidgetsLocalizations.delegate,
-                    GlobalCupertinoLocalizations.delegate,
-                  ],
-                  supportedLocales: SupportedLocales.supportedLocales,
-                  locale: LocaleManager().currentLocale,
-                  // Locale resolution
-                  localeResolutionCallback: (locale, supportedLocales) {
-                    // If the current device locale is supported, use it
-                    if (locale != null) {
-                      for (final supportedLocale in supportedLocales) {
-                        if (supportedLocale.languageCode ==
-                            locale.languageCode) {
-                          return supportedLocale;
-                        }
+          builder: (context) =>
+              BlocSelector<ProfileCubit, ProfileState, ThemeMode>(
+            selector: (state) =>
+                state is ProfileLoaded ? state.themeMode : ThemeMode.system,
+            builder: (context, themeMode) => GestureDetector(
+              onTap: AppUtils.unFocus,
+              child: MaterialApp.router(
+                title: 'ExpenseTracker',
+                theme: AppTheme.lightTheme,
+                darkTheme: AppTheme.darkTheme,
+                themeMode: themeMode,
+                debugShowCheckedModeBanner: false,
+                routerConfig: _appRouter.router,
+                localizationsDelegates: const [
+                  AppLocalizations.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                supportedLocales: SupportedLocales.supportedLocales,
+                locale: LocaleManager().currentLocale,
+                // Locale resolution
+                localeResolutionCallback: (locale, supportedLocales) {
+                  // If the current device locale is supported, use it
+                  if (locale != null) {
+                    for (final supportedLocale in supportedLocales) {
+                      if (supportedLocale.languageCode == locale.languageCode) {
+                        return supportedLocale;
                       }
                     }
-                    // Fallback to first supported locale (English)
-                    return supportedLocales.first;
-                  },
-                ),
+                  }
+                  // Fallback to first supported locale (English)
+                  return supportedLocales.first;
+                },
               ),
-            );
-          },
+            ),
+          ),
         ),
       );
 }

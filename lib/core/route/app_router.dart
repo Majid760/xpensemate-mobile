@@ -1,5 +1,6 @@
 // lib/core/router/app_router.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:xpensemate/core/route/auth_routes.dart';
 import 'package:xpensemate/core/route/home_routes.dart';
@@ -10,14 +11,13 @@ import 'package:xpensemate/core/route/utils/main_shell.dart';
 import 'package:xpensemate/core/route/utils/route_constants.dart';
 import 'package:xpensemate/core/route/utils/router_middleware_guard.dart';
 import 'package:xpensemate/core/service/analytics_service.dart';
+import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/budget_goal_list.dart';
 import 'package:xpensemate/features/expense/presentation/pages/expense_page.dart';
-import 'package:xpensemate/features/payment/presentation/pages/payment_page.dart';
 import 'package:xpensemate/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:xpensemate/features/payment/presentation/pages/payment_page.dart';
 import 'package:xpensemate/features/payment/presentation/pages/subscription_page.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:xpensemate/core/service/service_locator.dart';
 
 class AppRouter {
   AppRouter(this._authCubit, this._routeGuards, this._analyticsService);

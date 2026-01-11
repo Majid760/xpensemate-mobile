@@ -256,7 +256,7 @@ Future<void> initLocator() async {
         saveThemeUseCase: sl(),
       ),
     );
-    sl.registerFactory(() => AuthCubit(sl()));
+    sl.registerLazySingleton(() => AuthCubit(sl()));
     sl.registerFactory(
       () => ProfileCubit(
         sl(),

@@ -64,9 +64,18 @@ class FirebaseAnalyticsService implements AnalyticsService {
     Map<String, Object>? parameters,
   }) async {
     if (_debugMode) return;
+
+    // Truncate parameters to 100 characters to avoid Firebase warnings(100 chars max)
+    final sanitizedParams = parameters?.map((key, value) {
+      if (value is String && value.length > 100) {
+        return MapEntry(key, value.substring(0, 100));
+      }
+      return MapEntry(key, value);
+    });
+
     await _analytics.logEvent(
       name: name,
-      parameters: parameters,
+      parameters: sanitizedParams,
     );
   }
 

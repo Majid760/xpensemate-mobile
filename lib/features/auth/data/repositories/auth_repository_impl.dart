@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dartz/dartz.dart';
 import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/core/network/network_info.dart';
@@ -62,6 +64,7 @@ class AuthRepositoryImpl
           (data) async {
             final (UserModel userModel, AuthTokenModel tokenModel) = data;
             final userEntity = userModel.toEntity();
+            authService.setTokensAndUser(tokenModel, userEntity);
             await Future.wait([
               authService.saveTokenToStorage(tokenModel),
               authService.saveUserToStorage(userEntity),

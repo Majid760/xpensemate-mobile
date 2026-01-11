@@ -47,6 +47,15 @@ class AuthService {
     ]);
   }
 
+  // set the tokens and users
+  void setTokensAndUser(AuthTokenModel token, UserEntity user) {
+    accessToken = token.accessToken;
+    refreshToken = token.refreshToken ?? '';
+    _currentUser = user;
+    _isAuthenticated = true;
+    _userStreamController.add(user);
+  }
+
   /// Load user from local storage
   Future<UserEntity?> fetchUserFromStorage() async {
     try {
@@ -149,7 +158,7 @@ class AuthService {
         accessToken = token;
       }
       if (accessToken.isNotEmpty) {
-        print("access token wowowoow ==> ${accessToken.substring(0, 10)}");
+        logI("access token  ==> ${accessToken.substring(0, 10)}");
       }
       return token;
     } on Exception catch (e) {

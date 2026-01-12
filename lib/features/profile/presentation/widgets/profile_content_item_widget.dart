@@ -11,7 +11,6 @@ import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cub
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_state.dart';
 import 'package:xpensemate/features/profile/presentation/widgets/footer_widget.dart';
 import 'package:xpensemate/features/profile/presentation/widgets/menu_item_widget.dart';
-import 'package:xpensemate/features/profile/presentation/widgets/profile_widgets.dart';
 
 class ModernContent extends StatelessWidget {
   const ModernContent({
@@ -19,15 +18,13 @@ class ModernContent extends StatelessWidget {
     required this.profileState,
     required this.onLogoutTap,
     required this.onComingSoon,
-    required this.isDarkMode,
-    required this.onThemeChanged,
+    required this.onSettingsTap,
   });
 
   final ProfileState profileState;
   final VoidCallback onLogoutTap;
   final void Function(String) onComingSoon;
-  final bool isDarkMode;
-  final ValueChanged<bool> onThemeChanged;
+  final VoidCallback onSettingsTap;
 
   @override
   Widget build(BuildContext context) {
@@ -89,17 +86,13 @@ class ModernContent extends StatelessWidget {
         _ModernMenuSection(
           title: context.l10n.preferences,
           items: [
-            ThemeToggle(
-              isDarkMode: isDarkMode,
-              onChanged: onThemeChanged,
-            ),
             _ModernMenuItem(
               data: MenuItemData(
-                icon: Icons.language_rounded,
-                title: context.l10n.language,
-                subtitle: context.l10n.choosePreferredLanguage,
+                icon: Icons.settings_rounded,
+                title: context.l10n.settings,
+                subtitle: context.l10n.appSettings,
                 color: context.colorScheme.primary,
-                onTap: () => onComingSoon(context.l10n.language),
+                onTap: onSettingsTap,
               ),
             ),
             _ModernMenuItem(

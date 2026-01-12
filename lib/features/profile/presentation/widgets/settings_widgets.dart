@@ -264,7 +264,7 @@ class DangerZone extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = context.colorScheme;
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: colorScheme.error.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(context.md),

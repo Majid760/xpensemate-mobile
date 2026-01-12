@@ -3,7 +3,6 @@
 // import 'package:xpensemate/core/service/storage_service.dart';
 // import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -12,10 +11,10 @@ import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/service/permission_service.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
-import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
 import 'package:xpensemate/core/widget/image_picker_bottom_sheet.dart';
+import 'package:xpensemate/features/profile/presentation/widgets/permission_view.dart';
 
 enum MessageType { error, info, success, warning, primary, defaultType }
 
@@ -174,7 +173,7 @@ class AppDialogs {
           );
         }
       }
-    } catch (e, stackTrace) {
+    } on Exception catch (e) {
       // Show error dialog to user
       if (context.mounted) {
         await showDialog<void>(
@@ -195,6 +194,13 @@ class AppDialogs {
       }
     }
   }
+
+  static Future<void> showPermissionManagementDialog(BuildContext context) =>
+      showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const PermissionManagementDialog(),
+      );
 }
 
 class PermissionDialog extends StatefulWidget {
@@ -503,9 +509,6 @@ class _ModernPermissionDialogState extends State<_ModernPermissionDialog>
   late AnimationController _scaleController;
   late AnimationController _fadeController;
   late AnimationController _slideController;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
 
   @override
   void initState() {
@@ -533,36 +536,6 @@ class _ModernPermissionDialogState extends State<_ModernPermissionDialog>
     _slideController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
-    );
-
-    _scaleAnimation = Tween<double>(
-      begin: 0.7,
-      end: 1,
-    ).animate(
-      CurvedAnimation(
-        parent: _scaleController,
-        curve: Curves.elasticOut,
-      ),
-    );
-
-    _fadeAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(
-      CurvedAnimation(
-        parent: _fadeController,
-        curve: Curves.easeOut,
-      ),
-    );
-
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.2),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _slideController,
-        curve: Curves.easeOutCubic,
-      ),
     );
 
     _fadeController.forward();

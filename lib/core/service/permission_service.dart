@@ -437,6 +437,10 @@ class PermissionService {
         ) ??
         false;
   }
+
+  Future<void> openSettings() async {
+    await openAppSettings();
+  }
 }
 
 extension PermissionServiceExtensions on PermissionService {

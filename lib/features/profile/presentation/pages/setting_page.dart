@@ -28,24 +28,28 @@ class _SettingsPageState extends State<SettingsPage> {
   bool _biometricAuth = false;
   String _selectedCurrency = 'USD';
 
-  final List<Map<String, String>> _currencies = [
-    {'code': 'USD', 'name': 'US Dollar', 'symbol': r'$'},
-    {'code': 'PKR', 'name': 'Pakistani Rupee', 'symbol': '₨'},
-    {'code': 'EUR', 'name': 'Euro', 'symbol': '€'},
-    {'code': 'GBP', 'name': 'British Pound', 'symbol': '£'},
-    {'code': 'JPY', 'name': 'Japanese Yen', 'symbol': '¥'},
-    {'code': 'AUD', 'name': 'Australian Dollar', 'symbol': r'A$'},
-    {'code': 'CAD', 'name': 'Canadian Dollar', 'symbol': r'C$'},
-    {'code': 'CHF', 'name': 'Swiss Franc', 'symbol': 'Fr'},
-    {'code': 'CNY', 'name': 'Chinese Yuan', 'symbol': '¥'},
-    {'code': 'INR', 'name': 'Indian Rupee', 'symbol': '₹'},
-  ];
+  List<Map<String, String>> _getCurrencies(BuildContext context) {
+    final l10n = context.l10n;
+    return [
+      {'code': 'USD', 'name': l10n.currencyUSD, 'symbol': r'$'},
+      {'code': 'PKR', 'name': l10n.currencyPKR, 'symbol': '₨'},
+      {'code': 'EUR', 'name': l10n.currencyEUR, 'symbol': '€'},
+      {'code': 'GBP', 'name': l10n.currencyGBP, 'symbol': '£'},
+      {'code': 'JPY', 'name': l10n.currencyJPY, 'symbol': '¥'},
+      {'code': 'AUD', 'name': l10n.currencyAUD, 'symbol': r'A$'},
+      {'code': 'CAD', 'name': l10n.currencyCAD, 'symbol': r'C$'},
+      {'code': 'CHF', 'name': l10n.currencyCHF, 'symbol': 'Fr'},
+      {'code': 'CNY', 'name': l10n.currencyCNY, 'symbol': '¥'},
+      {'code': 'INR', 'name': l10n.currencyINR, 'symbol': '₹'},
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final currencies = _getCurrencies(context);
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -84,7 +88,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               color: colorScheme.onSurfaceVariant,
                             ),
                           ),
-                          _buildCurrencyTile(colorScheme, l10n),
+                          _buildCurrencyTile(colorScheme, l10n, currencies),
                           _buildThemeTile(themeMode, colorScheme, l10n),
                         ],
                       ),
@@ -248,9 +252,13 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget _buildCurrencyTile(ColorScheme colorScheme, AppLocalizations l10n) {
+  Widget _buildCurrencyTile(
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+    List<Map<String, String>> currencies,
+  ) {
     final currency =
-        _currencies.firstWhere((c) => c['code'] == _selectedCurrency);
+        currencies.firstWhere((c) => c['code'] == _selectedCurrency);
     return SettingsBaseTile(
       title: l10n.currency,
       subtitle: '${currency['name']} (${currency['symbol']})',
@@ -258,7 +266,7 @@ class _SettingsPageState extends State<SettingsPage> {
       onTap: () => CurrencyDialog.show(
         context: context,
         selectedCurrency: _selectedCurrency,
-        currencies: _currencies,
+        currencies: currencies,
         onCurrencyChanged: (val) => setState(() => _selectedCurrency = val),
       ),
       trailing: Icon(Icons.chevron_right, color: colorScheme.onSurfaceVariant),

@@ -113,34 +113,38 @@ class _MyAppState extends State<MyApp> {
                 state is ProfileLoaded ? state.themeMode : ThemeMode.system,
             builder: (context, themeMode) => GestureDetector(
               onTap: AppUtils.unFocus,
-              child: MaterialApp.router(
-                title: 'ExpenseTracker',
-                theme: AppTheme.lightTheme,
-                darkTheme: AppTheme.darkTheme,
-                themeMode: themeMode,
-                debugShowCheckedModeBanner: false,
-                routerConfig: _appRouter.router,
-                localizationsDelegates: const [
-                  AppLocalizations.delegate,
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate,
-                ],
-                supportedLocales: SupportedLocales.supportedLocales,
-                locale: LocaleManager().currentLocale,
-                // Locale resolution
-                localeResolutionCallback: (locale, supportedLocales) {
-                  // If the current device locale is supported, use it
-                  if (locale != null) {
-                    for (final supportedLocale in supportedLocales) {
-                      if (supportedLocale.languageCode == locale.languageCode) {
-                        return supportedLocale;
+              child: AnimatedBuilder(
+                animation: LocaleManager(),
+                builder: (context, child) => MaterialApp.router(
+                  title: 'ExpenseTracker',
+                  theme: AppTheme.lightTheme,
+                  darkTheme: AppTheme.darkTheme,
+                  themeMode: themeMode,
+                  debugShowCheckedModeBanner: false,
+                  routerConfig: _appRouter.router,
+                  localizationsDelegates: const [
+                    AppLocalizations.delegate,
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
+                  ],
+                  supportedLocales: SupportedLocales.supportedLocales,
+                  locale: LocaleManager().currentLocale,
+                  // Locale resolution
+                  localeResolutionCallback: (locale, supportedLocales) {
+                    // If the current device locale is supported, use it
+                    if (locale != null) {
+                      for (final supportedLocale in supportedLocales) {
+                        if (supportedLocale.languageCode ==
+                            locale.languageCode) {
+                          return supportedLocale;
+                        }
                       }
                     }
-                  }
-                  // Fallback to first supported locale (English)
-                  return supportedLocales.first;
-                },
+                    // Fallback to first supported locale (English)
+                    return supportedLocales.first;
+                  },
+                ),
               ),
             ),
           ),

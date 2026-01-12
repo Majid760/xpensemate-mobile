@@ -1,778 +1,4 @@
 {
-  "@@locale": "en",
-  "@@last_modified": "2024-01-15T10:00:00.000Z",
-  "@@author": "Majid",
-  "@@version": "1.0.0",
-  
-  "@@navigation_section": "Navigation related strings",
-  "appTitle": "Xpensemate",
-  "@appTitle": {
-      "description": "The title of the application"
-  },
-  "home": "Home",
-  "profile": "Profile",
-  "settings": "Settings",
-  "about": "About",
-  
-  "@@common_actions_section": "Common action buttons and labels",
-  "save": "Save",
-  "@save": {
-      "description": "Save button text used throughout the app"
-  },
-  "cancel": "Cancel",
-  "delete": "Delete",
-  "edit": "Edit",
-  "add": "Add",
-  "confirm": "Confirm",
-  "retry": "Retry",
-  "close": "Close",
-  "next": "Next",
-  "back": "Back",
-  "done": "Done",
-  "loading": "Loading...",
-  "expenseLoaded": "All expenses loaded successfully!",
-  "expenseDeleted": "Expense deleted successfully!",
-  "expenseUpdated": "Expense updated successfully!",
-  "expenseCreated": "Expense created successfully!",
-  "expenseFailed": "Expense failed to load!",
-  "expenseDeletedFailed": "Expense failed to delete!",
-  "expenseUpdatedFailed": "Expense failed to update!",
-  "expenseCreatedFailed": "Expense failed to create!",
-  
-  "@@expense_section": "Expense related strings",
-  "currencySymbol": "$",
-  
-  "or": "Or",
-  
-  "@@authentication_section": "Authentication and user account strings",
-  "login": "Login",
-  "logout": "Logout",
-  "register": "Register",
-  "email": "Email",
-  "dontHaveAccount": "Don't have an account?",
-  "@email": {
-      "description": "Email input field label",
-      "context": "Used in login and registration forms"
-  },
-  "hintEmail": "email",
-  "@hintEmail": {
-      "description": "Hint text for email input field",
-      "context": "Shown in the email TextField when it's empty"
-  },
-  "password": "Password",
-  "confirmPassword": "Confirm Password",
-  "hintConfirmPassword": "Re-enter password",
-  "name": "Full Name",
-  "hintName": "full name",
-  "alreadyHaveAccount": "Already have an account?",
-  "registerNow": "Create Account",
-  "hintPassword": "password",
-  "@hintPassword": {
-      "description": "Hint text for password input field",
-      "context": "Shown in the password TextField when it's empty"
-  },
-  "forgotPassword": "Forgot Password?",
-  "forgotPasswordTitle": "Reset Your Password",
-  "forgotPasswordSubtitle": "Enter your email and we'll send you a link to reset your password",
-  "resetPassword": "Reset Password",
-  "resetPasswordSuccess": "Password reset email sent. Please check your inbox.",
-  "rememberPassword": "Remember your password?",
-  "welcomeBack": "Welcome Back!",
-  "createAccount": "Create Account",
-  "verifyYourEmail": "Verify Your Email",
-  "verificationEmailSentTo": "Verification email sent to",
-  "verificationInstructions": "Please check your email for the verification link.",
-  "resendVerificationEmail": "Resend Verification Email",
-  "backToLogin": "Back to Login",
-  
-  "@@validation_section": "Form validation error messages",
-  "passwordOrEmail": "Password or Email is incorrect!",
-  "emailRequired": "Email is required",
-  "@emailRequired": {
-      "description": "Error message when email field is empty",
-      "context": "Shown when user submits the form without entering an email"
-  },
-  "passwordRequired": "Password is required",
-  "@passwordRequired": {
-      "description": "Error message when password field is empty",
-      "context": "Shown when user submits the form without entering a password"
-  },
-  "fieldRequired": "This field is required",
-  "invalidEmail": "Please enter a valid email",
-  "passwordTooShort": "Password must be at least 8 characters",
-  "passwordsDoNotMatch": "Passwords do not match",
-  "passwordMismatch": "Passwords do not match",
-  "confirmPasswordRequired": "Confirm Password is required",
-  "registerSuccess": "Account created successfully!",
-  "verifyEmail": "We have sent a verification email to your email address. Please check your inbox.",
-  "verifyEmailSuccess": "Email verification sent successfully!",
-  "verifyEmailFailed": "Email verification failed. Please try again.",
-  
-  "@@error_messages_section": "General error messages",
-  "errorGeneric": "Something went wrong. Please try again.",
-  "errorNetwork": "Network error. Please check your connection.",
-  "errorTimeout": "Request timeout. Please try again.",
-  "errorNotFound": "Resource not found.",
-  
-  "@@budget_section": "Budget related strings",
-  "budgetGoalsLoading": "Loading...",
-  "budgetGoalsRetry": "Retry",
-  "budgetGoalsError": "An error occurred",
-  "budgetGoalsEmptyTitle": "No budget goals yet",
-  "budgetGoalsEmptySubtitle": "Create your first budget goal to get started",
-  "budgetGoalsAllLoaded": "All budget goals loaded",
-  
-  "@@success_messages_section": "Success feedback messages",
-  "saveSuccess": "Saved successfully!",
-  "deleteSuccess": "Deleted successfully!",
-  "updateSuccess": "Updated successfully!",
-  
-  "@@placeholders_section": "Placeholder texts and empty states",
-  "searchPlaceholder": "Search...",
-  "noDataAvailable": "No data available",
-  "emptyListMessage": "Nothing to show here yet",
-  
-  "@@dialog_messages_section": "Dialog and confirmation messages",
-  "confirmDelete": "Are you sure you want to delete this item?",
-  "@confirmDelete": {
-      "description": "Confirmation dialog when user tries to delete an item",
-      "context": "Shown in delete confirmation dialogs"
-  },
-  "confirmLogout": "Are you sure you want to logout?",
-  "deleteWarning": "This action cannot be undone.",
-  
-  "@@parametrized_section": "Messages with parameters and pluralization",
-  "welcomeUser": "Welcome, {userName}!",
-  "@welcomeUser": {
-      "description": "Welcome message with user name",
-      "placeholders": {
-          "userName": {
-              "type": "String",
-              "example": "John"
-          }
-      }
-  },
-  
-  "itemCount": "{count, plural, =0{No items} =1{1 item} other{{count} items}}",
-  "@itemCount": {
-      "description": "Shows count of items with proper pluralization",
-      "placeholders": {
-          "count": {
-              "type": "int",
-              "example": "5"
-          }
-      }
-  },
-  
-  "lastUpdated": "Last updated: {date}",
-  "@lastUpdated": {
-      "description": "Shows when something was last updated",
-      "placeholders": {
-          "date": {
-              "type": "DateTime",
-              "format": "yMd",
-              "example": "1/15/2024"
-          }
-      }
-  },
-  
-  "@@theme_settings_section": "Theme and appearance settings",
-  "themeMode": "Theme Mode",
-  "lightTheme": "Light",
-  "darkTheme": "Dark",
-  "systemTheme": "System",
-  
-  "@@language_settings_section": "Language and localization settings",
-  "language": "Language",
-  "selectLanguage": "Select Language",
-  "selectCurrency": "Select Currency",
-  "currency": "Currency",
-  "languageChanged": "Language changed successfully",
-
-  "totalSpent": "Total Spent",
-  "average": "Average",
-  "transactions": "Transactions",
-  "budgetGoalLabel": "Budget Goal: {amount}",
-  "thisMonth": "This Month",
-  "categories": "Categories",
-
-  "account": "Account",
-  "preferences": "Preferences",
-  "support": "Support",
-
-  "editProfile": "Edit Profile",
-  "updatePersonalInfo": "Update your personal information",
-  "privacySecurity": "Privacy & Security",
-  "managePrivacySettings": "Manage your privacy settings",
-  "notifications": "Notifications",
-  "configureNotifications": "Configure your notifications",
-
-  "addWidgets": "Add Widgets",
-  "addWidgetsDescription": "Add widgets to your home screen to make it easier to access your most used features.",  
-
-  "choosePreferredLanguage": "Choose your preferred language",
-  "darkMode": "Dark Mode",
-  "switchBetweenLightAndDarkTheme": "Switch between light and dark theme",
-
-  "helpSupport": "Help & Support",
-  "getHelpWhenNeeded": "Get help when you need it",
-  "learnMoreAboutExpenseTracker": "Learn more about Xpensemate",
-  "signOut": "Sign Out",
-  "logoutFromAccount": "Logout from your account",
-  "completeYourProfile": "Complete your profile",
-
-  "expenseTracker": "Xpensemate",
-  "version": "Version 1.0.0 • Build 2024.1",
-  "craftedWithLove": "Crafted with ❤️ for smarter expense tracking",
-  "moto" : "Track Smart, Spend Wise",
-  "changeProfilePhoto": "Change Profile Photo",
-  "gotIt": "Got it!",
-  "areYouSureYouWantToSignOut": "Are you sure you want to sign out?",
-  "comingSoonMessage": "This amazing feature is coming soon!\nStay tuned for updates.",
-  "signOutConfirmation": "Are you sure you want to sign out?",
-  "signOutConfirmationMessage": "You will be signed out of your account and need to sign in again to continue.",
-  "signOutConfirmationButton": "Sign Out",
-  "signOutConfirmationCancel": "Cancel",
-
-  "fullName": "Full Name",
-  "gender": "Gender",
-  "dateOfBirth": "Date of Birth",
-  "phoneNumber": "Phone Number", 
-  "bio": "Bio",
-  "saveChanges": "Save Changes",
-  "profileUpdatedSuccessfully": "Profile updated successfully",
-  "enterYourName": "Enter your name",
-  "enterYourBio": "Enter your bio",
-  "selectDateOfBirth": "Select date of birth",
-  "nameIsRequired": "Name is required",
-  "nameMustBeAtLeast4Characters": "Name must be at least 4 characters",
-  "phoneNumberMustBeAtLeast10Digits": "Phone number must be at least 10 digits",
-  "logoutConfirmationMessage" : "Are you sure to want to logout?",
-  "userSessionNotFound": "User session not found",
-  "ageMinError": "You must be at least 7 years old",
-  "ageMaxError": "You cannot be more than 100 years old",
-  "dobRequired": "Date of birth is required",
-  "male": "Male",
-  "female": "Female",
-  "other": "Other",
-  
-  "@@settings_details_section": "Detailed settings strings",
-  "receiveNotificationsDesc": "Receive app notifications",
-  "transactionReminders": "Transaction Reminders",
-  "transactionRemindersDesc": "Daily reminder to log expenses",
-  "budgetAlerts": "Budget Alerts",
-  "budgetAlertsDesc": "Alert when approaching budget limit",
-  "biometricAuth": "Biometric Authentication",
-  "useFingerprintOrFaceId": "Use fingerprint or Face ID to unlock",
-  "appPermissions": "App Permissions",
-  "appPermissionsDesc": "Manage app access permissions",
-  "changePin": "Change PIN",
-  "changePinDesc": "Update your security PIN",
-  "dataManagement": "Data Management",
-  "autoBackup": "Auto Backup",
-  "autoBackupDesc": "Automatically backup data daily",
-  "exportData": "Export Data",
-  "exportDataDesc": "Download your data as CSV or PDF",
-  "importData": "Import Data",
-  "importDataDesc": "Import transactions from file",
-  "budgetAndCategories": "Budget & Categories",
-  "defaultCategories": "Default Categories",
-  "manageCategoriesDesc": "Manage expense categories",
-  "budgetPeriod": "Budget Period",
-  "setBudgetCycleDesc": "Set monthly or custom budget cycle",
-  "recurringTransactions": "Recurring Transactions",
-  "manageRecurringDesc": "Manage recurring expenses and income",
-  "privacyPolicyDesc": "Read our privacy policy",
-  "termsOfServiceDesc": "View terms and conditions",
-  "appVersion": "App Version",
-  "clearAllData": "Clear All Data",
-  "clearAllDataDesc": "Delete all transactions and reset app",
-  "clearAllDataConfirmTitle": "Clear All Data?",
-  "clearAllDataConfirmDesc": "This will permanently delete all your transactions, budgets, and settings. This action cannot be undone.",
-  "deleteAll": "Delete All",
-  "allDataCleared": "All data cleared",
-
-  "seeDetail": "See Detail",
-
-  
-  "@@image_picker_section": "Image picker related strings",
-  "selectImage": "Select Image",
-  "gallery": "Gallery",
-  "camera": "Camera",
-  "openingCamera": "Opening camera...",
-  "@openingCamera": {
-    "description": "Message shown when opening camera for image capture",
-    "context": "Displayed as info feedback when camera is being opened"
-  },
-  "openingGallery": "Opening gallery...",
-  "@openingGallery": {
-    "description": "Message shown when opening gallery for image selection",
-    "context": "Displayed as info feedback when gallery is being opened"
-  },
-  "processingImage": "Processing image...",
-  "@processingImage": {
-    "description": "Message shown when processing selected image",
-    "context": "Displayed as info feedback during image processing"
-  },
-  "imageSelectedSuccessfully": "Image selected successfully!",
-  "@imageSelectedSuccessfully": {
-    "description": "Success message when image is selected and validated",
-    "context": "Displayed as success feedback after successful image selection"
-  },
-  "imageSelectionCancelled": "Image selection cancelled",
-  "@imageSelectionCancelled": {
-    "description": "Info message when user cancels image selection",
-    "context": "Displayed as info feedback when user cancels image picker"
-  },
-  "imageSelectionFailed": "Failed to select image. Please try again.",
-  "@imageSelectionFailed": {
-    "description": "Error message when image selection fails",
-    "context": "Displayed as error feedback when image selection encounters an error"
-  },
-  "fileSizeExceeded": "File size ({size} MB) exceeds the limit of 10 MB. Please choose a smaller image.",
-  "@fileSizeExceeded": {
-    "description": "Error message when selected image file size exceeds the maximum limit",
-    "context": "Displayed as error feedback when image file is too large",
-    "placeholders": {
-      "size": {
-        "type": "String",
-        "example": "15.2"
-      }
-    }
-  },
-  
-  "@@permission_section": "Permission dialog related strings",
-  "permissionRequired": "Permission Required",
-  "permissionRationale": "We need this permission to provide you with the best experience.",
-  "notNow": "Not Now",
-  "proceed": "Continue",
-  "openSettings": "Settings",
-  "permissionDenied": "Permission Denied",
-  "permissionDeniedMessage": "Please enable this permission from settings to use this feature.",
-  "cameraPermissionMessage": "We need camera access to take photos.",
-  "galleryPermissionMessage": "We need gallery access to choose photos.",
-  "storage": "Storage",
-  "allowed": "Allowed",
-  "notAllowed": "Not Allowed",
-  "biometrics": "Biometrics",
-
-  "personalInformation": "Enter your bio",
-  "day": "Day",
-
-  "male": "Male",
-  "female": "Female",
-  "other": "Other",
-  "enterPhoneNumber": "Enter phone number",
-
-  "phoneNumberMinLength": "Phone number must be at least {min} digits",
-  "@phoneNumberMinLength": {
-    "description": "Phone number min length message",
-    "placeholders": {
-      "min": {
-        "type": "int",
-        "example": "10"
-      }
-    }
-  },
-
-  "phoneNumberTooShort" : "Phone number is not valid (too short)",
-  "selectGender":"Select Gender",
-  "nameMinLength": "Name must be at least {min} characters",
-  "@nameMinLength": {
-    "description": "Name min length message",
-    "placeholders": {
-      "min": {
-        "type": "int",
-        "example": "2"
-      }
-    }
-  },
-  "searchCountry":"Search country",
-  "noCountryFound":"No country found",
-  "tellUsAboutYourself": "Tell us about yourself...",
-  "changePhoto": "Change Photo",
-  "saving": "Saving...",
-  "errorSavingProfile" : "Error saving profile",
-  "errorWhileOpeningUrl" : "Link is not valid",
-
-  "@@dashboard_section": "Dashboard related strings",
-  "dashboard": "Dashboard",
-  "@dashboard": {
-    "description": "Dashboard page title"
-  },
-  "weeklyFinancialOverview": "Weekly Financial Overview",
-  "@weeklyFinancialOverview": {
-    "description": "Title for the weekly financial overview section"
-  },
-  "weeklyInsights": "Weekly Insights",
-  "@weeklyInsights": {
-    "description": "Title for weekly insights section"
-  },
-  "highestDay": "Highest Day",
-  "@highestDay": {
-    "description": "Label for the day with highest spending"
-  },
-  "lowestDay": "Lowest Day",
-  "@lowestDay": {
-    "description": "Label for the day with lowest spending"
-  },
-  "dailyAverage": "Daily Average",
-  "@dailyAverage": {
-    "description": "Label for daily average spending"
-  },
-  "acrossSevenDays": "across 7 days",
-  "@acrossSevenDays": {
-    "description": "Subtitle for daily average calculation"
-  },
-  "balanceRemaining": "Balance Remaining",
-  "@balanceRemaining": {
-    "description": "Label for remaining budget balance"
-  },
-  "totalExpenses": "Total Expenses",
-  "@totalExpenses": {
-    "description": "Label for total expenses"
-  },
-  "dailySpendingPattern": "Daily Spending Pattern",
-  "@dailySpendingPattern": {
-    "description": "Title for daily spending bar chart"
-  },
-  "thisWeek": "this week",
-  "@thisWeek": {
-    "description": "Time period label for current week"
-  },
-  "monthlyInsight": "Monthly Insight",
-  "@monthlyInsight": {
-    "description": "Title for monthly insight section"
-  },
-  "quarterInsight": "Quarterly Insight",
-  "@quarterInsight": {
-    "description": "Title for quarterly insight section"
-  },
-  "yearlyInsight": "Yearly Insight",
-  "@yearlyInsight": {
-    "description": "Title for yearly insight section"
-  },
-  "spendingTrend": "Spending Trend",
-  "@spendingTrend": {
-    "description": "Title for spending trend line chart"
-  },
-  "loadingDashboardData": "Loading dashboard data...",
-  "@loadingDashboardData": {
-    "description": "Loading message for dashboard data"
-  },
-  "failedToLoadData": "Failed to load data",
-  "@failedToLoadData": {
-    "description": "Error message when data loading fails"
-  },
-  "unknownError": "An unknown error occurred",
-  "@unknownError": {
-    "description": "Generic error message"
-  },
-  "tryAgain": "Try Again",
-  "@tryAgain": {
-    "description": "Button text to retry failed operation"
-  },
-  "startTrackingExpenses": "Start tracking your expenses to see insights",
-  "@startTrackingExpenses": {
-    "description": "Message shown when no expense data is available"
-  },
-  "noSpendingData": "No spending data",
-  "@noSpendingData": {
-    "description": "Message when no spending data is available for charts"
-  },
-  "noTrendData": "No trend data",
-  "@noTrendData": {
-    "description": "Message when no trend data is available"
-  },
-  "of12": "of",
-
-  "budget": "Budget",
-  "@budget": {
-    "description": "Budget label"
-  },
-    "@budget": {
-    "description": "Budget label"
-  },
-  "expenses": "expenses",
-  "@expenses": {
-    "description": "Expenses label"
-  },
-  "expense":"Expenses",
-  "@expense": {
-    "description": "Expenses label"
-  },
-  "archive": "Archive",
-  "@archive": {
-    "description": "Archive button label"
-  },
-  "share": "Share",
-  "@share": {
-    "description": "Share button label"
-  },
-  "cumulative": "cumulative",
-  "@cumulative": {
-    "description": "Label for cumulative values in charts"
-  },
-  
-  "goodMorning": "Good Morning",
-  "@goodMorning": {
-    "description": "Morning greeting shown before noon"
-  },
-  "goodAfternoon": "Good Afternoon",
-  "@goodAfternoon": {
-    "description": "Afternoon greeting shown between noon and evening"
-  },
-  "goodEvening": "Good Evening",
-  "@goodEvening": {
-    "description": "Evening greeting shown after 5 PM"
-  },
-  "financialOverviewSubtitle": "Here's your financial overview",
-  "@financialOverviewSubtitle": {
-    "description": "Subtitle shown below greeting in dashboard"
-  },
-  "totalBalance": "Total Balance",
-  "@totalBalance": {
-    "description": "Label for total balance in financial overview"
-  },
-  "vsLastWeek": "vs last week",
-  "@vsLastWeek": {
-    "description": "Comparison text for financial metrics"
-  },
-  "available": "Available",
-  "@available": {
-    "description": "Label for available balance"
-  },
-  "spentThisWeek": "Spent This Week",
-  "@spentThisWeek": {
-    "description": "Label for amount spent in current week"
-  },
-
-  "@@active_budget_section": "Active budget section related strings",
-  "activeBudgets": "Active Budgets",
-  "@activeBudgets": {
-    "description": "Title for active budgets section"
-  },
-  "noBudgetsActive": "No active budgets",
-  "@noBudgetsActive": {
-    "description": "Message when no active budgets are available"
-  },
-  "createBudget": "Create Budget",
-  "@createBudget": {
-    "description": "Button text to create a new budget"
-  },
-  "budgetProgress": "Budget Progress",
-  "@budgetProgress": {
-    "description": "Label for budget progress"
-  },
-  "remaining": "remaining",
-  "@remaining": {
-    "description": "Label for remaining budget amount"
-  },
-  "spent": "spent",
-  "@spent": {
-    "description": "Label for spent amount"
-  },
-  "highPriority": "High",
-  "@highPriority": {
-    "description": "High priority label"
-  },
-  "mediumPriority": "Medium",
-  "@mediumPriority": {
-    "description": "Medium priority label"
-  },
-  "mediumPriorityAbbr": "Med",
-  "@mediumPriorityAbbr": {
-    "description": "Medium priority abbreviation"
-  },
-  "lowPriority": "Low",
-  "@lowPriority": {
-    "description": "Low priority label"
-  },
-  "onTrack": "On Track",
-  "@onTrack": {
-    "description": "Budget status when on track"
-  },
-  "overBudget": "Over Budget",
-  "@overBudget": {
-    "description": "Budget status when over budget"
-  },
-  "nearLimit": "Near Limit",
-  "@nearLimit": {
-    "description": "Budget status when near the limit"
-  },
-  
-  "@@weekdays_section": "Day names and abbreviations",
-  "monday": "Monday",
-  "tuesday": "Tuesday", 
-  "wednesday": "Wednesday",
-  "thursday": "Thursday",
-  "friday": "Friday",
-  "saturday": "Saturday",
-  "sunday": "Sunday",
-  "mon": "Mon",
-  "tue": "Tue",
-  "wed": "Wed",
-  "thu": "Thu",
-  "fri": "Fri",
-  "sat": "Sat",
-  "sun": "Sun",
-
-  "description": "Description",
-  "@description": {
-    "description": "Expense description label"
-  },
-  "amount": "Amount",
-  "@amount": {
-    "description": "Expense amount label"
-  },
-  "category": "Category",
-  "@category": {
-    "description": "Expense category label"
-  },
-  "date": "Date",
-  "@date": {
-    "description": "Expense date label"
-  },
-  "time": "Time",
-  "@time": {
-    "description": "Expense time label"
-  },
-  "location": "Location",
-  "@location": {
-    "description": "Expense location label"
-  },
-  "paymentMethod": "Payment Method",
-  "@paymentMethod": {
-    "description": "Expense payment method label"
-  },
-  "details": "Details",
-  "@details": {
-    "description": "Expense details label"
-  },
-  "invalidAmount": "Please enter a valid amount",
-  "@invalidAmount": {
-    "description": "Invalid amount error message"
-  },
-  "productAnalytic" : "Product Analytics",
-  "@productAnalytic": {
-    "description": "Product Analytics"
-  },
-
-  "fieldTooShort": "This field is too short (minimum 2 characters)",
-  "fieldTooLong": "This field is too long (maximum 100 characters)",
-
-  "@@budget_insights_section": { "description": "Budget insights and statistics strings" },
-  "overview": "Overview",
-  "@overview": {
-    "description": "Title for the budget overview section"
-  },
-  "budgetStatistics": "Budget Statistics",
-  "@budgetStatistics": {
-    "description": "Subtitle for the budget statistics section"
-  },
-  "periodBudgetStatistics": "{period} Budget Statistics",
-  "@periodBudgetStatistics": {
-    "description": "Subtitle for the budget statistics section with period",
-    "placeholders": {
-      "period": {
-        "type": "String",
-        "example": "Monthly"
-      }
-    }
-  },
-  "totalGoals": "Total Goals",
-  "@totalGoals": {
-    "description": "Label for total budget goals count"
-  },
-  "active": "Active",
-  "@active": {
-    "description": "Label for active budget goals count"
-  },
-  "achieved": "Achieved",
-  "@achieved": {
-    "description": "Label for achieved budget goals count"
-  },
-  "failedTerminated": "Failed/Terminated",
-  "@failedTerminated": {
-    "description": "Label for failed and terminated budget goals count"
-  },
-  "goalsNotCompleted": "Goals not completed",
-  "@goalsNotCompleted": {
-    "description": "Subtitle for failed/terminated goals card"
-  },
-  "totalBudgeted": "Total Budgeted",
-  "@totalBudgeted": {
-    "description": "Label for total budgeted amount"
-  },
-  "totalAmountAllocated": "Total amount allocated for active goals",
-  "@totalAmountAllocated": {
-    "description": "Subtitle for total budgeted amount card"
-  },
-  "avgProgress": "Avg. Progress",
-  "@avgProgress": {
-    "description": "Label for average progress percentage"
-  },
-  "averageProgressGoals": "Average progress across all goals",
-  "@averageProgressGoals": {
-    "description": "Subtitle for average progress card"
-  },
-  "closestDeadline": "Closest Deadline",
-  "@closestDeadline": {
-    "description": "Label for closest deadline date"
-  },
-  "nextUpcomingDeadline": "Next upcoming deadline",
-  "@nextUpcomingDeadline": {
-    "description": "Subtitle for closest deadline card"
-  },
-  "overdueGoals": "Overdue Goals",
-  "@overdueGoals": {
-    "description": "Label for overdue goals count"
-  },
-  "goalsPastDeadline": "Goals past their deadline",
-  "@goalsPastDeadline": {
-    "description": "Subtitle for overdue goals card"
-  },
-  "noDeadlines": "No deadlines",
-  "@noDeadlines": {
-    "description": "Text shown when there are no deadlines"
-  },
-
-  "@@onboarding_section": "Onboarding flow strings",
-  "onboardingTitle1": "Track Your Expenses",
-  "onboardingDesc1": "Keep track of every penny you spend and manage your finances with ease.",
-  "onboardingTitle2": "Set Smart Budgets",
-  "onboardingDesc2": "Create budgets for different categories and stay on track with your financial goals.",
-  "onboardingTitle3": "Gain Financial Insights",
-  "onboardingDesc3": "Visualize your spending habits with detailed charts and reports.",
-  "getStarted": "Get Started",
-  "skip": "Skip",
-
-  "@@subscription_section": "Subscription and Paywall strings",
-  "premiumTitle": "Upgrade to Premium",
-  "premiumSubtitle": "Unlock the full potential of Xpensemate",
-  "featureUnlimitedBudgets": "Unlimited Budgets",
-  "featureAdvancedAnalytics": "Advanced Analytics",
-  "featureDataExport": "Data Export (PDF/CSV)",
-  "featureCloudSync": "Cloud Sync & Backup",
-  "monthly": "Monthly",
-  "yearly": "Yearly",
-  "subscribeNow": "Subscribe Now",
-  "restorePurchases": "Restore Purchases",
-  "termsOfService": "Terms of Service",
-  "privacyPolicy": "Privacy Policy",
-  "bestValue": "Best Value",
-  "payment": "Payment",
-  "addExpense": "Add Expense",
-  "addBudget": "Add Budget",
-  "addPayment": "Add Payment",
-  "editExpense": "Edit Expense",
-  "addCustomCategory": "+ Add Custom Category",
-  "noBudgetGoal": "No Budget Goal",
-  "pleaseFillRequired": "Please fill out all required fields",
-  "failedToLoadBudgets": "Failed to load budgets",
-
-
-
    "@@locale": "en",
   "@@last_modified": "2024-01-15T10:00:00.000Z",
   "@@author": "Majid",
@@ -959,6 +185,7 @@
   "@@language_settings_section": "Language and localization settings",
   "language": "Language",
   "selectLanguage": "Select Language",
+  "selectCurrency": "Select Currency",
   "languageChanged": "Language changed successfully",
 
   "totalSpent": "Total Spent",
@@ -978,6 +205,8 @@
   "managePrivacySettings": "Manage your privacy settings",
   "notifications": "Notifications",
   "configureNotifications": "Configure your notifications",
+
+  "appSettings": "Customize app preferences",
 
   "addWidgets": "Add Widgets",
   "addWidgetsDescription": "Add widgets to your home screen to make it easier to access your most used features.",  
@@ -1536,5 +765,131 @@
         "example": "5"
       }
     }
-  }
+  },
+  "permanentlyDenied": "Permanently Denied",
+  "disablePermissionManual": "Please disable this permission manually in Settings",
+  "photos": "Photos",
+  "locationInUse": "Location (In Use)",
+  "mediaLibrary": "Media Library",
+
+  "@@settings_page_section": "Settings page related strings",
+  "currency": "Currency",
+  "@currency": {
+    "description": "Currency setting label"
+  },
+  "biometricAuth": "Biometric Authentication",
+  "@biometricAuth": {
+    "description": "Biometric authentication setting label"
+  },
+  "useFingerprintOrFaceId": "Use fingerprint or Face ID to unlock",
+  "@useFingerprintOrFaceId": {
+    "description": "Description for biometric authentication setting"
+  },
+  "appPermissions": "App Permissions",
+  "@appPermissions": {
+    "description": "App permissions setting label"
+  },
+  "appPermissionsDesc": "Manage app permissions",
+  "@appPermissionsDesc": {
+    "description": "Description for app permissions setting"
+  },
+  "transactionReminders": "Transaction Reminders",
+  "@transactionReminders": {
+    "description": "Transaction reminders setting label"
+  },
+  "transactionRemindersDesc": "Get reminded to log your transactions",
+  "@transactionRemindersDesc": {
+    "description": "Description for transaction reminders setting"
+  },
+  "budgetAlerts": "Budget Alerts",
+  "@budgetAlerts": {
+    "description": "Budget alerts setting label"
+  },
+  "budgetAlertsDesc": "Get notified when approaching budget limits",
+  "@budgetAlertsDesc": {
+    "description": "Description for budget alerts setting"
+  },
+  "receiveNotificationsDesc": "Receive push notifications",
+  "@receiveNotificationsDesc": {
+    "description": "Description for notifications setting"
+  },
+  "dataManagement": "Data Management",
+  "@dataManagement": {
+    "description": "Data management section label"
+  },
+  "exportData": "Export Data",
+  "@exportData": {
+    "description": "Export data setting label"
+  },
+  "exportDataDesc": "Export your data to CSV or PDF",
+  "@exportDataDesc": {
+    "description": "Description for export data setting"
+  },
+  "importData": "Import Data",
+  "@importData": {
+    "description": "Import data setting label"
+  },
+  "importDataDesc": "Import data from a file",
+  "@importDataDesc": {
+    "description": "Description for import data setting"
+  },
+  "budgetAndCategories": "Budget & Categories",
+  "@budgetAndCategories": {
+    "description": "Budget and categories section label"
+  },
+  "budgetPeriod": "Budget Period",
+  "@budgetPeriod": {
+    "description": "Budget period setting label"
+  },
+  "setBudgetCycleDesc": "Set your budget cycle period",
+  "@setBudgetCycleDesc": {
+    "description": "Description for budget period setting"
+  },
+  "recurringTransactions": "Recurring Transactions",
+  "@recurringTransactions": {
+    "description": "Recurring transactions setting label"
+  },
+  "manageRecurringDesc": "Manage your recurring transactions",
+  "@manageRecurringDesc": {
+    "description": "Description for recurring transactions setting"
+  },
+  "privacyPolicyDesc": "Read our privacy policy",
+  "@privacyPolicyDesc": {
+    "description": "Description for privacy policy setting"
+  },
+  "termsOfServiceDesc": "Read our terms of service",
+  "@termsOfServiceDesc": {
+    "description": "Description for terms of service setting"
+  },
+  "appVersion": "App Version",
+  "@appVersion": {
+    "description": "App version setting label"
+  },
+  "clearAllData": "Clear All Data",
+  "@clearAllData": {
+    "description": "Clear all data setting label"
+  },
+  "clearAllDataDesc": "Permanently delete all your data",
+  "@clearAllDataDesc": {
+    "description": "Description for clear all data setting"
+  },
+  "storage": "Storage",
+  "allowed": "Allowed",
+  "denied": "Denied",
+  "failedToLoadProfile": "Failed to load profile",
+  "termsAndConditions": "Terms & Conditions",
+  "readTermsAndConditions": "Read our terms and conditions",
+  "lightThemeDesc": "Always use light theme",
+  "darkThemeDesc": "Always use dark theme",
+  "systemThemeDesc": "Follow system settings",
+  "currencyUSD": "US Dollar",
+  "currencyPKR": "Pakistani Rupee",
+  "currencyEUR": "Euro",
+  "currencyGBP": "British Pound",
+  "currencyJPY": "Japanese Yen",
+  "currencyAUD": "Australian Dollar",
+  "currencyCAD": "Canadian Dollar",
+  "currencyCHF": "Swiss Franc",
+  "currencyCNY": "Chinese Yuan",
+  "currencyINR": "Indian Rupee"
 }

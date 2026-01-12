@@ -50,13 +50,13 @@ class ModernContent extends StatelessWidget {
               ),
               SizedBox(height: context.md),
               Text(
-                'Failed to load profile',
+                context.l10n.failedToLoadProfile,
                 style: context.textTheme.titleMedium,
               ),
               SizedBox(height: context.md),
               ElevatedButton(
                 onPressed: () => context.profileCubit.updateProfile({}),
-                child: const Text('Retry'),
+                child: Text(context.l10n.retry),
               ),
             ],
           ),
@@ -140,8 +140,8 @@ class ModernContent extends StatelessWidget {
   List<MenuItemData> _supportMenuItems(BuildContext context) => [
         MenuItemData(
           icon: Icons.help_outline_rounded,
-          title: 'Terms & Conditions',
-          subtitle: 'Read our terms and conditions',
+          title: context.l10n.termsAndConditions,
+          subtitle: context.l10n.readTermsAndConditions,
           color: AppColors.info,
           onTap: () => _launchTermsAndConditions(context),
         ),
@@ -315,7 +315,7 @@ class UserInfoCard extends StatelessWidget {
                   ),
                   SizedBox(width: context.xs),
                   Text(
-                    'Complete your profile',
+                    context.l10n.completeYourProfile,
                     style: context.textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: context.colorScheme.secondary,

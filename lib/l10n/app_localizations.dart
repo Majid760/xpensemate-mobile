@@ -678,12 +678,6 @@ abstract class AppLocalizations {
   /// **'Select Currency'**
   String get selectCurrency;
 
-  /// No description provided for @currency.
-  ///
-  /// In en, this message translates to:
-  /// **'Currency'**
-  String get currency;
-
   /// No description provided for @languageChanged.
   ///
   /// In en, this message translates to:
@@ -779,6 +773,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Configure your notifications'**
   String get configureNotifications;
+
+  /// No description provided for @appSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize app preferences'**
+  String get appSettings;
 
   /// No description provided for @addWidgets.
   ///
@@ -1026,228 +1026,6 @@ abstract class AppLocalizations {
   /// **'Date of birth is required'**
   String get dobRequired;
 
-  /// No description provided for @male.
-  ///
-  /// In en, this message translates to:
-  /// **'Male'**
-  String get male;
-
-  /// No description provided for @female.
-  ///
-  /// In en, this message translates to:
-  /// **'Female'**
-  String get female;
-
-  /// No description provided for @other.
-  ///
-  /// In en, this message translates to:
-  /// **'Other'**
-  String get other;
-
-  /// No description provided for @receiveNotificationsDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Receive app notifications'**
-  String get receiveNotificationsDesc;
-
-  /// No description provided for @transactionReminders.
-  ///
-  /// In en, this message translates to:
-  /// **'Transaction Reminders'**
-  String get transactionReminders;
-
-  /// No description provided for @transactionRemindersDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Daily reminder to log expenses'**
-  String get transactionRemindersDesc;
-
-  /// No description provided for @budgetAlerts.
-  ///
-  /// In en, this message translates to:
-  /// **'Budget Alerts'**
-  String get budgetAlerts;
-
-  /// No description provided for @budgetAlertsDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Alert when approaching budget limit'**
-  String get budgetAlertsDesc;
-
-  /// No description provided for @biometricAuth.
-  ///
-  /// In en, this message translates to:
-  /// **'Biometric Authentication'**
-  String get biometricAuth;
-
-  /// No description provided for @useFingerprintOrFaceId.
-  ///
-  /// In en, this message translates to:
-  /// **'Use fingerprint or Face ID to unlock'**
-  String get useFingerprintOrFaceId;
-
-  /// No description provided for @appPermissions.
-  ///
-  /// In en, this message translates to:
-  /// **'App Permissions'**
-  String get appPermissions;
-
-  /// No description provided for @appPermissionsDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Manage app access permissions'**
-  String get appPermissionsDesc;
-
-  /// No description provided for @changePin.
-  ///
-  /// In en, this message translates to:
-  /// **'Change PIN'**
-  String get changePin;
-
-  /// No description provided for @changePinDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Update your security PIN'**
-  String get changePinDesc;
-
-  /// No description provided for @dataManagement.
-  ///
-  /// In en, this message translates to:
-  /// **'Data Management'**
-  String get dataManagement;
-
-  /// No description provided for @autoBackup.
-  ///
-  /// In en, this message translates to:
-  /// **'Auto Backup'**
-  String get autoBackup;
-
-  /// No description provided for @autoBackupDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Automatically backup data daily'**
-  String get autoBackupDesc;
-
-  /// No description provided for @exportData.
-  ///
-  /// In en, this message translates to:
-  /// **'Export Data'**
-  String get exportData;
-
-  /// No description provided for @exportDataDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Download your data as CSV or PDF'**
-  String get exportDataDesc;
-
-  /// No description provided for @importData.
-  ///
-  /// In en, this message translates to:
-  /// **'Import Data'**
-  String get importData;
-
-  /// No description provided for @importDataDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Import transactions from file'**
-  String get importDataDesc;
-
-  /// No description provided for @budgetAndCategories.
-  ///
-  /// In en, this message translates to:
-  /// **'Budget & Categories'**
-  String get budgetAndCategories;
-
-  /// No description provided for @defaultCategories.
-  ///
-  /// In en, this message translates to:
-  /// **'Default Categories'**
-  String get defaultCategories;
-
-  /// No description provided for @manageCategoriesDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Manage expense categories'**
-  String get manageCategoriesDesc;
-
-  /// No description provided for @budgetPeriod.
-  ///
-  /// In en, this message translates to:
-  /// **'Budget Period'**
-  String get budgetPeriod;
-
-  /// No description provided for @setBudgetCycleDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Set monthly or custom budget cycle'**
-  String get setBudgetCycleDesc;
-
-  /// No description provided for @recurringTransactions.
-  ///
-  /// In en, this message translates to:
-  /// **'Recurring Transactions'**
-  String get recurringTransactions;
-
-  /// No description provided for @manageRecurringDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Manage recurring expenses and income'**
-  String get manageRecurringDesc;
-
-  /// No description provided for @privacyPolicyDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Read our privacy policy'**
-  String get privacyPolicyDesc;
-
-  /// No description provided for @termsOfServiceDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'View terms and conditions'**
-  String get termsOfServiceDesc;
-
-  /// No description provided for @appVersion.
-  ///
-  /// In en, this message translates to:
-  /// **'App Version'**
-  String get appVersion;
-
-  /// No description provided for @clearAllData.
-  ///
-  /// In en, this message translates to:
-  /// **'Clear All Data'**
-  String get clearAllData;
-
-  /// No description provided for @clearAllDataDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete all transactions and reset app'**
-  String get clearAllDataDesc;
-
-  /// No description provided for @clearAllDataConfirmTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Clear All Data?'**
-  String get clearAllDataConfirmTitle;
-
-  /// No description provided for @clearAllDataConfirmDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'This will permanently delete all your transactions, budgets, and settings. This action cannot be undone.'**
-  String get clearAllDataConfirmDesc;
-
-  /// No description provided for @deleteAll.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete All'**
-  String get deleteAll;
-
-  /// No description provided for @allDataCleared.
-  ///
-  /// In en, this message translates to:
-  /// **'All data cleared'**
-  String get allDataCleared;
-
   /// No description provided for @seeDetail.
   ///
   /// In en, this message translates to:
@@ -1368,30 +1146,6 @@ abstract class AppLocalizations {
   /// **'We need gallery access to choose photos.'**
   String get galleryPermissionMessage;
 
-  /// No description provided for @storage.
-  ///
-  /// In en, this message translates to:
-  /// **'Storage'**
-  String get storage;
-
-  /// No description provided for @allowed.
-  ///
-  /// In en, this message translates to:
-  /// **'Allowed'**
-  String get allowed;
-
-  /// No description provided for @notAllowed.
-  ///
-  /// In en, this message translates to:
-  /// **'Not Allowed'**
-  String get notAllowed;
-
-  /// No description provided for @biometrics.
-  ///
-  /// In en, this message translates to:
-  /// **'Biometrics'**
-  String get biometrics;
-
   /// No description provided for @personalInformation.
   ///
   /// In en, this message translates to:
@@ -1403,6 +1157,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Day'**
   String get day;
+
+  /// No description provided for @male.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get male;
+
+  /// No description provided for @female.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get female;
+
+  /// No description provided for @other.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get other;
 
   /// No description provided for @enterPhoneNumber.
   ///
@@ -1548,17 +1320,17 @@ abstract class AppLocalizations {
   /// **'Monthly Insights'**
   String get monthlyInsight;
 
-  /// Title for quarterly insight section
+  /// Title for quarterly insights section
   ///
   /// In en, this message translates to:
-  /// **'Quarterly Insight'**
-  String get quarterInsight;
+  /// **'Quarterly Insights'**
+  String get quarterlyInsights;
 
-  /// Title for yearly insight section
+  /// Title for yearly insights section
   ///
   /// In en, this message translates to:
-  /// **'Yearly Insight'**
-  String get yearlyInsight;
+  /// **'Yearly Insights'**
+  String get yearlyInsights;
 
   /// Title for spending trend line chart
   ///
@@ -1698,6 +1470,18 @@ abstract class AppLocalizations {
   /// **'Spent This Week'**
   String get spentThisWeek;
 
+  /// Budget status when progress is moderate
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate'**
+  String get moderate;
+
+  /// Abbreviated label for Medium priority
+  ///
+  /// In en, this message translates to:
+  /// **'Med'**
+  String get mediumPriorityAbbr;
+
   /// Title for active budgets section
   ///
   /// In en, this message translates to:
@@ -1745,12 +1529,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Medium'**
   String get mediumPriority;
-
-  /// Abbreviated label for Medium priority
-  ///
-  /// In en, this message translates to:
-  /// **'Med'**
-  String get mediumPriorityAbbr;
 
   /// Low priority label
   ///
@@ -2214,24 +1992,6 @@ abstract class AppLocalizations {
   /// **'Failed to load budgets'**
   String get failedToLoadBudgets;
 
-  /// Title for quarterly insights section
-  ///
-  /// In en, this message translates to:
-  /// **'Quarterly Insights'**
-  String get quarterlyInsights;
-
-  /// Title for yearly insights section
-  ///
-  /// In en, this message translates to:
-  /// **'Yearly Insights'**
-  String get yearlyInsights;
-
-  /// Budget status when progress is moderate
-  ///
-  /// In en, this message translates to:
-  /// **'Moderate'**
-  String get moderate;
-
   /// No description provided for @noExpensesFound.
   ///
   /// In en, this message translates to:
@@ -2333,6 +2093,300 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 day used} other{{count} days used}}'**
   String daysUsed(int count);
+
+  /// No description provided for @permanentlyDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently Denied'**
+  String get permanentlyDenied;
+
+  /// No description provided for @disablePermissionManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Please disable this permission manually in Settings'**
+  String get disablePermissionManual;
+
+  /// No description provided for @photos.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get photos;
+
+  /// No description provided for @locationInUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Location (In Use)'**
+  String get locationInUse;
+
+  /// No description provided for @mediaLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Media Library'**
+  String get mediaLibrary;
+
+  /// Currency setting label
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get currency;
+
+  /// Biometric authentication setting label
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric Authentication'**
+  String get biometricAuth;
+
+  /// Description for biometric authentication setting
+  ///
+  /// In en, this message translates to:
+  /// **'Use fingerprint or Face ID to unlock'**
+  String get useFingerprintOrFaceId;
+
+  /// App permissions setting label
+  ///
+  /// In en, this message translates to:
+  /// **'App Permissions'**
+  String get appPermissions;
+
+  /// Description for app permissions setting
+  ///
+  /// In en, this message translates to:
+  /// **'Manage app permissions'**
+  String get appPermissionsDesc;
+
+  /// Transaction reminders setting label
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction Reminders'**
+  String get transactionReminders;
+
+  /// Description for transaction reminders setting
+  ///
+  /// In en, this message translates to:
+  /// **'Get reminded to log your transactions'**
+  String get transactionRemindersDesc;
+
+  /// Budget alerts setting label
+  ///
+  /// In en, this message translates to:
+  /// **'Budget Alerts'**
+  String get budgetAlerts;
+
+  /// Description for budget alerts setting
+  ///
+  /// In en, this message translates to:
+  /// **'Get notified when approaching budget limits'**
+  String get budgetAlertsDesc;
+
+  /// Description for notifications setting
+  ///
+  /// In en, this message translates to:
+  /// **'Receive push notifications'**
+  String get receiveNotificationsDesc;
+
+  /// Data management section label
+  ///
+  /// In en, this message translates to:
+  /// **'Data Management'**
+  String get dataManagement;
+
+  /// Export data setting label
+  ///
+  /// In en, this message translates to:
+  /// **'Export Data'**
+  String get exportData;
+
+  /// Description for export data setting
+  ///
+  /// In en, this message translates to:
+  /// **'Export your data to CSV or PDF'**
+  String get exportDataDesc;
+
+  /// Import data setting label
+  ///
+  /// In en, this message translates to:
+  /// **'Import Data'**
+  String get importData;
+
+  /// Description for import data setting
+  ///
+  /// In en, this message translates to:
+  /// **'Import data from a file'**
+  String get importDataDesc;
+
+  /// Budget and categories section label
+  ///
+  /// In en, this message translates to:
+  /// **'Budget & Categories'**
+  String get budgetAndCategories;
+
+  /// Budget period setting label
+  ///
+  /// In en, this message translates to:
+  /// **'Budget Period'**
+  String get budgetPeriod;
+
+  /// Description for budget period setting
+  ///
+  /// In en, this message translates to:
+  /// **'Set your budget cycle period'**
+  String get setBudgetCycleDesc;
+
+  /// Recurring transactions setting label
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring Transactions'**
+  String get recurringTransactions;
+
+  /// Description for recurring transactions setting
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your recurring transactions'**
+  String get manageRecurringDesc;
+
+  /// Description for privacy policy setting
+  ///
+  /// In en, this message translates to:
+  /// **'Read our privacy policy'**
+  String get privacyPolicyDesc;
+
+  /// Description for terms of service setting
+  ///
+  /// In en, this message translates to:
+  /// **'Read our terms of service'**
+  String get termsOfServiceDesc;
+
+  /// App version setting label
+  ///
+  /// In en, this message translates to:
+  /// **'App Version'**
+  String get appVersion;
+
+  /// Clear all data setting label
+  ///
+  /// In en, this message translates to:
+  /// **'Clear All Data'**
+  String get clearAllData;
+
+  /// Description for clear all data setting
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently delete all your data'**
+  String get clearAllDataDesc;
+
+  /// No description provided for @storage.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage'**
+  String get storage;
+
+  /// No description provided for @allowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Allowed'**
+  String get allowed;
+
+  /// No description provided for @denied.
+  ///
+  /// In en, this message translates to:
+  /// **'Denied'**
+  String get denied;
+
+  /// No description provided for @failedToLoadProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load profile'**
+  String get failedToLoadProfile;
+
+  /// No description provided for @termsAndConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms & Conditions'**
+  String get termsAndConditions;
+
+  /// No description provided for @readTermsAndConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'Read our terms and conditions'**
+  String get readTermsAndConditions;
+
+  /// No description provided for @lightThemeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Always use light theme'**
+  String get lightThemeDesc;
+
+  /// No description provided for @darkThemeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Always use dark theme'**
+  String get darkThemeDesc;
+
+  /// No description provided for @systemThemeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow system settings'**
+  String get systemThemeDesc;
+
+  /// No description provided for @currencyUSD.
+  ///
+  /// In en, this message translates to:
+  /// **'US Dollar'**
+  String get currencyUSD;
+
+  /// No description provided for @currencyPKR.
+  ///
+  /// In en, this message translates to:
+  /// **'Pakistani Rupee'**
+  String get currencyPKR;
+
+  /// No description provided for @currencyEUR.
+  ///
+  /// In en, this message translates to:
+  /// **'Euro'**
+  String get currencyEUR;
+
+  /// No description provided for @currencyGBP.
+  ///
+  /// In en, this message translates to:
+  /// **'British Pound'**
+  String get currencyGBP;
+
+  /// No description provided for @currencyJPY.
+  ///
+  /// In en, this message translates to:
+  /// **'Japanese Yen'**
+  String get currencyJPY;
+
+  /// No description provided for @currencyAUD.
+  ///
+  /// In en, this message translates to:
+  /// **'Australian Dollar'**
+  String get currencyAUD;
+
+  /// No description provided for @currencyCAD.
+  ///
+  /// In en, this message translates to:
+  /// **'Canadian Dollar'**
+  String get currencyCAD;
+
+  /// No description provided for @currencyCHF.
+  ///
+  /// In en, this message translates to:
+  /// **'Swiss Franc'**
+  String get currencyCHF;
+
+  /// No description provided for @currencyCNY.
+  ///
+  /// In en, this message translates to:
+  /// **'Chinese Yuan'**
+  String get currencyCNY;
+
+  /// No description provided for @currencyINR.
+  ///
+  /// In en, this message translates to:
+  /// **'Indian Rupee'**
+  String get currencyINR;
 }
 
 class _AppLocalizationsDelegate

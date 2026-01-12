@@ -318,9 +318,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectCurrency => 'Select Currency';
 
   @override
-  String get currency => 'Currency';
-
-  @override
   String get languageChanged => 'Language changed successfully';
 
   @override
@@ -369,6 +366,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get configureNotifications => 'Configure your notifications';
+
+  @override
+  String get appSettings => 'Customize app preferences';
 
   @override
   String get addWidgets => 'Add Widgets';
@@ -500,118 +500,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dobRequired => 'Date of birth is required';
 
   @override
-  String get male => 'Male';
-
-  @override
-  String get female => 'Female';
-
-  @override
-  String get other => 'Other';
-
-  @override
-  String get receiveNotificationsDesc => 'Receive app notifications';
-
-  @override
-  String get transactionReminders => 'Transaction Reminders';
-
-  @override
-  String get transactionRemindersDesc => 'Daily reminder to log expenses';
-
-  @override
-  String get budgetAlerts => 'Budget Alerts';
-
-  @override
-  String get budgetAlertsDesc => 'Alert when approaching budget limit';
-
-  @override
-  String get biometricAuth => 'Biometric Authentication';
-
-  @override
-  String get useFingerprintOrFaceId => 'Use fingerprint or Face ID to unlock';
-
-  @override
-  String get appPermissions => 'App Permissions';
-
-  @override
-  String get appPermissionsDesc => 'Manage app access permissions';
-
-  @override
-  String get changePin => 'Change PIN';
-
-  @override
-  String get changePinDesc => 'Update your security PIN';
-
-  @override
-  String get dataManagement => 'Data Management';
-
-  @override
-  String get autoBackup => 'Auto Backup';
-
-  @override
-  String get autoBackupDesc => 'Automatically backup data daily';
-
-  @override
-  String get exportData => 'Export Data';
-
-  @override
-  String get exportDataDesc => 'Download your data as CSV or PDF';
-
-  @override
-  String get importData => 'Import Data';
-
-  @override
-  String get importDataDesc => 'Import transactions from file';
-
-  @override
-  String get budgetAndCategories => 'Budget & Categories';
-
-  @override
-  String get defaultCategories => 'Default Categories';
-
-  @override
-  String get manageCategoriesDesc => 'Manage expense categories';
-
-  @override
-  String get budgetPeriod => 'Budget Period';
-
-  @override
-  String get setBudgetCycleDesc => 'Set monthly or custom budget cycle';
-
-  @override
-  String get recurringTransactions => 'Recurring Transactions';
-
-  @override
-  String get manageRecurringDesc => 'Manage recurring expenses and income';
-
-  @override
-  String get privacyPolicyDesc => 'Read our privacy policy';
-
-  @override
-  String get termsOfServiceDesc => 'View terms and conditions';
-
-  @override
-  String get appVersion => 'App Version';
-
-  @override
-  String get clearAllData => 'Clear All Data';
-
-  @override
-  String get clearAllDataDesc => 'Delete all transactions and reset app';
-
-  @override
-  String get clearAllDataConfirmTitle => 'Clear All Data?';
-
-  @override
-  String get clearAllDataConfirmDesc =>
-      'This will permanently delete all your transactions, budgets, and settings. This action cannot be undone.';
-
-  @override
-  String get deleteAll => 'Delete All';
-
-  @override
-  String get allDataCleared => 'All data cleared';
-
-  @override
   String get seeDetail => 'See Detail';
 
   @override
@@ -678,22 +566,19 @@ class AppLocalizationsEn extends AppLocalizations {
       'We need gallery access to choose photos.';
 
   @override
-  String get storage => 'Storage';
-
-  @override
-  String get allowed => 'Allowed';
-
-  @override
-  String get notAllowed => 'Not Allowed';
-
-  @override
-  String get biometrics => 'Biometrics';
-
-  @override
   String get personalInformation => 'Enter your bio';
 
   @override
   String get day => 'Day';
+
+  @override
+  String get male => 'Male';
+
+  @override
+  String get female => 'Female';
+
+  @override
+  String get other => 'Other';
 
   @override
   String get enterPhoneNumber => 'Enter phone number';
@@ -772,10 +657,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get monthlyInsight => 'Monthly Insights';
 
   @override
-  String get quarterInsight => 'Quarterly Insight';
+  String get quarterlyInsights => 'Quarterly Insights';
 
   @override
-  String get yearlyInsight => 'Yearly Insight';
+  String get yearlyInsights => 'Yearly Insights';
 
   @override
   String get spendingTrend => 'Spending Trend';
@@ -848,6 +733,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get spentThisWeek => 'Spent This Week';
 
   @override
+  String get moderate => 'Moderate';
+
+  @override
+  String get mediumPriorityAbbr => 'Med';
+
+  @override
   String get activeBudgets => 'Active Budgets';
 
   @override
@@ -870,9 +761,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mediumPriority => 'Medium';
-
-  @override
-  String get mediumPriorityAbbr => 'Med';
 
   @override
   String get lowPriority => 'Low';
@@ -1111,15 +999,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get failedToLoadBudgets => 'Failed to load budgets';
 
   @override
-  String get quarterlyInsights => 'Quarterly Insights';
-
-  @override
-  String get yearlyInsights => 'Yearly Insights';
-
-  @override
-  String get moderate => 'Moderate';
-
-  @override
   String get noExpensesFound => 'No Expense found!';
 
   @override
@@ -1177,4 +1056,153 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get permanentlyDenied => 'Permanently Denied';
+
+  @override
+  String get disablePermissionManual =>
+      'Please disable this permission manually in Settings';
+
+  @override
+  String get photos => 'Photos';
+
+  @override
+  String get locationInUse => 'Location (In Use)';
+
+  @override
+  String get mediaLibrary => 'Media Library';
+
+  @override
+  String get currency => 'Currency';
+
+  @override
+  String get biometricAuth => 'Biometric Authentication';
+
+  @override
+  String get useFingerprintOrFaceId => 'Use fingerprint or Face ID to unlock';
+
+  @override
+  String get appPermissions => 'App Permissions';
+
+  @override
+  String get appPermissionsDesc => 'Manage app permissions';
+
+  @override
+  String get transactionReminders => 'Transaction Reminders';
+
+  @override
+  String get transactionRemindersDesc =>
+      'Get reminded to log your transactions';
+
+  @override
+  String get budgetAlerts => 'Budget Alerts';
+
+  @override
+  String get budgetAlertsDesc => 'Get notified when approaching budget limits';
+
+  @override
+  String get receiveNotificationsDesc => 'Receive push notifications';
+
+  @override
+  String get dataManagement => 'Data Management';
+
+  @override
+  String get exportData => 'Export Data';
+
+  @override
+  String get exportDataDesc => 'Export your data to CSV or PDF';
+
+  @override
+  String get importData => 'Import Data';
+
+  @override
+  String get importDataDesc => 'Import data from a file';
+
+  @override
+  String get budgetAndCategories => 'Budget & Categories';
+
+  @override
+  String get budgetPeriod => 'Budget Period';
+
+  @override
+  String get setBudgetCycleDesc => 'Set your budget cycle period';
+
+  @override
+  String get recurringTransactions => 'Recurring Transactions';
+
+  @override
+  String get manageRecurringDesc => 'Manage your recurring transactions';
+
+  @override
+  String get privacyPolicyDesc => 'Read our privacy policy';
+
+  @override
+  String get termsOfServiceDesc => 'Read our terms of service';
+
+  @override
+  String get appVersion => 'App Version';
+
+  @override
+  String get clearAllData => 'Clear All Data';
+
+  @override
+  String get clearAllDataDesc => 'Permanently delete all your data';
+
+  @override
+  String get storage => 'Storage';
+
+  @override
+  String get allowed => 'Allowed';
+
+  @override
+  String get denied => 'Denied';
+
+  @override
+  String get failedToLoadProfile => 'Failed to load profile';
+
+  @override
+  String get termsAndConditions => 'Terms & Conditions';
+
+  @override
+  String get readTermsAndConditions => 'Read our terms and conditions';
+
+  @override
+  String get lightThemeDesc => 'Always use light theme';
+
+  @override
+  String get darkThemeDesc => 'Always use dark theme';
+
+  @override
+  String get systemThemeDesc => 'Follow system settings';
+
+  @override
+  String get currencyUSD => 'US Dollar';
+
+  @override
+  String get currencyPKR => 'Pakistani Rupee';
+
+  @override
+  String get currencyEUR => 'Euro';
+
+  @override
+  String get currencyGBP => 'British Pound';
+
+  @override
+  String get currencyJPY => 'Japanese Yen';
+
+  @override
+  String get currencyAUD => 'Australian Dollar';
+
+  @override
+  String get currencyCAD => 'Canadian Dollar';
+
+  @override
+  String get currencyCHF => 'Swiss Franc';
+
+  @override
+  String get currencyCNY => 'Chinese Yuan';
+
+  @override
+  String get currencyINR => 'Indian Rupee';
 }

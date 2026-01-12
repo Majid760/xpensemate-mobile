@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/service/permission_service.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
@@ -6,6 +7,7 @@ import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
 import 'package:xpensemate/core/widget/app_dialogs.dart';
+import 'package:xpensemate/l10n/app_localizations.dart';
 
 class PermissionManagementDialog extends StatefulWidget {
   const PermissionManagementDialog({super.key});
@@ -45,7 +47,7 @@ class _PermissionManagementDialogState
       // Cannot programmatically disable permissions
       AppDialogs.showTopSnackBar(
         context,
-        message: 'Please disable this permission manually in Settings',
+        message: context.l10n.disablePermissionManual,
         type: MessageType.info,
       );
       await sl.permissions.openSettings();
@@ -117,7 +119,7 @@ class _PermissionManagementDialogState
                   const SizedBox(width: AppSpacing.md),
                   Expanded(
                     child: Text(
-                      'App Permissions',
+                      context.l10n.appPermissions,
                       style: textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -159,7 +161,7 @@ class _PermissionManagementDialogState
             Padding(
               padding: const EdgeInsets.all(AppSpacing.md),
               child: AppButton.primary(
-                text: 'Done',
+                text: context.l10n.done,
                 textColor: context.colorScheme.onPrimary,
                 onPressed: () => Navigator.pop(context),
               ),
@@ -201,25 +203,24 @@ class _PermissionListItem extends StatelessWidget {
     }
   }
 
-  String _getLabel() {
-    // This should ideally use localization
+  String _getLabel(AppLocalizations l10n) {
     switch (permission) {
       case AppPermission.camera:
-        return 'Camera';
+        return l10n.camera;
       case AppPermission.gallery:
-        return 'Gallery';
+        return l10n.gallery;
       case AppPermission.photos:
-        return 'Photos';
+        return l10n.photos;
       case AppPermission.notification:
-        return 'Notifications';
+        return l10n.notifications;
       case AppPermission.location:
-        return 'Location';
+        return l10n.location;
       case AppPermission.locationWhenInUse:
-        return 'Location (In Use)';
+        return l10n.locationInUse;
       case AppPermission.storage:
-        return 'Storage';
+        return l10n.storage;
       case AppPermission.mediaLibrary:
-        return 'Media Library';
+        return l10n.mediaLibrary;
     }
   }
 
@@ -229,6 +230,7 @@ class _PermissionListItem extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
+    final l10n = context.l10n;
     final isGranted = status?.isGranted ?? false;
     final isPermanentlyDenied = status?.isPermanentlyDenied ?? false;
 
@@ -254,15 +256,17 @@ class _PermissionListItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _getLabel(),
+                  _getLabel(l10n),
                   style: textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 Text(
                   isGranted
-                      ? 'Allowed'
-                      : (isPermanentlyDenied ? 'Permanently Denied' : 'Denied'),
+                      ? l10n.allowed
+                      : (isPermanentlyDenied
+                          ? l10n.permanentlyDenied
+                          : l10n.denied),
                   style: textTheme.bodySmall?.copyWith(
                     color: isGranted
                         ? AppColors.success
@@ -282,7 +286,7 @@ class _PermissionListItem extends StatelessWidget {
                 foregroundColor: colorScheme.primary,
                 padding: const EdgeInsets.symmetric(horizontal: 12),
               ),
-              child: const Text('Settings'),
+              child: Text(l10n.openSettings),
             )
           else
             Switch(

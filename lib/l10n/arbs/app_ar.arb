@@ -1,375 +1,887 @@
 {
-    "@@locale": "ar",
-    "appTitle": "تطبيق فلاتر الخاص بي",
-    "home": "الرئيسية",
-    "profile": "الملف الشخصي",
-    "settings": "الإعدادات",
-    "about": "حول",
-    "save": "حفظ",
-    "cancel": "إلغاء",
-    "delete": "حذف",
-    "edit": "تعديل",
-    "add": "إضافة",
-    "confirm": "تأكيد",
-    "retry": "إعادة المحاولة",
-    "close": "إغلاق",
-    "next": "التالي",
-    "back": "رجوع",
-    "done": "تم",
-    "loading": "جاري التحميل...",
-    "login": "تسجيل الدخول",
-    "logout": "تسجيل الخروج",
-    "register": "التسجيل",
-    "email": "البريد الإلكتروني",
-    "password": "كلمة المرور",
-    "confirmPassword": "تأكيد كلمة المرور",
-    "forgotPassword": "نسيت كلمة المرور؟",
-    "welcomeBack": "مرحباً بعودتك!",
-    "createAccount": "إنشاء حساب",
-    "fieldRequired": "هذا الحقل مطلوب",
-    "invalidEmail": "يرجى إدخال بريد إلكتروني صحيح",
-    "passwordTooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
-    "passwordsDoNotMatch": "كلمات المرور غير متطابقة",
-    "errorGeneric": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
-    "errorNetwork": "خطأ في الشبكة. يرجى التحقق من اتصالك.",
-    "errorTimeout": "انتهت مهلة الطلب. يرجى المحاولة مرة أخرى.",
-    "errorNotFound": "المورد غير موجود.",
-    "saveSuccess": "تم الحفظ بنجاح!",
-    "deleteSuccess": "تم الحذف بنجاح!",
-    "updateSuccess": "تم التحديث بنجاح!",
-    "searchPlaceholder": "بحث...",
-    "noDataAvailable": "لا توجد بيانات متاحة",
-    "emptyListMessage": "لا يوجد شيء لعرضه هنا بعد",
-    "confirmDelete": "هل أنت متأكد من حذف هذا العنصر؟",
-    "confirmLogout": "هل أنت متأكد من تسجيل الخروج؟",
-    "deleteWarning": "لا يمكن التراجع عن هذا الإجراء.",
-    "welcomeUser": "مرحباً، {userName}!",
-    "itemCount": "{count, plural, =0{لا توجد عناصر} =1{عنصر واحد} other{{count} عنصر}}",
-    "lastUpdated": "آخر تحديث: {date}",
-    "themeMode": "وضع المظهر",
-    "lightTheme": "فاتح",
-    "darkTheme": "داكن",
-    "systemTheme": "النظام",
-    "language": "اللغة",
-    "selectLanguage": "اختر اللغة",
-    "languageChanged": "تم تغيير اللغة بنجاح",
-    "goodMorning": "صباح الخير",
-    "goodAfternoon": "مساء الخير",
-    "goodEvening": "مساء الخير",
-    "financialOverviewSubtitle": "إليك نظرة عامة على وضعك المالي",
-    "totalBalance": "الرصيد الإجمالي",
-    "vsLastWeek": "مقارنة بالأسبوع الماضي",
-    "available": "متاح",
-    "spentThisWeek": "المنفق هذا الأسبوع",
-    "mediumPriorityAbbr": "متوسط",
-    "expenseLoaded": "All expenses loaded successfully!",
-    "expenseDeleted": "Expense deleted successfully!",
-    "expenseUpdated": "Expense updated successfully!",
-    "expenseCreated": "Expense created successfully!",
-    "expenseFailed": "Expense failed to load!",
-    "expenseDeletedFailed": "Expense failed to delete!",
-    "expenseUpdatedFailed": "Expense failed to update!",
-    "expenseCreatedFailed": "Expense failed to create!",
-    "currencySymbol": "$",
-    "or": "Or",
-    "dontHaveAccount": "Don't have an account?",
-    "hintEmail": "email",
-    "hintConfirmPassword": "Re-enter password",
-    "name": "Full Name",
-    "hintName": "full name",
-    "alreadyHaveAccount": "Already have an account?",
-    "registerNow": "Create Account",
-    "hintPassword": "password",
-    "forgotPasswordTitle": "Reset Your Password",
-    "forgotPasswordSubtitle": "Enter your email and we'll send you a link to reset your password",
-    "resetPassword": "Reset Password",
-    "resetPasswordSuccess": "Password reset email sent. Please check your inbox.",
-    "rememberPassword": "Remember your password?",
-    "verifyYourEmail": "Verify Your Email",
-    "verificationEmailSentTo": "Verification email sent to",
-    "verificationInstructions": "Please check your email for the verification link.",
-    "resendVerificationEmail": "Resend Verification Email",
-    "backToLogin": "Back to Login",
-    "passwordOrEmail": "Password or Email is incorrect!",
-    "emailRequired": "Email is required",
-    "passwordRequired": "Password is required",
-    "passwordMismatch": "Passwords do not match",
-    "confirmPasswordRequired": "Confirm Password is required",
-    "registerSuccess": "Account created successfully!",
-    "verifyEmail": "We have sent a verification email to your email address. Please check your inbox.",
-    "verifyEmailSuccess": "Email verification sent successfully!",
-    "verifyEmailFailed": "Email verification failed. Please try again.",
-    "budgetGoalsLoading": "Loading...",
-    "budgetGoalsRetry": "Retry",
-    "budgetGoalsError": "An error occurred",
-    "budgetGoalsEmptyTitle": "No budget goals yet",
-    "budgetGoalsEmptySubtitle": "Create a budget goal",
-    "budgetGoalsAllLoaded": "All budget goals loaded",
-    "selectCurrency": "Select Currency",
-    "currency": "Currency",
-    "totalSpent": "Total Spent",
-    "average": "Average",
-    "transactions": "Transactions",
-    "budgetGoalLabel": "Budget Goal: {amount}",
-    "thisMonth": "This Month",
-    "categories": "Categories",
-    "account": "Account",
-    "preferences": "Preferences",
-    "support": "Support",
-    "editProfile": "Edit Profile",
-    "updatePersonalInfo": "Update your personal information",
-    "privacySecurity": "Privacy & Security",
-    "managePrivacySettings": "Manage your privacy settings",
-    "notifications": "Notifications",
-    "configureNotifications": "Configure your notifications",
-    "addWidgets": "Add Widgets",
-    "addWidgetsDescription": "Add widgets to your home screen to make it easier to access your most used features.",
-    "choosePreferredLanguage": "Choose your preferred language",
-    "darkMode": "Dark Mode",
-    "switchBetweenLightAndDarkTheme": "Switch between light and dark theme",
-    "helpSupport": "Help & Support",
-    "getHelpWhenNeeded": "Get help when you need it",
-    "learnMoreAboutExpenseTracker": "Learn more about Xpensemate",
-    "signOut": "Sign Out",
-    "logoutFromAccount": "Logout from your account",
-    "completeYourProfile": "Complete your profile",
-    "expenseTracker": "Xpensemate",
-    "version": "Version 1.0.0 • Build 2024.1",
-    "craftedWithLove": "Crafted with ❤️ for smarter expense tracking",
-    "moto": "Track Smart, Spend Wise",
-    "changeProfilePhoto": "Change Profile Photo",
-    "gotIt": "Got it!",
-    "areYouSureYouWantToSignOut": "Are you sure you want to sign out?",
-    "comingSoonMessage": "This amazing feature is coming soon!\nStay tuned for updates.",
-    "signOutConfirmation": "Are you sure you want to sign out?",
-    "signOutConfirmationMessage": "You will be signed out of your account and need to sign in again to continue.",
-    "signOutConfirmationButton": "Sign Out",
-    "signOutConfirmationCancel": "Cancel",
-    "fullName": "Full Name",
-    "gender": "Gender",
-    "dateOfBirth": "Date of Birth",
-    "phoneNumber": "Phone Number",
-    "bio": "Bio",
-    "saveChanges": "Save Changes",
-    "profileUpdatedSuccessfully": "Profile updated successfully",
-    "enterYourName": "Enter your name",
-    "enterYourBio": "Enter your bio",
-    "selectDateOfBirth": "Select date of birth",
-    "nameIsRequired": "Name is required",
-    "nameMustBeAtLeast4Characters": "Name must be at least 4 characters",
-    "phoneNumberMustBeAtLeast10Digits": "Phone number must be at least 10 digits",
-    "logoutConfirmationMessage": "Are you sure to want to logout?",
-    "userSessionNotFound": "User session not found",
-    "ageMinError": "You must be at least 7 years old",
-    "ageMaxError": "You cannot be more than 100 years old",
-    "dobRequired": "Date of birth is required",
-    "male": "Male",
-    "female": "Female",
-    "other": "Other",
-    "receiveNotificationsDesc": "Receive app notifications",
-    "transactionReminders": "Transaction Reminders",
-    "transactionRemindersDesc": "Daily reminder to log expenses",
-    "budgetAlerts": "Budget Alerts",
-    "budgetAlertsDesc": "Alert when approaching budget limit",
-    "biometricAuth": "Biometric Authentication",
-    "useFingerprintOrFaceId": "Use fingerprint or Face ID to unlock",
-    "appPermissions": "App Permissions",
-    "appPermissionsDesc": "Manage app access permissions",
-    "changePin": "Change PIN",
-    "changePinDesc": "Update your security PIN",
-    "dataManagement": "Data Management",
-    "autoBackup": "Auto Backup",
-    "autoBackupDesc": "Automatically backup data daily",
-    "exportData": "Export Data",
-    "exportDataDesc": "Download your data as CSV or PDF",
-    "importData": "Import Data",
-    "importDataDesc": "Import transactions from file",
-    "budgetAndCategories": "Budget & Categories",
-    "defaultCategories": "Default Categories",
-    "manageCategoriesDesc": "Manage expense categories",
-    "budgetPeriod": "Budget Period",
-    "setBudgetCycleDesc": "Set monthly or custom budget cycle",
-    "recurringTransactions": "Recurring Transactions",
-    "manageRecurringDesc": "Manage recurring expenses and income",
-    "privacyPolicyDesc": "Read our privacy policy",
-    "termsOfServiceDesc": "View terms and conditions",
-    "appVersion": "App Version",
-    "clearAllData": "Clear All Data",
-    "clearAllDataDesc": "Delete all transactions and reset app",
-    "clearAllDataConfirmTitle": "Clear All Data?",
-    "clearAllDataConfirmDesc": "This will permanently delete all your transactions, budgets, and settings. This action cannot be undone.",
-    "deleteAll": "Delete All",
-    "allDataCleared": "All data cleared",
-    "seeDetail": "See Detail",
-    "selectImage": "Select Image",
-    "gallery": "Gallery",
-    "camera": "Camera",
-    "openingCamera": "Opening camera...",
-    "openingGallery": "Opening gallery...",
-    "processingImage": "Processing image...",
-    "imageSelectedSuccessfully": "Image selected successfully!",
-    "imageSelectionCancelled": "Image selection cancelled",
-    "imageSelectionFailed": "Failed to select image. Please try again.",
-    "fileSizeExceeded": "File size ({size} MB) exceeds the limit of 10 MB. Please choose a smaller image.",
-    "permissionRequired": "Permission Required",
-    "permissionRationale": "We need this permission to provide you with the best experience.",
-    "notNow": "Not Now",
-    "proceed": "Continue",
-    "openSettings": "Settings",
-    "permissionDenied": "Permission Denied",
-    "permissionDeniedMessage": "Please enable this permission from settings to use this feature.",
-    "cameraPermissionMessage": "We need camera access to take photos.",
-    "galleryPermissionMessage": "We need gallery access to choose photos.",
-    "storage": "Storage",
-    "allowed": "Allowed",
-    "notAllowed": "Not Allowed",
-    "biometrics": "Biometrics",
-    "personalInformation": "Enter your bio",
-    "day": "Day",
-    "enterPhoneNumber": "Enter phone number",
-    "phoneNumberMinLength": "Phone number must be at least {min} digits",
-    "phoneNumberTooShort": "Phone number is not valid (too short)",
-    "selectGender": "Select Gender",
-    "nameMinLength": "Name must be at least {min} characters",
-    "searchCountry": "Search country",
-    "noCountryFound": "No country found",
-    "tellUsAboutYourself": "Tell us about yourself...",
-    "changePhoto": "Change Photo",
-    "saving": "Saving...",
-    "errorSavingProfile": "Error saving profile",
-    "errorWhileOpeningUrl": "Link is not valid",
-    "dashboard": "Dashboard",
-    "weeklyFinancialOverview": "Weekly Financial Overview",
-    "weeklyInsights": "Weekly Financial Overview",
-    "highestDay": "Highest Day",
-    "lowestDay": "Lowest Day",
-    "dailyAverage": "Daily Average",
-    "acrossSevenDays": "across 7 days",
-    "balanceRemaining": "Balance Remaining",
-    "totalExpenses": "Total Expenses",
-    "dailySpendingPattern": "Daily Spending Pattern",
-    "thisWeek": "this week",
-    "monthlyInsight": "Monthly Insights",
-    "quarterInsight": "Quarterly Insight",
-    "yearlyInsight": "Yearly Insight",
-    "spendingTrend": "Spending Trend",
-    "loadingDashboardData": "Loading dashboard data...",
-    "failedToLoadData": "Failed to load data",
-    "unknownError": "An unknown error occurred",
-    "tryAgain": "Try Again",
-    "startTrackingExpenses": "Start tracking your expenses to see insights",
-    "noSpendingData": "No spending data",
-    "noTrendData": "No trend data",
-    "of12": "of",
-    "budget": "Budget",
-    "expenses": "expenses",
-    "expense": "Expenses",
-    "archive": "Archive",
-    "share": "Share",
-    "cumulative": "cumulative",
-    "activeBudgets": "Active Budgets",
-    "noBudgetsActive": "No goals",
-    "createBudget": "Create Budget",
-    "budgetProgress": "Budget Progress",
-    "remaining": "Remaining",
-    "spent": "Spent",
-    "highPriority": "High",
-    "mediumPriority": "Medium",
-    "lowPriority": "Low",
-    "onTrack": "On Track",
-    "overBudget": "Over Budget",
-    "nearLimit": "Near Limit",
-    "monday": "Monday",
-    "tuesday": "Tuesday",
-    "wednesday": "Wednesday",
-    "thursday": "Thursday",
-    "friday": "Friday",
-    "saturday": "Saturday",
-    "sunday": "Sunday",
-    "mon": "Mon",
-    "tue": "Tue",
-    "wed": "Wed",
-    "thu": "Thu",
-    "fri": "Fri",
-    "sat": "Sat",
-    "sun": "Sun",
-    "description": "Description",
-    "amount": "Amount",
-    "category": "Category",
-    "date": "Date",
-    "time": "Time",
-    "location": "Location",
-    "paymentMethod": "Payment Method",
-    "details": "Details",
-    "invalidAmount": "Please enter a valid amount",
-    "productAnalytic": "Product Analytics",
-    "fieldTooShort": "This field is too short (minimum 2 characters)",
-    "fieldTooLong": "This field is too long (maximum 100 characters)",
-    "overview": "Overview",
-    "budgetStatistics": "Budget Statistics",
-    "periodBudgetStatistics": "{period} Budget Statistics",
-    "totalGoals": "Total Goals",
-    "active": "Active",
-    "achieved": "Achieved",
-    "failedTerminated": "Failed/Terminated",
-    "goalsNotCompleted": "Goals not completed",
-    "totalBudgeted": "Total Budgeted",
-    "totalAmountAllocated": "Total amount allocated for active goals",
-    "avgProgress": "Avg. Progress",
-    "averageProgressGoals": "Average progress across all goals",
-    "closestDeadline": "Closest Deadline",
-    "nextUpcomingDeadline": "Next upcoming deadline",
-    "overdueGoals": "Overdue Goals",
-    "goalsPastDeadline": "Goals past their deadline",
-    "noDeadlines": "No deadlines",
-    "onboardingTitle1": "Track Your Expenses",
-    "onboardingDesc1": "Keep track of every penny you spend and manage your finances with ease.",
-    "onboardingTitle2": "Set Smart Budgets",
-    "onboardingDesc2": "Create budgets for different categories and stay on track with your financial goals.",
-    "onboardingTitle3": "Gain Financial Insights",
-    "onboardingDesc3": "Visualize your spending habits with detailed charts and reports.",
-    "getStarted": "Get Started",
-    "skip": "Skip",
-    "premiumTitle": "Upgrade to Premium",
-    "premiumSubtitle": "Unlock the full potential of Xpensemate",
-    "featureUnlimitedBudgets": "Unlimited Budgets",
-    "featureAdvancedAnalytics": "Advanced Analytics",
-    "featureDataExport": "Data Export (PDF/CSV)",
-    "featureCloudSync": "Cloud Sync & Backup",
-    "monthly": "Monthly",
-    "yearly": "Yearly",
-    "subscribeNow": "Subscribe Now",
-    "restorePurchases": "Restore Purchases",
-    "termsOfService": "Terms of Service",
-    "privacyPolicy": "Privacy Policy",
-    "bestValue": "Best Value",
-    "payment": "Payment",
-    "addExpense": "Add Expense",
-    "addBudget": "Add Budget",
-    "addPayment": "Add Payment",
-    "editExpense": "Edit Expense",
-    "addCustomCategory": "+ Add Custom Category",
-    "noBudgetGoal": "No Budget Goal",
-    "pleaseFillRequired": "Please fill out all required fields",
-    "failedToLoadBudgets": "Failed to load budgets",
-    "quarterlyInsights": "Quarterly Insights",
-    "yearlyInsights": "Yearly Insights",
-    "moderate": "Moderate",
-    "noExpensesFound": "No Expense found!",
-    "errorLoadingExpenses": "Error while loading expenses!",
-    "noMoreExpenses": "No more expenses!",
-    "streak": "Streak",
-    "spendingVelocity": "Spending Velocity",
-    "trackingStreak": "Tracking Streak",
-    "consecutiveDays": "Consecutive days",
-    "totalSpentSubtitle": "Total spent in period",
-    "dailyAverageSubtitle": "Daily average in period",
-    "insights": "Insights",
-    "doingGreat": "You're doing great!",
-    "budgetExceeded": "Budget exceeded",
-    "mostActiveGoal": "Most Active Goal",
-    "search": "Search",
-    "searchHint": "Search...",
-    "closeSearch": "Close search",
-    "daysUsed": "{count, plural, =1{1 day used} other{{count} days used}}"
+  "@@locale": "ar",
+  "@@last_modified": "2024-01-15T10:00:00.000Z",
+  "@@author": "Majid",
+  "@@version": "1.0.0",
+  
+  "@@navigation_section": "Navigation related strings",
+  "appTitle": "Xpensemate",
+  "@appTitle": {
+      "description": "The title of the application"
+  },
+  "home": "الرئيسية",
+  "profile": "الملف الشخصي",
+  "settings": "الإعدادات",
+  "about": "حول",
+  
+  "@@common_actions_section": "Common action buttons and labels",
+  "save": "حفظ",
+  "@save": {
+      "description": "Save button text used throughout the app"
+  },
+  "cancel": "إلغاء",
+  "delete": "حذف",
+  "edit": "تعديل",
+  "add": "إضافة",
+  "confirm": "تأكيد",
+  "retry": "إعادة المحاولة",
+  "close": "إغلاق",
+  "next": "التالي",
+  "back": "رجوع",
+  "done": "تم",
+  "loading": "جاري التحميل...",
+  "expenseLoaded": "تم تحميل جميع النفقات بنجاح!",
+  "expenseDeleted": "تم حذف النفقة بنجاح!",
+  "expenseUpdated": "تم تحديث النفقة بنجاح!",
+  "expenseCreated": "تم إنشاء النفقة بنجاح!",
+  "expenseFailed": "فشل تحميل النفقة!",
+  "expenseDeletedFailed": "فشل حذف النفقة!",
+  "expenseUpdatedFailed": "فشل تحديث النفقة!",
+  "expenseCreatedFailed": "فشل إنشاء النفقة!",
+  
+  "@@expense_section": "Expense related strings",
+  "currencySymbol": "$",
+  
+  "or": "أو",
+  
+  "@@authentication_section": "Authentication and user account strings",
+  "login": "تسجيل الدخول",
+  "logout": "تسجيل الخروج",
+  "register": "التسجيل",
+  "email": "البريد الإلكتروني",
+  "dontHaveAccount": "ليس لديك حساب؟",
+  "@email": {
+      "description": "Email input field label",
+      "context": "Used in login and registration forms"
+  },
+  "hintEmail": "البريد الإلكتروني",
+  "@hintEmail": {
+      "description": "Hint text for email input field",
+      "context": "Shown in the email TextField when it's empty"
+  },
+  "password": "كلمة المرور",
+  "confirmPassword": "تأكيد كلمة المرور",
+  "hintConfirmPassword": "أعد إدخال كلمة المرور",
+  "name": "الاسم الكامل",
+  "hintName": "الاسم الكامل",
+  "alreadyHaveAccount": "لديك حساب بالفعل؟",
+  "registerNow": "إنشاء حساب",
+  "hintPassword": "كلمة المرور",
+  "@hintPassword": {
+      "description": "Hint text for password input field",
+      "context": "Shown in the password TextField when it's empty"
+  },
+  "forgotPassword": "نسيت كلمة المرور؟",
+  "forgotPasswordTitle": "إعادة تعيين كلمة المرور",
+  "forgotPasswordSubtitle": "أدخل بريدك الإلكتروني وسنرسل لك رابطاً لإعادة تعيين كلمة المرور",
+  "resetPassword": "إعادة تعيين كلمة المرور",
+  "resetPasswordSuccess": "تم إرسال بريد إعادة تعيين كلمة المرور. يرجى التحقق من صندوق الوارد.",
+  "rememberPassword": "تذكرت كلمة المرور؟",
+  "welcomeBack": "مرحباً بعودتك!",
+  "createAccount": "إنشاء حساب",
+  "verifyYourEmail": "تحقق من بريدك الإلكتروني",
+  "verificationEmailSentTo": "تم إرسال بريد التحقق إلى",
+  "verificationInstructions": "يرجى التحقق من بريدك الإلكتروني للحصول على رابط التحقق.",
+  "resendVerificationEmail": "إعادة إرسال بريد التحقق",
+  "backToLogin": "العودة لتسجيل الدخول",
+  
+  "@@validation_section": "Form validation error messages",
+  "passwordOrEmail": "كلمة المرور أو البريد الإلكتروني غير صحيح!",
+  "emailRequired": "البريد الإلكتروني مطلوب",
+  "@emailRequired": {
+      "description": "Error message when email field is empty",
+      "context": "Shown when user submits the form without entering an email"
+  },
+  "passwordRequired": "كلمة المرور مطلوبة",
+  "@passwordRequired": {
+      "description": "Error message when password field is empty",
+      "context": "Shown when user submits the form without entering a password"
+  },
+  "fieldRequired": "هذا الحقل مطلوب",
+  "invalidEmail": "يرجى إدخال بريد إلكتروني صحيح",
+  "passwordTooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+  "passwordsDoNotMatch": "كلمات المرور غير متطابقة",
+  "passwordMismatch": "كلمات المرور غير متطابقة",
+  "confirmPasswordRequired": "تأكيد كلمة المرور مطلوب",
+  "registerSuccess": "تم إنشاء الحساب بنجاح!",
+  "verifyEmail": "لقد أرسلنا بريد التحقق إلى عنوان بريدك الإلكتروني. يرجى التحقق من صندوق الوارد.",
+  "verifyEmailSuccess": "تم إرسال بريد التحقق بنجاح!",
+  "verifyEmailFailed": "فشل إرسال بريد التحقق. يرجى المحاولة مرة أخرى.",
+  
+  "@@error_messages_section": "General error messages",
+  "errorGeneric": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+  "errorNetwork": "خطأ في الشبكة. يرجى التحقق من اتصالك.",
+  "errorTimeout": "انتهت مهلة الطلب. يرجى المحاولة مرة أخرى.",
+  "errorNotFound": "المورد غير موجود.",
+  
+  "@@budget_section": "Budget related strings",
+  "budgetGoalsLoading": "جاري التحميل...",
+  "budgetGoalsRetry": "إعادة المحاولة",
+  "budgetGoalsError": "حدث خطأ",
+  "budgetGoalsEmptyTitle": "لا توجد أهداف للميزانية بعد",
+  "budgetGoalsEmptySubtitle": "قم بإنشاء أول هدف للميزانية للبدء",
+  "budgetGoalsAllLoaded": "تم تحميل جميع أهداف الميزانية",
+  
+  "@@success_messages_section": "Success feedback messages",
+  "saveSuccess": "تم الحفظ بنجاح!",
+  "deleteSuccess": "تم الحذف بنجاح!",
+  "updateSuccess": "تم التحديث بنجاح!",
+  
+  "@@placeholders_section": "Placeholder texts and empty states",
+  "searchPlaceholder": "بحث...",
+  "noDataAvailable": "لا توجد بيانات متاحة",
+  "emptyListMessage": "لا يوجد شيء لعرضه هنا بعد",
+  
+  "@@dialog_messages_section": "Dialog and confirmation messages",
+  "confirmDelete": "هل أنت متأكد من حذف هذا العنصر؟",
+  "@confirmDelete": {
+      "description": "Confirmation dialog when user tries to delete an item",
+      "context": "Shown in delete confirmation dialogs"
+  },
+  "confirmLogout": "هل أنت متأكد من تسجيل الخروج؟",
+  "deleteWarning": "لا يمكن التراجع عن هذا الإجراء.",
+  
+  "@@parametrized_section": "Messages with parameters and pluralization",
+  "welcomeUser": "مرحباً، {userName}!",
+  "@welcomeUser": {
+      "description": "Welcome message with user name",
+      "placeholders": {
+          "userName": {
+              "type": "String",
+              "example": "John"
+          }
+      }
+  },
+  
+  "itemCount": "{count, plural, =0{لا توجد عناصر} =1{عنصر واحد} other{{count} عنصر}}",
+  "@itemCount": {
+      "description": "Shows count of items with proper pluralization",
+      "placeholders": {
+          "count": {
+              "type": "int",
+              "example": "5"
+          }
+      }
+  },
+  
+  "lastUpdated": "آخر تحديث: {date}",
+  "@lastUpdated": {
+      "description": "Shows when something was last updated",
+      "placeholders": {
+          "date": {
+              "type": "DateTime",
+              "format": "yMd",
+              "example": "1/15/2024"
+          }
+      }
+  },
+  
+  "@@theme_settings_section": "Theme and appearance settings",
+  "themeMode": "وضع المظهر",
+  "lightTheme": "فاتح",
+  "darkTheme": "داكن",
+  "systemTheme": "النظام",
+  
+  "@@language_settings_section": "Language and localization settings",
+  "language": "اللغة",
+  "selectLanguage": "اختر اللغة",
+  "selectCurrency": "اختر العملة",
+  "languageChanged": "تم تغيير اللغة بنجاح",
+
+  "totalSpent": "إجمالي الإنفاق",
+  "average": "المتوسط",
+  "transactions": "المعاملات",
+  "budgetGoalLabel": "هدف الميزانية: {amount}",
+  "thisMonth": "هذا الشهر",
+  "categories": "الفئات",
+
+  "account": "الحساب",
+  "preferences": "التفضيلات",
+  "support": "الدعم",
+
+  "editProfile": "تعديل الملف الشخصي",
+  "updatePersonalInfo": "تحديث معلوماتك الشخصية",
+  "privacySecurity": "الخصوصية والأمان",
+  "managePrivacySettings": "إدارة إعدادات الخصوصية",
+  "notifications": "الإشعارات",
+  "configureNotifications": "تكوين إشعاراتك",
+
+  "appSettings": "تخصيص تفضيلات التطبيق",
+
+  "addWidgets": "إضافة أدوات",
+  "addWidgetsDescription": "أضف أدوات إلى شاشتك الرئيسية لتسهيل الوصول إلى ميزاتك الأكثر استخداماً.",  
+
+  "choosePreferredLanguage": "اختر لغتك المفضلة",
+  "darkMode": "الوضع الداكن",
+  "switchBetweenLightAndDarkTheme": "التبديل بين السمة الفاتحة والداكنة",
+
+  "helpSupport": "المساعدة والدعم",
+  "getHelpWhenNeeded": "احصل على المساعدة عند الحاجة",
+  "learnMoreAboutExpenseTracker": "تعرف على المزيد حول Xpensemate",
+  "signOut": "تسجيل الخروج",
+  "logoutFromAccount": "تحقق من خروجك من الحساب",
+  "completeYourProfile": "أكمل ملفك الشخصي",
+
+  "expenseTracker": "Xpensemate",
+  "version": "الإصدار 1.0.0 • بناء 2024.1",
+  "craftedWithLove": "صنع بـ ❤️ لتتبع أذكى للنفقات",
+  "moto" : "تتبع بذكاء، أنفق بحكمة",
+  "changeProfilePhoto": "تغيير الصورة الشخصية",
+  "gotIt": "فهمت!",
+  "areYouSureYouWantToSignOut": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+  "comingSoonMessage": "هذه الميزة الرائعة قادمة قريباً!\nترقبوا التحديثات.",
+  "signOutConfirmation": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+  "signOutConfirmationMessage": "سيتم تسجيل خروجك من حسابك وستحتاج إلى تسجيل الدخول مرة أخرى للمتابعة.",
+  "signOutConfirmationButton": "تسجيل الخروج",
+  "signOutConfirmationCancel": "إلغاء",
+
+  "fullName": "الاسم الكامل",
+  "gender": "الجنس",
+  "dateOfBirth": "تاريخ الميلاد",
+  "phoneNumber": "رقم الهاتف", 
+  "bio": "السيرة الذاتية",
+  "saveChanges": "حفظ التغييرات",
+  "profileUpdatedSuccessfully": "تم تحديث الملف الشخصي بنجاح",
+  "enterYourName": "أدخل اسمك",
+  "enterYourBio": "أدخل سيرتك الذاتية",
+  "selectDateOfBirth": "اختر تاريخ الميلاد",
+  "nameIsRequired": "الاسم مطلوب",
+  "nameMustBeAtLeast4Characters": "يجب أن يكون الاسم 4 أحرف على الأقل",
+  "phoneNumberMustBeAtLeast10Digits": "يجب أن يكون رقم الهاتف 10 أرقام على الأقل",
+  "logoutConfirmationMessage" : "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+  "userSessionNotFound": "جلسة المستخدم غير موجودة",
+  "ageMinError": "يجب أن يكون عمرك 7 سنوات على الأقل",
+  "ageMaxError": "لا يمكنك أن تكون أكبر من 100 عام",
+  "dobRequired": "تاريخ الميلاد مطلوب",
+
+  "seeDetail": "شاهد التفاصيل",
+
+  
+  "@@image_picker_section": "Image picker related strings",
+  "selectImage": "اختر صورة",
+  "gallery": "المعرض",
+  "camera": "الكاميرا",
+  "openingCamera": "جاري فتح الكاميرا...",
+  "@openingCamera": {
+    "description": "Message shown when opening camera for image capture",
+    "context": "Displayed as info feedback when camera is being opened"
+  },
+  "openingGallery": "جاري فتح المعرض...",
+  "@openingGallery": {
+    "description": "Message shown when opening gallery for image selection",
+    "context": "Displayed as info feedback when gallery is being opened"
+  },
+  "processingImage": "جاري معالجة الصورة...",
+  "@processingImage": {
+    "description": "Message shown when processing selected image",
+    "context": "Displayed as info feedback during image processing"
+  },
+  "imageSelectedSuccessfully": "تم اختيار الصورة بنجاح!",
+  "@imageSelectedSuccessfully": {
+    "description": "Success message when image is selected and validated",
+    "context": "Displayed as success feedback after successful image selection"
+  },
+  "imageSelectionCancelled": "تم إلغاء اختيار الصورة",
+  "@imageSelectionCancelled": {
+    "description": "Info message when user cancels image selection",
+    "context": "Displayed as info feedback when user cancels image picker"
+  },
+  "imageSelectionFailed": "فشل اختيار الصورة. يرجى المحاولة مرة أخرى.",
+  "@imageSelectionFailed": {
+    "description": "Error message when image selection fails",
+    "context": "Displayed as error feedback when image selection encounters an error"
+  },
+  "fileSizeExceeded": "حجم الملف ({size} ميغابايت) يتجاوز الحد الأقصى 10 ميغابايت. يرجى اختيار صورة أصغر.",
+  "@fileSizeExceeded": {
+    "description": "Error message when selected image file size exceeds the maximum limit",
+    "context": "Displayed as error feedback when image file is too large",
+    "placeholders": {
+      "size": {
+        "type": "String",
+        "example": "15.2"
+      }
+    }
+  },
+  
+  "@@permission_section": "Permission dialog related strings",
+  "permissionRequired": "إذن مطلوب",
+  "permissionRationale": "نحتاج إلى هذا الإذن لنقدم لك أفضل تجربة.",
+  "notNow": "ليس الآن",
+  "proceed": "متابعة",
+  "openSettings": "الإعدادات",
+  "permissionDenied": "تم رفض الإذن",
+  "permissionDeniedMessage": "يرجى تفعيل هذا الإذن من الإعدادات لاستخدام هذه الميزة.",
+  "cameraPermissionMessage": "نحتاج إلى الوصول للكاميرا لالتقاط الصور.",
+  "galleryPermissionMessage": "نحتاج إلى الوصول للمعرض لاختيار الصور.",
+
+  "personalInformation": "أدخل سيرتك الذاتية",
+  "day": "يوم",
+
+  "male": "ذكر",
+  "female": "أنثى",
+  "other": "آخر",
+  "enterPhoneNumber": "أدخل رقم الهاتف",
+
+  "phoneNumberMinLength": "يجب أن يكون رقم الهاتف على الأقل {min} خانة",
+  "@phoneNumberMinLength": {
+    "description": "Phone number min length message",
+    "placeholders": {
+      "min": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+
+  "phoneNumberTooShort" : "رقم الهاتف غير صالح (قصير جداً)",
+  "selectGender":"اختر الجنس",
+  "nameMinLength": "يجب أن يكون الاسم {min} أحرف على الأقل",
+  "@nameMinLength": {
+    "description": "Name min length message",
+    "placeholders": {
+      "min": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "searchCountry":"بحث عن دولة",
+  "noCountryFound":"لم يتم العثور على الدولة",
+  "tellUsAboutYourself": "خبرنا عن نفسك...",
+  "changePhoto": "تغيير الصورة",
+  "saving": "جاري الحفظ...",
+  "errorSavingProfile" : "خطأ في حفظ الملف الشخصي",
+  "errorWhileOpeningUrl" : "الرابط غير صالح",
+
+  "@@dashboard_section": "Dashboard related strings",
+  "dashboard": "لوحة المعلومات",
+  "@dashboard": {
+    "description": "Dashboard page title"
+  },
+  "weeklyFinancialOverview": "نظرة مالية أسبوعية",
+  "@weeklyFinancialOverview": {
+    "description": "Title for the weekly financial overview section"
+  },
+  "weeklyInsights": "رؤى أسبوعية",
+  "@weeklyInsights": {
+    "description": "Title for weekly insights section"
+  },
+  "highestDay": "أعلى يوم",
+  "@highestDay": {
+    "description": "Label for the day with highest spending"
+  },
+  "lowestDay": "أقل يوم",
+  "@lowestDay": {
+    "description": "Label for the day with lowest spending"
+  },
+  "dailyAverage": "المعدل اليومي",
+  "@dailyAverage": {
+    "description": "Label for daily average spending"
+  },
+  "acrossSevenDays": "خلال 7 أيام",
+  "@acrossSevenDays": {
+    "description": "Subtitle for daily average calculation"
+  },
+  "balanceRemaining": "الرصيد المتبقي",
+  "@balanceRemaining": {
+    "description": "Label for remaining budget balance"
+  },
+  "totalExpenses": "إجمالي المصاريف",
+  "@totalExpenses": {
+    "description": "Label for total expenses"
+  },
+  "dailySpendingPattern": "نمط الإنفاق اليومي",
+  "@dailySpendingPattern": {
+    "description": "Title for daily spending bar chart"
+  },
+  "thisWeek": "هذا الأسبوع",
+  "@thisWeek": {
+    "description": "Time period label for current week"
+  },
+  "monthlyInsight": "رؤى شهرية",
+  "@monthlyInsight": {
+    "description": "Title for monthly insight section"
+  },
+  "quarterlyInsights": "رؤى ربع سنوية",
+  "@quarterlyInsights": {
+    "description": "Title for quarterly insights section"
+  },
+  "yearlyInsights": "رؤى سنوية",
+  "@yearlyInsights": {
+    "description": "Title for yearly insights section"
+  },
+  "spendingTrend": "اتجاه الإنفاق",
+  "@spendingTrend": {
+    "description": "Title for spending trend line chart"
+  },
+  "loadingDashboardData": "جاري تحميل بيانات اللوحة...",
+  "@loadingDashboardData": {
+    "description": "Loading message for dashboard data"
+  },
+  "failedToLoadData": "فشل تحميل البيانات",
+  "@failedToLoadData": {
+    "description": "Error message when data loading fails"
+  },
+  "unknownError": "حدث خطأ غير معروف",
+  "@unknownError": {
+    "description": "Generic error message"
+  },
+  "tryAgain": "حاول مرة أخرى",
+  "@tryAgain": {
+    "description": "Button text to retry failed operation"
+  },
+  "startTrackingExpenses": "ابدأ بتتبع نفقاتك لتر الرؤى",
+  "@startTrackingExpenses": {
+    "description": "Message shown when no expense data is available"
+  },
+  "noSpendingData": "لا توجد بيانات إنفاق",
+  "@noSpendingData": {
+    "description": "Message when no spending data is available for charts"
+  },
+  "noTrendData": "لا توجد بيانات اتجاه",
+  "@noTrendData": {
+    "description": "Message when no trend data is available"
+  },
+  "of12": "من",
+
+  "budget": "الميزانية",
+  "@budget": {
+    "description": "Budget label"
+  },
+  "@budget": {
+    "description": "Budget label"
+  },
+  "expenses": "نفقات",
+  "@expenses": {
+    "description": "Expenses label"
+  },
+  "expense":"نفقات",
+  "@expense": {
+    "description": "Expenses label"
+  },
+  "archive": "أرشيف",
+  "@archive": {
+    "description": "Archive button label"
+  },
+  "share": "مشاركة",
+  "@share": {
+    "description": "Share button label"
+  },
+  "cumulative": "تراكمي",
+  "@cumulative": {
+    "description": "Label for cumulative values in charts"
+  },
+  
+  "goodMorning": "صباح الخير",
+  "@goodMorning": {
+    "description": "Morning greeting shown before noon"
+  },
+  "goodAfternoon": "مساء الخير",
+  "@goodAfternoon": {
+    "description": "Afternoon greeting shown between noon and evening"
+  },
+  "goodEvening": "مساء الخير",
+  "@goodEvening": {
+    "description": "Evening greeting shown after 5 PM"
+  },
+  "financialOverviewSubtitle": "إليك نظرة عامة على وضعك المالي",
+  "@financialOverviewSubtitle": {
+    "description": "Subtitle shown below greeting in dashboard"
+  },
+  "totalBalance": "الرصيد الإجمالي",
+  "@totalBalance": {
+    "description": "Label for total balance in financial overview"
+  },
+  "vsLastWeek": "مقارنة بالأسبوع الماضي",
+  "@vsLastWeek": {
+    "description": "Comparison text for financial metrics"
+  },
+  "available": "متاح",
+  "@available": {
+    "description": "Label for available balance"
+  },
+  "spentThisWeek": "المنفق هذا الأسبوع",
+  "@spentThisWeek": {
+    "description": "Label for amount spent in current week"
+  },
+  "moderate": "متوسط",
+  "@moderate": {
+    "description": "Budget status when progress is moderate"
+  },
+  "mediumPriorityAbbr": "متوسط",
+  "@mediumPriorityAbbr": {
+    "description": "Abbreviated label for Medium priority"
+  },
+
+  "@@active_budget_section": "Active budget section related strings",
+  "activeBudgets": "الميزانيات النشطة",
+  "@activeBudgets": {
+    "description": "Title for active budgets section"
+  },
+  "noBudgetsActive": "لا توجد أهداف نشطة",
+  "@noBudgetsActive": {
+    "description": "Message when no active budgets are available"
+  },
+  "createBudget": "إنشاء ميزانية",
+  "@createBudget": {
+    "description": "Button text to create a new budget"
+  },
+  "budgetProgress": "تقدم الميزانية",
+  "@budgetProgress": {
+    "description": "Label for budget progress"
+  },
+  "remaining": "المتبقي",
+  "@remaining": {
+    "description": "Label for remaining budget amount"
+  },
+  "spent": "المصروف",
+  "@spent": {
+    "description": "Label for spent amount"
+  },
+  "highPriority": "عالي",
+  "@highPriority": {
+    "description": "High priority label"
+  },
+  "mediumPriority": "متوسط",
+  "@mediumPriority": {
+    "description": "Medium priority label"
+  },
+  "lowPriority": "منخفض",
+  "@lowPriority": {
+    "description": "Low priority label"
+  },
+  "onTrack": "على المسار",
+  "@onTrack": {
+    "description": "Budget status when on track"
+  },
+  "overBudget": "تجاوز الميزانية",
+  "@overBudget": {
+    "description": "Budget status when over budget"
+  },
+  "nearLimit": "قريب من الحد",
+  "@nearLimit": {
+    "description": "Budget status when near the limit"
+  },
+  
+  "@@weekdays_section": "Day names and abbreviations",
+  "monday": "الإثنين",
+  "tuesday": "الثلاثاء", 
+  "wednesday": "الأربعاء",
+  "thursday": "الخميس",
+  "friday": "الجمعة",
+  "saturday": "السبت",
+  "sunday": "الأحد",
+  "mon": "إثنين",
+  "tue": "ثلاثاء",
+  "wed": "أربعاء",
+  "thu": "خميس",
+  "fri": "جمعة",
+  "sat": "سبت",
+  "sun": "أحد",
+
+  "description": "الوصف",
+  "@description": {
+    "description": "Expense description label"
+  },
+  "amount": "المبلغ",
+  "@amount": {
+    "description": "Expense amount label"
+  },
+  "category": "الفئة",
+  "@category": {
+    "description": "Expense category label"
+  },
+  "date": "التاريخ",
+  "@date": {
+    "description": "Expense date label"
+  },
+  "time": "الوقت",
+  "@time": {
+    "description": "Expense time label"
+  },
+  "location": "الموقع",
+  "@location": {
+    "description": "Expense location label"
+  },
+  "paymentMethod": "طريقة الدفع",
+  "@paymentMethod": {
+    "description": "Expense payment method label"
+  },
+  "details": "التفاصيل",
+  "@details": {
+    "description": "Expense details label"
+  },
+  "invalidAmount": "يرجى إدخال مبلغ صحيح",
+  "@invalidAmount": {
+    "description": "Invalid amount error message"
+  },
+  "productAnalytic" : "تحليلات المنتج",
+  "@productAnalytic": {
+    "description": "Product Analytics"
+  },
+
+  "fieldTooShort": "هذا الحقل قصير جداً (حد أدنى 2 حرف)",
+  "fieldTooLong": "هذا الحقل طويل جداً (حد أقصى 100 حرف)",
+
+  "@@budget_insights_section": { "description": "Budget insights and statistics strings" },
+  "overview": "نظرة عامة",
+  "@overview": {
+    "description": "Title for the budget overview section"
+  },
+  "budgetStatistics": "إحصائيات الميزانية",
+  "@budgetStatistics": {
+    "description": "Subtitle for the budget statistics section"
+  },
+  "periodBudgetStatistics": "إحصائيات الميزانية {period}",
+  "@periodBudgetStatistics": {
+    "description": "Subtitle for the budget statistics section with period",
+    "placeholders": {
+      "period": {
+        "type": "String",
+        "example": "Monthly"
+      }
+    }
+  },
+  "totalGoals": "إجمالي الأهداف",
+  "@totalGoals": {
+    "description": "Label for total budget goals count"
+  },
+  "active": "نشط",
+  "@active": {
+    "description": "Label for active budget goals count"
+  },
+  "achieved": "مكتمل",
+  "@achieved": {
+    "description": "Label for achieved budget goals count"
+  },
+  "failedTerminated": "فشل/منتهي",
+  "@failedTerminated": {
+    "description": "Label for failed and terminated budget goals count"
+  },
+  "goalsNotCompleted": "أهداف غير مكتملة",
+  "@goalsNotCompleted": {
+    "description": "Subtitle for failed/terminated goals card"
+  },
+  "totalBudgeted": "إجمالي الميزانية",
+  "@totalBudgeted": {
+    "description": "Label for total budgeted amount"
+  },
+  "totalAmountAllocated": "إجمالي المبلغ المخصص للأهداف النشطة",
+  "@totalAmountAllocated": {
+    "description": "Subtitle for total budgeted amount card"
+  },
+  "avgProgress": "متوسط التقدم",
+  "@avgProgress": {
+    "description": "Label for average progress percentage"
+  },
+  "averageProgressGoals": "متوسط التقدم عبر جميع الأهداف",
+  "@averageProgressGoals": {
+    "description": "Subtitle for average progress card"
+  },
+  "closestDeadline": "أقرب موعد نهائي",
+  "@closestDeadline": {
+    "description": "Label for closest deadline date"
+  },
+  "nextUpcomingDeadline": "الموعد النهائي القادم",
+  "@nextUpcomingDeadline": {
+    "description": "Subtitle for closest deadline card"
+  },
+  "overdueGoals": "أهداف متأخرة",
+  "@overdueGoals": {
+    "description": "Label for overdue goals count"
+  },
+  "goalsPastDeadline": "أهداف تجاوزت موعدها النهائي",
+  "@goalsPastDeadline": {
+    "description": "Subtitle for overdue goals card"
+  },
+  "noDeadlines": "لا توجد مواعيد نهائية",
+  "@noDeadlines": {
+    "description": "Text shown when there are no deadlines"
+  },
+
+  "@@onboarding_section": "Onboarding flow strings",
+  "onboardingTitle1": "تتبع نفقاتك",
+  "onboardingDesc1": "تتبع كل قرش تنفقه وأدر أموالك بسهولة.",
+  "onboardingTitle2": "تعيين ميزانيات ذكية",
+  "onboardingDesc2": "أنشئ ميزانيات لفئات مختلفة وابق على المسار الصحيح لأهدافك المالية.",
+  "onboardingTitle3": "احصل على رؤى مالية",
+  "onboardingDesc3": "تصور عادات إنفاقك مع رسوم بيانية وتقارير مفصلة.",
+  "getStarted": "البدء",
+  "skip": "تخطي",
+
+  "@@subscription_section": "Subscription and Paywall strings",
+  "premiumTitle": "الترقية إلى بريميوم",
+  "premiumSubtitle": "افتح الإمكانيات الكاملة لـ Xpensemate",
+  "featureUnlimitedBudgets": "ميزانيات غير محدودة",
+  "featureAdvancedAnalytics": "تحليلات متقدمة",
+  "featureDataExport": "تصدير البيانات (PDF/CSV)",
+  "featureCloudSync": "المزامنة والنسخ الاحتياطي السحابي",
+  "monthly": "شهري",
+  "yearly": "سنوي",
+  "subscribeNow": "اشترك الآن",
+  "restorePurchases": "استعادة المشتريات",
+  "termsOfService": "شروط الخدمة",
+  "privacyPolicy": "سياسة الخصوصية",
+  "bestValue": "أفضل قيمة",
+  "payment": "دفع",
+  "addExpense": "إضافة نفقة",
+  "addBudget": "إضافة ميزانية",
+  "addPayment": "إضافة دفع",
+  "editExpense": "تعديل نفقة",
+  "addCustomCategory": "+ إضافة فئة مخصصة",
+  "noBudgetGoal": "لا يوجد هدف ميزانية",
+  "pleaseFillRequired": "يرجى ملء جميع الحقول المطلوبة",
+  "failedToLoadBudgets": "فشل تحميل الميزانيات",
+  "noExpensesFound": "لم يتم العثور على نفقات!",
+  "errorLoadingExpenses": "خطأ أثناء تحميل النفقات!",
+  "noMoreExpenses": "لا توجد المزيد من النفقات!",
+  "streak": "التتابع",
+  "spendingVelocity": "سرعة الإنفاق",
+  "trackingStreak": "تتابع التتبع",
+  "consecutiveDays": "أيام متتالية",
+  "totalSpentSubtitle": "إجمالي الإنفاق في الفترة",
+  "dailyAverageSubtitle": "المعدل اليومي في الفترة",
+  "insights": "رؤى",
+  "doingGreat": "أنت تقوم بعمل رائع!",
+  "budgetExceeded": "تم تجاوز الميزانية",
+  "mostActiveGoal": "الهدف الأكثر نشاطاً",
+  "search": "بحث",
+  "searchHint": "بحث...",
+  "closeSearch": "إغلاق البحث",
+  "daysUsed": "{count, plural, =1{يوم واحد مستخدم} other{{count} أيام مستخدمة}}",
+  "@daysUsed": {
+    "description": "Number of days a goal has been active",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "permanentlyDenied": "تم الرفض نهائياً",
+  "disablePermissionManual": "يرجى تعطيل هذا الإذن يدوياً من الإعدادات",
+  "photos": "الصور",
+  "locationInUse": "الموقع (قيد الاستخدام)",
+  "mediaLibrary": "مكتبة الوسائط",
+
+  "@@settings_page_section": "Settings page related strings",
+  "currency": "العملة",
+  "@currency": {
+    "description": "Currency setting label"
+  },
+  "biometricAuth": "المصادقة البيومترية",
+  "@biometricAuth": {
+    "description": "Biometric authentication setting label"
+  },
+  "useFingerprintOrFaceId": "استخدم بصمة الإصبع أو معرف الوجه لفتح القفل",
+  "@useFingerprintOrFaceId": {
+    "description": "Description for biometric authentication setting"
+  },
+  "appPermissions": "أذونات التطبيق",
+  "@appPermissions": {
+    "description": "App permissions setting label"
+  },
+  "appPermissionsDesc": "إدارة أذونات التطبيق",
+  "@appPermissionsDesc": {
+    "description": "Description for app permissions setting"
+  },
+  "transactionReminders": "تذكيرات المعاملات",
+  "@transactionReminders": {
+    "description": "Transaction reminders setting label"
+  },
+  "transactionRemindersDesc": "احصل على تذكير لتدوين معاملاتك",
+  "@transactionRemindersDesc": {
+    "description": "Description for transaction reminders setting"
+  },
+  "budgetAlerts": "تنبيهات الميزانية",
+  "@budgetAlerts": {
+    "description": "Budget alerts setting label"
+  },
+  "budgetAlertsDesc": "احصل على إشعار عند الاقتراب من حدود الميزانية",
+  "@budgetAlertsDesc": {
+    "description": "Description for budget alerts setting"
+  },
+  "receiveNotificationsDesc": "استقبال إشعارات الدفع",
+  "@receiveNotificationsDesc": {
+    "description": "Description for notifications setting"
+  },
+  "dataManagement": "إدارة البيانات",
+  "@dataManagement": {
+    "description": "Data management section label"
+  },
+  "exportData": "تصدير البيانات",
+  "@exportData": {
+    "description": "Export data setting label"
+  },
+  "exportDataDesc": "قم بتصدير بياناتك إلى CSV أو PDF",
+  "@exportDataDesc": {
+    "description": "Description for export data setting"
+  },
+  "importData": "استيراد البيانات",
+  "@importData": {
+    "description": "Import data setting label"
+  },
+  "importDataDesc": "استيراد البيانات من ملف",
+  "@importDataDesc": {
+    "description": "Description for import data setting"
+  },
+  "budgetAndCategories": "الميزانية والفئات",
+  "@budgetAndCategories": {
+    "description": "Budget and categories section label"
+  },
+  "budgetPeriod": "فترة الميزانية",
+  "@budgetPeriod": {
+    "description": "Budget period setting label"
+  },
+  "setBudgetCycleDesc": "حدد دورة ميزانيتك",
+  "@setBudgetCycleDesc": {
+    "description": "Description for budget period setting"
+  },
+  "recurringTransactions": "المعاملات المتكررة",
+  "@recurringTransactions": {
+    "description": "Recurring transactions setting label"
+  },
+  "manageRecurringDesc": "أدر معاملاتك المتكررة",
+  "@manageRecurringDesc": {
+    "description": "Description for recurring transactions setting"
+  },
+  "privacyPolicyDesc": "اقرأ سياسة الخصوصية",
+  "@privacyPolicyDesc": {
+    "description": "Description for privacy policy setting"
+  },
+  "termsOfServiceDesc": "اقرأ شروط الخدمة",
+  "@termsOfServiceDesc": {
+    "description": "Description for terms of service setting"
+  },
+  "appVersion": "إصدار التطبيق",
+  "@appVersion": {
+    "description": "App version setting label"
+  },
+  "clearAllData": "مسح جميع البيانات",
+  "@clearAllData": {
+    "description": "Clear all data setting label"
+  },
+  "clearAllDataDesc": "حذف جميع بياناتك نهائياً",
+  "@clearAllDataDesc": {
+    "description": "Description for clear all data setting"
+  },
+  "storage": "التخزين",
+  "allowed": "مسموح",
+  "denied": "مرفوض",
+  "failedToLoadProfile": "فشل تحميل الملف الشخصي",
+  "termsAndConditions": "الشروط والأحكام",
+  "readTermsAndConditions": "اقرأ الشروط والأحكام الخاصة بنا",
+  "lightThemeDesc": "استخدم المظهر الفاتح دائمًا",
+  "darkThemeDesc": "استخدم المظهر الداكن دائمًا",
+  "systemThemeDesc": "اتبع إعدادات النظام",
+  "currencyUSD": "الدولار الأمريكي",
+  "currencyPKR": "الروبية الباكستانية",
+  "currencyEUR": "اليورو",
+  "currencyGBP": "الجنيه الإسترليني",
+  "currencyJPY": "الين الياباني",
+  "currencyAUD": "الدولار الأسترالي",
+  "currencyCAD": "الدولار الكندي",
+  "currencyCHF": "الفرنك السويسري",
+  "currencyCNY": "اليوان الصيني",
+  "currencyINR": "الروبية الهندية"
 }

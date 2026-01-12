@@ -9,7 +9,7 @@ class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr([String locale = 'fr']) : super(locale);
 
   @override
-  String get appTitle => 'Mon Application Flutter';
+  String get appTitle => 'Xpensemate';
 
   @override
   String get home => 'Accueil';
@@ -60,34 +60,34 @@ class AppLocalizationsFr extends AppLocalizations {
   String get loading => 'Chargement...';
 
   @override
-  String get expenseLoaded => 'All expenses loaded successfully!';
+  String get expenseLoaded => 'Toutes les dépenses chargées avec succès !';
 
   @override
-  String get expenseDeleted => 'Expense deleted successfully!';
+  String get expenseDeleted => 'Dépense supprimée avec succès !';
 
   @override
-  String get expenseUpdated => 'Expense updated successfully!';
+  String get expenseUpdated => 'Dépense mise à jour avec succès !';
 
   @override
-  String get expenseCreated => 'Expense created successfully!';
+  String get expenseCreated => 'Dépense créée avec succès !';
 
   @override
-  String get expenseFailed => 'Expense failed to load!';
+  String get expenseFailed => 'Échec du chargement de la dépense !';
 
   @override
-  String get expenseDeletedFailed => 'Expense failed to delete!';
+  String get expenseDeletedFailed => 'Échec de la suppression de la dépense !';
 
   @override
-  String get expenseUpdatedFailed => 'Expense failed to update!';
+  String get expenseUpdatedFailed => 'Échec de la mise à jour de la dépense !';
 
   @override
-  String get expenseCreatedFailed => 'Expense failed to create!';
+  String get expenseCreatedFailed => 'Échec de la création de la dépense !';
 
   @override
   String get currencySymbol => '\$';
 
   @override
-  String get or => 'Or';
+  String get or => 'Ou';
 
   @override
   String get login => 'Se connecter';
@@ -102,7 +102,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get email => 'E-mail';
 
   @override
-  String get dontHaveAccount => 'Don\'t have an account?';
+  String get dontHaveAccount => 'Vous n\'avez pas de compte ?';
 
   @override
   String get hintEmail => 'email';
@@ -114,42 +114,42 @@ class AppLocalizationsFr extends AppLocalizations {
   String get confirmPassword => 'Confirmer le mot de passe';
 
   @override
-  String get hintConfirmPassword => 'Re-enter password';
+  String get hintConfirmPassword => 'Saisissez à nouveau le mot de passe';
 
   @override
-  String get name => 'Full Name';
+  String get name => 'Nom complet';
 
   @override
-  String get hintName => 'full name';
+  String get hintName => 'nom complet';
 
   @override
-  String get alreadyHaveAccount => 'Already have an account?';
+  String get alreadyHaveAccount => 'Vous avez déjà un compte ?';
 
   @override
-  String get registerNow => 'Create Account';
+  String get registerNow => 'Créer un compte';
 
   @override
-  String get hintPassword => 'password';
+  String get hintPassword => 'mot de passe';
 
   @override
   String get forgotPassword => 'Mot de passe oublié ?';
 
   @override
-  String get forgotPasswordTitle => 'Reset Your Password';
+  String get forgotPasswordTitle => 'Réinitialisez votre mot de passe';
 
   @override
   String get forgotPasswordSubtitle =>
-      'Enter your email and we\'ll send you a link to reset your password';
+      'Entrez votre email et nous vous enverrons un lien pour réinitialiser votre mot de passe';
 
   @override
-  String get resetPassword => 'Reset Password';
+  String get resetPassword => 'Réinitialiser le mot de passe';
 
   @override
   String get resetPasswordSuccess =>
-      'Password reset email sent. Please check your inbox.';
+      'Email de réinitialisation envoyé. Veuillez vérifier votre boîte de réception.';
 
   @override
-  String get rememberPassword => 'Remember your password?';
+  String get rememberPassword => 'Vous vous souvenez de votre mot de passe ?';
 
   @override
   String get welcomeBack => 'Bon retour !';
@@ -158,29 +158,29 @@ class AppLocalizationsFr extends AppLocalizations {
   String get createAccount => 'Créer un compte';
 
   @override
-  String get verifyYourEmail => 'Verify Your Email';
+  String get verifyYourEmail => 'Vérifiez votre email';
 
   @override
-  String get verificationEmailSentTo => 'Verification email sent to';
+  String get verificationEmailSentTo => 'Email de vérification envoyé à';
 
   @override
   String get verificationInstructions =>
-      'Please check your email for the verification link.';
+      'Veuillez vérifier votre email pour le lien de vérification.';
 
   @override
-  String get resendVerificationEmail => 'Resend Verification Email';
+  String get resendVerificationEmail => 'Renvoyer l\'email de vérification';
 
   @override
-  String get backToLogin => 'Back to Login';
+  String get backToLogin => 'Retour à la connexion';
 
   @override
-  String get passwordOrEmail => 'Password or Email is incorrect!';
+  String get passwordOrEmail => 'Mot de passe ou email incorrect !';
 
   @override
-  String get emailRequired => 'Email is required';
+  String get emailRequired => 'L\'email est requis';
 
   @override
-  String get passwordRequired => 'Password is required';
+  String get passwordRequired => 'Le mot de passe est requis';
 
   @override
   String get fieldRequired => 'Ce champ est obligatoire';
@@ -196,24 +196,25 @@ class AppLocalizationsFr extends AppLocalizations {
   String get passwordsDoNotMatch => 'Les mots de passe ne correspondent pas';
 
   @override
-  String get passwordMismatch => 'Passwords do not match';
+  String get passwordMismatch => 'Les mots de passe ne correspondent pas';
 
   @override
-  String get confirmPasswordRequired => 'Confirm Password is required';
+  String get confirmPasswordRequired =>
+      'La confirmation du mot de passe est requise';
 
   @override
-  String get registerSuccess => 'Account created successfully!';
+  String get registerSuccess => 'Compte créé avec succès !';
 
   @override
   String get verifyEmail =>
-      'We have sent a verification email to your email address. Please check your inbox.';
+      'Nous avons envoyé un email de vérification à votre adresse email. Veuillez vérifier votre boîte de réception.';
 
   @override
-  String get verifyEmailSuccess => 'Email verification sent successfully!';
+  String get verifyEmailSuccess => 'Email de vérification envoyé avec succès !';
 
   @override
   String get verifyEmailFailed =>
-      'Email verification failed. Please try again.';
+      'Échec de l\'envoi de l\'email de vérification. Veuillez réessayer.';
 
   @override
   String get errorGeneric =>
@@ -230,22 +231,23 @@ class AppLocalizationsFr extends AppLocalizations {
   String get errorNotFound => 'Ressource non trouvée.';
 
   @override
-  String get budgetGoalsLoading => 'Loading...';
+  String get budgetGoalsLoading => 'Chargement...';
 
   @override
-  String get budgetGoalsRetry => 'Retry';
+  String get budgetGoalsRetry => 'Réessayer';
 
   @override
-  String get budgetGoalsError => 'An error occurred';
+  String get budgetGoalsError => 'Une erreur est survenue';
 
   @override
-  String get budgetGoalsEmptyTitle => 'No budget goals yet';
+  String get budgetGoalsEmptyTitle => 'Pas encore d\'objectifs budgétaires';
 
   @override
-  String get budgetGoalsEmptySubtitle => 'Create a budget goal';
+  String get budgetGoalsEmptySubtitle =>
+      'Créez votre premier objectif budgétaire pour commencer';
 
   @override
-  String get budgetGoalsAllLoaded => 'All budget goals loaded';
+  String get budgetGoalsAllLoaded => 'Tous les objectifs budgétaires chargés';
 
   @override
   String get saveSuccess => 'Enregistré avec succès !';
@@ -319,95 +321,97 @@ class AppLocalizationsFr extends AppLocalizations {
   String get selectLanguage => 'Sélectionner la langue';
 
   @override
-  String get selectCurrency => 'Select Currency';
-
-  @override
-  String get currency => 'Currency';
+  String get selectCurrency => 'Sélectionner la devise';
 
   @override
   String get languageChanged => 'Langue modifiée avec succès';
 
   @override
-  String get totalSpent => 'Total Spent';
+  String get totalSpent => 'Total Dépensé';
 
   @override
-  String get average => 'Average';
+  String get average => 'Moyenne';
 
   @override
   String get transactions => 'Transactions';
 
   @override
   String budgetGoalLabel(Object amount) {
-    return 'Budget Goal: $amount';
+    return 'Objectif Budgétaire: $amount';
   }
 
   @override
-  String get thisMonth => 'This Month';
+  String get thisMonth => 'Ce Mois';
 
   @override
-  String get categories => 'Categories';
+  String get categories => 'Catégories';
 
   @override
-  String get account => 'Account';
+  String get account => 'Compte';
 
   @override
-  String get preferences => 'Preferences';
+  String get preferences => 'Préférences';
 
   @override
   String get support => 'Support';
 
   @override
-  String get editProfile => 'Edit Profile';
+  String get editProfile => 'Modifier Profil';
 
   @override
-  String get updatePersonalInfo => 'Update your personal information';
+  String get updatePersonalInfo =>
+      'Mettez à jour vos informations personnelles';
 
   @override
-  String get privacySecurity => 'Privacy & Security';
+  String get privacySecurity => 'Confidentialité et Sécurité';
 
   @override
-  String get managePrivacySettings => 'Manage your privacy settings';
+  String get managePrivacySettings => 'Gérez vos paramètres de confidentialité';
 
   @override
   String get notifications => 'Notifications';
 
   @override
-  String get configureNotifications => 'Configure your notifications';
+  String get configureNotifications => 'Configurez vos notifications';
 
   @override
-  String get addWidgets => 'Add Widgets';
+  String get appSettings => 'Personnaliser les préférences de l\'application';
+
+  @override
+  String get addWidgets => 'Ajouter des Widgets';
 
   @override
   String get addWidgetsDescription =>
-      'Add widgets to your home screen to make it easier to access your most used features.';
+      'Ajoutez des widgets à votre écran d\'accueil pour accéder plus facilement à vos fonctionnalités les plus utilisées.';
 
   @override
-  String get choosePreferredLanguage => 'Choose your preferred language';
+  String get choosePreferredLanguage => 'Choisissez votre langue préférée';
 
   @override
-  String get darkMode => 'Dark Mode';
+  String get darkMode => 'Mode Sombre';
 
   @override
   String get switchBetweenLightAndDarkTheme =>
-      'Switch between light and dark theme';
+      'Basculer entre le thème clair et sombre';
 
   @override
-  String get helpSupport => 'Help & Support';
+  String get helpSupport => 'Aide et Support';
 
   @override
-  String get getHelpWhenNeeded => 'Get help when you need it';
+  String get getHelpWhenNeeded =>
+      'Obtenez de l\'aide quand vous en avez besoin';
 
   @override
-  String get learnMoreAboutExpenseTracker => 'Learn more about Xpensemate';
+  String get learnMoreAboutExpenseTracker => 'En savoir plus sur Xpensemate';
 
   @override
-  String get signOut => 'Sign Out';
+  String get signOut => 'Se Déconnecter';
 
   @override
-  String get logoutFromAccount => 'Logout from your account';
+  String get logoutFromAccount => 'Déconnectez-vous de votre compte';
 
   @override
-  String get completeYourProfile => 'Complete your profile';
+  String get completeYourProfile => 'Complétez votre profil';
 
   @override
   String get expenseTracker => 'Xpensemate';
@@ -416,416 +420,308 @@ class AppLocalizationsFr extends AppLocalizations {
   String get version => 'Version 1.0.0 • Build 2024.1';
 
   @override
-  String get craftedWithLove => 'Crafted with ❤️ for smarter expense tracking';
+  String get craftedWithLove =>
+      'Conçu avec ❤️ pour un suivi des dépenses plus intelligent';
 
   @override
-  String get moto => 'Track Smart, Spend Wise';
+  String get moto => 'Suivez Intelligemment, Depensez Sagement';
 
   @override
-  String get changeProfilePhoto => 'Change Profile Photo';
+  String get changeProfilePhoto => 'Changer la Photo de Profil';
 
   @override
-  String get gotIt => 'Got it!';
+  String get gotIt => 'Compris !';
 
   @override
-  String get areYouSureYouWantToSignOut => 'Are you sure you want to sign out?';
+  String get areYouSureYouWantToSignOut =>
+      'Êtes-vous sûr de vouloir vous déconnecter ?';
 
   @override
   String get comingSoonMessage =>
-      'This amazing feature is coming soon!\nStay tuned for updates.';
+      'Cette fonctionnalité incroyable arrive bientôt !\nRestez à l\'écoute des mises à jour.';
 
   @override
-  String get signOutConfirmation => 'Are you sure you want to sign out?';
+  String get signOutConfirmation =>
+      'Êtes-vous sûr de vouloir vous déconnecter ?';
 
   @override
   String get signOutConfirmationMessage =>
-      'You will be signed out of your account and need to sign in again to continue.';
+      'Vous serez déconnecté de votre compte et devrez vous reconnecter pour continuer.';
 
   @override
-  String get signOutConfirmationButton => 'Sign Out';
+  String get signOutConfirmationButton => 'Se Déconnecter';
 
   @override
-  String get signOutConfirmationCancel => 'Cancel';
+  String get signOutConfirmationCancel => 'Annuler';
 
   @override
-  String get fullName => 'Full Name';
+  String get fullName => 'Nom Complet';
 
   @override
-  String get gender => 'Gender';
+  String get gender => 'Genre';
 
   @override
-  String get dateOfBirth => 'Date of Birth';
+  String get dateOfBirth => 'Date de Naissance';
 
   @override
-  String get phoneNumber => 'Phone Number';
+  String get phoneNumber => 'Numéro de Téléphone';
 
   @override
   String get bio => 'Bio';
 
   @override
-  String get saveChanges => 'Save Changes';
+  String get saveChanges => 'Enregistrer les Changements';
 
   @override
-  String get profileUpdatedSuccessfully => 'Profile updated successfully';
+  String get profileUpdatedSuccessfully => 'Profil mis à jour avec succès';
 
   @override
-  String get enterYourName => 'Enter your name';
+  String get enterYourName => 'Entrez votre nom';
 
   @override
-  String get enterYourBio => 'Enter your bio';
+  String get enterYourBio => 'Entrez votre bio';
 
   @override
-  String get selectDateOfBirth => 'Select date of birth';
+  String get selectDateOfBirth => 'Sélectionnez la date de naissance';
 
   @override
-  String get nameIsRequired => 'Name is required';
+  String get nameIsRequired => 'Le nom est requis';
 
   @override
   String get nameMustBeAtLeast4Characters =>
-      'Name must be at least 4 characters';
+      'Le nom doit comporter au moins 4 caractères';
 
   @override
   String get phoneNumberMustBeAtLeast10Digits =>
-      'Phone number must be at least 10 digits';
+      'Le numéro de téléphone doit comporter au moins 10 chiffres';
 
   @override
-  String get logoutConfirmationMessage => 'Are you sure to want to logout?';
+  String get logoutConfirmationMessage =>
+      'Êtes-vous sûr de vouloir vous déconnecter ?';
 
   @override
-  String get userSessionNotFound => 'User session not found';
+  String get userSessionNotFound => 'Session utilisateur introuvable';
 
   @override
-  String get ageMinError => 'You must be at least 7 years old';
+  String get ageMinError => 'Vous devez avoir au moins 7 ans';
 
   @override
-  String get ageMaxError => 'You cannot be more than 100 years old';
+  String get ageMaxError => 'Vous ne pouvez pas avoir plus de 100 ans';
 
   @override
-  String get dobRequired => 'Date of birth is required';
+  String get dobRequired => 'La date de naissance est requise';
 
   @override
-  String get male => 'Male';
+  String get seeDetail => 'Voir Détail';
 
   @override
-  String get female => 'Female';
+  String get selectImage => 'Sélectionner Image';
 
   @override
-  String get other => 'Other';
+  String get gallery => 'Galerie';
 
   @override
-  String get receiveNotificationsDesc => 'Receive app notifications';
+  String get camera => 'Caméra';
 
   @override
-  String get transactionReminders => 'Transaction Reminders';
+  String get openingCamera => 'Ouverture de la caméra...';
 
   @override
-  String get transactionRemindersDesc => 'Daily reminder to log expenses';
+  String get openingGallery => 'Ouverture de la galerie...';
 
   @override
-  String get budgetAlerts => 'Budget Alerts';
+  String get processingImage => 'Traitement de l\'image...';
 
   @override
-  String get budgetAlertsDesc => 'Alert when approaching budget limit';
+  String get imageSelectedSuccessfully => 'Image sélectionnée avec succès !';
 
   @override
-  String get biometricAuth => 'Biometric Authentication';
-
-  @override
-  String get useFingerprintOrFaceId => 'Use fingerprint or Face ID to unlock';
-
-  @override
-  String get appPermissions => 'App Permissions';
-
-  @override
-  String get appPermissionsDesc => 'Manage app access permissions';
-
-  @override
-  String get changePin => 'Change PIN';
-
-  @override
-  String get changePinDesc => 'Update your security PIN';
-
-  @override
-  String get dataManagement => 'Data Management';
-
-  @override
-  String get autoBackup => 'Auto Backup';
-
-  @override
-  String get autoBackupDesc => 'Automatically backup data daily';
-
-  @override
-  String get exportData => 'Export Data';
-
-  @override
-  String get exportDataDesc => 'Download your data as CSV or PDF';
-
-  @override
-  String get importData => 'Import Data';
-
-  @override
-  String get importDataDesc => 'Import transactions from file';
-
-  @override
-  String get budgetAndCategories => 'Budget & Categories';
-
-  @override
-  String get defaultCategories => 'Default Categories';
-
-  @override
-  String get manageCategoriesDesc => 'Manage expense categories';
-
-  @override
-  String get budgetPeriod => 'Budget Period';
-
-  @override
-  String get setBudgetCycleDesc => 'Set monthly or custom budget cycle';
-
-  @override
-  String get recurringTransactions => 'Recurring Transactions';
-
-  @override
-  String get manageRecurringDesc => 'Manage recurring expenses and income';
-
-  @override
-  String get privacyPolicyDesc => 'Read our privacy policy';
-
-  @override
-  String get termsOfServiceDesc => 'View terms and conditions';
-
-  @override
-  String get appVersion => 'App Version';
-
-  @override
-  String get clearAllData => 'Clear All Data';
-
-  @override
-  String get clearAllDataDesc => 'Delete all transactions and reset app';
-
-  @override
-  String get clearAllDataConfirmTitle => 'Clear All Data?';
-
-  @override
-  String get clearAllDataConfirmDesc =>
-      'This will permanently delete all your transactions, budgets, and settings. This action cannot be undone.';
-
-  @override
-  String get deleteAll => 'Delete All';
-
-  @override
-  String get allDataCleared => 'All data cleared';
-
-  @override
-  String get seeDetail => 'See Detail';
-
-  @override
-  String get selectImage => 'Select Image';
-
-  @override
-  String get gallery => 'Gallery';
-
-  @override
-  String get camera => 'Camera';
-
-  @override
-  String get openingCamera => 'Opening camera...';
-
-  @override
-  String get openingGallery => 'Opening gallery...';
-
-  @override
-  String get processingImage => 'Processing image...';
-
-  @override
-  String get imageSelectedSuccessfully => 'Image selected successfully!';
-
-  @override
-  String get imageSelectionCancelled => 'Image selection cancelled';
+  String get imageSelectionCancelled => 'Sélection d\'image annulée';
 
   @override
   String get imageSelectionFailed =>
-      'Failed to select image. Please try again.';
+      'Échec de la sélection de l\'image. Veuillez réessayer.';
 
   @override
   String fileSizeExceeded(String size) {
-    return 'File size ($size MB) exceeds the limit of 10 MB. Please choose a smaller image.';
+    return 'La taille du fichier ($size Mo) dépasse la limite de 10 Mo. Veuillez choisir une image plus petite.';
   }
 
   @override
-  String get permissionRequired => 'Permission Required';
+  String get permissionRequired => 'Permission Requise';
 
   @override
   String get permissionRationale =>
-      'We need this permission to provide you with the best experience.';
+      'Nous avons besoin de cette permission pour vous offrir la meilleure expérience.';
 
   @override
-  String get notNow => 'Not Now';
+  String get notNow => 'Pas maintenant';
 
   @override
-  String get proceed => 'Continue';
+  String get proceed => 'Continuer';
 
   @override
-  String get openSettings => 'Settings';
+  String get openSettings => 'Paramètres';
 
   @override
-  String get permissionDenied => 'Permission Denied';
+  String get permissionDenied => 'Permission Refusée';
 
   @override
   String get permissionDeniedMessage =>
-      'Please enable this permission from settings to use this feature.';
+      'Veuillez activer cette permission dans les paramètres pour utiliser cette fonctionnalité.';
 
   @override
-  String get cameraPermissionMessage => 'We need camera access to take photos.';
+  String get cameraPermissionMessage =>
+      'Nous avons besoin d\'accéder à la caméra pour prendre des photos.';
 
   @override
   String get galleryPermissionMessage =>
-      'We need gallery access to choose photos.';
+      'Nous avons besoin d\'accéder à la galerie pour choisir des photos.';
 
   @override
-  String get storage => 'Storage';
+  String get personalInformation => 'Entrez votre bio';
 
   @override
-  String get allowed => 'Allowed';
+  String get day => 'Jour';
 
   @override
-  String get notAllowed => 'Not Allowed';
+  String get male => 'Homme';
 
   @override
-  String get biometrics => 'Biometrics';
+  String get female => 'Femme';
 
   @override
-  String get personalInformation => 'Enter your bio';
+  String get other => 'Autre';
 
   @override
-  String get day => 'Day';
-
-  @override
-  String get enterPhoneNumber => 'Enter phone number';
+  String get enterPhoneNumber => 'Entrez le numéro de téléphone';
 
   @override
   String phoneNumberMinLength(int min) {
-    return 'Phone number must be at least $min digits';
+    return 'Le numéro de téléphone doit comporter au moins $min chiffres';
   }
 
   @override
-  String get phoneNumberTooShort => 'Phone number is not valid (too short)';
+  String get phoneNumberTooShort =>
+      'Le numéro de téléphone n\'est pas valide (trop court)';
 
   @override
-  String get selectGender => 'Select Gender';
+  String get selectGender => 'Sélectionner Genre';
 
   @override
   String nameMinLength(int min) {
-    return 'Name must be at least $min characters';
+    return 'Le nom doit comporter au moins $min caractères';
   }
 
   @override
-  String get searchCountry => 'Search country';
+  String get searchCountry => 'Rechercher pays';
 
   @override
-  String get noCountryFound => 'No country found';
+  String get noCountryFound => 'Aucun pays trouvé';
 
   @override
-  String get tellUsAboutYourself => 'Tell us about yourself...';
+  String get tellUsAboutYourself => 'Parlez-nous de vous...';
 
   @override
-  String get changePhoto => 'Change Photo';
+  String get changePhoto => 'Changer Photo';
 
   @override
-  String get saving => 'Saving...';
+  String get saving => 'Enregistrement...';
 
   @override
-  String get errorSavingProfile => 'Error saving profile';
+  String get errorSavingProfile => 'Erreur lors de l\'enregistrement du profil';
 
   @override
-  String get errorWhileOpeningUrl => 'Link is not valid';
+  String get errorWhileOpeningUrl => 'Le lien n\'est pas valide';
 
   @override
-  String get dashboard => 'Dashboard';
+  String get dashboard => 'Tableau de Bord';
 
   @override
-  String get weeklyFinancialOverview => 'Weekly Financial Overview';
+  String get weeklyFinancialOverview => 'Aperçu Financier Hebdomadaire';
 
   @override
-  String get weeklyInsights => 'Weekly Financial Overview';
+  String get weeklyInsights => 'Aperçu Hebdomadaire';
 
   @override
-  String get highestDay => 'Highest Day';
+  String get highestDay => 'Jour le Plus Haut';
 
   @override
-  String get lowestDay => 'Lowest Day';
+  String get lowestDay => 'Jour le Plus Bas';
 
   @override
-  String get dailyAverage => 'Daily Average';
+  String get dailyAverage => 'Moyenne Quotidienne';
 
   @override
-  String get acrossSevenDays => 'across 7 days';
+  String get acrossSevenDays => 'sur 7 jours';
 
   @override
-  String get balanceRemaining => 'Balance Remaining';
+  String get balanceRemaining => 'Solde Restant';
 
   @override
-  String get totalExpenses => 'Total Expenses';
+  String get totalExpenses => 'Dépenses Totales';
 
   @override
-  String get dailySpendingPattern => 'Daily Spending Pattern';
+  String get dailySpendingPattern => 'Modèle de Dépenses Quotidiennes';
 
   @override
-  String get thisWeek => 'this week';
+  String get thisWeek => 'cette semaine';
 
   @override
-  String get monthlyInsight => 'Monthly Insights';
+  String get monthlyInsight => 'Aperçu Mensuel';
 
   @override
-  String get quarterInsight => 'Quarterly Insight';
+  String get quarterlyInsights => 'Aperçu Trimestriel';
 
   @override
-  String get yearlyInsight => 'Yearly Insight';
+  String get yearlyInsights => 'Aperçu Annuel';
 
   @override
-  String get spendingTrend => 'Spending Trend';
+  String get spendingTrend => 'Tendance des Dépenses';
 
   @override
-  String get loadingDashboardData => 'Loading dashboard data...';
+  String get loadingDashboardData =>
+      'Chargement des données du tableau de bord...';
 
   @override
-  String get failedToLoadData => 'Failed to load data';
+  String get failedToLoadData => 'Échec du chargement des données';
 
   @override
-  String get unknownError => 'An unknown error occurred';
+  String get unknownError => 'Une erreur inconnue est survenue';
 
   @override
-  String get tryAgain => 'Try Again';
+  String get tryAgain => 'Réessayer';
 
   @override
   String get startTrackingExpenses =>
-      'Start tracking your expenses to see insights';
+      'Commencez à suivre vos dépenses pour voir des aperçus';
 
   @override
-  String get noSpendingData => 'No spending data';
+  String get noSpendingData => 'Aucune donnée de dépenses';
 
   @override
-  String get noTrendData => 'No trend data';
+  String get noTrendData => 'Aucune donnée de tendance';
 
   @override
-  String get of12 => 'of';
+  String get of12 => 'sur';
 
   @override
   String get budget => 'Budget';
 
   @override
-  String get expenses => 'expenses';
+  String get expenses => 'dépenses';
 
   @override
-  String get expense => 'Expenses';
+  String get expense => 'Dépenses';
 
   @override
-  String get archive => 'Archive';
+  String get archive => 'Archiver';
 
   @override
-  String get share => 'Share';
+  String get share => 'Partager';
 
   @override
-  String get cumulative => 'cumulative';
+  String get cumulative => 'cumulé';
 
   @override
   String get goodMorning => 'Bonjour';
@@ -852,333 +748,482 @@ class AppLocalizationsFr extends AppLocalizations {
   String get spentThisWeek => 'Dépensé cette semaine';
 
   @override
-  String get activeBudgets => 'Active Budgets';
+  String get moderate => 'Modéré';
 
   @override
-  String get noBudgetsActive => 'No goals';
+  String get mediumPriorityAbbr => 'Moy';
 
   @override
-  String get createBudget => 'Create Budget';
+  String get activeBudgets => 'Budgets Actifs';
 
   @override
-  String get budgetProgress => 'Budget Progress';
+  String get noBudgetsActive => 'Aucun budget actif';
 
   @override
-  String get remaining => 'Remaining';
+  String get createBudget => 'Créer Budget';
 
   @override
-  String get spent => 'Spent';
+  String get budgetProgress => 'Progression du Budget';
 
   @override
-  String get highPriority => 'High';
+  String get remaining => 'restant';
 
   @override
-  String get mediumPriority => 'Medium';
+  String get spent => 'dépensé';
 
   @override
-  String get mediumPriorityAbbr => 'Med';
+  String get highPriority => 'Haut';
 
   @override
-  String get lowPriority => 'Low';
+  String get mediumPriority => 'Moyen';
 
   @override
-  String get onTrack => 'On Track';
+  String get lowPriority => 'Bas';
 
   @override
-  String get overBudget => 'Over Budget';
+  String get onTrack => 'Sur la Voie';
 
   @override
-  String get nearLimit => 'Near Limit';
+  String get overBudget => 'Budget Dépassé';
 
   @override
-  String get monday => 'Monday';
+  String get nearLimit => 'Proche de la Limite';
 
   @override
-  String get tuesday => 'Tuesday';
+  String get monday => 'Lundi';
 
   @override
-  String get wednesday => 'Wednesday';
+  String get tuesday => 'Mardi';
 
   @override
-  String get thursday => 'Thursday';
+  String get wednesday => 'Mercredi';
 
   @override
-  String get friday => 'Friday';
+  String get thursday => 'Jeudi';
 
   @override
-  String get saturday => 'Saturday';
+  String get friday => 'Vendredi';
 
   @override
-  String get sunday => 'Sunday';
+  String get saturday => 'Samedi';
 
   @override
-  String get mon => 'Mon';
+  String get sunday => 'Dimanche';
 
   @override
-  String get tue => 'Tue';
+  String get mon => 'Lun';
 
   @override
-  String get wed => 'Wed';
+  String get tue => 'Mar';
 
   @override
-  String get thu => 'Thu';
+  String get wed => 'Mer';
 
   @override
-  String get fri => 'Fri';
+  String get thu => 'Jeu';
 
   @override
-  String get sat => 'Sat';
+  String get fri => 'Ven';
 
   @override
-  String get sun => 'Sun';
+  String get sat => 'Sam';
+
+  @override
+  String get sun => 'Dim';
 
   @override
   String get description => 'Description';
 
   @override
-  String get amount => 'Amount';
+  String get amount => 'Montant';
 
   @override
-  String get category => 'Category';
+  String get category => 'Catégorie';
 
   @override
   String get date => 'Date';
 
   @override
-  String get time => 'Time';
+  String get time => 'Heure';
 
   @override
-  String get location => 'Location';
+  String get location => 'Lieu';
 
   @override
-  String get paymentMethod => 'Payment Method';
+  String get paymentMethod => 'Méthode de Paiement';
 
   @override
-  String get details => 'Details';
+  String get details => 'Détails';
 
   @override
-  String get invalidAmount => 'Please enter a valid amount';
+  String get invalidAmount => 'Veuillez entrer un montant valide';
 
   @override
-  String get productAnalytic => 'Product Analytics';
+  String get productAnalytic => 'Analyse Produit';
 
   @override
-  String get fieldTooShort => 'This field is too short (minimum 2 characters)';
+  String get fieldTooShort => 'Ce champ est trop court (minimum 2 caractères)';
 
   @override
-  String get fieldTooLong => 'This field is too long (maximum 100 characters)';
+  String get fieldTooLong => 'Ce champ est trop long (maximum 100 caractères)';
 
   @override
-  String get overview => 'Overview';
+  String get overview => 'Aperçu';
 
   @override
-  String get budgetStatistics => 'Budget Statistics';
+  String get budgetStatistics => 'Statistiques Budgétaires';
 
   @override
   String periodBudgetStatistics(String period) {
-    return '$period Budget Statistics';
+    return 'Statistiques Budgétaires $period';
   }
 
   @override
-  String get totalGoals => 'Total Goals';
+  String get totalGoals => 'Total Objectifs';
 
   @override
-  String get active => 'Active';
+  String get active => 'Actif';
 
   @override
-  String get achieved => 'Achieved';
+  String get achieved => 'Atteint';
 
   @override
-  String get failedTerminated => 'Failed/Terminated';
+  String get failedTerminated => 'Échoué/Terminé';
 
   @override
-  String get goalsNotCompleted => 'Goals not completed';
+  String get goalsNotCompleted => 'Objectifs non atteints';
 
   @override
-  String get totalBudgeted => 'Total Budgeted';
+  String get totalBudgeted => 'Total Budgété';
 
   @override
-  String get totalAmountAllocated => 'Total amount allocated for active goals';
+  String get totalAmountAllocated =>
+      'Montant total alloué aux objectifs actifs';
 
   @override
-  String get avgProgress => 'Avg. Progress';
+  String get avgProgress => 'Progression Moyenne';
 
   @override
-  String get averageProgressGoals => 'Average progress across all goals';
+  String get averageProgressGoals =>
+      'Progression moyenne sur tous les objectifs';
 
   @override
-  String get closestDeadline => 'Closest Deadline';
+  String get closestDeadline => 'Date Limite la Plus Proche';
 
   @override
-  String get nextUpcomingDeadline => 'Next upcoming deadline';
+  String get nextUpcomingDeadline => 'Prochaine échéance';
 
   @override
-  String get overdueGoals => 'Overdue Goals';
+  String get overdueGoals => 'Objectifs En Retard';
 
   @override
-  String get goalsPastDeadline => 'Goals past their deadline';
+  String get goalsPastDeadline => 'Objectifs ayant dépassé leur date limite';
 
   @override
-  String get noDeadlines => 'No deadlines';
+  String get noDeadlines => 'Aucune date limite';
 
   @override
-  String get onboardingTitle1 => 'Track Your Expenses';
+  String get onboardingTitle1 => 'Suivez Vos Dépenses';
 
   @override
   String get onboardingDesc1 =>
-      'Keep track of every penny you spend and manage your finances with ease.';
+      'Gardez une trace de chaque centime dépensé et gérez vos finances facilement.';
 
   @override
-  String get onboardingTitle2 => 'Set Smart Budgets';
+  String get onboardingTitle2 => 'Définissez des Budgets Intelligents';
 
   @override
   String get onboardingDesc2 =>
-      'Create budgets for different categories and stay on track with your financial goals.';
+      'Créez des budgets pour différentes catégories et restez sur la bonne voie avec vos objectifs financiers.';
 
   @override
-  String get onboardingTitle3 => 'Gain Financial Insights';
+  String get onboardingTitle3 => 'Obtenez des Aperçus Financiers';
 
   @override
   String get onboardingDesc3 =>
-      'Visualize your spending habits with detailed charts and reports.';
+      'Visualisez vos habitudes de dépenses avec des graphiques et des rapports détaillés.';
 
   @override
-  String get getStarted => 'Get Started';
+  String get getStarted => 'Commencer';
 
   @override
-  String get skip => 'Skip';
+  String get skip => 'Passer';
 
   @override
-  String get premiumTitle => 'Upgrade to Premium';
+  String get premiumTitle => 'Passer à Premium';
 
   @override
-  String get premiumSubtitle => 'Unlock the full potential of Xpensemate';
+  String get premiumSubtitle => 'Débloquez tout le potentiel de Xpensemate';
 
   @override
-  String get featureUnlimitedBudgets => 'Unlimited Budgets';
+  String get featureUnlimitedBudgets => 'Budgets Illimités';
 
   @override
-  String get featureAdvancedAnalytics => 'Advanced Analytics';
+  String get featureAdvancedAnalytics => 'Analyses Avancées';
 
   @override
-  String get featureDataExport => 'Data Export (PDF/CSV)';
+  String get featureDataExport => 'Export de Données (PDF/CSV)';
 
   @override
-  String get featureCloudSync => 'Cloud Sync & Backup';
+  String get featureCloudSync => 'Synchronisation et Sauvegarde Cloud';
 
   @override
-  String get monthly => 'Monthly';
+  String get monthly => 'Mensuel';
 
   @override
-  String get yearly => 'Yearly';
+  String get yearly => 'Annuel';
 
   @override
-  String get subscribeNow => 'Subscribe Now';
+  String get subscribeNow => 'S\'abonner Maintenant';
 
   @override
-  String get restorePurchases => 'Restore Purchases';
+  String get restorePurchases => 'Restaurer les Achats';
 
   @override
-  String get termsOfService => 'Terms of Service';
+  String get termsOfService => 'Conditions d\'Utilisation';
 
   @override
-  String get privacyPolicy => 'Privacy Policy';
+  String get privacyPolicy => 'Politique de Confidentialité';
 
   @override
-  String get bestValue => 'Best Value';
+  String get bestValue => 'Meilleure Valeur';
 
   @override
-  String get payment => 'Payment';
+  String get payment => 'Paiement';
 
   @override
-  String get addExpense => 'Add Expense';
+  String get addExpense => 'Ajouter Dépense';
 
   @override
-  String get addBudget => 'Add Budget';
+  String get addBudget => 'Ajouter Budget';
 
   @override
-  String get addPayment => 'Add Payment';
+  String get addPayment => 'Ajouter Paiement';
 
   @override
-  String get editExpense => 'Edit Expense';
+  String get editExpense => 'Modifier Dépense';
 
   @override
-  String get addCustomCategory => '+ Add Custom Category';
+  String get addCustomCategory => '+ Ajouter Catégorie Personnalisée';
 
   @override
-  String get noBudgetGoal => 'No Budget Goal';
+  String get noBudgetGoal => 'Aucun Objectif Budgétaire';
 
   @override
-  String get pleaseFillRequired => 'Please fill out all required fields';
+  String get pleaseFillRequired => 'Veuillez remplir tous les champs requis';
 
   @override
-  String get failedToLoadBudgets => 'Failed to load budgets';
+  String get failedToLoadBudgets => 'Échec du chargement des budgets';
 
   @override
-  String get quarterlyInsights => 'Quarterly Insights';
+  String get noExpensesFound => 'Aucune dépense trouvée !';
 
   @override
-  String get yearlyInsights => 'Yearly Insights';
+  String get errorLoadingExpenses => 'Erreur lors du chargement des dépenses !';
 
   @override
-  String get moderate => 'Moderate';
+  String get noMoreExpenses => 'Plus aucune dépense !';
 
   @override
-  String get noExpensesFound => 'No Expense found!';
+  String get streak => 'Série';
 
   @override
-  String get errorLoadingExpenses => 'Error while loading expenses!';
+  String get spendingVelocity => 'Vitesse de Dépense';
 
   @override
-  String get noMoreExpenses => 'No more expenses!';
+  String get trackingStreak => 'Série de Suivi';
 
   @override
-  String get streak => 'Streak';
+  String get consecutiveDays => 'Jours consécutifs';
 
   @override
-  String get spendingVelocity => 'Spending Velocity';
+  String get totalSpentSubtitle => 'Total dépensé sur la période';
 
   @override
-  String get trackingStreak => 'Tracking Streak';
+  String get dailyAverageSubtitle => 'Moyenne quotidienne sur la période';
 
   @override
-  String get consecutiveDays => 'Consecutive days';
+  String get insights => 'Aperçus';
 
   @override
-  String get totalSpentSubtitle => 'Total spent in period';
+  String get doingGreat => 'Vous vous débrouillez très bien !';
 
   @override
-  String get dailyAverageSubtitle => 'Daily average in period';
+  String get budgetExceeded => 'Budget dépassé';
 
   @override
-  String get insights => 'Insights';
+  String get mostActiveGoal => 'Objectif le Plus Actif';
 
   @override
-  String get doingGreat => 'You\'re doing great!';
+  String get search => 'Rechercher';
 
   @override
-  String get budgetExceeded => 'Budget exceeded';
+  String get searchHint => 'Rechercher...';
 
   @override
-  String get mostActiveGoal => 'Most Active Goal';
-
-  @override
-  String get search => 'Search';
-
-  @override
-  String get searchHint => 'Search...';
-
-  @override
-  String get closeSearch => 'Close search';
+  String get closeSearch => 'Fermer la recherche';
 
   @override
   String daysUsed(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count days used',
-      one: '1 day used',
+      other: '$count jours utilisés',
+      one: '1 jour utilisé',
     );
     return '$_temp0';
   }
+
+  @override
+  String get permanentlyDenied => 'Définitivement refusé';
+
+  @override
+  String get disablePermissionManual =>
+      'Veuillez désactiver cette autorisation manuellement dans les paramètres';
+
+  @override
+  String get photos => 'Photos';
+
+  @override
+  String get locationInUse => 'Localisation (En cours d\'utilisation)';
+
+  @override
+  String get mediaLibrary => 'Médiathèque';
+
+  @override
+  String get currency => 'Devise';
+
+  @override
+  String get biometricAuth => 'Authentification Biométrique';
+
+  @override
+  String get useFingerprintOrFaceId =>
+      'Utilisez l\'empreinte digitale ou Face ID pour déverrouiller';
+
+  @override
+  String get appPermissions => 'Permissions de l\'App';
+
+  @override
+  String get appPermissionsDesc =>
+      'Gérer les permissions d\'accès de l\'application';
+
+  @override
+  String get transactionReminders => 'Rappels de Transaction';
+
+  @override
+  String get transactionRemindersDesc =>
+      'Rappel quotidien pour enregistrer vos dépenses';
+
+  @override
+  String get budgetAlerts => 'Alertes Budget';
+
+  @override
+  String get budgetAlertsDesc => 'Alerte à l\'approche de la limite du budget';
+
+  @override
+  String get receiveNotificationsDesc => 'Recevoir des notifications push';
+
+  @override
+  String get dataManagement => 'Gestion des Données';
+
+  @override
+  String get exportData => 'Exporter les Données';
+
+  @override
+  String get exportDataDesc => 'Téléchargez vos données en CSV ou PDF';
+
+  @override
+  String get importData => 'Importer des Données';
+
+  @override
+  String get importDataDesc => 'Importer des transactions depuis un fichier';
+
+  @override
+  String get budgetAndCategories => 'Budget & Catégories';
+
+  @override
+  String get budgetPeriod => 'Période Budgétaire';
+
+  @override
+  String get setBudgetCycleDesc =>
+      'Définir le cycle budgétaire mensuel ou personnalisé';
+
+  @override
+  String get recurringTransactions => 'Transactions Récurrentes';
+
+  @override
+  String get manageRecurringDesc => 'Gérer les dépenses et revenus récurrents';
+
+  @override
+  String get privacyPolicyDesc => 'Lire notre politique de confidentialité';
+
+  @override
+  String get termsOfServiceDesc => 'Voir les conditions générales';
+
+  @override
+  String get appVersion => 'Version de l\'App';
+
+  @override
+  String get clearAllData => 'Effacer Toutes les Données';
+
+  @override
+  String get clearAllDataDesc =>
+      'Supprimer toutes les transactions et réinitialiser l\'application';
+
+  @override
+  String get storage => 'Stockage';
+
+  @override
+  String get allowed => 'Autorisé';
+
+  @override
+  String get denied => 'Refusé';
+
+  @override
+  String get failedToLoadProfile => 'Échec du chargement du profil';
+
+  @override
+  String get termsAndConditions => 'Termes et Conditions';
+
+  @override
+  String get readTermsAndConditions => 'Lisez nos termes et conditions';
+
+  @override
+  String get lightThemeDesc => 'Toujours utiliser le thème clair';
+
+  @override
+  String get darkThemeDesc => 'Toujours utiliser le thème sombre';
+
+  @override
+  String get systemThemeDesc => 'Suivre les paramètres du système';
+
+  @override
+  String get currencyUSD => 'Dollar américain';
+
+  @override
+  String get currencyPKR => 'Roupie pakistanaise';
+
+  @override
+  String get currencyEUR => 'Euro';
+
+  @override
+  String get currencyGBP => 'Livre sterling';
+
+  @override
+  String get currencyJPY => 'Yen japonais';
+
+  @override
+  String get currencyAUD => 'Dollar australien';
+
+  @override
+  String get currencyCAD => 'Dollar canadien';
+
+  @override
+  String get currencyCHF => 'Franc suisse';
+
+  @override
+  String get currencyCNY => 'Yuan chinois';
+
+  @override
+  String get currencyINR => 'Roupie indienne';
 }

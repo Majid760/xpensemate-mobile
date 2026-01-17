@@ -67,6 +67,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   late final AppRouter _appRouter;
 
+  StreamSubscription<Map<String, dynamic>>? _notificationSubscription;
+
   @override
   void initState() {
     super.initState();
@@ -76,6 +78,41 @@ class _MyAppState extends State<MyApp> {
       RouteGuards(authCubit, sl<StorageService>()),
       sl.analytics,
     );
+    _setupNotifications();
+  }
+
+  @override
+  void dispose() {
+    _notificationSubscription?.cancel();
+    super.dispose();
+  }
+
+  void _setupNotifications() {
+    // Initialize the notification service
+    sl.notificationService.initialize().then((_) {
+      // Listen to the stream
+      _notificationSubscription =
+          sl.notificationService.notificationStream.listen((data) {
+        logI('Notification payload received: $data');
+        _handleNotificationNavigation(data);
+      });
+    });
+  }
+
+  void _handleNotificationNavigation(Map<String, dynamic> data) {
+    // Example: Check for a 'route' key in the payload
+    // You should adjust this key based on what your backend sends
+    final route = data['route'] as String?;
+    final id = data['id'] as String?;
+
+    if (route != null) {
+      if (id != null) {
+        // Example: /expense/123
+        _appRouter.router.push('$route/$id');
+      } else {
+        _appRouter.router.push(route);
+      }
+    }
   }
 
   @override

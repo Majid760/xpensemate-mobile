@@ -55,14 +55,15 @@ class ThemeDialog extends StatelessWidget {
     }
   }
 
-  String _getThemeDescription(ThemeMode mode) {
+  String _getThemeDescription(BuildContext context, ThemeMode mode) {
+    final l10n = context.l10n;
     switch (mode) {
       case ThemeMode.light:
-        return 'Always use light theme';
+        return l10n.lightThemeDesc;
       case ThemeMode.dark:
-        return 'Always use dark theme';
+        return l10n.darkThemeDesc;
       case ThemeMode.system:
-        return 'Follow system settings';
+        return l10n.systemThemeDesc;
     }
   }
 
@@ -194,7 +195,7 @@ class ThemeDialog extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  _getThemeDescription(mode),
+                                  _getThemeDescription(context, mode),
                                   style: textTheme.bodySmall?.copyWith(
                                     color: colorScheme.onSurfaceVariant,
                                   ),

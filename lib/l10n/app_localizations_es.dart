@@ -1108,6 +1108,37 @@ class AppLocalizationsEs extends AppLocalizations {
   String get transactionReminders => 'Recordatorios de Transacciones';
 
   @override
+  String daysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days left',
+      one: '1 day left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dueToday => 'Due today';
+
+  @override
+  String overdueBy(int count, String unit) {
+    return 'Overdue by $count $unit';
+  }
+
+  @override
+  String get statusActive => 'Active';
+
+  @override
+  String get statusAchieved => 'Achieved';
+
+  @override
+  String get statusFailed => 'Failed';
+
+  @override
+  String get statusTerminated => 'Terminated';
+
+  @override
   String get transactionRemindersDesc =>
       'Recordatorio diario para registrar gastos';
 
@@ -1151,7 +1182,72 @@ class AppLocalizationsEs extends AppLocalizations {
   String get recurringTransactions => 'Transacciones Recurrentes';
 
   @override
+  String get note => 'Note';
+
+  @override
+  String get addNotes => 'Add any additional notes';
+
+  @override
+  String get priorityLabel => 'Priority';
+
+  @override
+  String get statusLabel => 'Status';
+
+  @override
+  String get selectPriority => 'Select Priority';
+
+  @override
+  String get selectStatus => 'Select Status';
+
+  @override
+  String get selectTargetDate => 'Select Target Date';
+
+  @override
+  String get fillAllRequired => 'Please fill out all required fields';
+
+  @override
+  String get enterValidAmount => 'Please enter a valid amount';
+
+  @override
+  String get criticalPriority => 'Critical';
+
+  @override
   String get manageRecurringDesc => 'Administrar gastos e ingresos recurrentes';
+
+  @override
+  String get editBudget => 'Edit Budget';
+
+  @override
+  String get errorLoadingBudgets => 'Error while loading budgets!';
+
+  @override
+  String get noBudgetsFound => 'No budget goals found!';
+
+  @override
+  String get noMoreBudgets => 'No more budgets!';
+
+  @override
+  String percentageUsed(String percentage) {
+    return '$percentage% used';
+  }
+
+  @override
+  String get allCaughtUp => 'You\'re all caught up!';
+
+  @override
+  String get filterByPaymentMethod => 'Filter by Payment Method';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get cash => 'Cash';
+
+  @override
+  String get creditCard => 'Credit Card';
+
+  @override
+  String get debitCard => 'Debit Card';
 
   @override
   String get privacyPolicyDesc => 'Leer nuestra política de privacidad';

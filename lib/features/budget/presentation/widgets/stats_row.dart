@@ -1,5 +1,8 @@
-// Stats Row Widget
 import 'package:flutter/material.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/theme/colors/app_colors.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/utils/app_utils.dart';
 
 class StatsRow extends StatelessWidget {
   const StatsRow({
@@ -17,87 +20,40 @@ class StatsRow extends StatelessWidget {
   final bool isOverdue;
   final Color categoryColor;
 
+  DateTime? _parseDate(String dateStr) {
+    if (dateStr.isEmpty) return null;
+    try {
+      if (dateStr.contains('T')) {
+        return DateTime.parse(dateStr);
+      }
+      final parts = dateStr.split(' ');
+      if (parts.isNotEmpty) {
+        return DateTime.parse(parts[0]);
+      }
+    } catch (_) {
+      // ignore
+    }
+    return null;
+  }
+
+  String _formatDateStr(String dateStr) {
+    final date = _parseDate(dateStr);
+    if (date != null) {
+      // Use AppUtils to format
+      return AppUtils.formatDate(date);
+    }
+    return dateStr.split(' ')[0];
+  }
+
   bool _isOverdue() {
-    if (deadline.isEmpty) return false;
+    final date = _parseDate(deadline);
+    if (date == null) return false;
 
-    try {
-      final DateTime dueDate;
-      if (deadline.contains('-')) {
-        if (deadline.contains('T')) {
-          dueDate = DateTime.parse(deadline);
-        } else {
-          final parts = deadline.split(' ');
-          if (parts.isNotEmpty) {
-            dueDate = DateTime.parse(parts[0]);
-          } else {
-            return false;
-          }
-        }
-      } else {
-        return false;
-      }
+    final today = DateTime.now();
+    final todayDate = DateTime(today.year, today.month, today.day);
+    final dueDateOnly = DateTime(date.year, date.month, date.day);
 
-      final today = DateTime.now();
-      final todayDate = DateTime(today.year, today.month, today.day);
-      final dueDateOnly = DateTime(dueDate.year, dueDate.month, dueDate.day);
-
-      return dueDateOnly.isBefore(todayDate);
-    } on Exception catch (_) {
-      return false;
-    }
-  }
-
-  // Format amount with k for values >= 1000
-  String _formatAmount(double amount) {
-    if (amount >= 10000 || amount <= -10000) {
-      return '${(amount / 1000).toStringAsFixed(1)}k';
-    }
-    return amount.toInt().toString();
-  }
-
-  // Format date to show only last two digits of year
-  String _formatDate(String dateStr) {
-    if (dateStr.isEmpty) return '';
-
-    try {
-      final DateTime dueDate;
-      if (dateStr.contains('-')) {
-        if (dateStr.contains('T')) {
-          dueDate = DateTime.parse(dateStr);
-        } else {
-          final parts = dateStr.split(' ');
-          if (parts.isNotEmpty) {
-            dueDate = DateTime.parse(parts[0]);
-          } else {
-            return dateStr.split(' ')[0];
-          }
-        }
-      } else {
-        return dateStr;
-      }
-
-      // Format as MM/dd/yy
-      final year = dueDate.year.toString().substring(2); // Last two digits
-      return '${dueDate.month.toString().padLeft(2, '0')}/${dueDate.day.toString().padLeft(2, '0')}/$year';
-    } on Exception catch (_) {
-      // If parsing fails, try to extract the date part and format it
-      try {
-        final parts = dateStr.split(' ');
-        if (parts.isNotEmpty) {
-          final datePart = parts[0];
-          if (datePart.contains('-')) {
-            final dateParts = datePart.split('-');
-            if (dateParts.length >= 3) {
-              final year = dateParts[0].substring(2); // Last two digits of year
-              return '${dateParts[1]}/${dateParts[2]}/$year';
-            }
-          }
-        }
-      } on Exception catch (_) {
-        // If all else fails, return original string
-      }
-      return dateStr.split(' ')[0];
-    }
+    return dueDateOnly.isBefore(todayDate);
   }
 
   @override
@@ -122,8 +78,8 @@ class StatsRow extends StatelessWidget {
             Expanded(
               child: ModernStat(
                 icon: Icons.trending_up_rounded,
-                label: 'Spent',
-                value: '${_formatAmount(spent)} \$', // Use formatted amount
+                label: context.l10n.spent,
+                value: '${AppUtils.formatLargeNumber(spent)} \$',
                 iconColor: categoryColor,
               ),
             ),
@@ -135,11 +91,11 @@ class StatsRow extends StatelessWidget {
             Expanded(
               child: ModernStat(
                 icon: Icons.account_balance_wallet_rounded,
-                label: 'Left',
-                value: '${_formatAmount(remaining)} \$', // Use formatted amount
+                label: context.l10n.remaining,
+                value: '${AppUtils.formatLargeNumber(remaining)} \$',
                 iconColor: remaining > 0
-                    ? const Color(0xFF10B981)
-                    : const Color(0xFFEF4444),
+                    ? AppColors.success
+                    : context.theme.colorScheme.error,
               ),
             ),
             Container(
@@ -150,17 +106,17 @@ class StatsRow extends StatelessWidget {
             Expanded(
               child: ModernStat(
                 icon: Icons.calendar_today_rounded,
-                label: 'Due',
-                value: _formatDate(deadline), // Use formatted date
+                label: context.l10n.closestDeadline,
+                value: _formatDateStr(deadline),
                 iconColor: _isOverdue()
-                    ? const Color(0xFFEF4444)
-                    : const Color(0xFF3B82F6),
+                    ? context.theme.colorScheme.error
+                    : context.theme.colorScheme.primary,
                 valueStyle: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: _isOverdue()
-                      ? const Color(0xFFDC2626)
-                      : const Color(0xFF64748B),
+                      ? context.theme.colorScheme.error
+                      : context.theme.colorScheme.onSurfaceVariant,
                   letterSpacing: -0.5,
                 ),
               ),
@@ -206,10 +162,8 @@ class ModernStat extends StatelessWidget {
           Text(
             value,
             style: valueStyle ??
-                const TextStyle(
-                  fontSize: 18,
+                context.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF111827),
                   letterSpacing: -0.5,
                 ),
             maxLines: 1,
@@ -218,10 +172,9 @@ class ModernStat extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 11,
+            style: context.textTheme.labelSmall?.copyWith(
               fontWeight: FontWeight.w600,
-              color: Color(0xFF9CA3AF),
+              color: context.colorScheme.onSurfaceVariant,
               letterSpacing: 0.2,
             ),
           ),

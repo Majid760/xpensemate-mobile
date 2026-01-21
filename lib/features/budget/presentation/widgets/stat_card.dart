@@ -134,24 +134,17 @@ class _StatsCardState extends State<StatsCard>
                     vertical: AppSpacing.sm,
                   ),
                   decoration: BoxDecoration(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onPrimary
-                        .withValues(alpha: 0.2),
+                    color: context.colorScheme.onPrimary.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onPrimary
-                          .withValues(alpha: 0.35),
+                      color:
+                          context.colorScheme.onPrimary.withValues(alpha: 0.35),
                       width: 1.5,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .shadow
-                            .withValues(alpha: 0.1),
+                        color:
+                            context.colorScheme.shadow.withValues(alpha: 0.1),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -189,9 +182,7 @@ class _StatsCardState extends State<StatsCard>
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimary
+                                    color: context.colorScheme.onPrimary
                                         .withValues(alpha: 0.95),
                                     fontSize: widget.label
                                             .toLowerCase()
@@ -212,9 +203,7 @@ class _StatsCardState extends State<StatsCard>
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onPrimary
+                              color: context.colorScheme.onPrimary
                                   .withValues(alpha: 0.95),
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
@@ -229,9 +218,7 @@ class _StatsCardState extends State<StatsCard>
                               width: 48,
                               height: 20,
                               decoration: BoxDecoration(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .outlineVariant,
+                                color: context.colorScheme.outlineVariant,
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: _PulsingShimmer(),
@@ -245,9 +232,7 @@ class _StatsCardState extends State<StatsCard>
                               style: (context.textTheme.bodySmall ??
                                       const TextStyle())
                                   .copyWith(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onPrimary
+                                color: context.colorScheme.onPrimary
                                     .withValues(alpha: 0.8),
                               ),
                             ),
@@ -300,7 +285,7 @@ class _PulsingShimmerState extends State<_PulsingShimmer>
         ),
         child: Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.outlineVariant,
+            color: context.colorScheme.outlineVariant,
             borderRadius: BorderRadius.circular(4),
           ),
         ),
@@ -336,7 +321,7 @@ class _ExpandableTextState extends State<_ExpandableText>
       vsync: this,
     );
     _opacityAnimation = Tween<double>(
-      begin: 1.0,
+      begin: 1,
       end: 0.8,
     ).animate(CurvedAnimation(
       parent: _animationController,

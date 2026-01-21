@@ -32,7 +32,7 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
   void _editBudget(BudgetGoalEntity? budget, BuildContext context) {
     AppBottomSheet.show<void>(
       context: context,
-      title: "Edit Budget",
+      title: context.l10n.editBudget,
       config: const BottomSheetConfig(
         padding: EdgeInsets.symmetric(horizontal: 8),
         blurSigma: 5,
@@ -128,20 +128,20 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
                 ),
               ),
               firstPageErrorIndicatorBuilder: (_) => ErrorStateSectionWidget(
-                errorMsg:
-                    (state.error ?? 'Error while loading budgets!').toString(),
+                errorMsg: (state.error ?? context.l10n.errorLoadingBudgets)
+                    .toString(),
                 onRetry: context.budgetCubit.pagingController.refresh,
               ),
               newPageErrorIndicatorBuilder: (_) => ErrorStateSectionWidget(
                 onRetry: () => fetchNextPage,
-                errorMsg:
-                    (state.error ?? 'Error while loading budgets!').toString(),
+                errorMsg: (state.error ?? context.l10n.errorLoadingBudgets)
+                    .toString(),
               ),
               noItemsFoundIndicatorBuilder: (_) => Center(
                 child: ErrorStateSectionWidget(
                   onRetry: () => fetchNextPage,
                   errorMsg:
-                      (state.error ?? 'No Budget goals found!').toString(),
+                      (state.error ?? context.l10n.noBudgetsFound).toString(),
                 ),
               ),
               newPageProgressIndicatorBuilder: (_) => const Padding(
@@ -150,43 +150,13 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
                   child: CustomAppLoader(),
                 ),
               ),
-              noMoreItemsIndicatorBuilder: (_) => const Padding(
-                padding: EdgeInsets.only(top: 32),
-                child: AllCaughtUpWidget(title: 'No more budgets!'),
+              noMoreItemsIndicatorBuilder: (_) => Padding(
+                padding: const EdgeInsets.only(top: 32),
+                child: AllCaughtUpWidget(title: context.l10n.noMoreBudgets),
               ),
             ),
             separatorBuilder: (context, index) => const SizedBox(height: 16),
           ),
         ),
       );
-}
-
-// This function can be called from other pages or components
-// to trigger the add budget action
-void addBudget({
-  required BuildContext context,
-  void Function(BudgetGoalEntity)? onSave,
-}) {
-  final screenHeight = MediaQuery.of(context).size.height;
-  AppBottomSheet.show<void>(
-    context: context,
-    title: 'Add Budget',
-    config: BottomSheetConfig(
-      minHeight: screenHeight * 0.8,
-      maxHeight: screenHeight * 0.95,
-      padding: EdgeInsets.zero,
-      blurSigma: 5,
-      barrierColor: Colors.transparent,
-    ),
-    child: BudgetFormPage(
-      onSave: onSave ??
-          (goal) async {
-            await context.budgetCubit.createBudgetGoal(goal);
-            if (context.mounted) {
-              Navigator.of(context).pop();
-            }
-          },
-      onCancel: () => Navigator.of(context).pop(),
-    ),
-  );
 }

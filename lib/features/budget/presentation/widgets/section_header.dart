@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:xpensemate/core/theme/app_spacing.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
 
 class SectionHeader extends StatefulWidget {
   const SectionHeader({
@@ -123,22 +126,18 @@ class _SectionHeaderState extends State<SectionHeader>
                                 if (hasSpaceForIcon)
                                   Icon(
                                     Icons.receipt_long_rounded,
-                                    color: Theme.of(context).primaryColor,
-                                    size: 24,
+                                    color: context.primaryColor,
+                                    size: AppSpacing.iconLg,
                                   ),
                                 if (hasSpaceForIcon) const SizedBox(width: 8),
                                 Flexible(
                                   child: Text(
                                     widget.title,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall
+                                    style: context.textTheme.headlineSmall
                                         ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurface,
-                                        ),
+                                      fontWeight: FontWeight.bold,
+                                      color: context.colorScheme.onSurface,
+                                    ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -162,19 +161,17 @@ class _SectionHeaderState extends State<SectionHeader>
                           opacity: _fadeInAnimation.value,
                           child: DecoratedBox(
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.surface,
+                              color: context.colorScheme.surface,
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: Theme.of(context)
-                                    .primaryColor
-                                    .withOpacity(0.3),
+                                color:
+                                    context.primaryColor.withValues(alpha: 0.3),
                                 width: 1.5,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Theme.of(context)
-                                      .primaryColor
-                                      .withOpacity(0.15),
+                                  color: context.primaryColor
+                                      .withValues(alpha: 0.15),
                                   blurRadius: 12,
                                   offset: const Offset(0, 4),
                                 ),
@@ -183,29 +180,25 @@ class _SectionHeaderState extends State<SectionHeader>
                             child: TextField(
                               controller: _searchController,
                               focusNode: _focusNode,
-                              style: Theme.of(context).textTheme.bodyMedium,
+                              style: context.textTheme.bodyMedium,
                               decoration: InputDecoration(
                                 hintText: widget.searchHint,
                                 hintStyle: TextStyle(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurface
-                                      .withOpacity(0.5),
+                                  color: context.colorScheme.onSurface
+                                      .withValues(alpha: 0.5),
                                 ),
                                 prefixIcon: Icon(
                                   Icons.search,
-                                  color: Theme.of(context).primaryColor,
-                                  size: 20,
+                                  color: context.primaryColor,
+                                  size: AppSpacing.iconSm,
                                 ),
                                 suffixIcon: _searchController.text.isNotEmpty
                                     ? IconButton(
                                         icon: Icon(
                                           Icons.clear,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurface
-                                              .withOpacity(0.6),
-                                          size: 20,
+                                          color: context.colorScheme.onSurface
+                                              .withValues(alpha: 0.6),
+                                          size: AppSpacing.iconSm,
                                         ),
                                         onPressed: _clearSearch,
                                         splashRadius: 20,
@@ -231,8 +224,8 @@ class _SectionHeaderState extends State<SectionHeader>
                   height: 48,
                   decoration: BoxDecoration(
                     color: _isSearchExpanded
-                        ? Theme.of(context).colorScheme.errorContainer
-                        : Theme.of(context).primaryColor.withOpacity(0.1),
+                        ? context.colorScheme.errorContainer
+                        : context.primaryColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: IconButton(
@@ -251,13 +244,15 @@ class _SectionHeaderState extends State<SectionHeader>
                         _isSearchExpanded ? Icons.close : Icons.search,
                         key: ValueKey<bool>(_isSearchExpanded),
                         color: _isSearchExpanded
-                            ? Theme.of(context).colorScheme.error
-                            : Theme.of(context).primaryColor,
+                            ? context.colorScheme.error
+                            : context.primaryColor,
                         size: 22,
                       ),
                     ),
                     onPressed: _toggleSearch,
-                    tooltip: _isSearchExpanded ? 'Close search' : 'Search',
+                    tooltip: _isSearchExpanded
+                        ? context.l10n.close
+                        : context.l10n.searchPlaceholder,
                     splashRadius: 24,
                   ),
                 ),

@@ -1,6 +1,7 @@
-// Search and Filter Bar with shadow
 import 'package:flutter/material.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/features/auth/presentation/widgets/custom_text_form_field.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_expense_cubit.dart';
 
@@ -148,10 +149,9 @@ class _SearchAndFilterBarState extends State<SearchAndFilterBar>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      'Filter by Payment Method',
-                      style: TextStyle(
-                        fontSize: 16,
+                    Text(
+                      context.l10n.filterByPaymentMethod,
+                      style: context.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -160,26 +160,26 @@ class _SearchAndFilterBarState extends State<SearchAndFilterBar>
                       child: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: context.primaryColor,
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.close,
-                          color: Theme.of(context).colorScheme.onPrimary,
+                          color: context.onPrimaryColor,
                           size: 20,
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: context.md),
                 PaymentMethodFilter(
                   onFilterChanged: (method) {
                     if (context.mounted) {
                       // Convert display names to database format
-                      final dbFormat = _convertToDatabaseFormat(method);
+                      // final dbFormat = _convertToDatabaseFormat(method);
                       context.budgetExpensesCubit
-                          .updatePaymentMethodFilter(dbFormat);
+                          .updatePaymentMethodFilter(method);
                     }
                   },
                 ),
@@ -188,34 +188,19 @@ class _SearchAndFilterBarState extends State<SearchAndFilterBar>
           ),
         ),
       );
-
-  // Convert display names to database format
-  String _convertToDatabaseFormat(String displayName) {
-    switch (displayName) {
-      case 'Cash':
-        return 'cash';
-      case 'Credit Card':
-        return 'credit_card';
-      case 'Debit Card':
-        return 'debit_card';
-      default:
-        return 'all'; // For 'All' option
-    }
-  }
 }
 
-// Payment Method Filter
 class PaymentMethodFilter extends StatefulWidget {
   const PaymentMethodFilter({super.key, this.onFilterChanged});
 
-  final Function(String)? onFilterChanged;
+  final void Function(String)? onFilterChanged;
 
   @override
   State<PaymentMethodFilter> createState() => _PaymentMethodFilterState();
 }
 
 class _PaymentMethodFilterState extends State<PaymentMethodFilter> {
-  String selected = 'All';
+  String selected = 'all';
 
   void _selectFilter(String filter) {
     setState(() {
@@ -233,29 +218,29 @@ class _PaymentMethodFilterState extends State<PaymentMethodFilter> {
             mainAxisSize: MainAxisSize.min,
             children: [
               FilterChip(
-                label: 'All',
-                isSelected: selected == 'All',
-                onTap: () => _selectFilter('All'),
+                label: context.l10n.all,
+                isSelected: selected == 'all',
+                onTap: () => _selectFilter('all'),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: context.sm),
               FilterChip(
-                label: 'Cash',
-                isSelected: selected == 'Cash',
-                onTap: () => _selectFilter('Cash'),
+                label: context.l10n.cash,
+                isSelected: selected == 'cash',
+                onTap: () => _selectFilter('cash'),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: context.sm),
               FilterChip(
-                label: 'Credit Card',
-                isSelected: selected == 'Credit Card',
-                onTap: () => _selectFilter('Credit Card'),
+                label: context.l10n.creditCard,
+                isSelected: selected == 'credit_card',
+                onTap: () => _selectFilter('credit_card'),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: context.sm),
               FilterChip(
-                label: 'Debit Card',
-                isSelected: selected == 'Debit Card',
-                onTap: () => _selectFilter('Debit Card'),
+                label: context.l10n.debitCard,
+                isSelected: selected == 'debit_card',
+                onTap: () => _selectFilter('debit_card'),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: context.sm),
             ],
           ),
         ),
@@ -281,26 +266,19 @@ class FilterChip extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           decoration: BoxDecoration(
-            color: isSelected
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.surface,
+            color:
+                isSelected ? context.primaryColor : context.colorScheme.surface,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: isSelected
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.outlineVariant,
+                  ? context.primaryColor
+                  : context.colorScheme.outlineVariant,
             ),
             boxShadow: [
               BoxShadow(
                 color: isSelected
-                    ? Theme.of(context)
-                        .colorScheme
-                        .primary
-                        .withValues(alpha: 0.3)
-                    : Theme.of(context)
-                        .colorScheme
-                        .shadow
-                        .withValues(alpha: 0.05),
+                    ? context.primaryColor.withValues(alpha: 0.3)
+                    : context.colorScheme.shadow.withValues(alpha: 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),
@@ -308,11 +286,10 @@ class FilterChip extends StatelessWidget {
           ),
           child: Text(
             label,
-            style: TextStyle(
+            style: context.textTheme.bodyMedium?.copyWith(
               color: isSelected
-                  ? Theme.of(context).colorScheme.onPrimary
-                  : Theme.of(context).colorScheme.onSurface,
-              fontSize: 14,
+                  ? context.onPrimaryColor
+                  : context.colorScheme.onSurface,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
             ),
           ),

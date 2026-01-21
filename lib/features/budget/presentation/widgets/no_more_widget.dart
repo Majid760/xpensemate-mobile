@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
 
 class AllCaughtUpWidget extends StatefulWidget {
   const AllCaughtUpWidget({super.key, required this.title});
@@ -69,7 +70,7 @@ class _AllCaughtUpWidgetState extends State<AllCaughtUpWidget>
             child: Column(
               children: [
                 Text(
-                  "You're all caught up!",
+                  context.l10n.allCaughtUp,
                   style: context.textTheme.titleMedium?.copyWith(
                     color: context.colorScheme.onSurface,
                     fontWeight: FontWeight.w600,

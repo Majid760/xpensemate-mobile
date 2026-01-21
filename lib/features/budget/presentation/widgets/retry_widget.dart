@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
-import 'package:xpensemate/l10n/app_localizations.dart';
 
 class RetryWidget extends StatelessWidget {
   const RetryWidget({super.key, this.onRetry, this.message});
@@ -9,8 +9,6 @@ class RetryWidget extends StatelessWidget {
   final String? message;
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context);
-
     return Container(
       width: context.screenWidth - 32,
       padding: const EdgeInsets.symmetric(
@@ -26,20 +24,20 @@ class RetryWidget extends StatelessWidget {
         children: [
           Icon(
             Icons.error_outline,
-            color: Theme.of(context).colorScheme.error,
+            color: context.colorScheme.error,
             size: 32,
           ),
           const SizedBox(height: 8),
           Text(
-            message ?? localizations?.budgetGoalsError ?? 'An error occurred',
+            message ?? context.l10n.errorLoadingBudgets,
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.error,
-                ),
+            style: context.textTheme.bodyMedium?.copyWith(
+              color: context.colorScheme.error,
+            ),
           ),
           const SizedBox(height: 12),
           AppButton.icon(
-            text: localizations?.budgetGoalsRetry ?? 'Retry',
+            text: context.l10n.retry,
             onPressed: onRetry,
             leadingIcon: const Icon(Icons.refresh, size: 24),
           ),

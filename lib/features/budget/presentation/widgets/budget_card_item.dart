@@ -3,9 +3,11 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/theme/theme_constant.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/core/widget/animated_card_widget.dart';
 import 'package:xpensemate/core/widget/app_custom_dialog.dart';
 import 'package:xpensemate/core/widget/app_dismissible_widget.dart';
@@ -17,19 +19,19 @@ class BudgetGoalCard extends StatefulWidget {
   const BudgetGoalCard({
     super.key,
     required this.budgetGoal,
+    required this.index,
     this.onStatusChange,
     this.onEdit,
     this.onDelete,
-    required this.index,
     this.onSelect,
   });
 
   final BudgetGoalEntity budgetGoal;
+  final int index;
   final void Function(String)? onStatusChange;
   final void Function(BudgetGoalEntity)? onEdit;
   final void Function(String id)? onDelete;
   final void Function(String id)? onSelect;
-  final int index;
 
   @override
   State<BudgetGoalCard> createState() => _BudgetGoalCardState();
@@ -47,24 +49,29 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
     _status = _budgetGoal.status;
   }
 
-  void _updateStatus(
-    String value,
-    BudgetGoalEntity budgetGoal,
-    BuildContext context,
-  ) {
-    if (value.isNotEmpty && value != _status) {
-      widget.onStatusChange?.call(value);
-      context.budgetCubit.updateBudgetGoal(
-        budgetGoal.copyWith(status: value),
-      );
-      setState(() {
-        _status = value;
-      });
+  @override
+  void didUpdateWidget(BudgetGoalCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.budgetGoal != oldWidget.budgetGoal) {
+      _budgetGoal = widget.budgetGoal;
+      _status = _budgetGoal.status;
     }
   }
 
-  void _updateBudgetGoal(BudgetGoalEntity goal) {
-    widget.onEdit?.call(widget.budgetGoal);
+  void _updateStatus(String value) {
+    if (value.isNotEmpty && value != _status) {
+      widget.onStatusChange?.call(value);
+      try {
+        context.budgetCubit.updateBudgetGoal(
+          _budgetGoal.copyWith(status: value),
+        );
+        setState(() {
+          _status = value;
+        });
+      } on Exception catch (e, stack) {
+        AppLogger.e('Failed to update budget status', e, stack);
+      }
+    }
   }
 
   Future<bool?> _showDeleteConfirmation(BuildContext context) async {
@@ -76,12 +83,7 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
       onConfirm: () => confirmResult = true,
       onCancel: () => confirmResult = false,
     );
-
     return confirmResult;
-  }
-
-  void _handleDelete() {
-    widget.onDelete?.call(_budgetGoal.id);
   }
 
   @override
@@ -99,40 +101,41 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
         onDeleteConfirm: () async {
           final result = await _showDeleteConfirmation(context);
           if (result ?? false) {
-            _handleDelete();
+            widget.onDelete?.call(_budgetGoal.id);
           }
           return result ?? false;
         },
-        onEdit: () => _updateBudgetGoal(widget.budgetGoal),
+        onEdit: () => widget.onEdit?.call(widget.budgetGoal),
         child: Card(
           elevation: 2,
-          color: Theme.of(context).cardColor,
-          shadowColor: Theme.of(context).shadowColor.withValues(alpha: .1),
+          color: context.theme.cardColor,
+          shadowColor: context.theme.shadowColor.withValues(alpha: .1),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(ThemeConstants.radiusLarge),
             side: BorderSide(
-              color: Theme.of(context).dividerColor.withValues(alpha: .1),
+              color: context.theme.dividerColor.withValues(alpha: .1),
             ),
           ),
           child: InkWell(
-            onTap: () => HapticFeedback.lightImpact,
+            onTap: HapticFeedback.lightImpact,
             onTapDown: (_) => HapticFeedback.selectionClick(),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(ThemeConstants.radiusLarge),
             child: Column(
               children: [
-                TopSection(
+                _BudgetTopSection(
                   title: _budgetGoal.name,
                   category: _budgetGoal.category,
                   amount: _budgetGoal.amount,
                   deadline: _budgetGoal.date.toString(),
                   categoryColor: context.primaryColor,
                   isCompleted: isCompleted,
+                  isOverdue:
+                      false, // Logic moved inside if needed or kept simple
                   status: _status,
-                  isOverdue: false,
                   budgetGoalEntity: _budgetGoal,
                   onSelected: widget.onSelect,
                 ),
-                BottomSection(
+                _BudgetBottomSection(
                   progress: progress,
                   spent: _budgetGoal.currentSpending,
                   remaining: remaining,
@@ -140,8 +143,7 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
                   isOverdue: false,
                   status: _status,
                   categoryColor: context.primaryColor,
-                  onStatusChange: (String value) =>
-                      _updateStatus(value, _budgetGoal, context),
+                  onStatusChange: _updateStatus,
                 ),
               ],
             ),
@@ -152,10 +154,8 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
   }
 }
 
-// Top Section Widget
-class TopSection extends StatelessWidget {
-  const TopSection({
-    super.key,
+class _BudgetTopSection extends StatelessWidget {
+  const _BudgetTopSection({
     required this.title,
     required this.category,
     required this.amount,
@@ -181,7 +181,7 @@ class TopSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: EdgeInsets.all(context.md),
+        padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
           color: categoryColor,
           borderRadius: const BorderRadius.only(
@@ -191,16 +191,58 @@ class TopSection extends StatelessWidget {
         ),
         child: Column(
           children: [
-            TopHeader(
-              title: title,
-              category: category,
-              isCompleted: isCompleted,
-              isOverdue: isOverdue,
-              budgetGoalEntity: budgetGoalEntity,
-              onSelected: onSelected,
+            Row(
+              children: [
+                if (isCompleted) ...[
+                  Container(
+                    padding: const EdgeInsets.all(AppSpacing.sm),
+                    decoration: BoxDecoration(
+                      color:
+                          context.colorScheme.onPrimary.withValues(alpha: 0.25),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.check_rounded,
+                      size: 20,
+                      color: context.colorScheme.onPrimary,
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: context.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: context.colorScheme.onPrimary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                      Text(
+                        category.toUpperCase(),
+                        style: context.textTheme.labelMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: context.colorScheme.onPrimary
+                              .withValues(alpha: 0.8),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                _MenuButton(
+                  budgetGoalEntity: budgetGoalEntity,
+                  onSelected: onSelected,
+                ),
+              ],
             ),
-            SizedBox(height: context.sm),
-            AmountDisplay(
+            const SizedBox(height: AppSpacing.sm),
+            _AmountDisplay(
               amount: amount,
               deadline: deadline,
               status: status,
@@ -210,219 +252,8 @@ class TopSection extends StatelessWidget {
       );
 }
 
-// Top Header Widget
-class TopHeader extends StatelessWidget {
-  const TopHeader({
-    super.key,
-    required this.title,
-    required this.category,
-    required this.isCompleted,
-    required this.isOverdue,
-    required this.budgetGoalEntity,
-    this.onSelected,
-  });
-
-  final String title;
-  final String category;
-  final bool isCompleted;
-  final bool isOverdue;
-  final BudgetGoalEntity budgetGoalEntity;
-  final void Function(String)? onSelected;
-
-  @override
-  Widget build(BuildContext context) => Row(
-        children: [
-          if (isCompleted) ...[
-            StatusIcon(isCompleted: isCompleted),
-            SizedBox(width: context.sm),
-          ],
-          Expanded(
-            child: TitleCategory(title: title, category: category),
-          ),
-          SizedBox(width: context.sm),
-          MenuButton(
-              budgetGoalEntity: budgetGoalEntity, onSelected: onSelected),
-        ],
-      );
-}
-
-// Title and Category Widget
-class TitleCategory extends StatelessWidget {
-  const TitleCategory({
-    super.key,
-    required this.title,
-    required this.category,
-  });
-
-  final String title;
-  final String category;
-
-  @override
-  Widget build(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: context.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: context.colorScheme.onPrimary,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          SizedBox(height: context.xs),
-          Text(
-            category.toUpperCase(),
-            style: context.textTheme.labelMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: context.colorScheme.onPrimary.withValues(alpha: 0.8),
-            ),
-          ),
-        ],
-      );
-}
-
-// Status Icon Widget
-class StatusIcon extends StatelessWidget {
-  const StatusIcon({
-    super.key,
-    required this.isCompleted,
-  });
-
-  final bool isCompleted;
-
-  @override
-  Widget build(BuildContext context) => Container(
-        padding: EdgeInsets.all(context.sm),
-        decoration: BoxDecoration(
-          color: context.colorScheme.onPrimary.withValues(alpha: 0.25),
-          shape: BoxShape.circle,
-        ),
-        child: Icon(
-          isCompleted ? Icons.check_rounded : Icons.warning_rounded,
-          size: 20,
-          color: context.colorScheme.onPrimary,
-        ),
-      );
-}
-
-// Menu Button Widget
-class MenuButton extends StatelessWidget {
-  const MenuButton(
-      {super.key, required this.budgetGoalEntity, this.onSelected});
-  final BudgetGoalEntity budgetGoalEntity;
-  final void Function(String)? onSelected;
-
-  @override
-  Widget build(BuildContext context) => DecoratedBox(
-        decoration: BoxDecoration(
-          color: context.colorScheme.onPrimary.withValues(alpha: 0.25),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: PopupMenuButton<String>(
-          icon: Icon(
-            Icons.more_vert_rounded,
-            size: 20,
-            color: context.colorScheme.onPrimary,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
-          offset: const Offset(0, 8),
-          padding: EdgeInsets.all(context.xs),
-          onSelected: onSelected,
-          itemBuilder: (context) => [
-            MenuItemWidget(
-              icon: Icons.edit_outlined,
-              text: context.l10n.edit,
-              value: 'edit',
-            ),
-            MenuItemWidget(
-              icon: Icons.edit_outlined,
-              text: context.l10n.expense,
-              value: 'expenses',
-            ),
-            MenuItemWidget(
-              icon: Icons.share_outlined,
-              text: context.l10n
-                  .share, // Using hardcoded string as no localization available
-              value: 'share',
-            ),
-            MenuItemWidget(
-              icon: Icons.archive_outlined,
-              text: context.l10n
-                  .archive, // Using hardcoded string as no localization available
-              value: 'archive',
-            ),
-            const PopupMenuDivider(),
-            MenuItemWidget(
-              icon: Icons.delete_outline_rounded,
-              text: context.l10n.delete,
-              value: 'delete',
-              isDestructive: true,
-            ),
-          ],
-        ),
-      );
-}
-
-// Menu Item Widget
-class MenuItemWidget extends PopupMenuItem<String> {
-  MenuItemWidget({
-    super.key,
-    required IconData icon,
-    required String text,
-    required String value,
-    bool isDestructive = false,
-  }) : super(
-          value: value,
-          child: _MenuItemContent(
-            icon: icon,
-            text: text,
-            isDestructive: isDestructive,
-          ),
-        );
-}
-
-class _MenuItemContent extends StatelessWidget {
-  const _MenuItemContent({
-    required this.icon,
-    required this.text,
-    required this.isDestructive,
-  });
-
-  final IconData icon;
-  final String text;
-  final bool isDestructive;
-
-  @override
-  Widget build(BuildContext context) => Row(
-        children: [
-          Icon(
-            icon,
-            size: 20,
-            color: isDestructive
-                ? context.colorScheme.error
-                : context.colorScheme.onSurfaceVariant,
-          ),
-          SizedBox(width: context.sm),
-          Text(
-            text,
-            style: context.textTheme.bodyMedium?.copyWith(
-              color: isDestructive
-                  ? context.colorScheme.error
-                  : context.colorScheme.onSurface,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      );
-}
-
-// Amount Display Widget
-class AmountDisplay extends StatelessWidget {
-  const AmountDisplay({
-    super.key,
+class _AmountDisplay extends StatelessWidget {
+  const _AmountDisplay({
     required this.amount,
     required this.deadline,
     required this.status,
@@ -445,11 +276,11 @@ class AmountDisplay extends StatelessWidget {
           if (parts.isNotEmpty) {
             dueDate = DateTime.parse(parts[0]);
           } else {
-            return deadline.split(' ')[0];
+            return '';
           }
         }
       } else {
-        return deadline.split(' ')[0];
+        return '';
       }
 
       final today = DateTime.now();
@@ -457,56 +288,32 @@ class AmountDisplay extends StatelessWidget {
       final dueDateOnly = DateTime(dueDate.year, dueDate.month, dueDate.day);
       final diffDays = dueDateOnly.difference(todayDate).inDays;
 
-      if (diffDays > 1) {
-        return '$diffDays days left'; // Using hardcoded string as no localization available
-      } else if (diffDays == 1) {
-        return '1 day left'; // Using hardcoded string as no localization available
+      if (diffDays > 0) {
+        return context.l10n.daysLeft(diffDays);
       } else if (diffDays == 0) {
-        return 'Due today'; // Using hardcoded string as no localization available
+        return context.l10n.dueToday;
       } else {
-        final absDiff = diffDays.abs();
-        final dayText = absDiff > 1
-            ? 'days'
-            : 'day'; // Using hardcoded string as no localization available
-        return 'Overdue by $absDiff $dayText'; // Using hardcoded string as no localization available
+        return context.l10n.overdueBy(diffDays.abs(), context.l10n.day);
       }
     } on Exception catch (_) {
-      return deadline.split(' ')[0];
+      return '';
     }
   }
 
   bool _isOverdue() {
     if (deadline.isEmpty) return false;
-
     try {
-      final DateTime dueDate;
-      if (deadline.contains('-')) {
-        if (deadline.contains('T')) {
-          dueDate = DateTime.parse(deadline);
-        } else {
-          final parts = deadline.split(' ');
-          if (parts.isNotEmpty) {
-            dueDate = DateTime.parse(parts[0]);
-          } else {
-            return false;
-          }
-        }
-      } else {
-        return false;
-      }
-
+      final dueDate = DateTime.parse(deadline);
       final today = DateTime.now();
       final todayDate = DateTime(today.year, today.month, today.day);
       final dueDateOnly = DateTime(dueDate.year, dueDate.month, dueDate.day);
-
       return dueDateOnly.isBefore(todayDate);
     } on Exception catch (_) {
       return false;
     }
   }
 
-  // Format amount with k for values >= 1000
-  String _formatAmount(double amount) {
+  String _formatAmount(double amount, BuildContext context) {
     if (amount >= 10000) {
       return '${(amount / 1000).toStringAsFixed(1)}k';
     }
@@ -518,16 +325,16 @@ class AmountDisplay extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Text(
-            r'$',
+            context.l10n.currencySymbol,
             style: context.textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.w600,
               color: context.colorScheme.onPrimary,
               height: 1,
             ),
           ),
-          SizedBox(width: context.xs),
+          const SizedBox(width: AppSpacing.xs),
           Text(
-            _formatAmount(amount), // Use formatted amount
+            _formatAmount(amount, context),
             style: context.textTheme.displaySmall?.copyWith(
               fontWeight: FontWeight.bold,
               color: context.colorScheme.onPrimary,
@@ -536,9 +343,9 @@ class AmountDisplay extends StatelessWidget {
             ),
           ),
           if (status == "active") ...[
-            SizedBox(width: context.md),
+            const SizedBox(width: AppSpacing.md),
             Padding(
-              padding: EdgeInsets.only(bottom: context.xs),
+              padding: const EdgeInsets.only(bottom: AppSpacing.xs),
               child: Text(
                 _calculateDaysStatus(context),
                 style: context.textTheme.bodyMedium?.copyWith(
@@ -554,10 +361,8 @@ class AmountDisplay extends StatelessWidget {
       );
 }
 
-// Bottom Section Widget
-class BottomSection extends StatelessWidget {
-  const BottomSection({
-    super.key,
+class _BudgetBottomSection extends StatelessWidget {
+  const _BudgetBottomSection({
     required this.progress,
     required this.spent,
     required this.remaining,
@@ -575,21 +380,20 @@ class BottomSection extends StatelessWidget {
   final bool isOverdue;
   final Color categoryColor;
   final String status;
-  // onChange of status method
   final void Function(String)? onStatusChange;
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: EdgeInsets.all(context.lg),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
           children: [
-            ProgressSection(
+            _ProgressSection(
               progress: progress,
               categoryColor: categoryColor,
               status: status,
               onStatusChange: onStatusChange,
             ),
-            SizedBox(height: context.md),
+            const SizedBox(height: AppSpacing.md),
             StatsRow(
               spent: spent,
               remaining: remaining,
@@ -602,10 +406,8 @@ class BottomSection extends StatelessWidget {
       );
 }
 
-// Progress Section Widget
-class ProgressSection extends StatefulWidget {
-  const ProgressSection({
-    super.key,
+class _ProgressSection extends StatelessWidget {
+  const _ProgressSection({
     required this.progress,
     required this.status,
     required this.categoryColor,
@@ -616,19 +418,6 @@ class ProgressSection extends StatefulWidget {
   final Color categoryColor;
   final String status;
   final void Function(String)? onStatusChange;
-
-  @override
-  State<ProgressSection> createState() => _ProgressSectionState();
-}
-
-class _ProgressSectionState extends State<ProgressSection> {
-  late String _status = '';
-
-  @override
-  void initState() {
-    super.initState();
-    _status = widget.status;
-  }
 
   Color _getStatusColor(String status, BuildContext context) {
     switch (status) {
@@ -664,105 +453,185 @@ class _ProgressSectionState extends State<ProgressSection> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '${(widget.progress * 100).toInt()}%',
+                    '${(progress * 100).toInt()}%',
                     style: context.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: widget.categoryColor,
+                      color: categoryColor,
                     ),
                   ),
-                  SizedBox(width: context.xs),
-                  PopupMenuButton<String>(
-                    padding: EdgeInsets.zero,
-                    icon: Container(
-                      padding: EdgeInsets.fromLTRB(
-                        context.xs,
-                        context.xs,
-                        context.md,
-                        context.xs,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: _getStatusColor(_status, context),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.arrow_drop_down,
-                            size: 18,
-                            color: _getStatusColor(_status, context),
-                          ),
-                          SizedBox(width: context.xs),
-                          Text(
-                            _status,
-                            style: context.textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: _getStatusColor(_status, context),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    offset: const Offset(0, 8),
-                    initialValue: _status,
-                    onSelected: (value) {
-                      widget.onStatusChange?.call(value);
-                      setState(() {
-                        _status = value;
-                      });
-                    },
-                    itemBuilder: (context) => [
-                      MenuItemWidget(
-                        icon: Icons.local_activity,
-                        text:
-                            'Active', // Using hardcoded string as no localization available
-                        value: 'active',
-                      ),
-                      MenuItemWidget(
-                        icon: Icons.star,
-                        text:
-                            'Achieved', // Using hardcoded string as no localization available
-                        value: 'achieved',
-                      ),
-                      MenuItemWidget(
-                        icon: Icons.sms_failed,
-                        text:
-                            'Failed', // Using hardcoded string as no localization available
-                        value: 'failed',
-                      ),
-                      MenuItemWidget(
-                        icon: Icons.terminal,
-                        text:
-                            'Terminated', // Using hardcoded string as no localization available
-                        value: 'terminated',
-                        // isDestructive: true,
-                      ),
-                      MenuItemWidget(
-                        icon: Icons.more_horiz,
-                        text: context.l10n.other,
-                        value: 'other',
-                        // isDestructive: true,
-                      ),
-                    ],
-                  ),
+                  const SizedBox(width: AppSpacing.xs),
+                  _buildStatusDropdown(context),
                 ],
               ),
             ],
           ),
-          SizedBox(height: context.sm),
+          const SizedBox(height: AppSpacing.sm),
           ClipRRect(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(ThemeConstants.radiusSmall),
             child: LinearProgressIndicator(
-              value: widget.progress.clamp(0.0, 1.0),
+              value: progress.clamp(0.0, 1.0),
               minHeight: 10,
               backgroundColor: context.colorScheme.surfaceContainerHighest,
-              valueColor: AlwaysStoppedAnimation<Color>(widget.categoryColor),
+              valueColor: AlwaysStoppedAnimation<Color>(categoryColor),
             ),
           ),
         ],
+      );
+
+  Widget _buildStatusDropdown(BuildContext context) => PopupMenuButton<String>(
+        padding: EdgeInsets.zero,
+        icon: Container(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.xs,
+            AppSpacing.xs,
+            AppSpacing.md,
+            AppSpacing.xs,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: _getStatusColor(status, context),
+            ),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.arrow_drop_down,
+                size: 18,
+                color: _getStatusColor(status, context),
+              ),
+              const SizedBox(width: AppSpacing.xs),
+              Text(
+                status,
+                style: context.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: _getStatusColor(status, context),
+                ),
+              ),
+            ],
+          ),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(ThemeConstants.radiusMedium),
+        ),
+        offset: const Offset(0, 8),
+        initialValue: status,
+        onSelected: onStatusChange,
+        itemBuilder: (context) => [
+          _buildPopupMenuItem(context, 'active', Icons.local_activity,
+              context.l10n.statusActive),
+          _buildPopupMenuItem(
+              context, 'achieved', Icons.star, context.l10n.statusAchieved),
+          _buildPopupMenuItem(
+              context, 'failed', Icons.sms_failed, context.l10n.statusFailed),
+          _buildPopupMenuItem(context, 'terminated', Icons.terminal,
+              context.l10n.statusTerminated),
+          _buildPopupMenuItem(
+              context, 'other', Icons.more_horiz, context.l10n.other),
+        ],
+      );
+
+  PopupMenuItem<String> _buildPopupMenuItem(
+    BuildContext context,
+    String value,
+    IconData icon,
+    String text,
+  ) =>
+      PopupMenuItem<String>(
+        value: value,
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 20,
+              color: context.colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Text(
+              text,
+              style: context.textTheme.bodyMedium?.copyWith(
+                color: context.colorScheme.onSurface,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      );
+}
+
+class _MenuButton extends StatelessWidget {
+  const _MenuButton({
+    required this.budgetGoalEntity,
+    this.onSelected,
+  });
+
+  final BudgetGoalEntity budgetGoalEntity;
+  final void Function(String)? onSelected;
+
+  @override
+  Widget build(BuildContext context) => DecoratedBox(
+        decoration: BoxDecoration(
+          color: context.colorScheme.onPrimary.withValues(alpha: 0.25),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: PopupMenuButton<String>(
+          icon: Icon(
+            Icons.more_vert_rounded,
+            size: 20,
+            color: context.colorScheme.onPrimary,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          offset: const Offset(0, 8),
+          padding: const EdgeInsets.all(AppSpacing.xs),
+          onSelected: onSelected,
+          itemBuilder: (context) => [
+            _buildMenuItem(
+                context, 'edit', Icons.edit_outlined, context.l10n.edit),
+            _buildMenuItem(context, 'expenses', Icons.edit_outlined,
+                context.l10n.expense), // Used 'Expense' key
+            _buildMenuItem(
+                context, 'share', Icons.share_outlined, context.l10n.share),
+            _buildMenuItem(context, 'archive', Icons.archive_outlined,
+                context.l10n.archive),
+            const PopupMenuDivider(),
+            _buildMenuItem(context, 'delete', Icons.delete_outline_rounded,
+                context.l10n.delete,
+                isDestructive: true),
+          ],
+        ),
+      );
+
+  PopupMenuItem<String> _buildMenuItem(
+    BuildContext context,
+    String value,
+    IconData icon,
+    String text, {
+    bool isDestructive = false,
+  }) =>
+      PopupMenuItem<String>(
+        value: value,
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 20,
+              color: isDestructive
+                  ? context.colorScheme.error
+                  : context.colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Text(
+              text,
+              style: context.textTheme.bodyMedium?.copyWith(
+                color: isDestructive
+                    ? context.colorScheme.error
+                    : context.colorScheme.onSurface,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
       );
 }

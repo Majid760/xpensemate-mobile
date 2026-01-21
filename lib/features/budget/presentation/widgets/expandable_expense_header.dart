@@ -30,7 +30,8 @@ class ExpandableExpenseHeader extends StatefulWidget {
   final double remaining;
 
   @override
-  State<ExpandableExpenseHeader> createState() => _ExpandableExpenseHeaderState();
+  State<ExpandableExpenseHeader> createState() =>
+      _ExpandableExpenseHeaderState();
 }
 
 class _ExpandableExpenseHeaderState extends State<ExpandableExpenseHeader> {
@@ -80,7 +81,8 @@ class _ExpandableExpenseHeaderState extends State<ExpandableExpenseHeader> {
                               letterSpacing: 0.5,
                               shadows: [
                                 Shadow(
-                                  color: context.colorScheme.shadow.withValues(alpha: 0.16),
+                                  color: context.colorScheme.shadow
+                                      .withValues(alpha: 0.16),
                                   offset: const Offset(0, 2),
                                   blurRadius: 4,
                                 ),
@@ -90,13 +92,16 @@ class _ExpandableExpenseHeaderState extends State<ExpandableExpenseHeader> {
                         ),
                         // Expand/Collapse indicator with animated rotation
                         AnimatedRotation(
-                          turns: widget.isExpanded ? 0.5 : 0, // Rotate 180 degrees when expanded
+                          turns: widget.isExpanded
+                              ? 0.5
+                              : 0, // Rotate 180 degrees when expanded
                           duration: const Duration(milliseconds: 400),
                           curve: Curves.easeInOutCubic,
                           child: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: context.colorScheme.onPrimary.withValues(alpha: 0.2),
+                              color: context.colorScheme.onPrimary
+                                  .withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Icon(
@@ -116,10 +121,12 @@ class _ExpandableExpenseHeaderState extends State<ExpandableExpenseHeader> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: context.colorScheme.onPrimary.withValues(alpha: 0.2),
+                        color: context.colorScheme.onPrimary
+                            .withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: context.colorScheme.onPrimary.withValues(alpha: 0.3),
+                          color: context.colorScheme.onPrimary
+                              .withValues(alpha: 0.3),
                         ),
                       ),
                       child: Text(
@@ -176,9 +183,12 @@ class _ExpandableExpenseHeaderState extends State<ExpandableExpenseHeader> {
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  context.colorScheme.onPrimary.withValues(alpha: 0),
-                                  context.colorScheme.onPrimary.withValues(alpha: 0.3),
-                                  context.colorScheme.onPrimary.withValues(alpha: 0),
+                                  context.colorScheme.onPrimary
+                                      .withValues(alpha: 0),
+                                  context.colorScheme.onPrimary
+                                      .withValues(alpha: 0.3),
+                                  context.colorScheme.onPrimary
+                                      .withValues(alpha: 0),
                                 ],
                               ),
                             ),
@@ -190,7 +200,8 @@ class _ExpandableExpenseHeaderState extends State<ExpandableExpenseHeader> {
                             spent: widget.totalSpent,
                             remaining: widget.remaining,
                             progress: widget.budgetAmount > 0
-                                ? (widget.totalSpent / widget.budgetAmount).clamp(0.0, 1.0)
+                                ? (widget.totalSpent / widget.budgetAmount)
+                                    .clamp(0.0, 1.0)
                                 : 0.0,
                           ),
                         ],
@@ -361,7 +372,8 @@ class _DetailedBudgetInfo extends StatelessWidget {
             Align(
               alignment: Alignment.centerRight,
               child: Text(
-                '${(progress * 100).toStringAsFixed(1)}% used',
+                context.l10n
+                    .percentageUsed((progress * 100).toStringAsFixed(1)),
                 style: TextStyle(
                   color: context.colorScheme.onPrimary,
                   fontSize: 12,
@@ -385,7 +397,8 @@ class _DetailedBudgetInfo extends StatelessWidget {
   }
 
   // Get gradient colors for progress bar based on progress
-  List<Color> _getProgressGradientColors(BuildContext context, double progress) {
+  List<Color> _getProgressGradientColors(
+      BuildContext context, double progress) {
     if (progress < 0.5) {
       // Green gradient for < 50% usage
       return [

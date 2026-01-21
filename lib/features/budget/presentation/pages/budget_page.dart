@@ -17,10 +17,38 @@ import 'package:xpensemate/features/budget/presentation/widgets/insight_card_sec
 class BudgetPage extends StatelessWidget {
   const BudgetPage({super.key});
 
+  static void showAddBudgetSheet({
+    required BuildContext context,
+    void Function(BudgetGoalEntity)? onSave,
+  }) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    AppBottomSheet.show<void>(
+      context: context,
+      title: context.l10n.addBudget,
+      config: BottomSheetConfig(
+        minHeight: screenHeight * 0.8,
+        maxHeight: screenHeight * 0.95,
+        padding: EdgeInsets.zero,
+        blurSigma: 5,
+        barrierColor: Colors.transparent,
+      ),
+      child: BudgetFormPage(
+        onSave: onSave ??
+            (goal) async {
+              await context.budgetCubit.createBudgetGoal(goal);
+              if (context.mounted) {
+                Navigator.of(context).pop();
+              }
+            },
+        onCancel: () => Navigator.of(context).pop(),
+      ),
+    );
+  }
+
   @override
-  Widget build(BuildContext context) => const Scaffold(
-        backgroundColor: Color(0xFFF8F9FE),
-        body: BudgetPageBody(),
+  Widget build(BuildContext context) => Scaffold(
+        backgroundColor: context.theme.scaffoldBackgroundColor,
+        body: const BudgetPageBody(),
       );
 }
 
@@ -119,31 +147,10 @@ class _BudgetPageContentState extends State<BudgetPageContent>
       );
 }
 
-// This function can be called from other pages or components
-// to trigger the add budget action
-void addBudget(
-    {required BuildContext context,
-    required void Function(BudgetGoalEntity)? onSave}) {
-  final screenHeight = MediaQuery.of(context).size.height;
-  AppBottomSheet.show<void>(
-    context: context,
-    title: 'Add Budget',
-    config: BottomSheetConfig(
-      minHeight: screenHeight * 0.8,
-      maxHeight: screenHeight * 0.95,
-      padding: EdgeInsets.zero,
-      blurSigma: 5,
-      barrierColor: Colors.transparent,
-    ),
-    child: BudgetFormPage(
-      onSave: onSave ??
-          (goal) async {
-            await context.budgetCubit.createBudgetGoal(goal);
-            if (context.mounted) {
-              Navigator.of(context).pop();
-            }
-          },
-      onCancel: () => Navigator.of(context).pop(),
-    ),
-  );
+// Function exposed for external calls
+void addBudget({
+  required BuildContext context,
+  void Function(BudgetGoalEntity)? onSave,
+}) {
+  BudgetPage.showAddBudgetSheet(context: context, onSave: onSave);
 }

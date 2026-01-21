@@ -5,6 +5,7 @@ import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
+import 'package:xpensemate/core/widget/custom_app_loader.dart';
 import 'package:xpensemate/core/widget/error_state_widget.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_expense_cubit.dart';
@@ -12,7 +13,6 @@ import 'package:xpensemate/features/budget/presentation/cubit/budget_expense_sta
 import 'package:xpensemate/features/budget/presentation/widgets/expandable_expense_header.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/expense_card.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/search_filter.dart';
-import 'package:xpensemate/core/widget/custom_app_loader.dart';
 
 class ExpenseScreen extends StatefulWidget {
   const ExpenseScreen({super.key, required this.budgetGoal});
@@ -345,138 +345,5 @@ class _AnimatedWidgetState extends State<AnimatedWidget>
           position: _slideAnimation,
           child: widget.child,
         ),
-      );
-}
-
-// Budget Progress Bar with shadow
-class BudgetProgressBar extends StatelessWidget {
-  const BudgetProgressBar({
-    super.key,
-    required this.category,
-    required this.subtitle,
-    required this.budget,
-    required this.spent,
-    required this.remaining,
-  });
-  final String category;
-  final String subtitle;
-  final double budget;
-  final double spent;
-  final double remaining;
-
-  @override
-  Widget build(BuildContext context) {
-    final progress = spent / budget;
-    final colorScheme = context.colorScheme;
-    final textTheme = context.textTheme;
-
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: colorScheme.outlineVariant),
-        boxShadow: [
-          BoxShadow(
-            color: colorScheme.secondaryFixed.withValues(alpha: 0.06),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              RichText(
-                text: TextSpan(
-                  style: textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.onSurface,
-                  ),
-                  children: [
-                    TextSpan(text: category),
-                    TextSpan(
-                      text: '  $subtitle',
-                      style: textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.normal,
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Wrap(
-                spacing: AppSpacing.sm,
-                runSpacing: 8,
-                children: [
-                  _BudgetLabel(context.l10n.budget, budget,
-                      colorScheme.onSurfaceVariant),
-                  _BudgetLabel(
-                      context.l10n.spent, spent, colorScheme.onSurfaceVariant),
-                  _BudgetLabel(
-                      context.l10n.remaining, remaining, context.primaryColor),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.md),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: colorScheme.secondary.withValues(alpha: 0.2),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: LinearProgressIndicator(
-                value: progress.clamp(0.0, 1.0), // Clamp value between 0 and 1
-                backgroundColor: colorScheme.surfaceContainerHighest,
-                valueColor: AlwaysStoppedAnimation<Color>(context.primaryColor),
-                minHeight: 10,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _BudgetLabel extends StatelessWidget {
-  const _BudgetLabel(this.label, this.amount, this.color);
-  final String label;
-  final double amount;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            label,
-            style: context.textTheme.bodySmall?.copyWith(
-              color: context.colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          Text(
-            '\$${amount.toStringAsFixed(2)}',
-            style: context.textTheme.bodyMedium?.copyWith(
-              color: color,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
       );
 }

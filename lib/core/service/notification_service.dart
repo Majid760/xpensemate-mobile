@@ -8,6 +8,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:xpensemate/core/service/service_locator.dart';
+import 'package:xpensemate/core/theme/colors/app_colors.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 
 class NotificationService {
@@ -189,6 +190,9 @@ class NotificationService {
       priority: priority == NotificationPriority.high
           ? Priority.high
           : Priority.defaultPriority,
+      color: AppColors.primary,
+      icon: '@mipmap/ic_launcher',
+      largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
     );
 
     const iosDetails = DarwinNotificationDetails(
@@ -227,6 +231,9 @@ class NotificationService {
     const androidDetails = AndroidNotificationDetails(
       _scheduledChannelId,
       'Scheduled Notifications',
+      color: AppColors.primary,
+      icon: '@mipmap/ic_launcher',
+      largeIcon: DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
     );
 
     const iosDetails = DarwinNotificationDetails(
@@ -262,6 +269,9 @@ class NotificationService {
     const androidDetails = AndroidNotificationDetails(
       _scheduledChannelId,
       'Scheduled Notifications',
+      color: AppColors.primary,
+      icon: '@mipmap/ic_launcher',
+      largeIcon: DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
     );
 
     const iosDetails = DarwinNotificationDetails(

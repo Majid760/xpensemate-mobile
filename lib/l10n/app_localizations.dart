@@ -507,7 +507,7 @@ abstract class AppLocalizations {
   /// No description provided for @errorGeneric.
   ///
   /// In en, this message translates to:
-  /// **'Something went wrong. Please try again.'**
+  /// **'Something went wrong'**
   String get errorGeneric;
 
   /// No description provided for @errorNetwork.
@@ -1401,7 +1401,7 @@ abstract class AppLocalizations {
   /// Expenses label
   ///
   /// In en, this message translates to:
-  /// **'Expenses'**
+  /// **'Expense'**
   String get expense;
 
   /// Archive button label
@@ -1968,7 +1968,7 @@ abstract class AppLocalizations {
   /// **'Edit Expense'**
   String get editExpense;
 
-  /// No description provided for @addCustomCategory.
+  /// Label for adding a custom category
   ///
   /// In en, this message translates to:
   /// **'+ Add Custom Category'**
@@ -2160,6 +2160,48 @@ abstract class AppLocalizations {
   /// **'Transaction Reminders'**
   String get transactionReminders;
 
+  /// Days remaining until deadline
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day left} other{{count} days left}}'**
+  String daysLeft(int count);
+
+  /// Deadline is today
+  ///
+  /// In en, this message translates to:
+  /// **'Due today'**
+  String get dueToday;
+
+  /// Overdue duration
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue by {count} {unit}'**
+  String overdueBy(int count, String unit);
+
+  /// Active status
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get statusActive;
+
+  /// Achieved status
+  ///
+  /// In en, this message translates to:
+  /// **'Achieved'**
+  String get statusAchieved;
+
+  /// Failed status
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get statusFailed;
+
+  /// Terminated status
+  ///
+  /// In en, this message translates to:
+  /// **'Terminated'**
+  String get statusTerminated;
+
   /// Description for transaction reminders setting
   ///
   /// In en, this message translates to:
@@ -2238,11 +2280,137 @@ abstract class AppLocalizations {
   /// **'Recurring Transactions'**
   String get recurringTransactions;
 
+  /// Label for note field
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get note;
+
+  /// Hint text for note field
+  ///
+  /// In en, this message translates to:
+  /// **'Add any additional notes'**
+  String get addNotes;
+
+  /// Label for priority field
+  ///
+  /// In en, this message translates to:
+  /// **'Priority'**
+  String get priorityLabel;
+
+  /// Label for status field
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get statusLabel;
+
+  /// Hint text for priority dropdown
+  ///
+  /// In en, this message translates to:
+  /// **'Select Priority'**
+  String get selectPriority;
+
+  /// Hint text for status dropdown
+  ///
+  /// In en, this message translates to:
+  /// **'Select Status'**
+  String get selectStatus;
+
+  /// Hint text for date picker
+  ///
+  /// In en, this message translates to:
+  /// **'Select Target Date'**
+  String get selectTargetDate;
+
+  /// Error message for form validation
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill out all required fields'**
+  String get fillAllRequired;
+
+  /// Error message for amount validation
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid amount'**
+  String get enterValidAmount;
+
+  /// Critical priority label
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get criticalPriority;
+
   /// Description for recurring transactions setting
   ///
   /// In en, this message translates to:
   /// **'Manage your recurring transactions'**
   String get manageRecurringDesc;
+
+  /// No description provided for @editBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Budget'**
+  String get editBudget;
+
+  /// No description provided for @errorLoadingBudgets.
+  ///
+  /// In en, this message translates to:
+  /// **'Error while loading budgets!'**
+  String get errorLoadingBudgets;
+
+  /// No description provided for @noBudgetsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No budget goals found!'**
+  String get noBudgetsFound;
+
+  /// No description provided for @noMoreBudgets.
+  ///
+  /// In en, this message translates to:
+  /// **'No more budgets!'**
+  String get noMoreBudgets;
+
+  /// Percentage of budget used
+  ///
+  /// In en, this message translates to:
+  /// **'{percentage}% used'**
+  String percentageUsed(String percentage);
+
+  /// No description provided for @allCaughtUp.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re all caught up!'**
+  String get allCaughtUp;
+
+  /// No description provided for @filterByPaymentMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by Payment Method'**
+  String get filterByPaymentMethod;
+
+  /// No description provided for @all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
+
+  /// No description provided for @cash.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash'**
+  String get cash;
+
+  /// No description provided for @creditCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit Card'**
+  String get creditCard;
+
+  /// No description provided for @debitCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Debit Card'**
+  String get debitCard;
 
   /// Description for privacy policy setting
   ///

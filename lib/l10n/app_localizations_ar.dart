@@ -1093,34 +1093,28 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String daysLeft(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count days left',
-      one: '1 day left',
-    );
-    return '$_temp0';
+    return '';
   }
 
   @override
-  String get dueToday => 'Due today';
+  String get dueToday => '';
 
   @override
   String overdueBy(int count, String unit) {
-    return 'Overdue by $count $unit';
+    return '';
   }
 
   @override
-  String get statusActive => 'Active';
+  String get statusActive => '';
 
   @override
-  String get statusAchieved => 'Achieved';
+  String get statusAchieved => '';
 
   @override
-  String get statusFailed => 'Failed';
+  String get statusFailed => '';
 
   @override
-  String get statusTerminated => 'Terminated';
+  String get statusTerminated => '';
 
   @override
   String get transactionRemindersDesc => 'احصل على تذكير لتدوين معاملاتك';
@@ -1163,72 +1157,72 @@ class AppLocalizationsAr extends AppLocalizations {
   String get recurringTransactions => 'المعاملات المتكررة';
 
   @override
-  String get note => 'Note';
+  String get note => '';
 
   @override
-  String get addNotes => 'Add any additional notes';
+  String get addNotes => '';
 
   @override
-  String get priorityLabel => 'Priority';
+  String get priorityLabel => '';
 
   @override
-  String get statusLabel => 'Status';
+  String get statusLabel => '';
 
   @override
-  String get selectPriority => 'Select Priority';
+  String get selectPriority => '';
 
   @override
-  String get selectStatus => 'Select Status';
+  String get selectStatus => '';
 
   @override
-  String get selectTargetDate => 'Select Target Date';
+  String get selectTargetDate => '';
 
   @override
-  String get fillAllRequired => 'Please fill out all required fields';
+  String get fillAllRequired => '';
 
   @override
-  String get enterValidAmount => 'Please enter a valid amount';
+  String get enterValidAmount => '';
 
   @override
-  String get criticalPriority => 'Critical';
+  String get criticalPriority => '';
 
   @override
   String get manageRecurringDesc => 'أدر معاملاتك المتكررة';
 
   @override
-  String get editBudget => 'Edit Budget';
+  String get editBudget => '';
 
   @override
-  String get errorLoadingBudgets => 'Error while loading budgets!';
+  String get errorLoadingBudgets => '';
 
   @override
-  String get noBudgetsFound => 'No budget goals found!';
+  String get noBudgetsFound => '';
 
   @override
-  String get noMoreBudgets => 'No more budgets!';
+  String get noMoreBudgets => '';
 
   @override
   String percentageUsed(String percentage) {
-    return '$percentage% used';
+    return '';
   }
 
   @override
-  String get allCaughtUp => 'You\'re all caught up!';
+  String get allCaughtUp => '';
 
   @override
-  String get filterByPaymentMethod => 'Filter by Payment Method';
+  String get filterByPaymentMethod => 'تصفية حسب طريقة الدفع';
 
   @override
-  String get all => 'All';
+  String get all => 'الكل';
 
   @override
-  String get cash => 'Cash';
+  String get cash => 'نقد';
 
   @override
-  String get creditCard => 'Credit Card';
+  String get creditCard => 'بطاقة ائتمان';
 
   @override
-  String get debitCard => 'Debit Card';
+  String get debitCard => 'بطاقة خصم';
 
   @override
   String get privacyPolicyDesc => 'اقرأ سياسة الخصوصية';

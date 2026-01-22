@@ -279,7 +279,7 @@ class _ReactiveAppFieldState extends State<ReactiveAppField> {
       case FieldType.phone:
         return 'Enter your phone number';
       case FieldType.search:
-        return 'Search...';
+        return context.l10n.searchPlaceholder;
       case FieldType.number:
       case FieldType.decimal:
         return 'Enter a number';

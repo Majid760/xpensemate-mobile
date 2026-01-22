@@ -797,6 +797,55 @@
   "@transactionReminders": {
     "description": "Transaction reminders setting label"
   },
+  "daysLeft": "{count, plural, =1{1 day left} other{{count} days left}}",
+  "@daysLeft": {
+    "description": "Days remaining until deadline",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "dueToday": "Due today",
+  "@dueToday": {
+    "description": "Deadline is today"
+  },
+  "overdueBy": "Overdue by {count} {unit}",
+  "@overdueBy": {
+    "description": "Overdue duration",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      },
+      "unit": {
+        "type": "String",
+        "example": "days"
+      }
+    }
+  },
+  "statusActive": "Active",
+  "@statusActive": {
+    "description": "Active status"
+  },
+  "statusAchieved": "Achieved",
+  "@statusAchieved": {
+    "description": "Achieved status"
+  },
+  "statusFailed": "Failed",
+  "@statusFailed": {
+    "description": "Failed status"
+  },
+  "statusTerminated": "Terminated",
+  "@statusTerminated": {
+    "description": "Terminated status"
+  },
+  "edit": "Edit",
+  "delete": "Delete",
+  "share": "Share",
+  "archive": "Archive",
+  "expense": "Expense",
   "transactionRemindersDesc": "Get reminded to log your transactions",
   "@transactionRemindersDesc": {
     "description": "Description for transaction reminders setting"
@@ -849,10 +898,88 @@
   "@recurringTransactions": {
     "description": "Recurring transactions setting label"
   },
+  "addCustomCategory": "+ Add Custom Category",
+  "@addCustomCategory": {
+    "description": "Label for adding a custom category"
+  },
+  "note": "Note",
+  "@note": {
+    "description": "Label for note field"
+  },
+  "addNotes": "Add any additional notes",
+  "@addNotes": {
+    "description": "Hint text for note field"
+  },
+  "priorityLabel": "Priority",
+  "@priorityLabel": {
+    "description": "Label for priority field"
+  },
+  "statusLabel": "Status",
+  "@statusLabel": {
+    "description": "Label for status field"
+  },
+  "selectPriority": "Select Priority",
+  "@selectPriority": {
+    "description": "Hint text for priority dropdown"
+  },
+  "selectStatus": "Select Status",
+  "@selectStatus": {
+    "description": "Hint text for status dropdown"
+  },
+  "selectTargetDate": "Select Target Date",
+  "@selectTargetDate": {
+    "description": "Hint text for date picker"
+  },
+  "fillAllRequired": "Please fill out all required fields",
+  "@fillAllRequired": {
+    "description": "Error message for form validation"
+  },
+  "enterValidAmount": "Please enter a valid amount",
+  "@enterValidAmount": {
+    "description": "Error message for amount validation"
+  },
+  "highPriority": "High",
+  "@highPriority": {
+    "description": "High priority label"
+  },
+  "mediumPriority": "Medium",
+  "@mediumPriority": {
+    "description": "Medium priority label"
+  },
+  "lowPriority": "Low",
+  "@lowPriority": {
+    "description": "Low priority label"
+  },
+  "criticalPriority": "Critical",
+  "@criticalPriority": {
+    "description": "Critical priority label"
+  },
   "manageRecurringDesc": "Manage your recurring transactions",
   "@manageRecurringDesc": {
     "description": "Description for recurring transactions setting"
   },
+  "editBudget": "Edit Budget",
+  "errorGeneric": "Something went wrong",
+  "tryAgain": "Try Again",
+  "errorLoadingBudgets": "Error while loading budgets!",
+  "noBudgetsFound": "No budget goals found!",
+  "noMoreBudgets": "No more budgets!",
+  "percentageUsed": "{percentage}% used",
+  "@percentageUsed": {
+    "description": "Percentage of budget used",
+    "placeholders": {
+      "percentage": {
+        "type": "String",
+        "example": "50.0"
+      }
+    }
+  },
+  "allCaughtUp": "You're all caught up!",
+  "filterByPaymentMethod": "Filter by Payment Method",
+  "all": "All",
+  "cash": "Cash",
+  "creditCard": "Credit Card",
+  "debitCard": "Debit Card",
   "privacyPolicyDesc": "Read our privacy policy",
   "@privacyPolicyDesc": {
     "description": "Description for privacy policy setting"

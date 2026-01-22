@@ -110,7 +110,12 @@ class _BudgetPageContentState extends State<BudgetPageContent>
                     context.budgetCubit.getBudgetGoalsInsights(period: value),
               ),
               SliverPadding(
-                padding: EdgeInsets.all(context.md),
+                padding: EdgeInsets.fromLTRB(
+                  context.md,
+                  context.xs,
+                  context.md,
+                  context.xs,
+                ),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
                     ExpandableStatsCard(

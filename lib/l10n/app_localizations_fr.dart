@@ -1111,6 +1111,31 @@ class AppLocalizationsFr extends AppLocalizations {
   String get transactionReminders => 'Rappels de Transaction';
 
   @override
+  String daysLeft(int count) {
+    return '';
+  }
+
+  @override
+  String get dueToday => '';
+
+  @override
+  String overdueBy(int count, String unit) {
+    return '';
+  }
+
+  @override
+  String get statusActive => '';
+
+  @override
+  String get statusAchieved => '';
+
+  @override
+  String get statusFailed => '';
+
+  @override
+  String get statusTerminated => '';
+
+  @override
   String get transactionRemindersDesc =>
       'Rappel quotidien pour enregistrer vos dépenses';
 
@@ -1152,7 +1177,72 @@ class AppLocalizationsFr extends AppLocalizations {
   String get recurringTransactions => 'Transactions Récurrentes';
 
   @override
+  String get note => '';
+
+  @override
+  String get addNotes => '';
+
+  @override
+  String get priorityLabel => '';
+
+  @override
+  String get statusLabel => '';
+
+  @override
+  String get selectPriority => '';
+
+  @override
+  String get selectStatus => '';
+
+  @override
+  String get selectTargetDate => '';
+
+  @override
+  String get fillAllRequired => '';
+
+  @override
+  String get enterValidAmount => '';
+
+  @override
+  String get criticalPriority => '';
+
+  @override
   String get manageRecurringDesc => 'Gérer les dépenses et revenus récurrents';
+
+  @override
+  String get editBudget => '';
+
+  @override
+  String get errorLoadingBudgets => '';
+
+  @override
+  String get noBudgetsFound => '';
+
+  @override
+  String get noMoreBudgets => '';
+
+  @override
+  String percentageUsed(String percentage) {
+    return '';
+  }
+
+  @override
+  String get allCaughtUp => '';
+
+  @override
+  String get filterByPaymentMethod => 'Filtrer par méthode de paiement';
+
+  @override
+  String get all => 'Tous';
+
+  @override
+  String get cash => 'Espèces';
+
+  @override
+  String get creditCard => 'Carte de crédit';
+
+  @override
+  String get debitCard => 'Carte de débit';
 
   @override
   String get privacyPolicyDesc => 'Lire notre politique de confidentialité';

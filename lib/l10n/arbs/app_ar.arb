@@ -3,21 +3,19 @@
   "@@last_modified": "2024-01-15T10:00:00.000Z",
   "@@author": "Majid",
   "@@version": "1.0.0",
-  
   "@@navigation_section": "Navigation related strings",
   "appTitle": "Xpensemate",
   "@appTitle": {
-      "description": "The title of the application"
+    "description": "The title of the application"
   },
   "home": "الرئيسية",
   "profile": "الملف الشخصي",
   "settings": "الإعدادات",
   "about": "حول",
-  
   "@@common_actions_section": "Common action buttons and labels",
   "save": "حفظ",
   "@save": {
-      "description": "Save button text used throughout the app"
+    "description": "Save button text used throughout the app"
   },
   "cancel": "إلغاء",
   "delete": "حذف",
@@ -38,12 +36,9 @@
   "expenseDeletedFailed": "فشل حذف النفقة!",
   "expenseUpdatedFailed": "فشل تحديث النفقة!",
   "expenseCreatedFailed": "فشل إنشاء النفقة!",
-  
   "@@expense_section": "Expense related strings",
   "currencySymbol": "$",
-  
   "or": "أو",
-  
   "@@authentication_section": "Authentication and user account strings",
   "login": "تسجيل الدخول",
   "logout": "تسجيل الخروج",
@@ -51,13 +46,13 @@
   "email": "البريد الإلكتروني",
   "dontHaveAccount": "ليس لديك حساب؟",
   "@email": {
-      "description": "Email input field label",
-      "context": "Used in login and registration forms"
+    "description": "Email input field label",
+    "context": "Used in login and registration forms"
   },
   "hintEmail": "البريد الإلكتروني",
   "@hintEmail": {
-      "description": "Hint text for email input field",
-      "context": "Shown in the email TextField when it's empty"
+    "description": "Hint text for email input field",
+    "context": "Shown in the email TextField when it's empty"
   },
   "password": "كلمة المرور",
   "confirmPassword": "تأكيد كلمة المرور",
@@ -68,8 +63,8 @@
   "registerNow": "إنشاء حساب",
   "hintPassword": "كلمة المرور",
   "@hintPassword": {
-      "description": "Hint text for password input field",
-      "context": "Shown in the password TextField when it's empty"
+    "description": "Hint text for password input field",
+    "context": "Shown in the password TextField when it's empty"
   },
   "forgotPassword": "نسيت كلمة المرور؟",
   "forgotPasswordTitle": "إعادة تعيين كلمة المرور",
@@ -84,18 +79,17 @@
   "verificationInstructions": "يرجى التحقق من بريدك الإلكتروني للحصول على رابط التحقق.",
   "resendVerificationEmail": "إعادة إرسال بريد التحقق",
   "backToLogin": "العودة لتسجيل الدخول",
-  
   "@@validation_section": "Form validation error messages",
   "passwordOrEmail": "كلمة المرور أو البريد الإلكتروني غير صحيح!",
   "emailRequired": "البريد الإلكتروني مطلوب",
   "@emailRequired": {
-      "description": "Error message when email field is empty",
-      "context": "Shown when user submits the form without entering an email"
+    "description": "Error message when email field is empty",
+    "context": "Shown when user submits the form without entering an email"
   },
   "passwordRequired": "كلمة المرور مطلوبة",
   "@passwordRequired": {
-      "description": "Error message when password field is empty",
-      "context": "Shown when user submits the form without entering a password"
+    "description": "Error message when password field is empty",
+    "context": "Shown when user submits the form without entering a password"
   },
   "fieldRequired": "هذا الحقل مطلوب",
   "invalidEmail": "يرجى إدخال بريد إلكتروني صحيح",
@@ -107,13 +101,11 @@
   "verifyEmail": "لقد أرسلنا بريد التحقق إلى عنوان بريدك الإلكتروني. يرجى التحقق من صندوق الوارد.",
   "verifyEmailSuccess": "تم إرسال بريد التحقق بنجاح!",
   "verifyEmailFailed": "فشل إرسال بريد التحقق. يرجى المحاولة مرة أخرى.",
-  
   "@@error_messages_section": "General error messages",
   "errorGeneric": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
   "errorNetwork": "خطأ في الشبكة. يرجى التحقق من اتصالك.",
   "errorTimeout": "انتهت مهلة الطلب. يرجى المحاولة مرة أخرى.",
   "errorNotFound": "المورد غير موجود.",
-  
   "@@budget_section": "Budget related strings",
   "budgetGoalsLoading": "جاري التحميل...",
   "budgetGoalsRetry": "إعادة المحاولة",
@@ -121,111 +113,95 @@
   "budgetGoalsEmptyTitle": "لا توجد أهداف للميزانية بعد",
   "budgetGoalsEmptySubtitle": "قم بإنشاء أول هدف للميزانية للبدء",
   "budgetGoalsAllLoaded": "تم تحميل جميع أهداف الميزانية",
-  
   "@@success_messages_section": "Success feedback messages",
   "saveSuccess": "تم الحفظ بنجاح!",
   "deleteSuccess": "تم الحذف بنجاح!",
   "updateSuccess": "تم التحديث بنجاح!",
-  
   "@@placeholders_section": "Placeholder texts and empty states",
   "searchPlaceholder": "بحث...",
   "noDataAvailable": "لا توجد بيانات متاحة",
   "emptyListMessage": "لا يوجد شيء لعرضه هنا بعد",
-  
   "@@dialog_messages_section": "Dialog and confirmation messages",
   "confirmDelete": "هل أنت متأكد من حذف هذا العنصر؟",
   "@confirmDelete": {
-      "description": "Confirmation dialog when user tries to delete an item",
-      "context": "Shown in delete confirmation dialogs"
+    "description": "Confirmation dialog when user tries to delete an item",
+    "context": "Shown in delete confirmation dialogs"
   },
   "confirmLogout": "هل أنت متأكد من تسجيل الخروج؟",
   "deleteWarning": "لا يمكن التراجع عن هذا الإجراء.",
-  
   "@@parametrized_section": "Messages with parameters and pluralization",
   "welcomeUser": "مرحباً، {userName}!",
   "@welcomeUser": {
-      "description": "Welcome message with user name",
-      "placeholders": {
-          "userName": {
-              "type": "String",
-              "example": "John"
-          }
+    "description": "Welcome message with user name",
+    "placeholders": {
+      "userName": {
+        "type": "String",
+        "example": "John"
       }
+    }
   },
-  
   "itemCount": "{count, plural, =0{لا توجد عناصر} =1{عنصر واحد} other{{count} عنصر}}",
   "@itemCount": {
-      "description": "Shows count of items with proper pluralization",
-      "placeholders": {
-          "count": {
-              "type": "int",
-              "example": "5"
-          }
+    "description": "Shows count of items with proper pluralization",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
       }
+    }
   },
-  
   "lastUpdated": "آخر تحديث: {date}",
   "@lastUpdated": {
-      "description": "Shows when something was last updated",
-      "placeholders": {
-          "date": {
-              "type": "DateTime",
-              "format": "yMd",
-              "example": "1/15/2024"
-          }
+    "description": "Shows when something was last updated",
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "yMd",
+        "example": "1/15/2024"
       }
+    }
   },
-  
   "@@theme_settings_section": "Theme and appearance settings",
   "themeMode": "وضع المظهر",
   "lightTheme": "فاتح",
   "darkTheme": "داكن",
   "systemTheme": "النظام",
-  
   "@@language_settings_section": "Language and localization settings",
   "language": "اللغة",
   "selectLanguage": "اختر اللغة",
   "selectCurrency": "اختر العملة",
   "languageChanged": "تم تغيير اللغة بنجاح",
-
   "totalSpent": "إجمالي الإنفاق",
   "average": "المتوسط",
   "transactions": "المعاملات",
   "budgetGoalLabel": "هدف الميزانية: {amount}",
   "thisMonth": "هذا الشهر",
   "categories": "الفئات",
-
   "account": "الحساب",
   "preferences": "التفضيلات",
   "support": "الدعم",
-
   "editProfile": "تعديل الملف الشخصي",
   "updatePersonalInfo": "تحديث معلوماتك الشخصية",
   "privacySecurity": "الخصوصية والأمان",
   "managePrivacySettings": "إدارة إعدادات الخصوصية",
   "notifications": "الإشعارات",
   "configureNotifications": "تكوين إشعاراتك",
-
   "appSettings": "تخصيص تفضيلات التطبيق",
-
   "addWidgets": "إضافة أدوات",
-  "addWidgetsDescription": "أضف أدوات إلى شاشتك الرئيسية لتسهيل الوصول إلى ميزاتك الأكثر استخداماً.",  
-
+  "addWidgetsDescription": "أضف أدوات إلى شاشتك الرئيسية لتسهيل الوصول إلى ميزاتك الأكثر استخداماً.",
   "choosePreferredLanguage": "اختر لغتك المفضلة",
   "darkMode": "الوضع الداكن",
   "switchBetweenLightAndDarkTheme": "التبديل بين السمة الفاتحة والداكنة",
-
   "helpSupport": "المساعدة والدعم",
   "getHelpWhenNeeded": "احصل على المساعدة عند الحاجة",
   "learnMoreAboutExpenseTracker": "تعرف على المزيد حول Xpensemate",
   "signOut": "تسجيل الخروج",
   "logoutFromAccount": "تحقق من خروجك من الحساب",
   "completeYourProfile": "أكمل ملفك الشخصي",
-
   "expenseTracker": "Xpensemate",
   "version": "الإصدار 1.0.0 • بناء 2024.1",
   "craftedWithLove": "صنع بـ ❤️ لتتبع أذكى للنفقات",
-  "moto" : "تتبع بذكاء، أنفق بحكمة",
+  "moto": "تتبع بذكاء، أنفق بحكمة",
   "changeProfilePhoto": "تغيير الصورة الشخصية",
   "gotIt": "فهمت!",
   "areYouSureYouWantToSignOut": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
@@ -234,11 +210,10 @@
   "signOutConfirmationMessage": "سيتم تسجيل خروجك من حسابك وستحتاج إلى تسجيل الدخول مرة أخرى للمتابعة.",
   "signOutConfirmationButton": "تسجيل الخروج",
   "signOutConfirmationCancel": "إلغاء",
-
   "fullName": "الاسم الكامل",
   "gender": "الجنس",
   "dateOfBirth": "تاريخ الميلاد",
-  "phoneNumber": "رقم الهاتف", 
+  "phoneNumber": "رقم الهاتف",
   "bio": "السيرة الذاتية",
   "saveChanges": "حفظ التغييرات",
   "profileUpdatedSuccessfully": "تم تحديث الملف الشخصي بنجاح",
@@ -248,15 +223,12 @@
   "nameIsRequired": "الاسم مطلوب",
   "nameMustBeAtLeast4Characters": "يجب أن يكون الاسم 4 أحرف على الأقل",
   "phoneNumberMustBeAtLeast10Digits": "يجب أن يكون رقم الهاتف 10 أرقام على الأقل",
-  "logoutConfirmationMessage" : "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+  "logoutConfirmationMessage": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
   "userSessionNotFound": "جلسة المستخدم غير موجودة",
   "ageMinError": "يجب أن يكون عمرك 7 سنوات على الأقل",
   "ageMaxError": "لا يمكنك أن تكون أكبر من 100 عام",
   "dobRequired": "تاريخ الميلاد مطلوب",
-
   "seeDetail": "شاهد التفاصيل",
-
-  
   "@@image_picker_section": "Image picker related strings",
   "selectImage": "اختر صورة",
   "gallery": "المعرض",
@@ -302,7 +274,6 @@
       }
     }
   },
-  
   "@@permission_section": "Permission dialog related strings",
   "permissionRequired": "إذن مطلوب",
   "permissionRationale": "نحتاج إلى هذا الإذن لنقدم لك أفضل تجربة.",
@@ -313,15 +284,12 @@
   "permissionDeniedMessage": "يرجى تفعيل هذا الإذن من الإعدادات لاستخدام هذه الميزة.",
   "cameraPermissionMessage": "نحتاج إلى الوصول للكاميرا لالتقاط الصور.",
   "galleryPermissionMessage": "نحتاج إلى الوصول للمعرض لاختيار الصور.",
-
   "personalInformation": "أدخل سيرتك الذاتية",
   "day": "يوم",
-
   "male": "ذكر",
   "female": "أنثى",
   "other": "آخر",
   "enterPhoneNumber": "أدخل رقم الهاتف",
-
   "phoneNumberMinLength": "يجب أن يكون رقم الهاتف على الأقل {min} خانة",
   "@phoneNumberMinLength": {
     "description": "Phone number min length message",
@@ -332,9 +300,8 @@
       }
     }
   },
-
-  "phoneNumberTooShort" : "رقم الهاتف غير صالح (قصير جداً)",
-  "selectGender":"اختر الجنس",
+  "phoneNumberTooShort": "رقم الهاتف غير صالح (قصير جداً)",
+  "selectGender": "اختر الجنس",
   "nameMinLength": "يجب أن يكون الاسم {min} أحرف على الأقل",
   "@nameMinLength": {
     "description": "Name min length message",
@@ -345,14 +312,13 @@
       }
     }
   },
-  "searchCountry":"بحث عن دولة",
-  "noCountryFound":"لم يتم العثور على الدولة",
+  "searchCountry": "بحث عن دولة",
+  "noCountryFound": "لم يتم العثور على الدولة",
   "tellUsAboutYourself": "خبرنا عن نفسك...",
   "changePhoto": "تغيير الصورة",
   "saving": "جاري الحفظ...",
-  "errorSavingProfile" : "خطأ في حفظ الملف الشخصي",
-  "errorWhileOpeningUrl" : "الرابط غير صالح",
-
+  "errorSavingProfile": "خطأ في حفظ الملف الشخصي",
+  "errorWhileOpeningUrl": "الرابط غير صالح",
   "@@dashboard_section": "Dashboard related strings",
   "dashboard": "لوحة المعلومات",
   "@dashboard": {
@@ -443,11 +409,7 @@
     "description": "Message when no trend data is available"
   },
   "of12": "من",
-
   "budget": "الميزانية",
-  "@budget": {
-    "description": "Budget label"
-  },
   "@budget": {
     "description": "Budget label"
   },
@@ -455,7 +417,7 @@
   "@expenses": {
     "description": "Expenses label"
   },
-  "expense":"نفقات",
+  "expense": "نفقات",
   "@expense": {
     "description": "Expenses label"
   },
@@ -471,7 +433,6 @@
   "@cumulative": {
     "description": "Label for cumulative values in charts"
   },
-  
   "goodMorning": "صباح الخير",
   "@goodMorning": {
     "description": "Morning greeting shown before noon"
@@ -512,7 +473,6 @@
   "@mediumPriorityAbbr": {
     "description": "Abbreviated label for Medium priority"
   },
-
   "@@active_budget_section": "Active budget section related strings",
   "activeBudgets": "الميزانيات النشطة",
   "@activeBudgets": {
@@ -562,10 +522,9 @@
   "@nearLimit": {
     "description": "Budget status when near the limit"
   },
-  
   "@@weekdays_section": "Day names and abbreviations",
   "monday": "الإثنين",
-  "tuesday": "الثلاثاء", 
+  "tuesday": "الثلاثاء",
   "wednesday": "الأربعاء",
   "thursday": "الخميس",
   "friday": "الجمعة",
@@ -578,7 +537,6 @@
   "fri": "جمعة",
   "sat": "سبت",
   "sun": "أحد",
-
   "description": "الوصف",
   "@description": {
     "description": "Expense description label"
@@ -615,15 +573,15 @@
   "@invalidAmount": {
     "description": "Invalid amount error message"
   },
-  "productAnalytic" : "تحليلات المنتج",
+  "productAnalytic": "تحليلات المنتج",
   "@productAnalytic": {
     "description": "Product Analytics"
   },
-
   "fieldTooShort": "هذا الحقل قصير جداً (حد أدنى 2 حرف)",
   "fieldTooLong": "هذا الحقل طويل جداً (حد أقصى 100 حرف)",
-
-  "@@budget_insights_section": { "description": "Budget insights and statistics strings" },
+  "@@budget_insights_section": {
+    "description": "Budget insights and statistics strings"
+  },
   "overview": "نظرة عامة",
   "@overview": {
     "description": "Title for the budget overview section"
@@ -698,7 +656,6 @@
   "@noDeadlines": {
     "description": "Text shown when there are no deadlines"
   },
-
   "@@onboarding_section": "Onboarding flow strings",
   "onboardingTitle1": "تتبع نفقاتك",
   "onboardingDesc1": "تتبع كل قرش تنفقه وأدر أموالك بسهولة.",
@@ -708,7 +665,6 @@
   "onboardingDesc3": "تصور عادات إنفاقك مع رسوم بيانية وتقارير مفصلة.",
   "getStarted": "البدء",
   "skip": "تخطي",
-
   "@@subscription_section": "Subscription and Paywall strings",
   "premiumTitle": "الترقية إلى بريميوم",
   "premiumSubtitle": "افتح الإمكانيات الكاملة لـ Xpensemate",
@@ -763,7 +719,6 @@
   "photos": "الصور",
   "locationInUse": "الموقع (قيد الاستخدام)",
   "mediaLibrary": "مكتبة الوسائط",
-
   "@@settings_page_section": "Settings page related strings",
   "currency": "العملة",
   "@currency": {
@@ -883,5 +838,33 @@
   "currencyCAD": "الدولار الكندي",
   "currencyCHF": "الفرنك السويسري",
   "currencyCNY": "اليوان الصيني",
-  "currencyINR": "الروبية الهندية"
+  "currencyINR": "الروبية الهندية",
+  "daysLeft": "",
+  "dueToday": "",
+  "overdueBy": "",
+  "statusActive": "",
+  "statusAchieved": "",
+  "statusFailed": "",
+  "statusTerminated": "",
+  "note": "",
+  "addNotes": "",
+  "priorityLabel": "",
+  "statusLabel": "",
+  "selectPriority": "",
+  "selectStatus": "",
+  "selectTargetDate": "",
+  "fillAllRequired": "",
+  "enterValidAmount": "",
+  "criticalPriority": "",
+  "editBudget": "",
+  "errorLoadingBudgets": "",
+  "noBudgetsFound": "",
+  "noMoreBudgets": "",
+  "percentageUsed": "",
+  "allCaughtUp": "",
+  "filterByPaymentMethod": "تصفية حسب طريقة الدفع",
+  "all": "الكل",
+  "cash": "نقد",
+  "creditCard": "بطاقة ائتمان",
+  "debitCard": "بطاقة خصم"
 }

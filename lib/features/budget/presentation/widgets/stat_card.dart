@@ -391,12 +391,12 @@ class _QuickStatItem extends StatelessWidget {
   Widget build(BuildContext context) => Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(AppSpacing.sm1),
+            padding: EdgeInsets.all(context.sm),
             decoration: BoxDecoration(
-              color: iconBg,
-              borderRadius: BorderRadius.circular(ThemeConstants.radiusMedium),
+              color: context.onPrimaryColor.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: Colors.white, size: AppSpacing.iconLg),
+            child: Icon(icon, color: Colors.white, size: AppSpacing.iconMd),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(

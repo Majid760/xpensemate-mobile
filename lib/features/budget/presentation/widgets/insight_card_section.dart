@@ -63,8 +63,8 @@ class _ExpandableStatsCardState extends State<ExpandableStatsCard>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              context.primaryColor,
-              context.colorScheme.secondary,
+              context.colorScheme.primary,
+              context.colorScheme.primary.withValues(alpha: 0.8),
             ],
           ),
           borderRadius: BorderRadius.circular(ThemeConstants.radiusXLarge),
@@ -159,12 +159,10 @@ class _ExpandableStatsCardState extends State<ExpandableStatsCard>
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  context.colorScheme.onPrimary
-                                      .withValues(alpha: 0),
-                                  context.colorScheme.onPrimary
-                                      .withValues(alpha: 0.3),
-                                  context.colorScheme.onPrimary
-                                      .withValues(alpha: 0),
+                                  context.colorScheme.primary,
+                                  context.colorScheme.secondary,
+                                  // context.colorScheme.onPrimary
+                                  //     .withValues(alpha: 0),
                                 ],
                               ),
                             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
@@ -171,7 +172,7 @@ class _PaymentFormWidgetState extends State<PaymentFormWidget>
       if (!_form.valid) {
         AppSnackBar.show(
           context: context,
-          message: "Please fill out all required fields",
+          message: context.l10n.fillAllRequired,
           type: SnackBarType.error,
         );
         _form.markAllAsTouched();
@@ -243,7 +244,7 @@ class _PaymentFormWidgetState extends State<PaymentFormWidget>
             0,
           ),
           child: Text(
-            '+ Add Custom Payment Type',
+            '+ ${context.l10n.addCustomCategory}',
             style: TextStyle(
               color: colorScheme.primary,
               fontWeight: FontWeight.bold,
@@ -324,8 +325,8 @@ class _PaymentFormWidgetState extends State<PaymentFormWidget>
                       // Name Field
                       ReactiveAppField(
                         formControlName: 'name',
-                        labelText: 'Payment Name *',
-                        hintText: 'Enter payment name',
+                        labelText: '${context.l10n.paymentName} *',
+                        hintText: context.l10n.enterValidAmount,
                         prefixIcon: Icon(
                           Icons.description_outlined,
                           color: colorScheme.onSurfaceVariant
@@ -333,7 +334,8 @@ class _PaymentFormWidgetState extends State<PaymentFormWidget>
                         ),
                         textInputAction: TextInputAction.next,
                         validationMessages: {
-                          'required': (error) => 'Name is required',
+                          'required': (error) =>
+                              context.l10n.paymentNameRequired,
                           'minLength': (error) =>
                               'Must be at least 2 characters',
                         },
@@ -343,7 +345,7 @@ class _PaymentFormWidgetState extends State<PaymentFormWidget>
                       // Amount Field
                       ReactiveAppField(
                         formControlName: 'amount',
-                        labelText: 'Amount *',
+                        labelText: '${context.l10n.amount} *',
                         hintText: 'e.g 5000',
                         fieldType: FieldType.number,
                         prefixIcon: Icon(
@@ -358,7 +360,8 @@ class _PaymentFormWidgetState extends State<PaymentFormWidget>
                           ),
                         ],
                         validationMessages: {
-                          'required': (error) => 'Amount is required',
+                          'required': (error) =>
+                              context.l10n.paymentAmountRequired,
                           'pattern': (error) => 'Invalid amount',
                           'min': (error) => 'Amount must be positive',
                         },
@@ -368,8 +371,8 @@ class _PaymentFormWidgetState extends State<PaymentFormWidget>
                       // Payer Field
                       ReactiveAppField(
                         formControlName: 'payer',
-                        labelText: 'Payer *',
-                        hintText: 'Enter payer name',
+                        labelText: '${context.l10n.payer} *',
+                        hintText: context.l10n.payerRequired,
                         prefixIcon: Icon(
                           Icons.person_outline,
                           color: colorScheme.onSurfaceVariant
@@ -377,7 +380,7 @@ class _PaymentFormWidgetState extends State<PaymentFormWidget>
                         ),
                         textInputAction: TextInputAction.next,
                         validationMessages: {
-                          'required': (error) => 'Payer is required',
+                          'required': (error) => context.l10n.payerRequired,
                           'minLength': (error) =>
                               'Must be at least 3 characters',
                         },
@@ -390,12 +393,13 @@ class _PaymentFormWidgetState extends State<PaymentFormWidget>
                         children: [
                           ReactiveAppField(
                             formControlName: 'paymentType',
-                            labelText: 'Payment Type *',
-                            hintText: 'Select Payment Type',
+                            labelText: '${context.l10n.paymentType} *',
+                            hintText: context.l10n.selectPaymentType,
                             dropdownItems: _buildPaymentTypeDropdownItems(),
                             fieldType: FieldType.dropdown,
                             validationMessages: {
-                              'required': (error) => 'Payment Type is required',
+                              'required': (error) =>
+                                  context.l10n.paymentTypeRequired,
                             },
                             onDropdownChanged: (value) {
                               if (value.value == 'ADD_CUSTOM_TYPE') {
@@ -419,7 +423,7 @@ class _PaymentFormWidgetState extends State<PaymentFormWidget>
                             const SizedBox(height: AppSpacing.md),
                             ReactiveAppField(
                               formControlName: 'customPaymentType',
-                              labelText: 'Custom Payment Type *',
+                              labelText: '${context.l10n.paymentType} *',
                               hintText: 'Enter custom type',
                               prefixIcon: Icon(
                                 Icons.category_outlined,
@@ -442,7 +446,7 @@ class _PaymentFormWidgetState extends State<PaymentFormWidget>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Date *',
+                            '${context.l10n.date} *',
                             style: textTheme.labelLarge?.copyWith(
                               color: colorScheme.onSurfaceVariant,
                             ),
@@ -492,7 +496,7 @@ class _PaymentFormWidgetState extends State<PaymentFormWidget>
                                         Text(
                                           date != null
                                               ? '${date.day}/${date.month}/${date.year}'
-                                              : 'Select Date',
+                                              : context.l10n.selectTargetDate,
                                           style: textTheme.bodyLarge?.copyWith(
                                             color: date != null
                                                 ? colorScheme.onSurface
@@ -513,8 +517,9 @@ class _PaymentFormWidgetState extends State<PaymentFormWidget>
                       // Notes Field
                       ReactiveAppField(
                         formControlName: 'notes',
-                        labelText: 'Notes (Optional)',
-                        hintText: 'Add a note',
+                        labelText:
+                            '${context.l10n.note} (${context.l10n.optional})',
+                        hintText: context.l10n.addNotes,
                         prefixIcon: Icon(
                           Icons.note_alt_outlined,
                           color: colorScheme.onSurfaceVariant
@@ -531,7 +536,7 @@ class _PaymentFormWidgetState extends State<PaymentFormWidget>
                           if (widget.onCancel != null) ...[
                             Expanded(
                               child: AppButton.outline(
-                                text: "Cancel",
+                                text: context.l10n.cancel,
                                 onPressed: widget.onCancel!,
                               ),
                             ),
@@ -540,8 +545,8 @@ class _PaymentFormWidgetState extends State<PaymentFormWidget>
                           Expanded(
                             child: AppButton.primary(
                               text: widget.payment == null
-                                  ? "Save Payment"
-                                  : "Update Payment",
+                                  ? context.l10n.save
+                                  : context.l10n.update,
                               onPressed: _submitForm,
                               textColor: colorScheme.onPrimary,
                             ),

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:xpensemate/core/enums.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/theme/app_spacing.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_stats_entity.dart';
@@ -55,33 +58,38 @@ class _PaymentStatsWidgetState extends State<PaymentStatsWidget>
   @override
   Widget build(BuildContext context) => SliverToBoxAdapter(
         child: Container(
-          margin: const EdgeInsets.all(16),
+          margin: const EdgeInsets.fromLTRB(
+            AppSpacing.md,
+            AppSpacing.xs,
+            AppSpacing.md,
+            AppSpacing.sm,
+          ),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Theme.of(context).primaryColor,
-                Theme.of(context).colorScheme.secondary,
+                context.colorScheme.primary,
+                context.colorScheme.tertiary,
               ],
             ),
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(AppSpacing.lg),
             boxShadow: [
               BoxShadow(
-                color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
+                color: context.colorScheme.primary.withValues(alpha: 0.3),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(AppSpacing.lg),
             child: Material(
               color: Colors.transparent,
               child: InkWell(
                 onTap: _toggleExpanded,
                 child: Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(AppSpacing.md1),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -93,26 +101,20 @@ class _PaymentStatsWidgetState extends State<PaymentStatsWidget>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Overview',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                      color:
-                                          Colors.white.withValues(alpha: 0.7),
-                                      letterSpacing: 0.5,
-                                    ),
+                                context.l10n.overview,
+                                style: context.textTheme.titleMedium?.copyWith(
+                                  color: Colors.white.withValues(alpha: 0.7),
+                                  letterSpacing: 0.5,
+                                ),
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: AppSpacing.xs),
                               Text(
-                                '${widget.defaultPeriod.name.capitalize} Insights',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineSmall
-                                    ?.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                '${widget.defaultPeriod.name.capitalize} ${context.l10n.insights}',
+                                style:
+                                    context.textTheme.headlineSmall?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ],
                           ),
@@ -121,21 +123,22 @@ class _PaymentStatsWidgetState extends State<PaymentStatsWidget>
                             duration: const Duration(milliseconds: 400),
                             curve: Curves.easeInOutCubic,
                             child: Container(
-                              padding: const EdgeInsets.all(10),
+                              padding: const EdgeInsets.all(AppSpacing.sm1),
                               decoration: BoxDecoration(
                                 color: Colors.white.withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius:
+                                    BorderRadius.circular(AppSpacing.sm1),
                               ),
                               child: const Icon(
                                 Icons.keyboard_arrow_down_rounded,
                                 color: Colors.white,
-                                size: 24,
+                                size: AppSpacing.iconMd,
                               ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: AppSpacing.md1),
                       // Quick Stats Row (Abstract - Always Visible)
                       _QuickStatsRow(stats: widget.stats),
                       // Expandable Detailed Section
@@ -144,7 +147,7 @@ class _PaymentStatsWidgetState extends State<PaymentStatsWidget>
                         axisAlignment: -1,
                         child: Column(
                           children: [
-                            const SizedBox(height: 20),
+                            const SizedBox(height: AppSpacing.md1),
                             Container(
                               height: 1,
                               decoration: BoxDecoration(
@@ -157,7 +160,7 @@ class _PaymentStatsWidgetState extends State<PaymentStatsWidget>
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: AppSpacing.md1),
                             _DetailedStatsGrid(stats: widget.stats),
                           ],
                         ),
@@ -184,7 +187,7 @@ class _QuickStatsRow extends StatelessWidget {
             child: _QuickStatItem(
               icon: Icons.account_balance_wallet_rounded,
               value: AppUtils.formatLargeNumber(stats?.walletBalance ?? 0),
-              label: 'Wallet Balance',
+              label: context.l10n.walletBalance,
               iconBg: Colors.white.withValues(alpha: 0.2),
             ),
           ),
@@ -197,7 +200,7 @@ class _QuickStatsRow extends StatelessWidget {
             child: _QuickStatItem(
               icon: Icons.trending_up_rounded,
               value: '${(stats?.periodGrowth ?? 0).toStringAsFixed(1)}%',
-              label: 'Growth',
+              label: context.l10n.growth,
               iconBg: Colors.white.withValues(alpha: 0.2),
             ),
           ),
@@ -210,7 +213,7 @@ class _QuickStatsRow extends StatelessWidget {
             child: _QuickStatItem(
               icon: Icons.person_rounded,
               value: stats?.topPayer ?? 'N/A',
-              label: 'Top Payer',
+              label: context.l10n.topPayer,
               iconBg: Colors.white.withValues(alpha: 0.2),
             ),
           ),
@@ -234,31 +237,29 @@ class _QuickStatItem extends StatelessWidget {
   Widget build(BuildContext context) => Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(AppSpacing.sm1),
             decoration: BoxDecoration(
               color: iconBg,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(AppSpacing.sm1),
             ),
-            child: Icon(icon, color: Colors.white, size: 24),
+            child: Icon(icon, color: Colors.white, size: AppSpacing.iconMd),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             value,
-            style: const TextStyle(
+            style: context.textTheme.titleMedium?.copyWith(
               color: Colors.white,
-              fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: AppSpacing.xs),
           Text(
             label,
-            style: TextStyle(
+            style: context.textTheme.labelSmall?.copyWith(
               color: Colors.white.withValues(alpha: 0.8),
-              fontSize: 11,
             ),
             textAlign: TextAlign.center,
             maxLines: 1,
@@ -282,38 +283,38 @@ class _DetailedStatsGrid extends StatelessWidget {
                 child: _StatsCard(
                   icon: Icons.account_balance_wallet_rounded,
                   value: AppUtils.formatLargeNumber(stats?.totalAmount ?? 0),
-                  label: 'Total Balance',
-                  subtitle: 'Wallet Balance',
+                  label: context.l10n.totalBalance,
+                  subtitle: context.l10n.walletBalance,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AppSpacing.sm1),
               Expanded(
                 child: _StatsCard(
                   icon: Icons.analytics_rounded,
                   value: AppUtils.formatLargeNumber(stats?.averagePayment ?? 0),
-                  label: 'Average Payment',
-                  subtitle: 'Per transaction',
+                  label: context.l10n.averagePayment,
+                  subtitle: context.l10n.perTransaction,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.sm1),
           Row(
             children: [
               Expanded(
                 child: _StatsCard(
                   icon: Icons.trending_up_rounded,
                   value: '+${(stats?.periodGrowth ?? 0).toStringAsFixed(1)}%',
-                  label: 'Growth (Weekly)',
-                  subtitle: 'Increase from previous period',
+                  label: context.l10n.growthWeekly,
+                  subtitle: context.l10n.increaseFromPreviousPeriod,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AppSpacing.sm1),
               Expanded(
                 child: _StatsCard(
                   icon: Icons.person_rounded,
                   value: stats?.topPayer ?? 'N/A',
-                  label: 'Top Payer',
+                  label: context.l10n.topPayer,
                   subtitle:
                       CurrencyFormatter.format(stats?.topPayerAmount ?? 0),
                 ),
@@ -386,10 +387,10 @@ class _StatsCardState extends State<_StatsCard>
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(AppSpacing.sm1),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(AppSpacing.md),
                 border: Border.all(
                   color: Colors.white.withValues(alpha: 0.35),
                   width: 1.5,
@@ -409,14 +410,14 @@ class _StatsCardState extends State<_StatsCard>
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(AppSpacing.sm),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.3),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(AppSpacing.sm1),
                         ),
                         child: Icon(
                           widget.icon,
-                          size: 18,
+                          size: AppSpacing.iconSm,
                           color: Colors.white,
                         ),
                       ),
@@ -426,9 +427,8 @@ class _StatsCardState extends State<_StatsCard>
                           textAlign: TextAlign.center,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
+                          style: context.textTheme.titleMedium?.copyWith(
                             color: Colors.white.withValues(alpha: 0.95),
-                            fontSize: 20,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.3,
                             height: 1.2,
@@ -437,25 +437,23 @@ class _StatsCardState extends State<_StatsCard>
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.sm1),
                   Text(
                     widget.label.toUpperCase(),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
+                    style: context.textTheme.labelSmall?.copyWith(
                       color: Colors.white.withValues(alpha: 0.95),
-                      fontSize: 11,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 0.5,
                       height: 1.2,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSpacing.sm),
                   Text(
                     widget.subtitle,
-                    style: TextStyle(
+                    style: context.textTheme.labelSmall?.copyWith(
                       color: Colors.white.withValues(alpha: 0.8),
-                      fontSize: 11,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:xpensemate/core/theme/colors/app_colors.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/theme/app_spacing.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/theme/widgets/app_buttons.dart';
 import 'package:xpensemate/features/payment/presentation/widgets/feature_item.dart';
 import 'package:xpensemate/features/payment/presentation/widgets/subscription_option.dart';
-import 'package:xpensemate/l10n/app_localizations.dart';
 
 class SubscriptionPage extends StatefulWidget {
   const SubscriptionPage({super.key});
@@ -18,7 +19,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = context.l10n;
 
     // Mock features list
     final features = [
@@ -29,11 +30,11 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
     ];
 
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: context.colorScheme.surface,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: EdgeInsets.all(AppSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -47,7 +48,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                     },
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: AppSpacing.md),
 
                 // Title & Subtitle
                 Center(
@@ -55,31 +56,28 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                     children: [
                       Text(
                         l10n.premiumTitle,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium
-                            ?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primary,
-                            ),
+                        style: context.textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: context.primaryColor,
+                        ),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: AppSpacing.sm),
                       Text(
                         l10n.premiumSubtitle,
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: AppColors.onSurfaceVariant,
-                            ),
+                        style: context.textTheme.bodyLarge?.copyWith(
+                          color: context.colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: AppSpacing.xl),
 
                 // Features List
                 ...features.map((feature) => FeatureItem(text: feature)),
 
-                const SizedBox(height: 32),
+                SizedBox(height: AppSpacing.xl),
 
                 // Subscription Options
                 SubscriptionOption(
@@ -98,7 +96,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                   subtitle: l10n.bestValue,
                 ),
 
-                const SizedBox(height: 32),
+                SizedBox(height: AppSpacing.xl),
 
                 // Subscribe Button
                 PrimaryButton(
@@ -108,7 +106,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                     context.go('/home');
                   },
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: AppSpacing.md),
 
                 // Restore Purchase & Links
                 Center(
@@ -119,7 +117,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                     child: Text(l10n.restorePurchases),
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: AppSpacing.sm),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -127,17 +125,21 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                       onPressed: () {},
                       child: Text(
                         l10n.termsOfService,
-                        style:
-                            const TextStyle(fontSize: 12, color: Colors.grey),
+                        style: context.textTheme.labelSmall?.copyWith(
+                          color: context.colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ),
-                    const Text('•', style: TextStyle(color: Colors.grey)),
+                    Text('•',
+                        style: TextStyle(
+                            color: context.colorScheme.onSurfaceVariant)),
                     TextButton(
                       onPressed: () {},
                       child: Text(
                         l10n.privacyPolicy,
-                        style:
-                            const TextStyle(fontSize: 12, color: Colors.grey),
+                        style: context.textTheme.labelSmall?.copyWith(
+                          color: context.colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ),
                   ],

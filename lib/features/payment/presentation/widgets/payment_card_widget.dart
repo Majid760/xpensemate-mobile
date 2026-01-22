@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/theme/app_spacing.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/widget/animated_card_widget.dart';
 import 'package:xpensemate/core/widget/app_custom_dialog.dart';
 import 'package:xpensemate/core/widget/app_dismissible_widget.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_entity.dart';
-import 'package:xpensemate/l10n/app_localizations.dart';
 
 class PaymentItemWidget extends StatelessWidget {
   const PaymentItemWidget({
@@ -23,14 +24,12 @@ class PaymentItemWidget extends StatelessWidget {
   final void Function(String)? onDelete;
 
   Future<bool?> _showDeleteConfirmation(BuildContext context) async {
-    final localizations = AppLocalizations.of(context);
     bool? confirmResult;
 
     await AppCustomDialogs.showDelete(
       context: context,
-      title: localizations?.delete ?? context.l10n.delete,
-      message:
-          '${localizations?.confirmDelete ?? context.l10n.confirmDelete}\n\n${localizations?.deleteWarning ?? context.l10n.deleteWarning}',
+      title: context.l10n.delete,
+      message: '${context.l10n.confirmDelete}\n\n${context.l10n.deleteWarning}',
       onConfirm: () => confirmResult = true,
       onCancel: () => confirmResult = false,
     );
@@ -56,20 +55,20 @@ class PaymentItemWidget extends StatelessWidget {
           },
           onEdit: () => onEdit?.call(payment),
           child: Card(
-            color: Theme.of(context).cardColor,
-            shadowColor: Theme.of(context).shadowColor.withValues(alpha: 0.1),
+            color: context.colorScheme.surface,
+            shadowColor: context.colorScheme.shadow.withValues(alpha: 0.1),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(AppSpacing.md),
               side: BorderSide(
-                color: Theme.of(context).dividerColor.withValues(alpha: .1),
+                color: context.colorScheme.outlineVariant.withValues(alpha: .1),
               ),
             ),
             child: InkWell(
               onTap: () => HapticFeedback.lightImpact,
               onTapDown: (_) => HapticFeedback.selectionClick(),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(AppSpacing.md),
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(AppSpacing.md),
                 child: Row(
                   children: [
                     // Payment info
@@ -79,35 +78,24 @@ class PaymentItemWidget extends StatelessWidget {
                         children: [
                           Text(
                             payment.name,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
+                            style: context.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
                             overflow: TextOverflow.ellipsis,
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: AppSpacing.xs),
                           Text(
                             payment.payer,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurfaceVariant,
-                                ),
+                            style: context.textTheme.bodyMedium?.copyWith(
+                              color: context.colorScheme.onSurfaceVariant,
+                            ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: AppSpacing.xs),
                           Text(
                             AppUtils.formatDate(payment.date),
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant,
-                                    ),
+                            style: context.textTheme.bodySmall?.copyWith(
+                              color: context.colorScheme.onSurfaceVariant,
+                            ),
                           ),
                         ],
                       ),
@@ -118,37 +106,29 @@ class PaymentItemWidget extends StatelessWidget {
                       children: [
                         Text(
                           AppUtils.formatLargeNumber(payment.amount),
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium
-                              ?.copyWith(
-                                fontWeight: FontWeight.w700,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
+                          style: context.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: context.colorScheme.primary,
+                          ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AppSpacing.xs),
                         // Action buttons
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
+                            horizontal: AppSpacing.sm,
+                            vertical: AppSpacing.xs,
                           ),
                           decoration: BoxDecoration(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .primary
+                            color: context.colorScheme.primary
                                 .withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(AppSpacing.sm),
                           ),
                           child: Text(
                             payment.paymentType.toFormattedPaymentType,
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelSmall
-                                ?.copyWith(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                            style: context.textTheme.labelSmall?.copyWith(
+                              color: context.colorScheme.primary,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ],

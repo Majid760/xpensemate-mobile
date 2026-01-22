@@ -1315,4 +1315,76 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get currencyINR => 'Rupia india';
+
+  @override
+  String get editPayment => '';
+
+  @override
+  String get payments => '';
+
+  @override
+  String get walletBalance => '';
+
+  @override
+  String get averagePayment => '';
+
+  @override
+  String get perTransaction => '';
+
+  @override
+  String get increaseFromPreviousPeriod => '';
+
+  @override
+  String get noPaymentsFound => '';
+
+  @override
+  String get errorLoadingPayments => '';
+
+  @override
+  String get noMorePayments => '';
+
+  @override
+  String get paymentName => '';
+
+  @override
+  String get paymentAmount => '';
+
+  @override
+  String get payer => '';
+
+  @override
+  String get paymentType => '';
+
+  @override
+  String get selectPaymentType => '';
+
+  @override
+  String get paymentNameRequired => '';
+
+  @override
+  String get paymentAmountRequired => '';
+
+  @override
+  String get payerRequired => '';
+
+  @override
+  String get paymentTypeRequired => '';
+
+  @override
+  String get growthWeekly => '';
+
+  @override
+  String get monthlyInsights => '';
+
+  @override
+  String get growth => '';
+
+  @override
+  String get topPayer => '';
+
+  @override
+  String get optional => '';
+
+  @override
+  String get update => '';
 }

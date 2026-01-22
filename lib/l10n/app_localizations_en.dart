@@ -1301,4 +1301,76 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get currencyINR => 'Indian Rupee';
+
+  @override
+  String get editPayment => 'Edit Payment';
+
+  @override
+  String get payments => 'Payments';
+
+  @override
+  String get walletBalance => 'Wallet Balance';
+
+  @override
+  String get averagePayment => 'Average Payment';
+
+  @override
+  String get perTransaction => 'Per transaction';
+
+  @override
+  String get increaseFromPreviousPeriod => 'Increase from previous period';
+
+  @override
+  String get noPaymentsFound => 'No payments found!';
+
+  @override
+  String get errorLoadingPayments => 'Error while loading payments!';
+
+  @override
+  String get noMorePayments => 'No more payments!';
+
+  @override
+  String get paymentName => 'Payment Name';
+
+  @override
+  String get paymentAmount => 'Payment Amount';
+
+  @override
+  String get payer => 'Payer';
+
+  @override
+  String get paymentType => 'Payment Type';
+
+  @override
+  String get selectPaymentType => 'Select Payment Type';
+
+  @override
+  String get paymentNameRequired => 'Payment name is required';
+
+  @override
+  String get paymentAmountRequired => 'Payment amount is required';
+
+  @override
+  String get payerRequired => 'Payer is required';
+
+  @override
+  String get paymentTypeRequired => 'Payment type is required';
+
+  @override
+  String get growthWeekly => 'Growth (Weekly)';
+
+  @override
+  String get monthlyInsights => 'Monthly Insights';
+
+  @override
+  String get growth => 'Growth';
+
+  @override
+  String get topPayer => 'Top Payer';
+
+  @override
+  String get optional => 'Optional';
+
+  @override
+  String get update => 'Update';
 }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/enums.dart';
+import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/theme/app_spacing.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/widget/animated_section_header.dart';
 import 'package:xpensemate/core/widget/app_bar_widget.dart';
@@ -17,16 +20,9 @@ class PaymentPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        body: const PaymentPageBody(),
+        backgroundColor: context.colorScheme.surface,
+        body: const PaymentPageContent(),
       );
-}
-
-class PaymentPageBody extends StatelessWidget {
-  const PaymentPageBody({super.key});
-
-  @override
-  Widget build(BuildContext context) => const PaymentPageContent();
 }
 
 class PaymentPageContent extends StatefulWidget {
@@ -60,7 +56,7 @@ class _PaymentPageContentState extends State<PaymentPageContent>
   void _editPayment(PaymentEntity entity, BuildContext context) {
     AppBottomSheet.show<void>(
       context: context,
-      title: "Edit Payment",
+      title: context.l10n.editPayment,
       config: const BottomSheetConfig(
         padding: EdgeInsets.zero,
         blurSigma: 5,
@@ -98,7 +94,7 @@ class _PaymentPageContentState extends State<PaymentPageContent>
         },
         child: RefreshIndicator(
           onRefresh: () async => _loadPaymentData(FilterValue.monthly),
-          color: Theme.of(context).primaryColor,
+          color: context.primaryColor,
           child: CustomScrollView(
             controller: _scrollController,
             physics: const BouncingScrollPhysics(
@@ -120,14 +116,14 @@ class _PaymentPageContentState extends State<PaymentPageContent>
                 ),
               ),
               SliverPadding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(AppSpacing.md),
                 sliver: SliverToBoxAdapter(
                   child: AnimatedSectionHeader(
-                    title: "Payments",
+                    title: context.l10n.payments,
                     icon: Icon(
                       Icons.payment_rounded,
-                      color: Theme.of(context).primaryColor,
-                      size: 28,
+                      color: context.primaryColor,
+                      size: AppSpacing.iconLg,
                     ),
                     onSearchChanged: (value) {
                       if (value.trim().isEmpty) return;
@@ -142,7 +138,7 @@ class _PaymentPageContentState extends State<PaymentPageContent>
                 ),
               ),
               SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                 sliver: PaymentListWidget(
                   onEdit: (updatedEntity) {
                     _editPayment(updatedEntity, context);
@@ -155,7 +151,7 @@ class _PaymentPageContentState extends State<PaymentPageContent>
               ),
               // Bottom padding for FAB
               const SliverToBoxAdapter(
-                child: SizedBox(height: 100),
+                child: SizedBox(height: AppSpacing.xxxl + AppSpacing.xl),
               ),
             ],
           ),
@@ -167,11 +163,11 @@ void addPayment({
   required BuildContext context,
   void Function(PaymentEntity)? onSave,
 }) {
-  final screenHeight = MediaQuery.of(context).size.height;
+  final screenHeight = context.screenHeight;
 
   AppBottomSheet.show<void>(
     context: context,
-    title: 'Add Payment',
+    title: context.l10n.addPayment,
     config: BottomSheetConfig(
       minHeight: screenHeight * 0.8,
       maxHeight: screenHeight * 0.95,

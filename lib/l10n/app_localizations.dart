@@ -2555,6 +2555,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Indian Rupee'**
   String get currencyINR;
+
+  /// No description provided for @editPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Payment'**
+  String get editPayment;
+
+  /// No description provided for @payments.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments'**
+  String get payments;
+
+  /// No description provided for @walletBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet Balance'**
+  String get walletBalance;
+
+  /// No description provided for @averagePayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Average Payment'**
+  String get averagePayment;
+
+  /// No description provided for @perTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Per transaction'**
+  String get perTransaction;
+
+  /// No description provided for @increaseFromPreviousPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Increase from previous period'**
+  String get increaseFromPreviousPeriod;
+
+  /// No description provided for @noPaymentsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No payments found!'**
+  String get noPaymentsFound;
+
+  /// No description provided for @errorLoadingPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'Error while loading payments!'**
+  String get errorLoadingPayments;
+
+  /// No description provided for @noMorePayments.
+  ///
+  /// In en, this message translates to:
+  /// **'No more payments!'**
+  String get noMorePayments;
+
+  /// No description provided for @paymentName.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Name'**
+  String get paymentName;
+
+  /// No description provided for @paymentAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Amount'**
+  String get paymentAmount;
+
+  /// No description provided for @payer.
+  ///
+  /// In en, this message translates to:
+  /// **'Payer'**
+  String get payer;
+
+  /// No description provided for @paymentType.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Type'**
+  String get paymentType;
+
+  /// No description provided for @selectPaymentType.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Payment Type'**
+  String get selectPaymentType;
+
+  /// No description provided for @paymentNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment name is required'**
+  String get paymentNameRequired;
+
+  /// No description provided for @paymentAmountRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment amount is required'**
+  String get paymentAmountRequired;
+
+  /// No description provided for @payerRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Payer is required'**
+  String get payerRequired;
+
+  /// No description provided for @paymentTypeRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment type is required'**
+  String get paymentTypeRequired;
+
+  /// No description provided for @growthWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Growth (Weekly)'**
+  String get growthWeekly;
+
+  /// No description provided for @monthlyInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Insights'**
+  String get monthlyInsights;
+
+  /// No description provided for @growth.
+  ///
+  /// In en, this message translates to:
+  /// **'Growth'**
+  String get growth;
+
+  /// No description provided for @topPayer.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Payer'**
+  String get topPayer;
+
+  /// No description provided for @optional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get optional;
+
+  /// No description provided for @update.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get update;
 }
 
 class _AppLocalizationsDelegate

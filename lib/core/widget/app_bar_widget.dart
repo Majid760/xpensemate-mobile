@@ -20,7 +20,7 @@ class CustomAppBar extends StatelessWidget {
         ),
         actions: [
           Container(
-            margin: EdgeInsets.only(right: context.md),
+            margin: EdgeInsetsDirectional.only(end: context.md),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [

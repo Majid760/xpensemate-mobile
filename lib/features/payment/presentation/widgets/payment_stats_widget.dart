@@ -237,7 +237,7 @@ class _QuickStatItem extends StatelessWidget {
   Widget build(BuildContext context) => Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(AppSpacing.sm1),
+            padding: const EdgeInsets.all(AppSpacing.sm),
             decoration: BoxDecoration(
               color: iconBg,
               borderRadius: BorderRadius.circular(AppSpacing.sm1),
@@ -412,13 +412,15 @@ class _StatsCardState extends State<_StatsCard>
                       Container(
                         padding: const EdgeInsets.all(AppSpacing.sm),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.3),
+                          color: context.colorScheme.onPrimary
+                              .withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(AppSpacing.sm1),
                         ),
                         child: Icon(
                           widget.icon,
                           size: AppSpacing.iconSm,
-                          color: Colors.white,
+                          color: context.colorScheme.onPrimary
+                              .withValues(alpha: 0.95),
                         ),
                       ),
                       Expanded(
@@ -428,7 +430,8 @@ class _StatsCardState extends State<_StatsCard>
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: context.textTheme.titleMedium?.copyWith(
-                            color: Colors.white.withValues(alpha: 0.95),
+                            color: context.colorScheme.onPrimary
+                                .withValues(alpha: 0.95),
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.3,
                             height: 1.2,
@@ -443,7 +446,8 @@ class _StatsCardState extends State<_StatsCard>
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: context.textTheme.labelSmall?.copyWith(
-                      color: Colors.white.withValues(alpha: 0.95),
+                      color:
+                          context.colorScheme.onPrimary.withValues(alpha: 0.95),
                       fontWeight: FontWeight.w600,
                       letterSpacing: 0.5,
                       height: 1.2,
@@ -453,7 +457,9 @@ class _StatsCardState extends State<_StatsCard>
                   Text(
                     widget.subtitle,
                     style: context.textTheme.labelSmall?.copyWith(
-                      color: Colors.white.withValues(alpha: 0.8),
+                      color:
+                          context.colorScheme.onPrimary.withValues(alpha: 0.8),
+                      fontSize: 10,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

@@ -15,7 +15,10 @@ class AppBarWidget extends StatelessWidget {
         leading: Builder(
           builder: (BuildContext builderContext) => UnconstrainedBox(
             child: Padding(
-              padding: EdgeInsets.only(left: context.sm),
+              // iimplement pasddingg from sides when in arabic and right when in english
+              padding: EdgeInsetsDirectional.only(
+                start: context.sm,
+              ),
               child: InkWell(
                 onTap: onProfileTap,
                 child: AppImage.network(
@@ -45,7 +48,7 @@ class AppBarWidget extends StatelessWidget {
         toolbarHeight: 60,
         actions: [
           Padding(
-            padding: EdgeInsets.only(right: context.md),
+            padding: EdgeInsetsDirectional.only(end: context.md),
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(

@@ -163,10 +163,10 @@ class _StatsCardState extends State<StatsCard>
                               Container(
                                 padding: const EdgeInsets.all(AppSpacing.sm),
                                 decoration: BoxDecoration(
-                                  color: context.colorScheme.onPrimary
+                                  color: context.colorScheme.primary
                                       .withValues(alpha: 0.3),
                                   borderRadius: BorderRadius.circular(
-                                    ThemeConstants.radiusMedium,
+                                    ThemeConstants.radiusLarge,
                                   ),
                                 ),
                                 child: Icon(
@@ -396,14 +396,18 @@ class _QuickStatItem extends StatelessWidget {
               color: context.onPrimaryColor.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: Colors.white, size: AppSpacing.iconMd),
+            child: Icon(
+              icon,
+              color: context.onPrimaryColor,
+              size: AppSpacing.iconMd,
+            ),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
             value,
             style:
                 (context.textTheme.headlineSmall ?? const TextStyle()).copyWith(
-              color: Colors.white,
+              color: context.onPrimaryColor,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -411,7 +415,7 @@ class _QuickStatItem extends StatelessWidget {
           Text(
             label,
             style: (context.textTheme.bodySmall ?? const TextStyle()).copyWith(
-              color: Colors.white.withValues(alpha: 0.8),
+              color: context.onPrimaryColor.withValues(alpha: 0.8),
             ),
             textAlign: TextAlign.center,
           ),

@@ -691,10 +691,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get of12 => 'of';
 
   @override
-  String get budget => 'Budget';
+  String get budget => 'Budgets';
 
   @override
-  String get expenses => 'expenses';
+  String get expenses => 'Expenses';
 
   @override
   String get expense => 'Expense';

@@ -1389,13 +1389,13 @@ abstract class AppLocalizations {
   /// Budget label
   ///
   /// In en, this message translates to:
-  /// **'Budget'**
+  /// **'Budgets'**
   String get budget;
 
   /// Expenses label
   ///
   /// In en, this message translates to:
-  /// **'expenses'**
+  /// **'Expenses'**
   String get expenses;
 
   /// Expenses label

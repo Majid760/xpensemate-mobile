@@ -70,7 +70,7 @@ class _PaymentStatsWidgetState extends State<PaymentStatsWidget>
               end: Alignment.bottomRight,
               colors: [
                 context.colorScheme.primary,
-                context.colorScheme.tertiary,
+                context.colorScheme.secondary,
               ],
             ),
             borderRadius: BorderRadius.circular(AppSpacing.lg),
@@ -85,7 +85,7 @@ class _PaymentStatsWidgetState extends State<PaymentStatsWidget>
           child: ClipRRect(
             borderRadius: BorderRadius.circular(AppSpacing.lg),
             child: Material(
-              color: Colors.transparent,
+              color: context.colorScheme.primary,
               child: InkWell(
                 onTap: _toggleExpanded,
                 child: Padding(
@@ -103,7 +103,7 @@ class _PaymentStatsWidgetState extends State<PaymentStatsWidget>
                               Text(
                                 context.l10n.overview,
                                 style: context.textTheme.titleMedium?.copyWith(
-                                  color: Colors.white.withValues(alpha: 0.7),
+                                  color: context.onPrimaryColor,
                                   letterSpacing: 0.5,
                                 ),
                               ),
@@ -112,7 +112,7 @@ class _PaymentStatsWidgetState extends State<PaymentStatsWidget>
                                 '${widget.defaultPeriod.name.capitalize} ${context.l10n.insights}',
                                 style:
                                     context.textTheme.headlineSmall?.copyWith(
-                                  color: Colors.white,
+                                  color: context.onPrimaryColor,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -123,16 +123,16 @@ class _PaymentStatsWidgetState extends State<PaymentStatsWidget>
                             duration: const Duration(milliseconds: 400),
                             curve: Curves.easeInOutCubic,
                             child: Container(
-                              padding: const EdgeInsets.all(AppSpacing.sm1),
+                              padding: EdgeInsets.all(context.sm),
                               decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.2),
-                                borderRadius:
-                                    BorderRadius.circular(AppSpacing.sm1),
+                                color: context.onPrimaryColor
+                                    .withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.keyboard_arrow_down_rounded,
-                                color: Colors.white,
-                                size: AppSpacing.iconMd,
+                                color: context.onPrimaryColor,
+                                size: 24,
                               ),
                             ),
                           ),
@@ -188,33 +188,33 @@ class _QuickStatsRow extends StatelessWidget {
               icon: Icons.account_balance_wallet_rounded,
               value: AppUtils.formatLargeNumber(stats?.walletBalance ?? 0),
               label: context.l10n.walletBalance,
-              iconBg: Colors.white.withValues(alpha: 0.2),
+              iconBg: context.onPrimaryColor.withValues(alpha: 0.2),
             ),
           ),
           Container(
             width: 1,
             height: 40,
-            color: Colors.white.withValues(alpha: 0.2),
+            color: context.onPrimaryColor.withValues(alpha: 0.2),
           ),
           Expanded(
             child: _QuickStatItem(
               icon: Icons.trending_up_rounded,
               value: '${(stats?.periodGrowth ?? 0).toStringAsFixed(1)}%',
               label: context.l10n.growth,
-              iconBg: Colors.white.withValues(alpha: 0.2),
+              iconBg: context.onPrimaryColor.withValues(alpha: 0.2),
             ),
           ),
           Container(
             width: 1,
             height: 40,
-            color: Colors.white.withValues(alpha: 0.2),
+            color: context.onPrimaryColor.withValues(alpha: 0.2),
           ),
           Expanded(
             child: _QuickStatItem(
               icon: Icons.person_rounded,
               value: stats?.topPayer ?? 'N/A',
               label: context.l10n.topPayer,
-              iconBg: Colors.white.withValues(alpha: 0.2),
+              iconBg: context.onPrimaryColor.withValues(alpha: 0.2),
             ),
           ),
         ],
@@ -242,13 +242,14 @@ class _QuickStatItem extends StatelessWidget {
               color: iconBg,
               borderRadius: BorderRadius.circular(AppSpacing.sm1),
             ),
-            child: Icon(icon, color: Colors.white, size: AppSpacing.iconMd),
+            child: Icon(icon,
+                color: context.onPrimaryColor, size: AppSpacing.iconMd),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
             value,
             style: context.textTheme.titleMedium?.copyWith(
-              color: Colors.white,
+              color: context.onPrimaryColor,
               fontWeight: FontWeight.bold,
             ),
             maxLines: 1,
@@ -259,7 +260,7 @@ class _QuickStatItem extends StatelessWidget {
           Text(
             label,
             style: context.textTheme.labelSmall?.copyWith(
-              color: Colors.white.withValues(alpha: 0.8),
+              color: context.onPrimaryColor.withValues(alpha: 0.8),
             ),
             textAlign: TextAlign.center,
             maxLines: 1,
@@ -389,15 +390,15 @@ class _StatsCardState extends State<_StatsCard>
               curve: Curves.easeInOut,
               padding: const EdgeInsets.all(AppSpacing.sm1),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
+                color: context.onPrimaryColor.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(AppSpacing.md),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.35),
+                  color: context.onPrimaryColor.withValues(alpha: 0.35),
                   width: 1.5,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
+                    color: context.onPrimaryColor.withValues(alpha: 0.1),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -412,15 +413,13 @@ class _StatsCardState extends State<_StatsCard>
                       Container(
                         padding: const EdgeInsets.all(AppSpacing.sm),
                         decoration: BoxDecoration(
-                          color: context.colorScheme.onPrimary
-                              .withValues(alpha: 0.3),
-                          borderRadius: BorderRadius.circular(AppSpacing.sm1),
+                          color: context.primaryColor.withValues(alpha: 0.3),
+                          borderRadius: BorderRadius.circular(AppSpacing.md),
                         ),
                         child: Icon(
                           widget.icon,
                           size: AppSpacing.iconSm,
-                          color: context.colorScheme.onPrimary
-                              .withValues(alpha: 0.95),
+                          color: context.onPrimaryColor,
                         ),
                       ),
                       Expanded(
@@ -430,8 +429,8 @@ class _StatsCardState extends State<_StatsCard>
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: context.textTheme.titleMedium?.copyWith(
-                            color: context.colorScheme.onPrimary
-                                .withValues(alpha: 0.95),
+                            color:
+                                context.onPrimaryColor.withValues(alpha: 0.95),
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.3,
                             height: 1.2,

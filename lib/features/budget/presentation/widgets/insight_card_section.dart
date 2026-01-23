@@ -127,18 +127,16 @@ class _ExpandableStatsCardState extends State<ExpandableStatsCard>
                           duration: const Duration(milliseconds: 400),
                           curve: Curves.easeInOutCubic,
                           child: Container(
-                            padding: const EdgeInsets.all(AppSpacing.sm),
+                            padding: EdgeInsets.all(context.sm),
                             decoration: BoxDecoration(
-                              color: context.colorScheme.onPrimary
-                                  .withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(
-                                ThemeConstants.radiusMedium,
-                              ),
+                              color:
+                                  context.onPrimaryColor.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(12),
                             ),
                             child: Icon(
                               Icons.keyboard_arrow_down_rounded,
-                              color: context.colorScheme.onPrimary,
-                              size: AppSpacing.iconLg,
+                              color: context.onPrimaryColor,
+                              size: 24,
                             ),
                           ),
                         ),

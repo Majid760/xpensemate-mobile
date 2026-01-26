@@ -24,11 +24,13 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage>
-    with TickerProviderStateMixin {
-  late AnimationController _fadeController;
-  late AnimationController _slideController;
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+  late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+
+  String? _lastMessage;
+
   @override
   void initState() {
     super.initState();
@@ -37,24 +39,21 @@ class _DashboardPageState extends State<DashboardPage>
 
   @override
   void dispose() {
-    _fadeController.dispose();
-    _slideController.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
   void _initializeAnimations() {
-    _fadeController = AnimationController(
+    _animationController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
 
-    _slideController = AnimationController(
-      duration: const Duration(milliseconds: 1000),
-      vsync: this,
-    );
-
     _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _fadeController, curve: Curves.easeOutQuart),
+      CurvedAnimation(
+        parent: _animationController,
+        curve: const Interval(0, 0.6, curve: Curves.easeOutQuart),
+      ),
     );
 
     _slideAnimation = Tween<Offset>(
@@ -62,128 +61,178 @@ class _DashboardPageState extends State<DashboardPage>
       end: Offset.zero,
     ).animate(
       CurvedAnimation(
-        parent: _slideController,
-        curve: Curves.easeOutCubic,
+        parent: _animationController,
+        curve: const Interval(0, 0.8, curve: Curves.easeOutCubic),
       ),
     );
 
-    _fadeController.forward();
-    _slideController.forward();
+    _animationController.forward();
+  }
+
+  void _handleStateChange(BuildContext context, DashboardState state) {
+    if (state.message != null &&
+        state.message!.isNotEmpty &&
+        state.message != _lastMessage) {
+      _lastMessage = state.message;
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          AppSnackBar.show(
+            context: context,
+            message: state.message!,
+            type: state.state == DashboardStates.error
+                ? SnackBarType.error
+                : SnackBarType.success,
+          );
+        }
+      });
+    }
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        backgroundColor: context.colorScheme.surface,
-        drawerScrimColor: Colors.transparent,
-        body: BlocListener<DashboardCubit, DashboardState>(
-          listenWhen: (previous, current) =>
-              // previous.state != current.state ||
-              previous.message != current.message,
-          listener: (context, state) {
-            if (state.message != null && state.message!.isNotEmpty) {
-              AppSnackBar.show(
-                context: context,
-                message: state.message!,
-                type: state.state == DashboardStates.error
-                    ? SnackBarType.error
-                    : SnackBarType.success,
-              );
-            }
-          },
-          child: RefreshIndicator(
-            onRefresh: () async =>
-                context.read<DashboardCubit>().loadDashboardData(),
-            color: context.colorScheme.primary,
-            child: CustomScrollView(
-              physics: const BouncingScrollPhysics(),
-              slivers: [
-                // App Bar with Actions
-                AppBarWidget(onProfileTap: widget.onProfileTap),
+  Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
 
-                // Dashboard Header Widget (Expandable Card)
-                SliverToBoxAdapter(
-                  child: BlocBuilder<DashboardCubit, DashboardState>(
-                    buildWhen: (previous, current) =>
-                        previous.weeklyStats != current.weeklyStats ||
-                        previous.state != current.state,
-                    builder: (context, state) =>
-                        DashboardHeaderWidget(state: state),
-                  ),
-                ),
-
-                // Rest of the content
-                SliverToBoxAdapter(
-                  child: FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: SlideTransition(
-                      position: _slideAnimation,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Weekly Financial Overview Section
-                            BlocBuilder<DashboardCubit, DashboardState>(
-                              buildWhen: (previous, current) =>
-                                  previous.weeklyStats != current.weeklyStats ||
-                                  previous.state != current.state ||
-                                  previous.message != current.message,
-                              builder: (context, state) =>
-                                  WeeklyFinancialOverviewWidget(
-                                weeklyStats: state.weeklyStats,
-                                isLoading:
-                                    state.state == DashboardStates.loading,
-                                errorMessage:
-                                    state.state == DashboardStates.error
-                                        ? state.message
-                                        : null,
-                                onRetry: () => context
-                                    .read<DashboardCubit>()
-                                    .loadDashboardData(),
-                              ),
-                            ),
-
-                            SizedBox(height: context.lg),
-
-                            // Active Budget Section
-                            BlocSelector<DashboardCubit, DashboardState,
-                                BudgetGoalsEntity?>(
-                              selector: (state) => state.budgetGoals,
-                              builder: (context, budgetGoals) {
-                                if (budgetGoals != null) {
-                                  return Column(
-                                    children: [
-                                      ActiveBudgetSectionWidget(
-                                        budgetGoals: budgetGoals,
-                                      ),
-                                      SizedBox(height: context.lg),
-                                    ],
-                                  );
-                                }
-                                return const SizedBox.shrink();
-                              },
-                            ),
-
-                            // Product Analytics Section
-                            const ProductAnalyticsWidget(),
-
-                            SizedBox(height: context.lg),
-
-                            // Additional padding at bottom for better scrolling
-                            SizedBox(height: context.xl),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+    return Scaffold(
+      backgroundColor: context.colorScheme.surface,
+      drawerScrimColor: Colors.transparent,
+      body: BlocListener<DashboardCubit, DashboardState>(
+        listenWhen: (previous, current) => previous.message != current.message,
+        listener: _handleStateChange,
+        child: RefreshIndicator(
+          onRefresh: () async =>
+              context.read<DashboardCubit>().loadDashboardData(),
+          color: context.colorScheme.primary,
+          child: CustomScrollView(
+            cacheExtent: 500,
+            physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics(),
             ),
+            slivers: [
+              AppBarWidget(onProfileTap: widget.onProfileTap),
+
+              // Dashboard Header
+              const SliverToBoxAdapter(
+                child: RepaintBoundary(
+                  child: _DashboardHeader(),
+                ),
+              ),
+
+              // Main Content
+              SliverToBoxAdapter(
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: SlideTransition(
+                    position: _slideAnimation,
+                    child: const _DashboardContent(),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // OPTIMIZATION  Keep state alive to prevent rebuilds when navigating
+  @override
+  bool get wantKeepAlive => true;
+}
+
+/// Dashboard Header Widget
+class _DashboardHeader extends StatelessWidget {
+  const _DashboardHeader();
+
+  @override
+  Widget build(BuildContext context) =>
+      BlocBuilder<DashboardCubit, DashboardState>(
+        // Only rebuild when these specific fields change
+        buildWhen: (previous, current) =>
+            previous.weeklyStats != current.weeklyStats ||
+            previous.state != current.state,
+        builder: (context, state) => DashboardHeaderWidget(state: state),
+      );
+}
+
+/// Dashboard Content Widget
+class _DashboardContent extends StatelessWidget {
+  const _DashboardContent();
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Weekly Financial Overview
+            const _WeeklyFinancialSection(),
+
+            SizedBox(height: context.lg),
+
+            // Active Budget Section
+            const _ActiveBudgetSection(),
+
+            // Product Analytics Section
+            const RepaintBoundary(
+              child: ProductAnalyticsWidget(),
+            ),
+
+            SizedBox(height: context.lg),
+
+            SizedBox(height: context.xl),
+          ],
+        ),
+      );
+}
+
+/// Weekly Financial Section with optimized rebuilds
+class _WeeklyFinancialSection extends StatelessWidget {
+  const _WeeklyFinancialSection();
+
+  @override
+  Widget build(BuildContext context) =>
+      BlocBuilder<DashboardCubit, DashboardState>(
+        // ✅ OPTIMIZATION 8: Precise buildWhen conditions
+        buildWhen: (previous, current) =>
+            previous.weeklyStats != current.weeklyStats ||
+            previous.state != current.state,
+        builder: (context, state) => RepaintBoundary(
+          child: WeeklyFinancialOverviewWidget(
+            weeklyStats: state.weeklyStats,
+            isLoading: state.state == DashboardStates.loading,
+            errorMessage:
+                state.state == DashboardStates.error ? state.message : null,
+            onRetry: () => context.read<DashboardCubit>().loadDashboardData(),
           ),
         ),
       );
 }
 
+/// Active Budget Section
+class _ActiveBudgetSection extends StatelessWidget {
+  const _ActiveBudgetSection();
+
+  @override
+  Widget build(BuildContext context) =>
+      BlocSelector<DashboardCubit, DashboardState, BudgetGoalsEntity?>(
+        selector: (state) => state.budgetGoals,
+        builder: (context, budgetGoals) {
+          if (budgetGoals == null) return const SizedBox.shrink();
+
+          return RepaintBoundary(
+            child: Column(
+              children: [
+                ActiveBudgetSectionWidget(budgetGoals: budgetGoals),
+                SizedBox(height: context.lg),
+              ],
+            ),
+          );
+        },
+      );
+}
+
+//  wrapper with better controller management
 class DashboardPageWrapper extends StatefulWidget {
   const DashboardPageWrapper({super.key});
 
@@ -193,6 +242,7 @@ class DashboardPageWrapper extends StatefulWidget {
 
 class _DashboardPageWrapperState extends State<DashboardPageWrapper> {
   late final AwesomeDrawerBarController _drawerController;
+
   @override
   void initState() {
     super.initState();
@@ -201,29 +251,30 @@ class _DashboardPageWrapperState extends State<DashboardPageWrapper> {
 
   @override
   void dispose() {
+    // No need to dispose AwesomeDrawerBarController
     super.dispose();
   }
 
+  void _toggleDrawer() => _drawerController.toggle?.call();
+  void _closeDrawer() => _drawerController.close?.call();
+
   @override
-  Widget build(BuildContext context) => AwesomeDrawerBar(
-        controller: _drawerController,
-        borderRadius: 12,
-        angle: -10,
-        type: StyleState.popUp,
-        showShadow: true,
-        shadowColor: context.colorScheme.primary,
-        backgroundColor: context.colorScheme.primary,
-        duration: const Duration(milliseconds: 400),
-        slideWidth: context.screenWidth * 0.90,
-        // openCurve:
-        mainScreen: DashboardPage(
-          onProfileTap: () {
-            (_drawerController.toggle as void Function()?)?.call();
-          },
-        ),
-        menuScreen: ProfilePage(
-          onBackTap: () =>
-              (_drawerController.close as void Function()?)?.call(),
-        ),
-      );
+  Widget build(BuildContext context) {
+    //  Cache computed values
+    final screenWidth = MediaQuery.sizeOf(context).width;
+
+    return AwesomeDrawerBar(
+      controller: _drawerController,
+      borderRadius: 12,
+      angle: -10,
+      type: StyleState.popUp,
+      showShadow: true,
+      shadowColor: context.colorScheme.primary,
+      backgroundColor: context.colorScheme.primary,
+      duration: const Duration(milliseconds: 400),
+      slideWidth: screenWidth * 0.90,
+      mainScreen: DashboardPage(onProfileTap: _toggleDrawer),
+      menuScreen: ProfilePage(onBackTap: _closeDrawer),
+    );
+  }
 }

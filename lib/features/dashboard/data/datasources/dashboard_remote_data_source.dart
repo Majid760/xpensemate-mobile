@@ -20,12 +20,10 @@ abstract class DashboardRemoteDataSource {
   });
 
   /// Fetches product weekly analytics
-  Future<Either<Failure, ProductWeeklyAnalyticsModel>>
-      getProductWeeklyAnalytics();
+  Future<Either<Failure, ProductWeeklyAnalyticsModel>> getProductWeeklyAnalytics();
 
   /// Fetches product weekly analytics for a specific category
-  Future<Either<Failure, ProductWeeklyAnalyticsModel>>
-      getProductWeeklyAnalyticsForCategory();
+  Future<Either<Failure, ProductWeeklyAnalyticsModel>> getProductWeeklyAnalyticsForCategory();
 }
 
 class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
@@ -73,16 +71,14 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
   }
 
   @override
-  Future<Either<Failure, ProductWeeklyAnalyticsModel>>
-      getProductWeeklyAnalytics() => _networkClient.get(
-            NetworkConfigs.expenseStats,
-            fromJson: ProductWeeklyAnalyticsModel.fromJson,
-          );
+  Future<Either<Failure, ProductWeeklyAnalyticsModel>> getProductWeeklyAnalytics() => _networkClient.get(
+        NetworkConfigs.expenseStats,
+        fromJson: ProductWeeklyAnalyticsModel.fromJson,
+      );
 
   @override
-  Future<Either<Failure, ProductWeeklyAnalyticsModel>>
-      getProductWeeklyAnalyticsForCategory() => _networkClient.get(
-            NetworkConfigs.expenseStats,
-            fromJson: ProductWeeklyAnalyticsModel.fromJson,
-          );
+  Future<Either<Failure, ProductWeeklyAnalyticsModel>> getProductWeeklyAnalyticsForCategory() => _networkClient.get(
+        NetworkConfigs.expenseStats,
+        fromJson: ProductWeeklyAnalyticsModel.fromJson,
+      );
 }

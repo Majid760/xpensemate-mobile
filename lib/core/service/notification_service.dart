@@ -350,12 +350,10 @@ class NotificationService {
     try {
       final user = sl.authService.currentUser;
       if (user != null) {
-        unawaited(
-          FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.id)
-              .set({'fm_token': token}, SetOptions(merge: true)),
-        );
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.id)
+            .set({'fm_token': token}, SetOptions(merge: true));
       }
     } on Exception catch (error) {
       logE("error while storing fcm token: $error");

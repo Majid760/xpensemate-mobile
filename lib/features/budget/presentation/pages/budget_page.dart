@@ -67,13 +67,14 @@ class BudgetPageContent extends StatefulWidget {
 }
 
 class _BudgetPageContentState extends State<BudgetPageContent>
-    with TickerProviderStateMixin {
+    with AutomaticKeepAliveClientMixin {
   late ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
+    _loadBudgetData();
   }
 
   @override
@@ -90,63 +91,109 @@ class _BudgetPageContentState extends State<BudgetPageContent>
   }
 
   @override
-  Widget build(BuildContext context) => BlocConsumer<BudgetCubit, BudgetState>(
-        listener: (context, state) {},
-        builder: (context, state) => RefreshIndicator(
-          onRefresh: () async => [
-            _loadBudgetData(),
-            context.budgetCubit.pagingController.refresh(),
-          ],
-          color: context.primaryColor,
-          child: CustomScrollView(
-            controller: _scrollController,
-            physics: const BouncingScrollPhysics(
-              parent: AlwaysScrollableScrollPhysics(),
+  Widget build(BuildContext context) {
+    super.build(context); // Essential for AutomaticKeepAliveClientMixin
+    return RefreshIndicator(
+      onRefresh: () async => [
+        _loadBudgetData(),
+        context.budgetCubit.pagingController.refresh(),
+      ],
+      color: context.primaryColor,
+      child: CustomScrollView(
+        controller: _scrollController,
+        // ✅ OPTIMIZATION: Add cacheExtent for smoother scrolling
+        cacheExtent: 500,
+        physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
+        slivers: [
+          // Filter Section
+          const _FilterSection(),
+
+          // Stats Section
+          const SliverPadding(
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+            sliver: SliverToBoxAdapter(
+              child: _StatsSection(),
             ),
-            slivers: [
-              CustomAppBar(
-                defaultPeriod: state.defaultPeriod,
-                onChanged: (value) =>
-                    context.budgetCubit.getBudgetGoalsInsights(period: value),
-              ),
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(
-                  context.md,
-                  context.xs,
-                  context.md,
-                  context.xs,
-                ),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate([
-                    ExpandableStatsCard(
-                      budgetGoalsInsight: state.budgetGoalsInsight,
-                      period: state.defaultPeriod.name,
-                    ),
-                    SizedBox(height: context.xl),
-                    AnimatedSectionHeader(
-                      title: context.l10n.budget,
-                      onSearchChanged: (value) {
-                        if (value.trim().isEmpty) return;
-                        AppUtils.debounce(
-                          () => context.budgetCubit.updateSearchTerm(value),
-                          delay: const Duration(milliseconds: 700),
-                        );
-                      },
-                      onSearchCleared: () =>
-                          context.budgetCubit.updateSearchTerm(''),
-                    ),
-                    SizedBox(height: context.sm),
-                  ]),
-                ),
-              ),
-              SliverPadding(
-                padding: EdgeInsets.symmetric(horizontal: context.md),
-                sliver:
-                    BudgetGoalsListWidget(scrollController: _scrollController),
-              ),
-              // Bottom padding for FAB
-              SliverToBoxAdapter(child: SizedBox(height: context.xl * 3)),
-            ],
+          ),
+
+          SliverToBoxAdapter(child: SizedBox(height: context.xl)),
+
+          // Search Header Section
+          const _SearchHeaderSection(),
+
+          SliverToBoxAdapter(child: SizedBox(height: context.sm)),
+
+          // Budget List Widget
+          SliverPadding(
+            padding: EdgeInsets.symmetric(horizontal: context.md),
+            sliver: BudgetGoalsListWidget(scrollController: _scrollController),
+          ),
+
+          // Bottom padding for FAB
+          SliverToBoxAdapter(child: SizedBox(height: context.xl * 3)),
+        ],
+      ),
+    );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+}
+
+// ✅ OPTIMIZATION: Extracted Filter Section
+class _FilterSection extends StatelessWidget {
+  const _FilterSection();
+
+  @override
+  Widget build(BuildContext context) =>
+      BlocSelector<BudgetCubit, BudgetState, FilterValue>(
+        selector: (state) => state.defaultPeriod,
+        builder: (context, defaultPeriod) => CustomAppBar(
+          defaultPeriod: defaultPeriod,
+          onChanged: (value) =>
+              context.budgetCubit.getBudgetGoalsInsights(period: value),
+        ),
+      );
+}
+
+// ✅ OPTIMIZATION: Extracted Stats Section with RepaintBoundary
+class _StatsSection extends StatelessWidget {
+  const _StatsSection();
+
+  @override
+  Widget build(BuildContext context) => BlocBuilder<BudgetCubit, BudgetState>(
+        buildWhen: (previous, current) =>
+            previous.budgetGoalsInsight != current.budgetGoalsInsight ||
+            previous.defaultPeriod != current.defaultPeriod,
+        builder: (context, state) => RepaintBoundary(
+          child: ExpandableStatsCard(
+            budgetGoalsInsight: state.budgetGoalsInsight,
+            period: state.defaultPeriod.name,
+          ),
+        ),
+      );
+}
+
+// ✅ OPTIMIZATION: Extracted Search Header Section
+class _SearchHeaderSection extends StatelessWidget {
+  const _SearchHeaderSection();
+
+  @override
+  Widget build(BuildContext context) => SliverPadding(
+        padding: EdgeInsets.symmetric(horizontal: context.md),
+        sliver: SliverToBoxAdapter(
+          child: AnimatedSectionHeader(
+            title: context.l10n.budget,
+            onSearchChanged: (value) {
+              if (value.trim().isEmpty) return;
+              AppUtils.debounce(
+                () => context.budgetCubit.updateSearchTerm(value),
+                delay: const Duration(milliseconds: 700),
+              );
+            },
+            onSearchCleared: () => context.budgetCubit.updateSearchTerm(''),
           ),
         ),
       );

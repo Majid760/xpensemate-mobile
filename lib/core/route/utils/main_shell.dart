@@ -15,8 +15,13 @@ import 'package:xpensemate/features/payment/presentation/pages/payment_page.dart
 typedef FabActionCallback = void Function(int index);
 
 class MainShell extends StatefulWidget {
-  const MainShell({super.key, required this.child, this.customFabAction});
-  final Widget child;
+  const MainShell({
+    super.key,
+    required this.navigationShell,
+    this.customFabAction,
+  });
+
+  final StatefulNavigationShell navigationShell;
   final FabActionCallback? customFabAction;
 
   @override
@@ -86,19 +91,19 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
       ];
 
   /* ---------- helpers ---------- */
-  int _calculateSelectedIndex(BuildContext context) {
-    final loc = GoRouterState.of(context).matchedLocation;
-    if (loc.startsWith('/home/budget')) return 3;
-    if (loc.startsWith('/home/expense')) return 1;
-    if (loc.startsWith('/home/payment')) return 4;
-    // Default to dashboard for /home and /home/dashboard
-    if (loc == '/home' || loc.startsWith('/home/dashboard')) return 0;
+  // Map shell index (0,1,2,3) to UI index (0,1,3,4)
+  int get _currentIndex {
+    final shellIndex = widget.navigationShell.currentIndex;
+    if (shellIndex == 0) return 0; // Dashboard
+    if (shellIndex == 1) return 1; // Expense
+    if (shellIndex == 2) return 3; // Budget
+    if (shellIndex == 3) return 4; // Payment
     return 0;
   }
 
   void _onFabTap() {
     // If custom action is provided, use it instead of default behavior
-    final currentIndex = _calculateSelectedIndex(context);
+    final currentIndex = _currentIndex;
 
     // If we're on dashboard (index 0), always show the arc menu
     if (currentIndex == 0) {
@@ -107,19 +112,13 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
     }
     if (widget.customFabAction != null) {
       // Find out which action to trigger based on current route
-      if (GoRouterState.of(context)
-          .matchedLocation
-          .startsWith('/home/expense')) {
+      if (currentIndex == 1) {
         widget.customFabAction!(1);
         return;
-      } else if (GoRouterState.of(context)
-          .matchedLocation
-          .startsWith('/home/budget')) {
+      } else if (currentIndex == 3) {
         widget.customFabAction!(3);
         return;
-      } else if (GoRouterState.of(context)
-          .matchedLocation
-          .startsWith('/home/payment')) {
+      } else if (currentIndex == 4) {
         widget.customFabAction!(4);
         return;
       }
@@ -131,42 +130,48 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
 
   void _onItemTapped(int index, BuildContext context) {
     if (index == 2) {
-      // Only toggle FAB if no custom action is provided
+      // FAB center item
       if (widget.customFabAction == null) {
         _toggleFab();
       } else {
-        // Execute custom action directly
         widget.customFabAction!(index);
       }
       return;
     }
+
     if (_isFabExpanded) {
       _toggleFab();
     }
 
-    final current = _calculateSelectedIndex(context);
+    final current = _currentIndex;
     if (current != index) {
       _animationController
           .forward()
           .then((_) => _animationController.reverse());
 
-      // Navigate to the correct route based on the tab index
       final tabName = _navItems[index].label;
       AppLogger.userAction('nav_tab_click', {'tab_name': tabName});
+
+      // Map UI index to shell branch index
+      var branchIndex = 0;
       switch (index) {
-        case 0: // Dashboard
-          context.go('/home');
-          break;
-        case 1: // Expense
-          context.go('/home/expense');
-          break;
-        case 3: // Budget
-          context.go('/home/budget');
-          break;
-        case 4: // Payment
-          context.go('/home/payment');
-          break;
+        case 0:
+          branchIndex = 0;
+          break; // Dashboard
+        case 1:
+          branchIndex = 1;
+          break; // Expense
+        case 3:
+          branchIndex = 2;
+          break; // Budget
+        case 4:
+          branchIndex = 3;
+          break; // Payment
       }
+      widget.navigationShell.goBranch(
+        branchIndex,
+        initialLocation: index == widget.navigationShell.currentIndex,
+      );
     }
   }
 
@@ -248,7 +253,7 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
   /* ---------- build ---------- */
   @override
   Widget build(BuildContext context) {
-    final currentIndex = _calculateSelectedIndex(context);
+    final currentIndex = _currentIndex;
     return Scaffold(
       extendBody: true,
       body: Stack(
@@ -256,7 +261,7 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
           // Content with padding for bottom bar
           Padding(
             padding: const EdgeInsets.only(bottom: 90),
-            child: widget.child,
+            child: widget.navigationShell,
           ),
 
           // Dimmer Overlay

@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:xpensemate/core/route/auth_routes.dart';
-import 'package:xpensemate/core/route/home_routes.dart';
-import 'package:xpensemate/core/route/profile_routes.dart';
 import 'package:xpensemate/core/route/splash_page.dart';
 import 'package:xpensemate/core/route/utils/error_page.dart';
 import 'package:xpensemate/core/route/utils/main_shell.dart';
@@ -14,7 +12,9 @@ import 'package:xpensemate/core/service/analytics_service.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/pages/budget_page.dart';
+import 'package:xpensemate/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:xpensemate/features/expense/presentation/pages/expense_page.dart';
+import 'package:xpensemate/features/home/presentation/pages/home_page.dart';
 import 'package:xpensemate/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:xpensemate/features/payment/presentation/pages/payment_page.dart';
 import 'package:xpensemate/features/payment/presentation/pages/subscription_page.dart';
@@ -61,10 +61,9 @@ class AppRouter {
       ...AuthRoutes.routes,
 
       // Main App Shell with Bottom Navigation
-      ShellRoute(
-        navigatorKey: _shellNavigatorKey,
-        builder: (context, state, child) => MainShell(
-          child: child,
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) => MainShell(
+          navigationShell: navigationShell,
           customFabAction: (index) {
             if (index == 1) {
               addExpense(context: context);
@@ -73,12 +72,66 @@ class AppRouter {
             } else if (index == 4) {
               addPayment(context: context);
             }
-            return;
           },
         ),
-        routes: [
-          ...HomeRoutes.routes,
-          ...ProfileRoutes.routes,
+        branches: [
+          // Branch 0: Dashboard (Home)
+          StatefulShellBranch(
+            navigatorKey: _rootNavigatorKey,
+            routes: [
+              GoRoute(
+                path: RouteConstants.home,
+                name: RouteNames.home,
+                redirect: RouteGuards.requireAuth,
+                builder: (context, state) => const DashboardPageWrapper(),
+                routes: [
+                  GoRoute(
+                    path: 'dashboard',
+                    name: RouteNames.dashboard,
+                    builder: (context, state) => const DashboardPageWrapper(),
+                  ),
+                  GoRoute(
+                    path: 'notifications',
+                    name: RouteNames.notifications,
+                    builder: (context, state) => const HomePage(),
+                  ),
+                ],
+              ),
+            ],
+          ),
+
+          // Branch 1: Expense
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/home/expense',
+                name: RouteNames.expense,
+                builder: (context, state) => const ExpensePage(),
+              ),
+            ],
+          ),
+
+          // Branch 2: Budget
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/home/budget',
+                name: RouteNames.budget,
+                builder: (context, state) => const BudgetPage(),
+              ),
+            ],
+          ),
+
+          // Branch 3: Payment
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/home/payment',
+                name: RouteNames.payment,
+                builder: (context, state) => const PaymentPage(),
+              ),
+            ],
+          ),
         ],
       ),
     ],

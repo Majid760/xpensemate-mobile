@@ -1,13 +1,15 @@
 {
-    "dart.flutterShowWebServerDevice": "remote",
-    "dart.previewFlutterUiGuides": true,
-    "dart.previewFlutterUiGuidesCustomTracking": true,
-    "editor.rulers": [
-        140
-    ],
-    "workbench.colorTheme": "Default Dark Modern",
-    "workbench.preferredDarkColorTheme": "Default Dark Modern",
-    "workbench.preferredHighContrastColorTheme": "Default Dark Modern",
-    "workbench.preferredHighContrastLightColorTheme": "Default Dark Modern",
-    "workbench.preferredLightColorTheme": "Default Dark Modern"
+  "dart.flutterShowWebServerDevice": "remote",
+  "dart.previewFlutterUiGuides": true,
+  "dart.previewFlutterUiGuidesCustomTracking": true,
+  "editor.rulers": [140],
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "always",
+    "source.fixAll": "always"
+  },
+  "workbench.colorTheme": "Default Dark Modern",
+  "workbench.preferredDarkColorTheme": "Default Dark Modern",
+  "workbench.preferredHighContrastColorTheme": "Default Dark Modern",
+  "workbench.preferredHighContrastLightColorTheme": "Default Dark Modern",
+  "workbench.preferredLightColorTheme": "Default Dark Modern"
 }

@@ -59,125 +59,121 @@ class _ExpenseStatsWidgetState extends State<ExpenseStatsWidget>
   }
 
   @override
-  Widget build(BuildContext context) => SliverToBoxAdapter(
-        child: Container(
-          margin: EdgeInsets.fromLTRB(
-            context.md,
-            context.xs,
-            context.md,
-            context.md,
-          ),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                context.primaryColor,
-                context.secondaryColor,
-              ],
-            ),
-            borderRadius: BorderRadius.circular(24),
-            boxShadow: [
-              BoxShadow(
-                color: context.primaryColor.withValues(alpha: 0.3),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
+  Widget build(BuildContext context) => Container(
+        margin: EdgeInsets.fromLTRB(
+          context.md,
+          context.xs,
+          context.md,
+          context.md,
+        ),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              context.primaryColor,
+              context.secondaryColor,
             ],
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(24),
-            child: Material(
-              color: context.primaryColor,
-              child: InkWell(
-                onTap: _toggleExpanded,
-                child: Padding(
-                  padding: EdgeInsets.all(context.lg),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Header Section
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: context.primaryColor.withValues(alpha: 0.3),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Material(
+            color: context.primaryColor,
+            child: InkWell(
+              onTap: _toggleExpanded,
+              child: Padding(
+                padding: EdgeInsets.all(context.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header Section
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                context.l10n.overview,
+                                style: context.textTheme.titleMedium?.copyWith(
+                                  color: context.onPrimaryColor
+                                      .withValues(alpha: 0.7),
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                              SizedBox(height: context.xs),
+                              Text(
+                                widget.filter
+                                    .getLocalizedInsightsTitle(context),
+                                style:
+                                    context.textTheme.headlineSmall?.copyWith(
+                                  color: context.onPrimaryColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                        AnimatedRotation(
+                          turns: isExpanded ? 0.5 : 0,
+                          duration: const Duration(milliseconds: 400),
+                          curve: Curves.easeInOutCubic,
+                          child: Container(
+                            padding: EdgeInsets.all(context.sm),
+                            decoration: BoxDecoration(
+                              color:
+                                  context.onPrimaryColor.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              color: context.onPrimaryColor,
+                              size: 24,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: context.lg),
+                    // Quick Stats Row (Abstract - Always Visible)
+                    _QuickStatsRow(stats: widget.stats),
+                    // Expandable Detailed Section
+                    SizeTransition(
+                      sizeFactor: _expandAnimation,
+                      axisAlignment: -1,
+                      child: Column(
                         children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  context.l10n.overview,
-                                  style:
-                                      context.textTheme.titleMedium?.copyWith(
-                                    color: context.onPrimaryColor
-                                        .withValues(alpha: 0.7),
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
-                                SizedBox(height: context.xs),
-                                Text(
-                                  widget.filter
-                                      .getLocalizedInsightsTitle(context),
-                                  style:
-                                      context.textTheme.headlineSmall?.copyWith(
-                                    color: context.onPrimaryColor,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                          AnimatedRotation(
-                            turns: isExpanded ? 0.5 : 0,
-                            duration: const Duration(milliseconds: 400),
-                            curve: Curves.easeInOutCubic,
-                            child: Container(
-                              padding: EdgeInsets.all(context.sm),
-                              decoration: BoxDecoration(
-                                color: context.onPrimaryColor
-                                    .withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Icon(
-                                Icons.keyboard_arrow_down_rounded,
-                                color: context.onPrimaryColor,
-                                size: 24,
+                          SizedBox(height: context.lg),
+                          Container(
+                            height: 1,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  context.onPrimaryColor.withValues(alpha: 0),
+                                  context.onPrimaryColor.withValues(alpha: 0.3),
+                                  context.onPrimaryColor.withValues(alpha: 0),
+                                ],
                               ),
                             ),
                           ),
+                          SizedBox(height: context.lg),
+                          _DetailedStatsGrid(stats: widget.stats),
                         ],
                       ),
-                      SizedBox(height: context.lg),
-                      // Quick Stats Row (Abstract - Always Visible)
-                      _QuickStatsRow(stats: widget.stats),
-                      // Expandable Detailed Section
-                      SizeTransition(
-                        sizeFactor: _expandAnimation,
-                        axisAlignment: -1,
-                        child: Column(
-                          children: [
-                            SizedBox(height: context.lg),
-                            Container(
-                              height: 1,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    context.onPrimaryColor.withValues(alpha: 0),
-                                    context.onPrimaryColor
-                                        .withValues(alpha: 0.3),
-                                    context.onPrimaryColor.withValues(alpha: 0),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: context.lg),
-                            _DetailedStatsGrid(stats: widget.stats),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),

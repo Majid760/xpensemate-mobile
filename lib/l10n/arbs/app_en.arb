@@ -409,11 +409,11 @@
     "description": "Message when no trend data is available"
   },
   "of12": "of",
-  "budget": "Budget",
+  "budget": "Budgets",
   "@budget": {
     "description": "Budget label"
   },
-  "expenses": "expenses",
+  "expenses": "Expenses",
   "@expenses": {
     "description": "Expenses label"
   },

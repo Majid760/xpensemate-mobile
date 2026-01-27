@@ -22,15 +22,8 @@ class ExpensePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: context.colorScheme.surface,
-        body: const ExpensePageBody(),
+        body: const ExpensePageContent(),
       );
-}
-
-class ExpensePageBody extends StatelessWidget {
-  const ExpensePageBody({super.key});
-
-  @override
-  Widget build(BuildContext context) => const ExpensePageContent();
 }
 
 class ExpensePageContent extends StatefulWidget {
@@ -40,7 +33,8 @@ class ExpensePageContent extends StatefulWidget {
   State<ExpensePageContent> createState() => _ExpensePageContentState();
 }
 
-class _ExpensePageContentState extends State<ExpensePageContent> {
+class _ExpensePageContentState extends State<ExpensePageContent>
+    with AutomaticKeepAliveClientMixin {
   late ScrollController _scrollController;
 
   @override
@@ -83,99 +77,128 @@ class _ExpensePageContentState extends State<ExpensePageContent> {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      BlocListener<ExpenseCubit, ExpenseState>(
-        listenWhen: (previous, current) =>
-            previous.message != current.message ||
-            (current.expenseStats != previous.expenseStats),
-        listener: (context, state) {
-          if (state.message != null && state.message!.isNotEmpty) {
-            AppSnackBar.show(
-              context: context,
-              message: state.message ?? "",
-              type: state.state == ExpenseStates.error
-                  ? SnackBarType.error
-                  : SnackBarType.success,
-            );
-          }
-        },
-        child: RefreshIndicator(
-          onRefresh: () async => _loadExpenseData(),
-          color: context.primaryColor,
-          child: CustomScrollView(
-            controller: _scrollController,
-            physics: const BouncingScrollPhysics(
-              parent: AlwaysScrollableScrollPhysics(),
+  Widget build(BuildContext context) {
+    super.build(context);
+    return BlocListener<ExpenseCubit, ExpenseState>(
+      listenWhen: (previous, current) =>
+          previous.message != current.message ||
+          (current.expenseStats != previous.expenseStats),
+      listener: (context, state) {
+        if (state.message != null && state.message!.isNotEmpty) {
+          AppSnackBar.show(
+            context: context,
+            message: state.message ?? "",
+            type: state.state == ExpenseStates.error
+                ? SnackBarType.error
+                : SnackBarType.success,
+          );
+        }
+      },
+      child: RefreshIndicator(
+        onRefresh: () async => _loadExpenseData(),
+        color: context.primaryColor,
+        child: CustomScrollView(
+          controller: _scrollController,
+          cacheExtent: 500,
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
+          slivers: [
+            // Filter Section
+            BlocSelector<ExpenseCubit, ExpenseState, FilterValue>(
+              selector: (state) => state.filterDefaultValue,
+              builder: (context, filterDefaultValue) => CustomAppBar(
+                defaultPeriod: filterDefaultValue,
+                onChanged: (value) =>
+                    context.expenseCubit.loadExpenseStats(period: value),
+              ),
             ),
-            slivers: [
-              BlocSelector<ExpenseCubit, ExpenseState, FilterValue>(
-                selector: (state) => state.filterDefaultValue,
-                builder: (context, filterDefaultValue) => CustomAppBar(
-                  defaultPeriod: filterDefaultValue,
-                  onChanged: (value) =>
-                      context.expenseCubit.loadExpenseStats(period: value),
-                ),
-              ),
-              BlocBuilder<ExpenseCubit, ExpenseState>(
-                buildWhen: (previous, current) =>
-                    previous.expenseStats != current.expenseStats ||
-                    previous.filterDefaultValue != current.filterDefaultValue,
-                builder: (context, state) => ExpenseStatsWidget(
-                  stats: state.expenseStats,
-                  filter: state.filterDefaultValue,
-                ),
-              ),
-              SliverPadding(
-                padding: EdgeInsets.all(context.md),
-                sliver: SliverToBoxAdapter(
-                  child: AnimatedSectionHeader(
-                    title: context.l10n.expenses,
-                    icon: Icon(
-                      Icons.receipt_long_rounded,
-                      color: context.primaryColor,
-                      size: AppSpacing.iconMd,
-                    ),
-                    onSearchChanged: (value) {
-                      if (value.trim().isEmpty) return;
-                      AppUtils.debounce(
-                        () => context.expenseCubit.updateSearchTerm(value),
-                        delay: const Duration(milliseconds: 700),
-                      );
-                    },
-                    onSearchCleared: () =>
-                        context.expenseCubit.refreshExpenses(),
-                  ),
-                ),
-              ),
 
-              // Expense List Widget
-              SliverPadding(
-                padding: EdgeInsets.symmetric(horizontal: context.md),
-                sliver: ExpenseListWidget(
-                  onEdit: (updatedEntity) {
-                    _editExpense(updatedEntity, context);
-                  },
-                  onDelete: (expenseId) {
-                    context.expenseCubit.deleteExpense(expenseId: expenseId);
-                  },
-                  scrollController: _scrollController,
-                ),
-              ),
+            // Stats Section
+            const SliverToBoxAdapter(
+              child: _ExpenseStatsSection(),
+            ),
 
-              // Bottom padding for FAB and Nav Bar
-              const SliverToBoxAdapter(
-                child: SizedBox(height: 100),
+            // Search Header
+            const _SearchHeaderSection(),
+
+            // Expense List Widget
+            SliverPadding(
+              padding: EdgeInsets.symmetric(horizontal: context.md),
+              sliver: ExpenseListWidget(
+                onEdit: (updatedEntity) {
+                  _editExpense(updatedEntity, context);
+                },
+                onDelete: (expenseId) {
+                  context.expenseCubit.deleteExpense(expenseId: expenseId);
+                },
+                scrollController: _scrollController,
               ),
-            ],
+            ),
+
+            // Bottom padding for FAB and Nav Bar
+            const SliverToBoxAdapter(
+              child: SizedBox(height: 100),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+}
+
+class _ExpenseStatsSection extends StatelessWidget {
+  const _ExpenseStatsSection();
+
+  @override
+  Widget build(BuildContext context) => BlocBuilder<ExpenseCubit, ExpenseState>(
+        buildWhen: (previous, current) =>
+            previous.expenseStats != current.expenseStats ||
+            previous.filterDefaultValue != current.filterDefaultValue,
+        builder: (context, state) => RepaintBoundary(
+          child: ExpenseStatsWidget(
+            stats: state.expenseStats,
+            filter: state.filterDefaultValue,
           ),
         ),
       );
 }
 
-// this function can be called from other pages or components
+class _SearchHeaderSection extends StatelessWidget {
+  const _SearchHeaderSection();
+
+  @override
+  Widget build(BuildContext context) => SliverPadding(
+        padding: EdgeInsets.all(context.md),
+        sliver: SliverToBoxAdapter(
+          child: AnimatedSectionHeader(
+            title: context.l10n.expenses,
+            icon: Icon(
+              Icons.receipt_long_rounded,
+              color: context.primaryColor,
+              size: AppSpacing.iconMd,
+            ),
+            onSearchChanged: (value) {
+              if (value.trim().isEmpty) return;
+              AppUtils.debounce(
+                () => context.expenseCubit.updateSearchTerm(value),
+                delay: const Duration(milliseconds: 700),
+              );
+            },
+            onSearchCleared: () => context.expenseCubit.refreshExpenses(),
+          ),
+        ),
+      );
+}
+
 // to trigger the add expense action
-void addExpense(
-    {required BuildContext context, void Function(ExpenseEntity)? onSave}) {
+void addExpense({
+  required BuildContext context,
+  void Function(ExpenseEntity)? onSave,
+}) {
   final screenHeight = MediaQuery.of(context).size.height;
   AppBottomSheet.show<void>(
     context: context,

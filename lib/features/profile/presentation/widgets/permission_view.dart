@@ -143,8 +143,9 @@ class _PermissionManagementDialogState
                       shrinkWrap: true,
                       itemCount: AppPermission.values.length,
                       separatorBuilder: (context, index) => Divider(
-                          color: colorScheme.outlineVariant
-                              .withValues(alpha: 0.5)),
+                        color:
+                            colorScheme.outlineVariant.withValues(alpha: 0.5),
+                      ),
                       itemBuilder: (context, index) {
                         final permission = AppPermission.values[index];
                         final status = _permissionStatuses[permission];
@@ -292,7 +293,7 @@ class _PermissionListItem extends StatelessWidget {
             Switch(
               value: isGranted,
               onChanged: (_) => onToggle(),
-              activeColor: colorScheme.primary,
+              activeThumbColor: colorScheme.primary,
             ),
         ],
       ),

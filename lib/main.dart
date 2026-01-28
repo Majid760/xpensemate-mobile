@@ -43,14 +43,12 @@ void main() async {
     },
     (error, stack) {
       // Improved error logging with more context and better formatting
+      AppLogger.e('Fatal error in main zone', error, stack);
       debugPrint('🔥 FATAL ERROR CAUGHT IN MAIN:');
       debugPrint('==============================');
       debugPrint('Error: $error');
       debugPrint('Stack trace: $stack');
       debugPrint('==============================');
-
-      // Record fatal error to Crashlytics
-      AppLogger.e('Fatal error in main zone', error, stack);
     },
   );
 }

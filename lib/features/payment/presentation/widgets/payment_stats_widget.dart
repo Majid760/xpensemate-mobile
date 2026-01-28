@@ -9,8 +9,11 @@ import 'package:xpensemate/core/utils/currency_formatter.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_stats_entity.dart';
 
 class PaymentStatsWidget extends StatefulWidget {
-  const PaymentStatsWidget(
-      {super.key, required this.stats, required this.defaultPeriod});
+  const PaymentStatsWidget({
+    super.key,
+    required this.stats,
+    required this.defaultPeriod,
+  });
   final PaymentStatsEntity? stats;
   final FilterValue defaultPeriod;
 
@@ -56,117 +59,114 @@ class _PaymentStatsWidgetState extends State<PaymentStatsWidget>
   }
 
   @override
-  Widget build(BuildContext context) => SliverToBoxAdapter(
-        child: Container(
-          margin: const EdgeInsets.fromLTRB(
-            AppSpacing.md,
-            AppSpacing.xs,
-            AppSpacing.md,
-            AppSpacing.sm,
-          ),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                context.colorScheme.primary,
-                context.colorScheme.secondary,
-              ],
-            ),
-            borderRadius: BorderRadius.circular(AppSpacing.lg),
-            boxShadow: [
-              BoxShadow(
-                color: context.colorScheme.primary.withValues(alpha: 0.3),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
+  Widget build(BuildContext context) => Container(
+        margin: const EdgeInsets.fromLTRB(
+          AppSpacing.md,
+          AppSpacing.xs,
+          AppSpacing.md,
+          AppSpacing.sm,
+        ),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              context.colorScheme.primary,
+              context.colorScheme.secondary,
             ],
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(AppSpacing.lg),
-            child: Material(
-              color: context.colorScheme.primary,
-              child: InkWell(
-                onTap: _toggleExpanded,
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.md1),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Header Section
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                context.l10n.overview,
-                                style: context.textTheme.titleMedium?.copyWith(
-                                  color: context.onPrimaryColor,
-                                  letterSpacing: 0.5,
-                                ),
-                              ),
-                              const SizedBox(height: AppSpacing.xs),
-                              Text(
-                                '${widget.defaultPeriod.name.capitalize} ${context.l10n.insights}',
-                                style:
-                                    context.textTheme.headlineSmall?.copyWith(
-                                  color: context.onPrimaryColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          AnimatedRotation(
-                            turns: isExpanded ? 0.5 : 0,
-                            duration: const Duration(milliseconds: 400),
-                            curve: Curves.easeInOutCubic,
-                            child: Container(
-                              padding: EdgeInsets.all(context.sm),
-                              decoration: BoxDecoration(
-                                color: context.onPrimaryColor
-                                    .withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Icon(
-                                Icons.keyboard_arrow_down_rounded,
-                                color: context.onPrimaryColor,
-                                size: 24,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: AppSpacing.md1),
-                      // Quick Stats Row (Abstract - Always Visible)
-                      _QuickStatsRow(stats: widget.stats),
-                      // Expandable Detailed Section
-                      SizeTransition(
-                        sizeFactor: _expandAnimation,
-                        axisAlignment: -1,
-                        child: Column(
+          borderRadius: BorderRadius.circular(AppSpacing.lg),
+          boxShadow: [
+            BoxShadow(
+              color: context.colorScheme.primary.withValues(alpha: 0.3),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(AppSpacing.lg),
+          child: Material(
+            color: context.colorScheme.primary,
+            child: InkWell(
+              onTap: _toggleExpanded,
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.md1),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header Section
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(height: AppSpacing.md1),
-                            Container(
-                              height: 1,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Colors.white.withValues(alpha: 0),
-                                    Colors.white.withValues(alpha: 0.3),
-                                    Colors.white.withValues(alpha: 0),
-                                  ],
-                                ),
+                            Text(
+                              context.l10n.overview,
+                              style: context.textTheme.titleMedium?.copyWith(
+                                color: context.onPrimaryColor,
+                                letterSpacing: 0.5,
                               ),
                             ),
-                            const SizedBox(height: AppSpacing.md1),
-                            _DetailedStatsGrid(stats: widget.stats),
+                            const SizedBox(height: AppSpacing.xs),
+                            Text(
+                              '${widget.defaultPeriod.name.capitalize} ${context.l10n.insights}',
+                              style: context.textTheme.headlineSmall?.copyWith(
+                                color: context.onPrimaryColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ],
                         ),
+                        AnimatedRotation(
+                          turns: isExpanded ? 0.5 : 0,
+                          duration: const Duration(milliseconds: 400),
+                          curve: Curves.easeInOutCubic,
+                          child: Container(
+                            padding: EdgeInsets.all(context.sm),
+                            decoration: BoxDecoration(
+                              color:
+                                  context.onPrimaryColor.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              color: context.onPrimaryColor,
+                              size: 24,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.md1),
+                    // Quick Stats Row (Abstract - Always Visible)
+                    _QuickStatsRow(stats: widget.stats),
+                    // Expandable Detailed Section
+                    SizeTransition(
+                      sizeFactor: _expandAnimation,
+                      axisAlignment: -1,
+                      child: Column(
+                        children: [
+                          const SizedBox(height: AppSpacing.md1),
+                          Container(
+                            height: 1,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.white.withValues(alpha: 0),
+                                  Colors.white.withValues(alpha: 0.3),
+                                  Colors.white.withValues(alpha: 0),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.md1),
+                          _DetailedStatsGrid(stats: widget.stats),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -242,8 +242,11 @@ class _QuickStatItem extends StatelessWidget {
               color: iconBg,
               borderRadius: BorderRadius.circular(AppSpacing.sm1),
             ),
-            child: Icon(icon,
-                color: context.onPrimaryColor, size: AppSpacing.iconMd),
+            child: Icon(
+              icon,
+              color: context.onPrimaryColor,
+              size: AppSpacing.iconMd,
+            ),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(

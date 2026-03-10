@@ -37,8 +37,7 @@ class ProfileCubit extends Cubit<ProfileState> {
 
     // 2. Load theme
     var themeMode = ThemeMode.system;
-    final themeResult =
-        await _profileUseCasesHolder.getThemeUseCase(const NoParams());
+    final themeResult = await _profileUseCasesHolder.getThemeUseCase(const NoParams());
     themeResult.fold((_) => null, (mode) => themeMode = mode);
 
     if (user != null) {

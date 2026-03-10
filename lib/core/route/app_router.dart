@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:xpensemate/core/route/auth_routes.dart';
+import 'package:xpensemate/core/route/profile_routes.dart';
 import 'package:xpensemate/core/route/splash_page.dart';
 import 'package:xpensemate/core/route/utils/error_page.dart';
 import 'package:xpensemate/core/route/utils/main_shell.dart';
@@ -59,6 +60,9 @@ class AppRouter {
 
       // Auth Routes
       ...AuthRoutes.routes,
+
+      // Profile Routes
+      ...ProfileRoutes.routes,
 
       // Main App Shell with Bottom Navigation
       StatefulShellRoute.indexedStack(

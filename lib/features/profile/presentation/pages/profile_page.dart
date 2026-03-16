@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
-import 'package:go_router/go_router.dart';
-import 'package:xpensemate/core/localization/locale_manager.dart';
-import 'package:xpensemate/core/localization/supported_locales.dart';
-import 'package:xpensemate/core/localization/locale_manager.dart';
-import 'package:xpensemate/core/localization/supported_locales.dart';
 import 'package:xpensemate/core/route/utils/router_extension.dart';
 import 'package:xpensemate/core/service/permission_service.dart';
 import 'package:xpensemate/core/service/service_locator.dart';

@@ -381,7 +381,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget>
                                 fieldType: FieldType.dropdown,
                                 hintText: context.l10n.selectGender,
                                 prefixIcon: const Icon(Icons.person_4_rounded,
-                                    size: 20),
+                                    size: 20,),
                                 onDropdownChanged: (value) {
                                   HapticFeedback.selectionClick();
                                 },

@@ -549,8 +549,7 @@ class AppBottomSheetService {
       case BottomSheetStyle.floating:
       case BottomSheetStyle.avatar:
       case BottomSheetStyle.custom:
-      default:
-        return showModalBottomSheet<T>(
+      return showModalBottomSheet<T>(
           context: context,
           builder: (_) => AppBottomSheetContent(
             title: title,
@@ -641,7 +640,7 @@ class AppBottomSheetService {
   }
 
   Widget _buildWoltTopBar(
-          BuildContext context, String title, BottomSheetConfig config) =>
+          BuildContext context, String title, BottomSheetConfig config,) =>
       Container(
         padding: EdgeInsets.symmetric(horizontal: context.lg),
         child: Row(
@@ -675,19 +674,6 @@ class AppBottomSheetService {
         ),
       );
 
-  Gradient? _buildGradient(BuildContext context, BottomSheetStyle style) {
-    switch (style) {
-      case BottomSheetStyle.woltSideSheet:
-        return LinearGradient(
-          colors: [
-            Theme.of(context).colorScheme.surface,
-            Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
-          ],
-        );
-      default:
-        return null;
-    }
-  }
 }
 
 /// Internal content widget for the bottom sheet
@@ -1288,7 +1274,6 @@ extension BottomSheetPresets on BottomSheetConfig {
   static BottomSheetConfig get woltDialog => BottomSheetConfig(
         borderRadius: 16,
         showHandle: false,
-        showCloseButton: true,
         modalTypeBuilder: (context) => WoltModalType.dialog(),
         height: 400,
       );

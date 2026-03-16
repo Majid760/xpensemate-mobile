@@ -66,7 +66,7 @@ class NotificationService {
       final token = await _firebaseMessaging.getToken();
       if (token != null) {
         logI("fcm token: $token");
-        unawaited(_sendFcmTokenToServer(token));
+        unawaited(_saveFcmToken(token));
       } else {
         // retry generating token
         await Future<void>.delayed(const Duration(seconds: 10));
@@ -118,7 +118,7 @@ class NotificationService {
       // Handle token refresh
       _firebaseMessaging.onTokenRefresh.listen((token) {
         logI('FCM token refreshed: $token');
-        _sendFcmTokenToServer(token);
+        _saveFcmToken(token);
       });
 
       // Handle terminated app messages
@@ -346,17 +346,16 @@ class NotificationService {
   }
 
   /// send notification (firebase)
-  Future<void> _sendFcmTokenToServer(String token) async {
+  Future<void> _saveFcmToken(String token) async {
     try {
       final user = sl.authService.currentUser;
-      if (user != null) {
         await FirebaseFirestore.instance
             .collection('users')
-            .doc(user.id)
-            .set({'fm_token': token}, SetOptions(merge: true));
-      }
+            .doc(token)
+            .set({'fm_token': token, 'uid': user?.id ?? '', 'createdAt': DateTime.now()}, SetOptions(merge: true));
+      
     } on Exception catch (error) {
-      logE("error while storing fcm token: $error");
+      logE("error while storing fcm token: $error"); 
     }
   }
 

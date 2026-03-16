@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/supported_locales.dart';
 import 'package:xpensemate/core/service/secure_storage_service.dart';
@@ -25,16 +26,16 @@ class LocaleManager extends ChangeNotifier {
       if (savedLocale != null) {
         _currentLocale = _parseLocale(savedLocale) ?? _defaultLocale;
         AppLogger.breadcrumb(
-            'Locale initialized from storage: $_currentLocale');
+            'Locale initialized from storage: $_currentLocale',);
       } else {
         // No saved locale - use default and save it
         _currentLocale = _defaultLocale;
         await _saveCurrentLocale();
         AppLogger.breadcrumb(
-            'Locale initialized with default: $_currentLocale');
+            'Locale initialized with default: $_currentLocale',);
       }
       unawaited(sl.analytics.setUserProperty(
-          name: 'language', value: _currentLocale.languageCode));
+          name: 'language', value: _currentLocale.languageCode,),);
     } on Exception catch (e) {
       logE('Error initializing locale: $e');
       _currentLocale = _defaultLocale;
@@ -52,7 +53,7 @@ class LocaleManager extends ChangeNotifier {
     await _saveCurrentLocale();
     AppLogger.breadcrumb('Locale changed to: $locale');
     unawaited(sl.analytics
-        .setUserProperty(name: 'language', value: locale.languageCode));
+        .setUserProperty(name: 'language', value: locale.languageCode),);
     notifyListeners();
   }
 

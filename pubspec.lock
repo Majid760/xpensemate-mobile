@@ -76,10 +76,11 @@ packages:
   awesome_drawer_bar:
     dependency: "direct main"
     description:
-      name: awesome_drawer_bar
-      sha256: adfa7448c6b3c7952e2b0ba76aa2e63655bf57891aa977bca34e21297e526049
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: "60fb59936bb0d7fab7441c28b467b11735926c1f"
+      url: "https://github.com/Majid760/drawer_bar-master.git"
+    source: git
     version: "1.2.1"
   bloc:
     dependency: transitive

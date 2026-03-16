@@ -256,7 +256,7 @@ class _DashboardPageWrapperState extends State<DashboardPageWrapper> {
   }
 
   void _toggleDrawer() => _drawerController.toggle?.call();
-  void _closeDrawer() => _drawerController.close?.call();
+  void _closeDrawer() => _drawerController.close?.call ();
 
   @override
   Widget build(BuildContext context) {
@@ -269,6 +269,7 @@ class _DashboardPageWrapperState extends State<DashboardPageWrapper> {
       angle: -10,
       type: StyleState.popUp,
       showShadow: true,
+      trailingWidget:const  SizedBox.shrink(),
       shadowColor: context.colorScheme.primary,
       backgroundColor: context.colorScheme.primary,
       duration: const Duration(milliseconds: 400),

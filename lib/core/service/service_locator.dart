@@ -1,6 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xpensemate/core/localization/locale_manager.dart';
 import 'package:xpensemate/core/network/network_client.dart';
@@ -9,6 +10,7 @@ import 'package:xpensemate/core/network/network_info.dart';
 import 'package:xpensemate/core/service/analytics_service.dart';
 import 'package:xpensemate/core/service/crashlytics_service.dart';
 import 'package:xpensemate/core/service/hive_storage_service.dart';
+import 'package:xpensemate/core/service/local_auth_service.dart';
 import 'package:xpensemate/core/service/notification_service.dart';
 import 'package:xpensemate/core/service/permission_service.dart';
 import 'package:xpensemate/core/service/secure_storage_service.dart';
@@ -70,6 +72,13 @@ import 'package:xpensemate/features/profile/domain/usecases/save_theme_usecase.d
 import 'package:xpensemate/features/profile/domain/usecases/update_profile_image_usecase.dart';
 import 'package:xpensemate/features/profile/domain/usecases/update_profile_usecase.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
+import 'package:xpensemate/features/settings/data/datasources/settings_local_data_source.dart';
+import 'package:xpensemate/features/settings/data/repositories/settings_repository_impl.dart';
+import 'package:xpensemate/features/settings/domain/repositories/settings_repository.dart';
+import 'package:xpensemate/features/settings/domain/usecases/get_settings_usecase.dart';
+import 'package:xpensemate/features/settings/domain/usecases/save_settings_usecase.dart';
+import 'package:xpensemate/features/settings/domain/usecases/settings_use_cases_holder.dart';
+import 'package:xpensemate/features/settings/presentation/cubit/settings_cubit.dart';
 
 /// Global, lazy singleton
 final sl = GetIt.instance;
@@ -114,6 +123,11 @@ Future<void> initLocator() async {
     // Permission Service
     sl.registerLazySingleton<PermissionService>(
       PermissionService.new,
+    );
+
+    // ---------- Local Auth Service ----------
+    sl.registerLazySingleton<LocalAuthService>(
+      () => LocalAuthService(LocalAuthentication()),
     );
 
     // ---------- Secure Storage Service ----------
@@ -172,9 +186,15 @@ Future<void> initLocator() async {
       () => PaymentRemoteDataSourceImpl(sl()),
     );
 
+    // ---------- Settings Local DataSource ----------
+    sl.registerLazySingleton<SettingsLocalDataSource>(
+      () => SettingsLocalDataSourceImpl(sl()),
+    );
+
     // ---------- Repositories ----------
     sl.registerLazySingleton<AuthRepository>(
       () => AuthRepositoryImpl(
+        sl(),
         sl(),
         sl(),
         sl(),
@@ -198,6 +218,11 @@ Future<void> initLocator() async {
     sl.registerLazySingleton<PaymentRepository>(
       () => PaymentRepositoryImpl(sl()),
     );
+    
+    // ---------- Settings Repository ----------
+    sl.registerLazySingleton<SettingsRepository>(
+      () => SettingsRepositoryImpl(sl()),
+    );
 
     // ---------- Use-cases ----------
     sl.registerLazySingleton(() => ForgotPasswordUseCase(sl()));
@@ -206,6 +231,7 @@ Future<void> initLocator() async {
     sl.registerLazySingleton(() => SignOutUseCase(sl()));
     sl.registerLazySingleton(() => SignUpUseCase(sl()));
     sl.registerLazySingleton(() => SendVerificationEmailUseCase(sl()));
+    sl.registerLazySingleton(() => AuthenticateWithBiometricsUseCase(sl()));
     sl.registerLazySingleton(() => UpdateProfileUseCase(sl()));
     sl.registerLazySingleton(() => UpdateProfileImageUseCase(sl()));
     sl.registerLazySingleton(() => GetThemeUseCase(sl()));
@@ -242,6 +268,10 @@ Future<void> initLocator() async {
     sl.registerLazySingleton(() => DeletePaymentUseCase(sl()));
     sl.registerLazySingleton(() => GetSinglePaymentUseCase(sl()));
 
+    // settings use cases
+    sl.registerLazySingleton(() => GetSettingsUseCase(sl()));
+    sl.registerLazySingleton(() => SaveSettingsUseCase(sl()));
+
     // ---------- Presentation Layer ----------
     sl.registerLazySingleton(
       () => AuthUseCasesHolder(
@@ -251,6 +281,7 @@ Future<void> initLocator() async {
         signOutUseCase: sl(),
         refreshTokenUseCase: sl(),
         sendVerificationEmailUseCase: sl(),
+        authenticateWithBiometricsUseCase: sl(),
       ),
     );
 
@@ -260,6 +291,13 @@ Future<void> initLocator() async {
         updateProfileImageUseCase: sl(),
         getThemeUseCase: sl(),
         saveThemeUseCase: sl(),
+      ),
+    );
+
+    sl.registerLazySingleton(
+      () => SettingsUseCasesHolder(
+        getSettingsUseCase: sl(),
+        saveSettingsUseCase: sl(),
       ),
     );
     sl.registerLazySingleton(() => AuthCubit(sl()));
@@ -278,6 +316,7 @@ Future<void> initLocator() async {
     sl.registerFactory(() => BudgetExpensesCubit(sl()));
     sl.registerFactory(() => PaymentCubit(sl(), sl(), sl(), sl(), sl()));
     sl.registerFactory(() => OnboardingCubit(sl()));
+    sl.registerFactory(() => SettingsCubit(sl()));
 
     AppLogger.i('Service locator initialized successfully');
   } on Exception catch (e) {
@@ -326,4 +365,5 @@ extension ServiceLocatorExtension on GetIt {
   CrashlyticsService get crashlytics => this<CrashlyticsService>();
   AnalyticsService get analytics => this<AnalyticsService>();
   NotificationService get notificationService => this<NotificationService>();
+  SettingsCubit get settingsCubit => this<SettingsCubit>();
 }

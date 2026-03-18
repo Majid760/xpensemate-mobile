@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/core/network/network_info.dart';
+import 'package:xpensemate/core/service/local_auth_service.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/core/utils/network_mixin.dart';
 import 'package:xpensemate/features/auth/data/datasources/auth_remote_data_source.dart';
@@ -20,11 +21,13 @@ class AuthRepositoryImpl
     this.remoteDataSource,
     this.networkInfo,
     this.authService,
+    this.localAuthService,
   );
   final AuthRemoteDataSource remoteDataSource;
   @override
   final NetworkInfoService networkInfo;
   final AuthService authService;
+  final LocalAuthService localAuthService;
 
   @override
   Future<Either<Failure, UserEntity>> getCurrentUser() async {
@@ -220,6 +223,22 @@ class AuthRepositoryImpl
     } on Exception catch (e) {
       logE("thissi excepiton occurs $e");
       return left(e.toFailure() as AuthenticationFailure);
+    }
+  }
+
+  /// Authenticate with Biometrics
+  @override
+  Future<Either<Failure, bool>> authenticateWithBiometrics() async {
+    try {
+      final success = await localAuthService.authenticate();
+      if (success) {
+        return const Right(true);
+      } else {
+        return const Left(AuthenticationFailure(message: 'Biometric authentication failed or canceled.'));
+      }
+    } on Exception catch (e) {
+      logE("Exception during biometric authentication $e");
+      return Left(AuthenticationFailure(message: e.toString()));
     }
   }
 }

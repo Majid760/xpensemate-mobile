@@ -8,6 +8,7 @@ class AuthUseCasesHolder {
     required this.signOutUseCase,
     required this.refreshTokenUseCase,
     required this.sendVerificationEmailUseCase,
+    required this.authenticateWithBiometricsUseCase,
   });
   final SignInWithEmailUseCase signInWithEmailUseCase;
   final SignUpUseCase signUpUseCase;
@@ -15,4 +16,5 @@ class AuthUseCasesHolder {
   final SignOutUseCase signOutUseCase;
   final RefreshTokenUseCase refreshTokenUseCase;
   final SendVerificationEmailUseCase sendVerificationEmailUseCase;
+  final AuthenticateWithBiometricsUseCase authenticateWithBiometricsUseCase;
 }

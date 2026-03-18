@@ -1,4 +1,5 @@
 // export all use cases
+export 'authenticate_with_biometrics_usecase.dart';
 export 'forgot_password_usercase.dart';
 export 'refresh_token_usecase.dart';
 export 'send_verification_email.dart';

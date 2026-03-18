@@ -102,7 +102,10 @@
 	<!-- Development and debugging permissions -->
 	<key>NSLocalNetworkUsageDescription</key>
     <string>This app needs local network access for development and debugging purposes.</string>
-
+    <!-- for Biometric Authentication -->
+	<key>NSFaceIDUsageDescription</key>
+    <string>We use Face ID to securely verify your identity and protect your data.</string>
+    
     <key>NSBonjourServices</key>
     <array>
         <string>_dartobservatory._tcp</string>

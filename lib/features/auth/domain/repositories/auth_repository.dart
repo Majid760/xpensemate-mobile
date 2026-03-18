@@ -40,6 +40,8 @@ abstract class AuthRepository {
   // Send verification email
   Future<Either<Failure, dynamic>> sendVerificationEmail(String email);
   
+  // Authenticate with Biometrics
+  Future<Either<Failure, bool>> authenticateWithBiometrics();
 }
 
 

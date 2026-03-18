@@ -6,12 +6,16 @@ import 'package:xpensemate/core/localization/supported_locales.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_custom_dialog.dart';
 import 'package:xpensemate/core/widget/app_dialogs.dart';
+import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_state.dart';
 import 'package:xpensemate/features/profile/presentation/widgets/currency_dialog.dart';
 import 'package:xpensemate/features/profile/presentation/widgets/language_dialog.dart';
 import 'package:xpensemate/features/profile/presentation/widgets/settings_widgets.dart';
 import 'package:xpensemate/features/profile/presentation/widgets/theme_dialog.dart';
+import 'package:xpensemate/features/settings/domain/entities/settings_entity.dart';
+import 'package:xpensemate/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:xpensemate/features/settings/presentation/cubit/settings_state.dart';
 import 'package:xpensemate/l10n/app_localizations.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -22,44 +26,62 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  bool _notificationsEnabled = true;
-  bool _transactionReminders = true;
-  bool _budgetAlerts = true;
-  bool _biometricAuth = false;
-  String _selectedCurrency = 'USD';
-
-  List<Map<String, String>> _getCurrencies(BuildContext context) {
-    final l10n = context.l10n;
-    return [
-      {'code': 'USD', 'name': l10n.currencyUSD, 'symbol': r'$'},
-      {'code': 'PKR', 'name': l10n.currencyPKR, 'symbol': '₨'},
-      {'code': 'EUR', 'name': l10n.currencyEUR, 'symbol': '€'},
-      {'code': 'GBP', 'name': l10n.currencyGBP, 'symbol': '£'},
-      {'code': 'JPY', 'name': l10n.currencyJPY, 'symbol': '¥'},
-      {'code': 'AUD', 'name': l10n.currencyAUD, 'symbol': r'A$'},
-      {'code': 'CAD', 'name': l10n.currencyCAD, 'symbol': r'C$'},
-      {'code': 'CHF', 'name': l10n.currencyCHF, 'symbol': 'Fr'},
-      {'code': 'CNY', 'name': l10n.currencyCNY, 'symbol': '¥'},
-      {'code': 'INR', 'name': l10n.currencyINR, 'symbol': '₹'},
-    ];
-  }
+  /// Resolves the localized display name for [code] from [SettingsCubit.currencies].
+  String _currencyName(String code, AppLocalizations l10n) => switch (code) {
+      'USD' => l10n.currencyUSD,
+      'PKR' => l10n.currencyPKR,
+      'EUR' => l10n.currencyEUR,
+      'GBP' => l10n.currencyGBP,
+      'JPY' => l10n.currencyJPY,
+      'AUD' => l10n.currencyAUD,
+      'CAD' => l10n.currencyCAD,
+      'CHF' => l10n.currencyCHF,
+      'CNY' => l10n.currencyCNY,
+      'INR' => l10n.currencyINR,
+      _ => code,
+    };
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final currencies = _getCurrencies(context);
 
-    return Scaffold(
-      backgroundColor: colorScheme.surface,
-      body: BlocBuilder<ProfileCubit, ProfileState>(
-        buildWhen: (previous, current) => current is ProfileLoaded,
-        builder: (context, state) {
-          final loadedState = state is ProfileLoaded ? state : null;
-          final themeMode = loadedState?.themeMode ?? ThemeMode.system;
+    return BlocListener<SettingsCubit, SettingsState>(
+      listenWhen: (previous, current) =>
+          previous is SettingsLoaded && current is SettingsLoaded
+              ? previous.message != current.message
+              : current is SettingsError,
+      listener: (context, state) {
+        if (state is SettingsLoaded && state.message != null) {
+          AppSnackBar.show(
+            context: context,
+            message: state.message!,
+            type: SnackBarType.success,
+          );
+        } else if (state is SettingsError) {
+          AppSnackBar.show(
+            context: context,
+            message: state.message,
+            type: SnackBarType.error,
+          );
+        }
+      },
+      child: Scaffold(
+        backgroundColor: colorScheme.surface,
+        body: BlocBuilder<ProfileCubit, ProfileState>(
+          buildWhen: (previous, current) => current is ProfileLoaded,
+          builder: (context, state) {
+            final loadedState = state is ProfileLoaded ? state : null;
+            final themeMode = loadedState?.themeMode ?? ThemeMode.system;
 
-          return CustomScrollView(
+            return BlocBuilder<SettingsCubit, SettingsState>(
+              builder: (context, settingsState) {
+                final settings = settingsState is SettingsLoaded
+                    ? settingsState.settings
+                    : const SettingsEntity();
+
+              return CustomScrollView(
             slivers: [
               _SettingsAppBar(),
               SliverToBoxAdapter(
@@ -88,7 +110,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               color: colorScheme.onSurfaceVariant,
                             ),
                           ),
-                          _buildCurrencyTile(colorScheme, l10n, currencies),
+                          _buildCurrencyTile(colorScheme, l10n, settings.selectedCurrency),
                           _buildThemeTile(themeMode, colorScheme, l10n),
                         ],
                       ),
@@ -100,25 +122,25 @@ class _SettingsPageState extends State<SettingsPage> {
                             title: l10n.notifications,
                             subtitle: l10n.receiveNotificationsDesc,
                             icon: Icons.notifications_outlined,
-                            value: _notificationsEnabled,
-                            onChanged: (value) =>
-                                setState(() => _notificationsEnabled = value),
+                            value: settings.notificationsEnabled,
+                            onChanged: (value) => context.settingsCubit
+                                .updateSettings(notificationsEnabled: value),
                           ),
                           SettingsSwitchTile(
                             title: l10n.transactionReminders,
                             subtitle: l10n.transactionRemindersDesc,
                             icon: Icons.alarm,
-                            value: _transactionReminders,
-                            onChanged: (value) =>
-                                setState(() => _transactionReminders = value),
+                            value: settings.transactionReminders,
+                            onChanged: (value) => context.settingsCubit
+                                .updateSettings(transactionReminders: value),
                           ),
                           SettingsSwitchTile(
                             title: l10n.budgetAlerts,
                             subtitle: l10n.budgetAlertsDesc,
                             icon: Icons.warning_amber_outlined,
-                            value: _budgetAlerts,
-                            onChanged: (value) =>
-                                setState(() => _budgetAlerts = value),
+                            value: settings.budgetAlerts,
+                            onChanged: (value) => context.settingsCubit
+                                .updateSettings(budgetAlerts: value),
                           ),
                         ],
                       ),
@@ -130,9 +152,9 @@ class _SettingsPageState extends State<SettingsPage> {
                             title: l10n.biometricAuth,
                             subtitle: l10n.useFingerprintOrFaceId,
                             icon: Icons.fingerprint,
-                            value: _biometricAuth,
-                            onChanged: (value) =>
-                                setState(() => _biometricAuth = value),
+                            value: settings.biometricAuth,
+                            onChanged: (value) => context.settingsCubit
+                                .updateSettings(biometricAuth: value),
                           ),
                           SettingsNavigationTile(
                             title: l10n.appPermissions,
@@ -246,8 +268,11 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
             ],
+              );
+            },
           );
-        },
+          },
+        ),
       ),
     );
   }
@@ -255,19 +280,27 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget _buildCurrencyTile(
     ColorScheme colorScheme,
     AppLocalizations l10n,
-    List<Map<String, String>> currencies,
+    String selectedCurrency,
   ) {
-    final currency =
-        currencies.firstWhere((c) => c['code'] == _selectedCurrency);
+    const currencies = SettingsCubit.currencies;
+    final currency = currencies.firstWhere((c) => c['code'] == selectedCurrency);
+    final name = _currencyName(selectedCurrency, l10n);
     return SettingsBaseTile(
       title: l10n.currency,
-      subtitle: '${currency['name']} (${currency['symbol']})',
+      subtitle: '$name (${currency['symbol']})',
       icon: Icons.attach_money,
       onTap: () => CurrencyDialog.show(
         context: context,
-        selectedCurrency: _selectedCurrency,
-        currencies: currencies,
-        onCurrencyChanged: (val) => setState(() => _selectedCurrency = val),
+        selectedCurrency: selectedCurrency,
+        currencies: currencies
+            .map((c) => {
+                  'code': c['code']!,
+                  'name': _currencyName(c['code']!, l10n),
+                  'symbol': c['symbol']!,
+                },)
+            .toList(),
+        onCurrencyChanged: (val) =>
+            context.settingsCubit.updateSettings(selectedCurrency: val),
       ),
       trailing: Icon(Icons.chevron_right, color: colorScheme.onSurfaceVariant),
     );

@@ -21,6 +21,7 @@ import 'package:xpensemate/features/expense/presentation/cubit/expense_cubit.dar
 import 'package:xpensemate/features/payment/presentation/cubit/payment_cubit.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_state.dart';
+import 'package:xpensemate/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:xpensemate/firebase_options.dart';
 import 'package:xpensemate/l10n/app_localizations.dart';
 
@@ -138,6 +139,10 @@ class _MyAppState extends State<MyApp> {
           ),
           BlocProvider<PaymentCubit>(
             create: (context) => sl.paymentCubit,
+          ),
+          BlocProvider<SettingsCubit>(
+            create: (context) => sl.settingsCubit,
+            lazy: false,
           ),
           // Other cubits/blocs
         ],

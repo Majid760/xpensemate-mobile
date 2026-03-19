@@ -1,0 +1,83 @@
+# ════════════════════════════════════════════════════════════════
+# Flutter Launcher Icons Configuration
+# Run: dart run flutter_launcher_icons --file flutter_launcher_icons.yaml
+# ════════════════════════════════════════════════════════════════
+
+flutter_launcher_icons:
+
+  # ─────────────────────────────────────────
+  # Global / Shared
+  # ─────────────────────────────────────────
+  # Default image used for any platform that doesn't specify its own.
+  # Best size: 1024×1024 PNG.
+  image_path: "assets/images/logo_icon.png"
+
+  # ─────────────────────────────────────────
+  # Android
+  # ─────────────────────────────────────────
+  android: true
+
+  # Override the global image for Android only (optional).
+  # image_path_android: "assets/images/logo_icon_android.png"
+
+  # Minimum SDK for adaptive icons (Android 8+). Default is 21.
+  min_sdk_android: 21
+
+  # Adaptive icon (Android 8+ — API 26+):
+  # Both background + foreground MUST be set for adaptive icons.
+  # Background can be a hex color or an image path.
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/logo_icon.png"
+
+  # Monochrome icon for Android 13+ themed icons.
+  # This should be a single-color (usually white-on-transparent) version
+  # of your logo so it blends with the user's chosen wallpaper tint.
+  # adaptive_icon_monochrome: "assets/images/logo_icon_monochrome.png"
+
+  # ─────────────────────────────────────────
+  # iOS
+  # ─────────────────────────────────────────
+  ios: true
+
+  # Override the global image for iOS only (optional).
+  # image_path_ios: "assets/images/logo_icon_ios.png"
+
+  # Remove the alpha/transparency channel from the iOS icon.
+  # Apple REQUIRES this — icons with transparency are rejected.
+  remove_alpha_ios: true
+
+  # iOS 18+ Dark Mode icon (transparent background recommended by Apple).
+  # Uncomment and provide a dark-mode variant of your logo:
+  # image_path_ios_dark_transparent: "assets/images/logo_icon_dark.png"
+
+  # iOS 18+ Tinted Mode icon (grayscale recommended by Apple).
+  # Uncomment and provide a grayscale variant of your logo:
+  # image_path_ios_tinted_grayscale: "assets/images/logo_icon_tinted.png"
+
+  # Auto-convert the tinted icon to grayscale if you don't have one ready.
+  # Only applies when image_path_ios_tinted_grayscale is set.
+  # desaturate_tinted_to_grayscale_ios: true
+
+  # ─────────────────────────────────────────
+  # Web
+  # ─────────────────────────────────────────
+  web:
+    generate: false
+    # image_path: "assets/images/logo_icon.png"
+    # background_color: "#FFFFFF"
+    # theme_color: "#4DB6AC"
+
+  # ─────────────────────────────────────────
+  # macOS
+  # ─────────────────────────────────────────
+  macos:
+    generate: false
+    # image_path: "assets/images/logo_icon.png"
+
+  # ─────────────────────────────────────────
+  # Windows
+  # ─────────────────────────────────────────
+  windows:
+    generate: false
+    # image_path: "assets/images/logo_icon.png"
+    # icon_size: 48  # min 48, max 256

@@ -27,7 +27,6 @@ class LocalAuthService {
       }
       return await _localAuth.authenticate(
         localizedReason: 'Please authenticate to log in',
-        persistAcrossBackgrounding: true,
       );
     } on PlatformException catch (e) {
       if (e.code == 'NotAvailable') {

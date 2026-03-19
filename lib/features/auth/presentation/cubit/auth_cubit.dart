@@ -71,6 +71,25 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
     );
   }
 
+  Future<void> loginWithBiometrics() async {
+    emit(const AuthLoading());
+
+    final result = await _useCasesHolder.authenticateWithBiometricsUseCase.call(
+      const NoParams(),
+    );
+    result.fold(
+      (failure) {
+        AppLogger.breadcrumb('Biometric login failed');
+        emit(AuthError(failure.message));
+      },
+      (user) {
+        AppLogger.setUserId(user.id);
+        AppLogger.setCustomKey('is_authenticated', true);
+        emit(AuthAuthenticated(user));
+      },
+    );
+  }
+
   Future<void> registerWithEmail({
     required String fullName,
     required String email,

@@ -41,7 +41,7 @@ abstract class AuthRepository {
   Future<Either<Failure, dynamic>> sendVerificationEmail(String email);
   
   // Authenticate with Biometrics
-  Future<Either<Failure, bool>> authenticateWithBiometrics();
+  Future<Either<Failure, UserEntity>> authenticateWithBiometrics();
 }
 
 

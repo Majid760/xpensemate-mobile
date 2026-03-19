@@ -12,12 +12,33 @@ final class AuthInterceptor extends QueuedInterceptor {
 
   final AuthService _authService;
 
+  /// Public endpoints that should NOT have an Authorization header.
+  static const _publicPaths = <String>[
+    NetworkConfigs.login,
+    NetworkConfigs.register,
+    NetworkConfigs.forgotPassword,
+    NetworkConfigs.resetPassword,
+    NetworkConfigs.sendVerificationEmail,
+    NetworkConfigs.loginWithGoogle,
+  ];
+
+  /// Returns true if [path] is a public endpoint that doesn't require auth.
+  bool _isPublicEndpoint(String path) =>
+      _publicPaths.any((p) => path.contains(p));
+
   @override
   Future<void> onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
     try {
+      // Skip auth header for public endpoints (login, register, etc.)
+      if (_isPublicEndpoint(options.path)) {
+        print("this is public path => ${options.path}");
+        logI('AuthInterceptor: skipping auth header for public endpoint ${options.path}');
+        return handler.next(options);
+      }
+
       var accessToken = _authService.token;
       logI(
         "this is accesss token before checking => ${accessToken.isNotEmpty ? accessToken.substring(0, 6) : 'empty'}",
@@ -30,7 +51,7 @@ final class AuthInterceptor extends QueuedInterceptor {
           accessToken = token;
           logI("access token IS NOW NOT empty, fetched from storage");
         } else {
-          logE('getAccessToken from storageg failed');
+          logE('getAccessToken from storage failed');
         }
       }
       options.headers['Authorization'] = 'Bearer $accessToken';
@@ -55,6 +76,12 @@ final class AuthInterceptor extends QueuedInterceptor {
       if (err.response?.statusCode != 401 && err.response?.statusCode != 403) {
         return handler.next(err);
       }
+
+      // Don't attempt token refresh for public endpoints — they don't use auth
+      if (_isPublicEndpoint(err.requestOptions.path)) {
+        return handler.next(err);
+      }
+
       logI(
         'Token expired or invalid (status ${err.response?.statusCode}), attempting to refresh...',
       );

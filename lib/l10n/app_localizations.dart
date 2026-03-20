@@ -420,6 +420,48 @@ abstract class AppLocalizations {
   /// **'Resend Verification Email'**
   String get resendVerificationEmail;
 
+  /// No description provided for @signInToYourFinancialWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to your financial workspace'**
+  String get signInToYourFinancialWorkspace;
+
+  /// No description provided for @startTrackingYourFinancesSmarter.
+  ///
+  /// In en, this message translates to:
+  /// **'Start tracking your finances smarter'**
+  String get startTrackingYourFinancesSmarter;
+
+  /// No description provided for @letter.
+  ///
+  /// In en, this message translates to:
+  /// **'Letter'**
+  String get letter;
+
+  /// No description provided for @number.
+  ///
+  /// In en, this message translates to:
+  /// **'Number'**
+  String get number;
+
+  /// No description provided for @emailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Email address'**
+  String get emailAddress;
+
+  /// No description provided for @signIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get signIn;
+
+  /// No description provided for @createOne.
+  ///
+  /// In en, this message translates to:
+  /// **'Create one'**
+  String get createOne;
+
   /// No description provided for @backToLogin.
   ///
   /// In en, this message translates to:
@@ -2699,6 +2741,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Update'**
   String get update;
+
+  /// No description provided for @checkYourEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Your Email'**
+  String get checkYourEmail;
+
+  /// Message that reset link was sent
+  ///
+  /// In en, this message translates to:
+  /// **'We sent a password reset link to {email}'**
+  String resetLinkSentTo(String email);
+
+  /// No description provided for @tapLinkInEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the link in your email'**
+  String get tapLinkInEmail;
+
+  /// No description provided for @linkExpiresIn24Hours.
+  ///
+  /// In en, this message translates to:
+  /// **'The link expires in 24 hours'**
+  String get linkExpiresIn24Hours;
+
+  /// No description provided for @checkSpamFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'If you don\'t see the email, check your spam or junk folder.'**
+  String get checkSpamFolder;
+
+  /// No description provided for @openEmailApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Email App'**
+  String get openEmailApp;
+
+  /// No description provided for @didntReceiveEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn\'t receive the email?'**
+  String get didntReceiveEmail;
+
+  /// No description provided for @resend.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend'**
+  String get resend;
+
+  /// Message shown during resend cooldown
+  ///
+  /// In en, this message translates to:
+  /// **'Resend in {seconds}s'**
+  String resendIn(int seconds);
 }
 
 class _AppLocalizationsDelegate

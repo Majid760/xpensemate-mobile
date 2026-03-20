@@ -505,5 +505,22 @@
   "growth": "",
   "topPayer": "",
   "optional": "",
-  "update": ""
+  "update": "",
+  "checkYourEmail": "Check Your Email",
+  "resetLinkSentTo": "We sent a password reset link to {email}",
+  "@resetLinkSentTo": {
+    "description": "Message that reset link was sent",
+    "placeholders": {
+      "email": {
+        "type": "String",
+        "example": "user@example.com"
+      }
+    }
+  },
+  "tapLinkInEmail": "Toca el enlace en el correo electrónico",
+  "linkExpiresIn24Hours": "El enlace caduca en 24 horas",
+  "checkSpamFolder": "If you don't see the email, check your spam or junk folder.",
+  "openEmailApp": "Open Email App",
+  "didntReceiveEmail": "Didn't receive the email?",
+  "resend": "Resend"
 }

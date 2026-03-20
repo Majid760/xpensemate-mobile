@@ -78,6 +78,13 @@
   "verificationEmailSentTo": "Verification email sent to",
   "verificationInstructions": "Please check your email for the verification link.",
   "resendVerificationEmail": "Resend Verification Email",
+  "signInToYourFinancialWorkspace": "Sign in to your financial workspace",
+  "startTrackingYourFinancesSmarter": "Start tracking your finances smarter",
+  "letter": "Letter",
+  "number": "Number",
+  "emailAddress": "Email address",
+  "signIn": "Sign in",
+  "createOne": "Create one",
   "backToLogin": "Back to Login",
   "@@validation_section": "Form validation error messages",
   "passwordOrEmail": "Password or Email is incorrect!",
@@ -970,5 +977,32 @@
   "growth": "Growth",
   "topPayer": "Top Payer",
   "optional": "Optional",
-  "update": "Update"
+  "update": "Update",
+  "checkYourEmail": "Check Your Email",
+  "resetLinkSentTo": "We sent a password reset link to {email}",
+  "@resetLinkSentTo": {
+    "description": "Message that reset link was sent",
+    "placeholders": {
+      "email": {
+        "type": "String",
+        "example": "user@example.com"
+      }
+    }
+  },
+  "tapLinkInEmail": "Tap the link in your email",
+  "linkExpiresIn24Hours": "The link expires in 24 hours",
+  "checkSpamFolder": "If you don't see the email, check your spam or junk folder.",
+  "openEmailApp": "Open Email App",
+  "didntReceiveEmail": "Didn't receive the email?",
+  "resend": "Resend",
+  "resendIn": "Resend in {seconds}s",
+  "@resendIn": {
+    "description": "Message shown during resend cooldown",
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "example": "30"
+      }
+    }
+  }
 }

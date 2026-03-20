@@ -171,6 +171,29 @@ class AppLocalizationsEs extends AppLocalizations {
   String get resendVerificationEmail => 'Reenviar Correo de Verificación';
 
   @override
+  String get signInToYourFinancialWorkspace =>
+      'Sign in to your financial workspace';
+
+  @override
+  String get startTrackingYourFinancesSmarter =>
+      'Start tracking your finances smarter';
+
+  @override
+  String get letter => 'Letter';
+
+  @override
+  String get number => 'Number';
+
+  @override
+  String get emailAddress => 'Email address';
+
+  @override
+  String get signIn => 'Sign in';
+
+  @override
+  String get createOne => 'Create one';
+
+  @override
   String get backToLogin => 'Volver al Inicio de Sesión';
 
   @override
@@ -1387,4 +1410,36 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get update => '';
+
+  @override
+  String get checkYourEmail => 'Check Your Email';
+
+  @override
+  String resetLinkSentTo(String email) {
+    return 'We sent a password reset link to $email';
+  }
+
+  @override
+  String get tapLinkInEmail => 'Toca el enlace en el correo electrónico';
+
+  @override
+  String get linkExpiresIn24Hours => 'El enlace caduca en 24 horas';
+
+  @override
+  String get checkSpamFolder =>
+      'If you don\'t see the email, check your spam or junk folder.';
+
+  @override
+  String get openEmailApp => 'Open Email App';
+
+  @override
+  String get didntReceiveEmail => 'Didn\'t receive the email?';
+
+  @override
+  String get resend => 'Resend';
+
+  @override
+  String resendIn(int seconds) {
+    return 'Resend in ${seconds}s';
+  }
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
@@ -6,6 +7,7 @@ import 'package:xpensemate/core/usecase/usecase.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/features/auth/domain/entities/user.dart';
 import 'package:xpensemate/features/auth/domain/usecases/forgot_password_usercase.dart';
+import 'package:xpensemate/features/auth/domain/usecases/send_verification_email.dart';
 import 'package:xpensemate/features/auth/domain/usecases/sign_in_usecase.dart';
 import 'package:xpensemate/features/auth/domain/usecases/sign_up_usecase.dart';
 import 'package:xpensemate/features/auth/domain/usecases/use_cases_holder.dart';
@@ -108,6 +110,19 @@ class AuthCubit extends Cubit<AuthState> with ChangeNotifier {
     result.fold(
       (failure) => emit(AuthError(failure.message)),
       (_) => emit(const AuthUnauthenticated()),
+    );
+  }
+
+  Future<void> sendVerificationEmail({required String email}) async {
+    emit(const AuthLoading());
+
+    final result = await _useCasesHolder.sendVerificationEmailUseCase.call(
+      SendVerificationEmailUseCaseParams(email: email),
+    );
+
+    result.fold(
+      (failure) => emit(AuthError(failure.message)),
+      (_) => emit(const AuthUnauthenticated(),),
     );
   }
 

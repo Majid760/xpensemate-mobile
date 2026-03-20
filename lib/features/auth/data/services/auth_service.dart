@@ -11,9 +11,7 @@ import 'package:xpensemate/features/auth/domain/entities/user.dart';
 class AuthService {
   AuthService({
     required AuthLocalDataSource localDataSource,
-  }) : _localDataSource = localDataSource {
-    _initialize();
-  }
+  }) : _localDataSource = localDataSource;
 
   final AuthLocalDataSource _localDataSource;
   final _userStreamController = StreamController<UserEntity?>.broadcast();
@@ -34,17 +32,14 @@ class AuthService {
   String get userRefreshToken => refreshToken;
 
   /// Initialize the service - load user from storage
-  Future<void> _initialize() async {
-    logI('AuthService: Initializing...');
-    await initializeService();
-    _isInitialized = true;
-  }
-
   Future<void> initializeService() async {
+    if (_isInitialized) return;
+    logI('AuthService: Initializing...');
     await Future.wait([
       fetchTokenFromStorage(),
       fetchUserFromStorage(),
     ]);
+    _isInitialized = true;
   }
 
   // set the tokens and users

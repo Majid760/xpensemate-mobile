@@ -109,7 +109,7 @@ class AuthRepositoryImpl
   /// Sign in with Google
   @override
   Future<Either<Failure, UserEntity>> signInWithGoogle(
-      {required String credential}) async {
+      {required String credential,}) async {
     try {
       return withNetworkCheck(() async {
         final result =
@@ -228,11 +228,17 @@ class AuthRepositoryImpl
 
   /// Authenticate with Biometrics
   @override
-  Future<Either<Failure, bool>> authenticateWithBiometrics() async {
+  Future<Either<Failure, UserEntity>> authenticateWithBiometrics() async {
     try {
       final success = await localAuthService.authenticate();
       if (success) {
-        return const Right(true);
+        // Biometric auth succeeded; fetch the stored user data
+        final user = await authService.fetchUserFromStorage();
+        if (user != null) {
+          return Right(user);
+        } else {
+          return const Left(AuthenticationFailure(message: 'User data not found. Please log in with password.'));
+        }
       } else {
         return const Left(AuthenticationFailure(message: 'Biometric authentication failed or canceled.'));
       }

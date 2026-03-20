@@ -121,6 +121,16 @@ class ModernContent extends StatelessWidget {
           color: context.colorScheme.secondary,
           onTap: () => onComingSoon(context.l10n.edit),
         ),
+        // MenuItemData(
+        //   icon: Icons.notifications_outlined,
+        //   title: context.l10n.notifications,
+        //   subtitle: context.l10n.configureNotifications,
+        //   color: AppColors.warning,
+        //   onTap: () => onComingSoon(context.l10n.notifications),
+        // ),
+      ];
+
+  List<MenuItemData> _supportMenuItems(BuildContext context) => [
         MenuItemData(
           icon: Icons.security_rounded,
           title: context.l10n.privacySecurity,
@@ -128,16 +138,6 @@ class ModernContent extends StatelessWidget {
           color: AppColors.success,
           onTap: () => _launchPrivacyPolicy(context),
         ),
-        MenuItemData(
-          icon: Icons.notifications_outlined,
-          title: context.l10n.notifications,
-          subtitle: context.l10n.configureNotifications,
-          color: AppColors.warning,
-          onTap: () => onComingSoon(context.l10n.notifications),
-        ),
-      ];
-
-  List<MenuItemData> _supportMenuItems(BuildContext context) => [
         MenuItemData(
           icon: Icons.help_outline_rounded,
           title: context.l10n.termsAndConditions,

@@ -5,8 +5,8 @@ class NetworkConfigs {
   //  Environment Configuration
   // ------------------------------------------------------------------
   static const String baseUrl = String.fromEnvironment(
-    'BASE_URL',
-    defaultValue: 'http://192.168.0.108:5001/api/v1',
+    'BASE_URL4',
+    defaultValue: 'http://192.168.0.100:5001/api/v1',
   );
 
   // ------------------------------------------------------------------

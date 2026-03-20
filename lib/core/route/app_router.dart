@@ -31,7 +31,7 @@ class AppRouter {
       _analyticsService.observer,
     ],
     // debugLogDiagnostics: true,
-    initialLocation: RouteConstants.home,
+    initialLocation: RouteConstants.splash,
     refreshListenable: _authCubit,
     redirect: _routeGuards.globalRedirectAsync,
     errorBuilder: (context, state) => ErrorPage(error: state.error),

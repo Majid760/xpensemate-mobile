@@ -103,7 +103,6 @@ class _MyAppState extends State<MyApp> {
     // You should adjust this key based on what your backend sends
     final route = data['route'] as String?;
     final id = data['id'] as String?;
-
     if (route != null) {
       if (id != null) {
         // Example: /expense/123

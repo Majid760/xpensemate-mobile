@@ -45,13 +45,16 @@ class NotificationService {
       // 1. Initialize Local Notifications (Sequential dependency)
       await _initializeLocalNotifications();
 
-      // 2. Initialize Push Notifications & Channels
-      // These can run somewhat in parallel but we want to ensure basic local setup is done first
+      // 2. Initialize Push Notifications & Channels in parallel
       await Future.wait([
         _initializePushNotifications(),
         _setupNotificationChannels(),
-        generateFcmToken(),
       ]);
+
+      // 3. Fire off FCM token generation in the background —
+      //    it involves a network call + Firestore write and should not
+      //    block the UI thread.
+      unawaited(generateFcmToken());
 
       _isInitialized = true;
       logI('NotificationService initialized successfully');
@@ -349,8 +352,8 @@ class NotificationService {
   Future<void> _saveFcmToken(String token) async {
     try {
       final user = sl.authService.currentUser;
-        await FirebaseFirestore.instance
-            .collection('users')
+      await FirebaseFirestore.instance
+          .collection('users')
             .doc(token)
             .set({'fm_token': token, 'uid': user?.id ?? '', 'createdAt': DateTime.now()}, SetOptions(merge: true));
       

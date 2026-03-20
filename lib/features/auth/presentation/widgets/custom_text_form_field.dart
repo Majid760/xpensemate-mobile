@@ -49,6 +49,7 @@ class ReactiveAppField extends StatefulWidget {
     this.validationMessages,
     this.showErrors,
     this.textInputAction,
+    this.onSubmitted,
     // Phone specific
     this.defaultCountry = 'US',
     this.priorityListByIsoCode,
@@ -93,6 +94,7 @@ class ReactiveAppField extends StatefulWidget {
   final Map<String, String Function(Object)>? validationMessages;
   final ShowErrorsFunction<dynamic>? showErrors;
   final TextInputAction? textInputAction;
+  final ReactiveFormFieldCallback<String>? onSubmitted;
 
   // Phone specific properties
   final String defaultCountry;
@@ -632,6 +634,7 @@ class _ReactiveAppFieldState extends State<ReactiveAppField> {
         autocorrect: _getAutocorrect(),
         enableSuggestions: _getEnableSuggestions(),
         inputFormatters: widget.inputFormatters,
+        onSubmitted: widget.onSubmitted,
       );
 
   InputDecoration _getInputDecoration(

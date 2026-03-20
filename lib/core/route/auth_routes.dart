@@ -5,6 +5,7 @@ import 'package:xpensemate/core/route/utils/router_middleware_guard.dart';
 import 'package:xpensemate/features/auth/presentation/pages/email_verify_page.dart';
 import 'package:xpensemate/features/auth/presentation/pages/forgot_password_page.dart';
 import 'package:xpensemate/features/auth/presentation/pages/login_page.dart';
+import 'package:xpensemate/features/auth/presentation/pages/register_page.dart';
 
 abstract class AuthRoutes {
   static List<RouteBase> get routes => [

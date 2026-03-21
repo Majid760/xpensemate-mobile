@@ -1,12 +1,40 @@
-//lib/features/splash/presentation/pages/splash_page.dart
+// lib/features/splash/presentation/pages/splash_page.dart
+//
+// Animation sequence:
+//   Phase 1 (0–800ms)    — 4 diamond petals fly from corners, assemble X mark
+//   Phase 2 (800ms)      — assembled mark pulses once (scale 1→1.09→1)
+//   Phase 3 (920ms…)     — "penseMate" chars rise from clip, staggered left→right
+//                          "pense" = light-weight / muted, "Mate" = bold / full white
+//   Phase 4              — italic gradient slogan slides up from clip
+//                          decorative rule lines + dot fade in
+//   Phase 5              — loading bar fills with shimmer → navigate to home
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
-import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
-import 'package:xpensemate/core/utils/assset_path.dart';
-import 'package:xpensemate/core/widget/app_image.dart';
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Brand colors — hardcoded so splash is theme-independent at startup
+// ─────────────────────────────────────────────────────────────────────────────
+const _cTL = Color(0xFF25C4C3); // top-left     teal
+const _cTR = Color(0xFF2E7692); // top-right    deep ocean
+const _cBL = Color(0xFF22D7A4); // bottom-left  mint
+const _cBR = Color(0xFF20CE6F); // bottom-right green
+
+const _splashBg    = Color(0xFF0D1F2D);
+const _textFull    = Color(0xFFE2F0F0);  // "Mate" — full brightness
+const _textMuted   = Color(0xBFE2F0F0);  // "pense" — 75% opacity
+
+// Slogan gradient stops
+const _gradBegin = _cTL;
+const _gradMid   = _cBL;
+const _gradEnd   = _cBR;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SplashPage
+// ─────────────────────────────────────────────────────────────────────────────
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
 
@@ -15,336 +43,471 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
-  late AnimationController _logoController;
-  late Animation<Offset> _logoSlideAnimation;
-  late Animation<double> _logoFadeAnimation;
+  // ── Phase 1: petal fly-in ────────────────────────────────────────────────
+  late final AnimationController _petalCtrl;
+  late final Animation<Offset> _tlSlide;
+  late final Animation<Offset> _trSlide;
+  late final Animation<Offset> _blSlide;
+  late final Animation<Offset> _brSlide;
+  late final Animation<double> _petalFade;
 
-  // Characters in reverse order: e, t, a, M, e, s, n, e, p
-  final String _appName = "penseMate";
-  final List<AnimationController> _characterControllers = [];
-  final List<Animation<double>> _characterRotationAnimations = [];
-  final List<Animation<Offset>> _characterSlideAnimations = [];
-  final List<Animation<double>> _characterOpacityAnimations = [];
+  // ── Phase 2: pulse ────────────────────────────────────────────────────────
+  late final AnimationController _pulseCtrl;
+  late final Animation<double> _pulse;
 
-  // Motto animation
-  late AnimationController _mottoController;
-  late Animation<double> _mottoFadeAnimation;
-  late Animation<Offset> _mottoSlideAnimation;
-  // final String _motto = "Track Smart, Spend Wise"; // Will use localized string
+  // ── Phase 3: wordmark chars — each gets its own controller ────────────────
+  // "pense" = indices 0-4, "Mate" = indices 5-8
+  static const _word = 'penseMate';
+  static const _lightCount = 5; // "pense"
+  final List<AnimationController> _charCtrl = [];
+  final List<Animation<double>> _charSlide = []; // 0=bottom,1=top
+  final List<Animation<double>> _charFade  = [];
 
-  // Loading animation
-  late AnimationController _loadingController;
-  late Animation<double> _loadingProgressAnimation;
+  // ── Phase 4: slogan + rule lines ──────────────────────────────────────────
+  late final AnimationController _sloganCtrl;
+  late final Animation<double> _sloganSlide; // 0=clipped,1=visible
+  late final AnimationController _ruleCtrl;
+  late final Animation<double> _ruleFade;
+
+  // ── Phase 5: loading ──────────────────────────────────────────────────────
+  late final AnimationController _loadingCtrl;
+  late final Animation<double> _loadingProgress;
   bool _showLoading = false;
-
-  // GlobalKey to get logo position
-  final GlobalKey _logoKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    _setupAnimations();
-    _startAnimations();
+    _setup();
+    _run();
   }
 
-  void _setupAnimations() {
-    // Logo animation controller
-    _logoController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
+  void _setup() {
+    // ── Phase 1 ───────────────────────────────────────────────────────────────
+    _petalCtrl = AnimationController(
       vsync: this,
+      duration: const Duration(milliseconds: 800),
     );
 
-    // Logo slide animation (from far left)
-    _logoSlideAnimation = Tween<Offset>(
-      begin: const Offset(-3, 0),
-      end: Offset.zero,
-    ).animate(
+    const flyDist = 1.8;
+    const flyIn   = Interval(0, 1, curve: Curves.easeOutCubic);
+
+    _tlSlide = Tween<Offset>(begin: const Offset(-flyDist,-flyDist), end: Offset.zero)
+        .animate(CurvedAnimation(parent: _petalCtrl, curve: flyIn));
+    _trSlide = Tween<Offset>(begin: const Offset(flyDist,-flyDist), end: Offset.zero)
+        .animate(CurvedAnimation(parent: _petalCtrl, curve: flyIn));
+    _blSlide = Tween<Offset>(begin: const Offset(-flyDist,flyDist), end: Offset.zero)
+        .animate(CurvedAnimation(parent: _petalCtrl, curve: flyIn));
+    _brSlide = Tween<Offset>(begin: const Offset(flyDist,flyDist), end: Offset.zero)
+        .animate(CurvedAnimation(parent: _petalCtrl, curve: flyIn));
+
+    _petalFade = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
-        parent: _logoController,
-        curve: Curves.easeOutCubic,
+        parent: _petalCtrl,
+        curve: const Interval(0, 0.4, curve: Curves.easeIn),
       ),
     );
 
-    // Logo fade animation
-    _logoFadeAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(
-      CurvedAnimation(
-        parent: _logoController,
-        curve: const Interval(0, 0.5, curve: Curves.easeIn),
-      ),
+    // ── Phase 2 ───────────────────────────────────────────────────────────────
+    _pulseCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
     );
+    _pulse = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: Tween<double>(begin:1, end:1.09)
+            .chain(CurveTween(curve: Curves.easeOut)),
+        weight: 50,
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(begin:1.09, end:1)
+            .chain(CurveTween(curve: Curves.easeIn)),
+        weight: 50,
+      ),
+    ]).animate(_pulseCtrl);
 
-    // Character animations - in reverse order
-    for (var i = 0; i < _appName.length; i++) {
-      final controller = AnimationController(
-        duration: const Duration(milliseconds: 200),
+    // ── Phase 3 — per-character clip-rise (380ms each, 55ms stagger) ─────────
+    for (var i = 0; i < _word.length; i++) {
+      final c = AnimationController(
         vsync: this,
+        duration: const Duration(milliseconds: 380),
       );
-      _characterControllers.add(controller);
+      _charCtrl.add(c);
 
-      // Rotation animation (spinning)
-      final rotationAnimation = Tween<double>(
-        begin: 0,
-        end: 2, // 2 full rotations
-      ).animate(
-        CurvedAnimation(
-          parent: controller,
-          curve: const Interval(0, 0.6, curve: Curves.easeInOut),
+      // Slide: 1.1 (below clip) → 0 (in place), with easeOutBack spring
+      _charSlide.add(
+        Tween<double>(begin: 1.1, end: 0).animate(
+          CurvedAnimation(parent: c, curve: Curves.easeOutBack),
         ),
       );
-      _characterRotationAnimations.add(rotationAnimation);
 
-      // Slide animation (from logo position to final position)
-      final slideAnimation = Tween<Offset>(
-        begin: Offset.zero,
-        end: Offset.zero,
-      ).animate(
-        CurvedAnimation(
-          parent: controller,
-          curve: const Interval(0.3, 1, curve: Curves.easeOutBack),
+      // Fade: 0→1 in first 25% of duration
+      _charFade.add(
+        Tween<double>(begin: 0, end: 1).animate(
+          CurvedAnimation(
+            parent: c,
+            curve: const Interval(0, 0.25, curve: Curves.easeIn),
+          ),
         ),
       );
-      _characterSlideAnimations.add(slideAnimation);
-
-      // Opacity animation
-      final opacityAnimation = Tween<double>(
-        begin: 0,
-        end: 1,
-      ).animate(
-        CurvedAnimation(
-          parent: controller,
-          curve: const Interval(0, 0.3, curve: Curves.easeIn),
-        ),
-      );
-      _characterOpacityAnimations.add(opacityAnimation);
     }
 
-    // Motto animation
-    _mottoController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
+    // ── Phase 4 — slogan clip-rise (700ms) ────────────────────────────────────
+    _sloganCtrl = AnimationController(
       vsync: this,
+      duration: const Duration(milliseconds: 700),
+    );
+    _sloganSlide = Tween<double>(begin: 1, end: 0).animate(
+      CurvedAnimation(parent: _sloganCtrl, curve: Curves.easeOutCubic),
     );
 
-    _mottoFadeAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(
-      CurvedAnimation(
-        parent: _mottoController,
-        curve: Curves.easeIn,
-      ),
-    );
-
-    _mottoSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.5),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _mottoController,
-        curve: Curves.easeOutCubic,
-      ),
-    );
-
-    // Loading animation
-    _loadingController = AnimationController(
-      duration: const Duration(milliseconds: 2000),
+    // Rule lines fade (400ms)
+    _ruleCtrl = AnimationController(
       vsync: this,
+      duration: const Duration(milliseconds: 400),
     );
+    _ruleFade = CurvedAnimation(parent: _ruleCtrl, curve: Curves.easeIn);
 
-    _loadingProgressAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(
-      CurvedAnimation(
-        parent: _loadingController,
-        curve: Curves.easeInOut,
-      ),
+    // ── Phase 5 ───────────────────────────────────────────────────────────────
+    _loadingCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2200),
+    );
+    _loadingProgress = CurvedAnimation(
+      parent: _loadingCtrl,
+      curve: Curves.easeInOut,
     );
   }
 
-  Future<void> _startAnimations() async {
-    // Start logo animation
-    await _logoController.forward();
+  Future<void> _run() async {
+    // Phase 1 — petals
+    await _petalCtrl.forward();
 
-    // Wait a bit after logo settles
+    // Phase 2 — pulse
+    await _pulseCtrl.forward();
+    await Future<void>.delayed(const Duration(milliseconds: 120));
+
+    // Phase 3 — staggered char rise (fire all with delay, await last)
+    if (!mounted) return;
+    const stagger = Duration(milliseconds: 55);
+    for (var i = 0; i < _word.length; i++) {
+      await Future<void>.delayed(stagger);
+      if (!mounted) return;
+      _charCtrl[i].forward(); // fire and forget — stagger drives timing
+    }
+    // Wait for the last one to fully finish
+    await _charCtrl.last.forward();
     await Future<void>.delayed(const Duration(milliseconds: 300));
 
-    // Start character animations in reverse order (e, t, a, M, e, s, n, e, p)
-    for (var i = _appName.length - 1; i >= 0; i--) {
-      if (mounted) {
-        await _characterControllers[i].forward();
-        await Future<void>.delayed(const Duration(milliseconds: 50));
-      }
-    }
+    // Phase 4 — slogan
+    if (!mounted) return;
+    await _sloganCtrl.forward();
+    await Future<void>.delayed(const Duration(milliseconds: 80));
+    await _ruleCtrl.forward();
+    await Future<void>.delayed(const Duration(milliseconds: 350));
 
-    // Wait a bit after text completes
-    await Future<void>.delayed(const Duration(milliseconds: 400));
-
-    // Start motto animation
-    if (mounted) {
-      await _mottoController.forward();
-    }
-
-    // Wait a bit, then show loading
-    await Future<void>.delayed(const Duration(milliseconds: 300));
-
-    if (mounted) {
-      setState(() {
-        _showLoading = true;
-      });
-      await _loadingController.forward();
-    }
-
-    // Wait for loading to complete, then navigate
+    // Phase 5 — loading
+    if (!mounted) return;
+    setState(() => _showLoading = true);
+    await _loadingCtrl.forward();
     await Future<void>.delayed(const Duration(milliseconds: 500));
 
-    if (mounted) {
-      context.go('/home');
-    }
+    if (mounted) context.go('/home');
   }
 
   @override
   void dispose() {
-    _logoController.dispose();
-    _mottoController.dispose();
-    _loadingController.dispose();
-    for (final controller in _characterControllers) {
-      controller.dispose();
-    }
+    _petalCtrl.dispose();
+    _pulseCtrl.dispose();
+    _sloganCtrl.dispose();
+    _ruleCtrl.dispose();
+    _loadingCtrl.dispose();
+    for (final c in _charCtrl) c.dispose();
     super.dispose();
   }
 
+  // ─────────────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: context.colorScheme.tertiary,
+        backgroundColor: context.secondaryColor.withValues(alpha: 0.4),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo and Text Row
+              // ── Brand row: mark + wordmark ──────────────────────────────
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
                 children: [
-                  // Animated Logo
-                  SlideTransition(
-                    position: _logoSlideAnimation,
-                    child: FadeTransition(
-                      opacity: _logoFadeAnimation,
-                      child: Container(
-                        key: _logoKey,
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
+                  // X mark — pulse wraps whole mark
+                  ScaleTransition(
+                    scale: _pulse,
+                    child: _XLogoMark(
+                      tlSlide: _tlSlide,
+                      trSlide: _trSlide,
+                      blSlide: _blSlide,
+                      brSlide: _brSlide,
+                      fade: _petalFade,
+                    ),
+                  ),
+
+                  const SizedBox(width: 10),
+
+                  // Wordmark — each char in its own clip container
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: List.generate(_word.length, (i) {
+                      final isLight = i < _lightCount;
+                      return ClipRect(
+                        child: AnimatedBuilder(
+                          animation: _charCtrl[i],
+                          builder: (_, __) => FractionalTranslation(
+                            translation: Offset(0, _charSlide[i].value),
+                            child: Opacity(
+                              opacity: _charFade[i].value.clamp(0.0, 1.0),
+                              child: Text(
+                                _word[i],
+                                style: GoogleFonts.dmSans(
+                                  fontSize: 40,
+                                  fontWeight: isLight
+                                      ? FontWeight.w300
+                                      : FontWeight.w700,
+                                  color: isLight ? _textMuted : _textFull,
+                                  height: 1.15,
+                                  letterSpacing: -0.8,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                        child: AppImage.asset(
-                          AssetPaths.logoWithoutText,
-                          height: 50,
-                          width: 50,
-                          color: context.colorScheme.onPrimary,
+                      );
+                    }),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 14),
+
+              // ── Slogan — italic, gradient, clip-rise ──────────────────
+              ClipRect(
+                child: AnimatedBuilder(
+                  animation: _sloganCtrl,
+                  builder: (_, __) => FractionalTranslation(
+                    translation: Offset(0, _sloganSlide.value),
+                    child: ShaderMask(
+                      shaderCallback: (bounds) => const LinearGradient(
+                        colors: [_gradBegin, _gradMid, _gradEnd],
+                      ).createShader(bounds),
+                      blendMode: BlendMode.srcIn,
+                      child: Text(
+                        context.l10n.moto,
+                        style: GoogleFonts.playfairDisplay(
+                          fontSize: 16,
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.white, // overridden by ShaderMask
+                          letterSpacing: 0.5,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: AppSpacing.xs),
-                  // Animated Text
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: _buildAnimatedText(),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-              // Animated Motto
-              SlideTransition(
-                position: _mottoSlideAnimation,
-                child: FadeTransition(
-                  opacity: _mottoFadeAnimation,
-                  child: Text(
-                    context.l10n.moto,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color:
-                          context.colorScheme.onPrimary.withValues(alpha: .9),
-                      letterSpacing: 0.5,
-                    ),
-                  ),
                 ),
               ),
-              const SizedBox(height: AppSpacing.xl),
-              // Loading Animation
-              if (_showLoading) _buildLoadingAnimation(context),
+
+              const SizedBox(height: 6),
+
+              // ── Decorative rule row ───────────────────────────────────
+              FadeTransition(
+                opacity: _ruleFade,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Left rule — fades left→transparent
+                    Container(
+                      width: 44,
+                      height: 1,
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Colors.transparent, _cTL],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Centre dot
+                    Container(
+                      width: 4,
+                      height: 4,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: _cTL,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Right rule — fades transparent→right
+                    Container(
+                      width: 44,
+                      height: 1,
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [_cTL, Colors.transparent],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 36),
+
+              // ── Loading bar ────────────────────────────────────────────
+              if (_showLoading) _LoadingBar(progress: _loadingProgress),
             ],
           ),
         ),
       );
+}
 
-  Widget _buildLoadingAnimation(BuildContext context) => Column(
+// ─────────────────────────────────────────────────────────────────────────────
+// _XLogoMark — v1 geometry kept exactly (rotated diamonds, 3.5px gap)
+// ─────────────────────────────────────────────────────────────────────────────
+class _XLogoMark extends StatelessWidget {
+  const _XLogoMark({
+    required this.tlSlide,
+    required this.trSlide,
+    required this.blSlide,
+    required this.brSlide,
+    required this.fade,
+  });
+
+  final Animation<Offset> tlSlide;
+  final Animation<Offset> trSlide;
+  final Animation<Offset> blSlide;
+  final Animation<Offset> brSlide;
+  final Animation<double> fade;
+
+  static const double _cell = 22;
+  static const double _gap  = 3.5;
+  static const double _size = _cell * 2 + _gap;
+
+  @override
+  Widget build(BuildContext context) => FadeTransition(
+        opacity: fade,
+        child: SizedBox(
+          width: _size,
+          height: _size,
+          child: Stack(
+            children: [
+              Positioned(left:0, top:0,
+                child: SlideTransition(position: tlSlide,
+                    child: const _DiamondPetal(color: _cTL, size: _cell),),),
+              Positioned(right:0, top:0,
+                child: SlideTransition(position: trSlide,
+                    child: const _DiamondPetal(color: _cTR, size: _cell),),),
+              Positioned(left:0, bottom:0,
+                child: SlideTransition(position: blSlide,
+                    child: const _DiamondPetal(color: _cBL, size: _cell),),),
+              Positioned(right:0, bottom:0,
+                child: SlideTransition(position: brSlide,
+                    child: const _DiamondPetal(color: _cBR, size: _cell),),),
+            ],
+          ),
+        ),
+      );
+}
+
+class _DiamondPetal extends StatelessWidget {
+  const _DiamondPetal({required this.color, required this.size});
+  final Color color;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) => Transform.rotate(
+        angle: 0.785398, // 45°
+        child: Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(size * 0.35),
+          ),
+        ),
+      );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// _LoadingBar
+// ─────────────────────────────────────────────────────────────────────────────
+class _LoadingBar extends StatelessWidget {
+  const _LoadingBar({required this.progress});
+  final Animation<double> progress;
+
+  @override
+  Widget build(BuildContext context) => Column(
         children: [
-          // Preparing text with dots animation
+          // Spaced uppercase label
           AnimatedBuilder(
-            animation: _loadingController,
-            builder: (context, child) {
-              final dots = '.' * ((_loadingController.value * 3).floor() % 4);
+            animation: progress,
+            builder: (context, _) {
+              final dots = '.' * ((progress.value * 3).floor() % 4);
               return FadeTransition(
-                opacity: _loadingProgressAnimation,
+                opacity: progress,
                 child: Text(
                   '${context.l10n.loading}$dots',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: context.colorScheme.onPrimary.withValues(alpha: .7),
-                    fontWeight: FontWeight.w400,
+                  style: GoogleFonts.dmSans(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 2.5,
+                    color: _cBL, // 28% opacity
                   ),
                 ),
               );
             },
           ),
-          const SizedBox(height: AppSpacing.sm),
-          // Progress bar
+          const SizedBox(height: 10),
+          // 2px thin track with gradient fill + shimmer
           AnimatedBuilder(
-            animation: _loadingProgressAnimation,
-            builder: (context, child) => Container(
-              width: 200,
-              height: 4,
+            animation: _loadingProgress,
+            builder: (_, __) => Container(
+              width: 160,
+              height: 2,
               decoration: BoxDecoration(
-                color: context.colorScheme.onPrimary.withValues(alpha: .2),
-                borderRadius: BorderRadius.circular(2),
+                color: const Color(0x12E2F0F0),
+                borderRadius: BorderRadius.circular(1),
               ),
               child: Stack(
+                clipBehavior: Clip.none,
                 children: [
-                  // Animated progress fill
+                  // Gradient fill
                   FractionallySizedBox(
                     alignment: Alignment.centerLeft,
-                    widthFactor: _loadingProgressAnimation.value,
+                    widthFactor: _loadingProgress.value,
                     child: Container(
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            context.colorScheme.primary,
-                            context.colorScheme.primary.withValues(alpha: 0.7),
-                          ],
+                        gradient: const LinearGradient(
+                          colors: [_cTL, _cBL, _cBR],
                         ),
-                        borderRadius: BorderRadius.circular(2),
+                        borderRadius: BorderRadius.circular(1),
                       ),
                     ),
                   ),
-                  // Shimmer effect
+                  // Shimmer leading edge
                   Positioned(
-                    left: _loadingProgressAnimation.value * 200 - 30,
+                    left: (_loadingProgress.value * 160 - 16)
+                        .clamp(0.0, 144.0),
+                    top: -1,
                     child: Container(
-                      width: 30,
+                      width: 16,
                       height: 4,
                       decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(2),
                         gradient: LinearGradient(
                           colors: [
-                            context.colorScheme.onPrimary.withValues(alpha: 0),
-                            context.colorScheme.onPrimary
-                                .withValues(alpha: 0.6),
-                            context.colorScheme.onPrimary.withValues(alpha: 0),
+                            Colors.white.withValues(alpha: 0),
+                            Colors.white.withValues(alpha: 0.6),
+                            Colors.white.withValues(alpha: 0),
                           ],
                         ),
                       ),
@@ -357,48 +520,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
         ],
       );
 
-  List<Widget> _buildAnimatedText() {
-    final characters = <Widget>[];
-
-    for (var i = 0; i < _appName.length; i++) {
-      characters.add(
-        AnimatedBuilder(
-          animation: _characterControllers[i],
-          builder: (context, child) {
-            final rotation = _characterRotationAnimations[i].value;
-            final opacity =
-                _characterOpacityAnimations[i].value.clamp(0.0, 1.0);
-
-            final characterIndex = i;
-            final slideX = -1.0 *
-                (1.0 - _characterControllers[i].value) *
-                (characterIndex + 1) *
-                0.5;
-
-            return Transform.translate(
-              offset: Offset(slideX * 50, 0),
-              child: Transform.rotate(
-                angle: rotation * 3.14159,
-                child: Opacity(
-                  opacity: opacity,
-                  child: Text(
-                    _appName[i],
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      color: context.colorScheme.onPrimary,
-                      letterSpacing: AppSpacing.xs,
-                      height: 1,
-                    ),
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-      );
-    }
-
-    return characters;
-  }
+  // Expose the parent's animation so the builder inside can reference it.
+  // Dart closures capture `progress` from the constructor — this works fine.
+  Animation<double> get _loadingProgress => progress;
 }

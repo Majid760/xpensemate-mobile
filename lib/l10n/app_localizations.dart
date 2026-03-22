@@ -2470,7 +2470,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'App Version'**
-  String get appVersion;
+  String get appVersionTitle;
 
   /// Clear all data setting label
   ///
@@ -2795,6 +2795,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Resend in {seconds}s'**
   String resendIn(int seconds);
+
+  /// No description provided for @myProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'My Profile'**
+  String get myProfile;
+
+  /// No description provided for @personalInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Information'**
+  String get personalInfo;
+
+  /// No description provided for @phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get phone;
+
+  /// No description provided for @notSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Set'**
+  String get notSet;
+
+  /// No description provided for @totalTracked.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Tracked'**
+  String get totalTracked;
+
+  /// No description provided for @memberSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Member Since'**
+  String get memberSince;
+
+  /// No description provided for @quickAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Access'**
+  String get quickAccess;
+
+  /// No description provided for @faceIdEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Face ID Enabled'**
+  String get faceIdEnabled;
+
+  /// No description provided for @fingerprintEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Fingerprint Enabled'**
+  String get fingerprintEnabled;
+
+  /// No description provided for @privacyAndSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy & Security'**
+  String get privacyAndSecurity;
+
+  /// App version label with version number
+  ///
+  /// In en, this message translates to:
+  /// **'App Version: {version}'**
+  String appVersionWithValue(String version);
 }
 
 class _AppLocalizationsDelegate

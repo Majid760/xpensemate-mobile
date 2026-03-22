@@ -246,7 +246,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             onTap: () {},
                           ),
                           SettingsInfoTile(
-                            title: l10n.appVersion,
+                            title: l10n.appVersionTitle,
                             value: '1.0.0',
                             icon: Icons.info_outline,
                           ),

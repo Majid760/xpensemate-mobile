@@ -1260,7 +1260,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get termsOfServiceDesc => 'Read our terms of service';
 
   @override
-  String get appVersion => 'App Version';
+  String get appVersionTitle => 'App Version';
 
   @override
   String get clearAllData => 'Clear All Data';
@@ -1427,5 +1427,40 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String resendIn(int seconds) {
     return 'Resend in ${seconds}s';
+  }
+
+  @override
+  String get myProfile => 'My Profile';
+
+  @override
+  String get personalInfo => 'Personal Information';
+
+  @override
+  String get phone => 'Phone';
+
+  @override
+  String get notSet => 'Not Set';
+
+  @override
+  String get totalTracked => 'Total Tracked';
+
+  @override
+  String get memberSince => 'Member Since';
+
+  @override
+  String get quickAccess => 'Quick Access';
+
+  @override
+  String get faceIdEnabled => 'Face ID Enabled';
+
+  @override
+  String get fingerprintEnabled => 'Fingerprint Enabled';
+
+  @override
+  String get privacyAndSecurity => 'Privacy & Security';
+
+  @override
+  String appVersionWithValue(String version) {
+    return 'App Version: $version';
   }
 }

@@ -1273,7 +1273,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get termsOfServiceDesc => 'Ver términos y condiciones';
 
   @override
-  String get appVersion => 'Versión de la Aplicación';
+  String get appVersionTitle => 'Versión de la Aplicación';
 
   @override
   String get clearAllData => 'Borrar Todos los Datos';
@@ -1441,5 +1441,40 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String resendIn(int seconds) {
     return 'Resend in ${seconds}s';
+  }
+
+  @override
+  String get myProfile => 'Mi Perfil';
+
+  @override
+  String get personalInfo => 'Información Personal';
+
+  @override
+  String get phone => 'Teléfono';
+
+  @override
+  String get notSet => 'Sin configurar';
+
+  @override
+  String get totalTracked => 'Total Seguido';
+
+  @override
+  String get memberSince => 'Miembro desde';
+
+  @override
+  String get quickAccess => 'Acceso rápido';
+
+  @override
+  String get faceIdEnabled => 'Face ID Habilitado';
+
+  @override
+  String get fingerprintEnabled => 'Huella Digital Habilitada';
+
+  @override
+  String get privacyAndSecurity => 'Privacidad y Seguridad';
+
+  @override
+  String appVersionWithValue(String version) {
+    return 'Versión de la aplicación: $version';
   }
 }

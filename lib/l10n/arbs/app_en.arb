@@ -922,8 +922,8 @@
   "@termsOfServiceDesc": {
     "description": "Description for terms of service setting"
   },
-  "appVersion": "App Version",
-  "@appVersion": {
+  "appVersionTitle": "App Version",
+  "@appVersionTitle": {
     "description": "App version setting label"
   },
   "clearAllData": "Clear All Data",
@@ -1002,6 +1002,26 @@
       "seconds": {
         "type": "int",
         "example": "30"
+      }
+    }
+  },
+  "myProfile": "My Profile",
+  "personalInfo": "Personal Information",
+  "phone": "Phone",
+  "notSet": "Not Set",
+  "totalTracked": "Total Tracked",
+  "memberSince": "Member Since",
+  "quickAccess": "Quick Access",
+  "faceIdEnabled": "Face ID Enabled",
+  "fingerprintEnabled": "Fingerprint Enabled",
+  "privacyAndSecurity": "Privacy & Security",
+  "appVersionWithValue": "App Version: {version}",
+  "@appVersionWithValue": {
+    "description": "App version label with version number",
+    "placeholders": {
+      "version": {
+        "type": "String",
+        "example": "1.0.0"
       }
     }
   }

@@ -1254,7 +1254,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get termsOfServiceDesc => 'اقرأ شروط الخدمة';
 
   @override
-  String get appVersion => 'إصدار التطبيق';
+  String get appVersionTitle => 'إصدار التطبيق';
 
   @override
   String get clearAllData => 'مسح جميع البيانات';
@@ -1421,5 +1421,40 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String resendIn(int seconds) {
     return 'Resend in ${seconds}s';
+  }
+
+  @override
+  String get myProfile => 'ملفي الشخصي';
+
+  @override
+  String get personalInfo => 'معلومات شخصية';
+
+  @override
+  String get phone => 'هاتف';
+
+  @override
+  String get notSet => 'غير محدد';
+
+  @override
+  String get totalTracked => 'إجمالي المتتبع';
+
+  @override
+  String get memberSince => 'عضو منذ';
+
+  @override
+  String get quickAccess => 'وصول سريع';
+
+  @override
+  String get faceIdEnabled => 'معرف الوجه مفعل';
+
+  @override
+  String get fingerprintEnabled => 'بصمة الإصبع مفعلة';
+
+  @override
+  String get privacyAndSecurity => 'الخصوصية والأمان';
+
+  @override
+  String appVersionWithValue(String version) {
+    return 'إصدار التطبيق: $version';
   }
 }

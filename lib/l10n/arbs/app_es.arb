@@ -189,7 +189,7 @@
   "manageRecurringDesc": "Administrar gastos e ingresos recurrentes",
   "privacyPolicyDesc": "Leer nuestra política de privacidad",
   "termsOfServiceDesc": "Ver términos y condiciones",
-  "appVersion": "Versión de la Aplicación",
+  "appVersionTitle": "Versión de la Aplicación",
   "clearAllData": "Borrar Todos los Datos",
   "clearAllDataDesc": "Eliminar todas las transacciones y restablecer la aplicación",
   "seeDetail": "Ver Detalle",
@@ -522,5 +522,16 @@
   "checkSpamFolder": "If you don't see the email, check your spam or junk folder.",
   "openEmailApp": "Open Email App",
   "didntReceiveEmail": "Didn't receive the email?",
-  "resend": "Resend"
+  "resend": "Resend",
+  "myProfile": "Mi Perfil",
+  "personalInfo": "Información Personal",
+  "phone": "Teléfono",
+  "notSet": "Sin configurar",
+  "totalTracked": "Total Seguido",
+  "memberSince": "Miembro desde",
+  "quickAccess": "Acceso rápido",
+  "faceIdEnabled": "Face ID Habilitado",
+  "fingerprintEnabled": "Huella Digital Habilitada",
+  "privacyAndSecurity": "Privacidad y Seguridad",
+  "appVersionWithValue": "Versión de la aplicación: {version}"
 }

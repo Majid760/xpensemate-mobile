@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:xpensemate/features/auth/domain/entities/user.dart';
+import 'package:intl/intl.dart';
 
 sealed class ProfileState extends Equatable {
   const ProfileState();
@@ -75,6 +76,21 @@ class ProfileLoaded extends ProfileState {
       user.name!.isNotEmpty &&
       user.profilePhotoUrl != null &&
       user.profilePhotoUrl!.isNotEmpty;
+
+  String get email => user.email;
+
+  String? get phone => user.phoneNumber;
+
+  String? get photoUrl => user.profilePhotoUrl;
+
+  String? get totalTracked => null; // Placeholder: Fetch this from a use case if needed
+
+  int? get transactionCount => 0; // Placeholder: Fetch this from a use case if needed
+
+  String? get memberSince {
+    if (user.createdAt == null) return null;
+    return DateFormat.yMMMM().format(user.createdAt!);
+  }
 }
 
 class ProfileError extends ProfileState {

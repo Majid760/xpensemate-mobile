@@ -17,16 +17,16 @@ import 'package:xpensemate/features/auth/presentation/widgets/custom_text_form_f
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_state.dart';
 
-class ProfileEditWidget extends StatefulWidget {
-  const ProfileEditWidget({
+class ProfileEditPage extends StatefulWidget {
+  const ProfileEditPage({
     super.key,
   });
 
   @override
-  State<ProfileEditWidget> createState() => _ProfileEditWidgetState();
+  State<ProfileEditPage> createState() => _ProfileEditPageState();
 }
 
-class _ProfileEditWidgetState extends State<ProfileEditWidget>
+class _ProfileEditPageState extends State<ProfileEditPage>
     with TickerProviderStateMixin {
   late final FormGroup _form;
 
@@ -435,6 +435,6 @@ void showEditProfile(BuildContext context) {
       maxHeight: screenHeight * 0.95,
       padding: EdgeInsets.zero,
     ),
-    child: const ProfileEditWidget(),
+    child: const ProfileEditPage(),
   );
 }

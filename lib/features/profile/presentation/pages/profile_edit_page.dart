@@ -6,14 +6,13 @@ import 'package:reactive_forms/reactive_forms.dart';
 import 'package:reactive_phone_form_field/reactive_phone_form_field.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
-import 'package:xpensemate/core/utils/app_utils.dart';
-import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
 import 'package:xpensemate/core/widget/app_dialogs.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/core/widget/profile_image_widget.dart';
-import 'package:xpensemate/features/auth/domain/entities/user.dart';
+import 'package:xpensemate/features/auth/presentation/widgets/background_decoration_widget.dart';
 import 'package:xpensemate/features/auth/presentation/widgets/custom_text_form_field.dart';
+import 'package:xpensemate/features/auth/presentation/widgets/feel_card_widget.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_state.dart';
 
@@ -269,172 +268,229 @@ class _ProfileEditPageState extends State<ProfileEditPage>
   }
 
   @override
-  Widget build(BuildContext context) => MultiBlocListener(
-        listeners: [
-          BlocListener<ProfileCubit, ProfileState>(
-            listenWhen: (previous, current) =>
-                current is ProfileError || current is ProfileLoaded,
-            listener: (context, state) {
-              if (state is ProfileError) {
-                AppSnackBar.show(
-                  context: context,
-                  message: state.message,
-                  type: SnackBarType.error,
-                );
-              } else if (state is ProfileLoaded && state.message != null) {
-                AppSnackBar.show(
-                  context: context,
-                  message: state.message!,
-                  type: SnackBarType.success,
-                );
-                Navigator.pop(context);
-              }
-            },
-          ),
-        ],
-        child: BlocBuilder<ProfileCubit, ProfileState>(
-          buildWhen: (previous, current) =>
-              current is ProfileLoaded || current is ProfileLoading,
-          builder: (context, state) {
-            final loadedState = state is ProfileLoaded ? state : null;
+  Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primary = context.primaryColor;
 
-            return FadeTransition(
-              opacity: _fadeAnimation,
-              child: SlideTransition(
-                position: _slideAnimation,
-                child: ReactiveForm(
-                  formGroup: _form,
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: Column(
-                      children: [
-                        Center(
-                          child: ProfileImageWidget(
-                            imageFile: loadedState?.imageFile,
-                            imageUrl: loadedState?.user.profilePhotoUrl,
-                            onImageTap: () {
-                              AppDialogs.showImagePicker(
-                                context: context,
-                                onImageSelected: (file) {
-                                  if (file != null) {
-                                    context.profileCubit.setImageFile(file);
-                                  }
-                                },
-                              );
-                            },
-                          ),
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<ProfileCubit, ProfileState>(
+          listenWhen: (previous, current) =>
+              current is ProfileError || current is ProfileLoaded,
+          listener: (context, state) {
+            if (state is ProfileError) {
+              AppSnackBar.show(
+                context: context,
+                message: state.message,
+                type: SnackBarType.error,
+              );
+            } else if (state is ProfileLoaded && state.message != null) {
+              AppSnackBar.show(
+                context: context,
+                message: state.message!,
+                type: SnackBarType.success,
+              );
+              Navigator.pop(context);
+            }
+          },
+        ),
+      ],
+      child: BlocBuilder<ProfileCubit, ProfileState>(
+        buildWhen: (previous, current) =>
+            current is ProfileLoaded || current is ProfileLoading,
+        builder: (context, state) {
+          final loadedState = state is ProfileLoaded ? state : null;
+
+          return Scaffold(
+            backgroundColor: scheme.surface,
+            body: Stack(
+              children: [
+                BackgroundDecoration(isDark: isDark),
+                SafeArea(
+                  child: FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: SlideTransition(
+                      position: _slideAnimation,
+                      child: ReactiveForm(
+                        formGroup: _form,
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 16),
+                            // ── Top Nav Row ──────────────────
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 24),
+                              child: Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () => Navigator.pop(context),
+                                    child: Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        color: primary.withValues(alpha: 0.08),
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: primary.withValues(alpha: 0.18),
+                                          width: 0.5,
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        Icons.arrow_back_ios_new_rounded,
+                                        size: 16,
+                                        color: primary,
+                                      ),
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  Text(
+                                    context.l10n.editProfile,
+                                    style: context.textTheme.titleMedium?.copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      color: primary,
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  const SizedBox(width: 40),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 28),
+
+                            Expanded(
+                              child: SingleChildScrollView(
+                                physics: const BouncingScrollPhysics(),
+                                padding: const EdgeInsets.symmetric(horizontal: 24),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: [
+                                    Center(
+                                      child: ProfileImageWidget(
+                                        imageFile: loadedState?.imageFile,
+                                        imageUrl: loadedState?.user.profilePhotoUrl,
+                                        onImageTap: () {
+                                          AppDialogs.showImagePicker(
+                                            context: context,
+                                            onImageSelected: (file) {
+                                              if (file != null) {
+                                                context.profileCubit.setImageFile(file);
+                                              }
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(height: 28),
+                                    FormCard(
+                                      isDark: isDark,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          ReactiveAppField(
+                                            formControlName: 'name',
+                                            labelText: context.l10n.fullName,
+                                            hintText: context.l10n.hintName,
+                                            prefixIcon: const Icon(
+                                              Icons.person_outline_rounded,
+                                              size: 20,
+                                            ),
+                                            validationMessages: {
+                                              'required': (error) =>
+                                                  context.l10n.nameIsRequired,
+                                              'minLength': (error) =>
+                                                  context.l10n.nameMustBeAtLeast4Characters,
+                                            },
+                                          ),
+                                          const SizedBox(height: 20),
+                                          ReactiveAppField(
+                                            formControlName: 'contactNumber',
+                                            labelText: context.l10n.phoneNumber,
+                                            fieldType: FieldType.phone,
+                                            hintText: context.l10n.enterPhoneNumber,
+                                            prefixIcon: const Icon(Icons.phone_outlined,
+                                                size: 20,),
+                                            validationMessages: {
+                                              'phoneValidation': (error) => context
+                                                  .l10n.phoneNumberMustBeAtLeast10Digits,
+                                            },
+                                          ),
+                                          const SizedBox(height: 20),
+                                          ReactiveAppField(
+                                            formControlName: 'dob',
+                                            labelText: context.l10n.dateOfBirth,
+                                            hintText: context.l10n.selectDateOfBirth,
+                                            readOnly: true,
+                                            onTap: _selectDate,
+                                            prefixIcon: const Icon(
+                                              Icons.calendar_today_rounded,
+                                              size: 20,
+                                            ),
+                                            validationMessages: {
+                                              'required': (error) =>
+                                                  context.l10n.dobRequired,
+                                            },
+                                          ),
+                                          const SizedBox(height: 20),
+                                          ReactiveAppField(
+                                            formControlName: 'gender',
+                                            labelText: context.l10n.gender,
+                                            fieldType: FieldType.dropdown,
+                                            hintText: context.l10n.selectGender,
+                                            prefixIcon: const Icon(
+                                              Icons.person_4_rounded,
+                                              size: 20,
+                                            ),
+                                            onDropdownChanged: (value) {
+                                              HapticFeedback.selectionClick();
+                                            },
+                                          ),
+                                          const SizedBox(height: 20),
+                                          ReactiveAppField(
+                                            formControlName: 'about',
+                                            labelText: context.l10n.about,
+                                            fieldType: FieldType.textarea,
+                                            hintText: context.l10n.enterYourBio,
+                                            maxLines: 3,
+                                            maxLength: 150,
+                                            fillColor: context
+                                                .colorScheme.surfaceContainerHighest
+                                                .withValues(alpha: 0.7),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 32),
+                                    AppButton.primary(
+                                      text: context.l10n.save,
+                                      isLoading: loadedState?.isUpdating ?? false,
+                                      onPressed: () =>
+                                          _handleSave(context.profileCubit),
+                                    ),
+                                    const SizedBox(height: 32),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        context.xl.heightBox,
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: context.md),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ReactiveAppField(
-                                formControlName: 'name',
-                                labelText: context.l10n.fullName,
-                                hintText: context.l10n.hintName,
-                                prefixIcon: const Icon(
-                                  Icons.person_outline_rounded,
-                                  size: 20,
-                                ),
-                                validationMessages: {
-                                  'required': (error) =>
-                                      context.l10n.nameIsRequired,
-                                  'minLength': (error) =>
-                                      context.l10n.nameMustBeAtLeast4Characters,
-                                },
-                              ),
-                              context.lg.heightBox,
-                              ReactiveAppField(
-                                formControlName: 'contactNumber',
-                                labelText: context.l10n.phoneNumber,
-                                fieldType: FieldType.phone,
-                                hintText: context.l10n.enterPhoneNumber,
-                                prefixIcon:
-                                    const Icon(Icons.phone_outlined, size: 20),
-                                validationMessages: {
-                                  'phoneValidation': (error) => context
-                                      .l10n.phoneNumberMustBeAtLeast10Digits,
-                                },
-                              ),
-                              context.lg.heightBox,
-                              ReactiveAppField(
-                                formControlName: 'dob',
-                                labelText: context.l10n.dateOfBirth,
-                                hintText: context.l10n.selectDateOfBirth,
-                                readOnly: true,
-                                onTap: _selectDate,
-                                prefixIcon: const Icon(
-                                  Icons.calendar_today_rounded,
-                                  size: 20,
-                                ),
-                                validationMessages: {
-                                  'required': (error) =>
-                                      context.l10n.dobRequired,
-                                },
-                              ),
-                              context.lg.heightBox,
-                              ReactiveAppField(
-                                formControlName: 'gender',
-                                labelText: context.l10n.gender,
-                                fieldType: FieldType.dropdown,
-                                hintText: context.l10n.selectGender,
-                                prefixIcon: const Icon(Icons.person_4_rounded,
-                                    size: 20,),
-                                onDropdownChanged: (value) {
-                                  HapticFeedback.selectionClick();
-                                },
-                              ),
-                              context.lg.heightBox,
-                              ReactiveAppField(
-                                formControlName: 'about',
-                                labelText: context.l10n.about,
-                                fieldType: FieldType.textarea,
-                                hintText: context.l10n.enterYourBio,
-                                maxLines: 3,
-                                maxLength: 150,
-                                fillColor: context
-                                    .colorScheme.surfaceContainerHighest
-                                    .withValues(alpha: 0.7),
-                              ),
-                              context.xl.heightBox,
-                              AppButton.primary(
-                                text: context.l10n.save,
-                                isLoading: loadedState?.isUpdating ?? false,
-                                textStyle:
-                                    context.textTheme.titleMedium?.copyWith(
-                                  color: context.colorScheme.onPrimary,
-                                ),
-                                onPressed: () =>
-                                    _handleSave(context.profileCubit),
-                              ),
-                              context.md.heightBox,
-                            ],
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            );
-          },
-        ),
-      );
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
 }
 
 void showEditProfile(BuildContext context) {
-  final screenHeight = MediaQuery.of(context).size.height;
-
-  AppBottomSheet.show<UserEntity>(
-    context: context,
-    title: context.l10n.editProfile,
-    config: BottomSheetConfig(
-      minHeight: screenHeight * 0.7,
-      maxHeight: screenHeight * 0.95,
-      padding: EdgeInsets.zero,
+  Navigator.push(
+    context,
+    MaterialPageRoute<void>(
+      builder: (context) => const ProfileEditPage(),
     ),
-    child: const ProfileEditPage(),
   );
 }

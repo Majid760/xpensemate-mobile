@@ -17,23 +17,22 @@ class GlassmorphicButton extends StatelessWidget {
             // color: context.colorScheme.onPrimary.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: context.colorScheme.onPrimary.withValues(alpha: 0.3),
+              color: context.colorScheme.onPrimary.withValues(alpha: 0.6),
               width: 1.5,
             ),
-            gradient: isGradientBg ? const LinearGradient(
-              colors: [
-                Color(0xFF6366F1),
-                Color(0xFF8B5CF6),
-                Color(0xFFA855F7),
-              ],
-            ) :  LinearGradient(
-              colors: [
-                context.colorScheme.onPrimary.withValues(alpha: 0.2),
-                context.colorScheme.onPrimary.withValues(alpha: 0.2),
-              ],
-            ) ,
+            color: context.colorScheme.primary.withValues(alpha: 0.9),
+            // gradient: isGradientBg ?  LinearGradient(
+            //   colors: [
+            //     context.colorScheme.onPrimary.withValues(alpha: 0.9),
+            //     context.primaryColor.withValues(alpha: 0.9),
+            //   ],
+            // ) :  LinearGradient(
+            //   colors: [
+            //     context.colorScheme.tertiary.withValues(alpha: 0.9),
+            //     context.colorScheme.tertiary.withValues(alpha: 0.9),
+            //   ],
+            // ) ,
             boxShadow: [
-              
               BoxShadow(
                 color: context.colorScheme.shadow.withValues(alpha: 0.1),
                 blurRadius: 10,

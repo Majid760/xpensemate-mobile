@@ -974,7 +974,7 @@ class _AppButtonState extends State<AppButton>
       children: [
         if (widget.leadingIcon != null) ...[
           widget.leadingIcon!,
-          context.xs.widthBox,
+          context.sm.widthBox,
         ],
         Text(
           widget.text,

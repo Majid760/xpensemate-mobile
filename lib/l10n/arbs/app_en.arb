@@ -428,6 +428,7 @@
   "@expense": {
     "description": "Expenses label"
   },
+  "paid": "Paid",
   "archive": "Archive",
   "@archive": {
     "description": "Archive button label"
@@ -691,6 +692,8 @@
   "addBudget": "Add Budget",
   "addPayment": "Add Payment",
   "editExpense": "Edit Expense",
+  "fillInExpenseDetails": "Please fill in the details of your expense below",
+  "updateExpenseDetails": "Update the details of your expense below",
   "addCustomCategory": "+ Add Custom Category",
   "noBudgetGoal": "No Budget Goal",
   "pleaseFillRequired": "Please fill out all required fields",
@@ -1015,6 +1018,7 @@
   "faceIdEnabled": "Face ID Enabled",
   "fingerprintEnabled": "Fingerprint Enabled",
   "privacyAndSecurity": "Privacy & Security",
+  "addHomeWidget": "Add Home Widget",
   "appVersionWithValue": "App Version: {version}",
   "@appVersionWithValue": {
     "description": "App version label with version number",

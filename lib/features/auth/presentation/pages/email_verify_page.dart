@@ -16,7 +16,7 @@ class EmailVerificationScreen extends StatefulWidget {
   const EmailVerificationScreen({
     super.key,
     required this.email,
-  });
+  }); 
 
   final String email;
 

@@ -735,6 +735,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get expense => 'Gastos';
 
   @override
+  String get paid => 'Pagado';
+
+  @override
   String get archive => 'Archivar';
 
   @override
@@ -1021,6 +1024,14 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get editExpense => 'Editar Gasto';
+
+  @override
+  String get fillInExpenseDetails =>
+      'Por favor, complete los detalles de su gasto a continuación';
+
+  @override
+  String get updateExpenseDetails =>
+      'Actualice los detalles de su gasto a continuación';
 
   @override
   String get addCustomCategory => '+ Agregar Categoría Personalizada';
@@ -1472,6 +1483,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get privacyAndSecurity => 'Privacidad y Seguridad';
+
+  @override
+  String get addHomeWidget => 'Añadir widget de inicio';
 
   @override
   String appVersionWithValue(String version) {

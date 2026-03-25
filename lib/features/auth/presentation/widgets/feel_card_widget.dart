@@ -3,13 +3,14 @@ import 'package:xpensemate/core/theme/theme_context_extension.dart';
 
 /// Elevated glass-feel form card
 class FormCard extends StatelessWidget {
-  const FormCard({super.key, required this.child, required this.isDark});
+  const FormCard({super.key, required this.child, required this.isDark, this.padding});
   final Widget child;
   final bool isDark;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) => Container(
-      padding: const EdgeInsets.all(20),
+      padding: padding ?? const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: isDark
             ? const Color(0xFF122436)

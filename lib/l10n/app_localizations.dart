@@ -1446,6 +1446,12 @@ abstract class AppLocalizations {
   /// **'Expense'**
   String get expense;
 
+  /// No description provided for @paid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get paid;
+
   /// Archive button label
   ///
   /// In en, this message translates to:
@@ -2009,6 +2015,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit Expense'**
   String get editExpense;
+
+  /// No description provided for @fillInExpenseDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill in the details of your expense below'**
+  String get fillInExpenseDetails;
+
+  /// No description provided for @updateExpenseDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Update the details of your expense below'**
+  String get updateExpenseDetails;
 
   /// Label for adding a custom category
   ///
@@ -2855,6 +2873,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Privacy & Security'**
   String get privacyAndSecurity;
+
+  /// No description provided for @addHomeWidget.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Home Widget'**
+  String get addHomeWidget;
 
   /// App version label with version number
   ///

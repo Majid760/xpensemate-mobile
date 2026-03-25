@@ -723,6 +723,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expense => 'Expense';
 
   @override
+  String get paid => 'Paid';
+
+  @override
   String get archive => 'Archive';
 
   @override
@@ -1008,6 +1011,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editExpense => 'Edit Expense';
+
+  @override
+  String get fillInExpenseDetails =>
+      'Please fill in the details of your expense below';
+
+  @override
+  String get updateExpenseDetails => 'Update the details of your expense below';
 
   @override
   String get addCustomCategory => '+ Add Custom Category';
@@ -1458,6 +1468,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyAndSecurity => 'Privacy & Security';
+
+  @override
+  String get addHomeWidget => 'Add Home Widget';
 
   @override
   String appVersionWithValue(String version) {

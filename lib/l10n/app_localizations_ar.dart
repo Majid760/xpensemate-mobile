@@ -723,6 +723,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get expense => 'نفقات';
 
   @override
+  String get paid => 'مدفوع';
+
+  @override
   String get archive => 'أرشيف';
 
   @override
@@ -1007,6 +1010,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get editExpense => 'تعديل نفقة';
+
+  @override
+  String get fillInExpenseDetails => 'يرجى ملء تفاصيل نفقتك أدناه';
+
+  @override
+  String get updateExpenseDetails => 'تحديث تفاصيل نفقتك أدناه';
 
   @override
   String get addCustomCategory => '+ إضافة فئة مخصصة';
@@ -1452,6 +1461,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get privacyAndSecurity => 'الخصوصية والأمان';
+
+  @override
+  String get addHomeWidget => 'إضافة أداة الشاشة الرئيسية';
 
   @override
   String appVersionWithValue(String version) {

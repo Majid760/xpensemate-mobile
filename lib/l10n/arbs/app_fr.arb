@@ -270,6 +270,7 @@
   "@expense": {
     "description": "Expenses label"
   },
+  "paid": "Payé",
   "archive": "Archiver",
   "@archive": {
     "description": "Archive button label"
@@ -372,6 +373,8 @@
   "addBudget": "Ajouter Budget",
   "addPayment": "Ajouter Paiement",
   "editExpense": "Modifier Dépense",
+  "fillInExpenseDetails": "Veuillez remplir les détails de votre dépense ci-dessous",
+  "updateExpenseDetails": "Mettre à jour les détails de votre dépense ci-dessous",
   "addCustomCategory": "+ Ajouter Catégorie Personnalisée",
   "noBudgetGoal": "Aucun Objectif Budgétaire",
   "pleaseFillRequired": "Veuillez remplir tous les champs requis",
@@ -533,5 +536,6 @@
   "faceIdEnabled": "Face ID Activé",
   "fingerprintEnabled": "Empreinte Digitale Activée",
   "privacyAndSecurity": "Confidentialité et Sécurité",
+  "addHomeWidget": "Ajouter le widget d'accueil",
   "appVersionWithValue": "Version de l'application : {version}"
 }

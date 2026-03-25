@@ -421,6 +421,7 @@
   "@expense": {
     "description": "Expenses label"
   },
+  "paid": "مدفوع",
   "archive": "أرشيف",
   "@archive": {
     "description": "Archive button label"
@@ -684,6 +685,8 @@
   "addBudget": "إضافة ميزانية",
   "addPayment": "إضافة دفع",
   "editExpense": "تعديل نفقة",
+  "fillInExpenseDetails": "يرجى ملء تفاصيل نفقتك أدناه",
+  "updateExpenseDetails": "تحديث تفاصيل نفقتك أدناه",
   "addCustomCategory": "+ إضافة فئة مخصصة",
   "noBudgetGoal": "لا يوجد هدف ميزانية",
   "pleaseFillRequired": "يرجى ملء جميع الحقول المطلوبة",
@@ -918,5 +921,6 @@
   "faceIdEnabled": "معرف الوجه مفعل",
   "fingerprintEnabled": "بصمة الإصبع مفعلة",
   "privacyAndSecurity": "الخصوصية والأمان",
+  "addHomeWidget": "إضافة أداة الشاشة الرئيسية",
   "appVersionWithValue": "إصدار التطبيق: {version}"
 }

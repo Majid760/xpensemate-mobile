@@ -201,8 +201,8 @@ class _AnimatedSectionHeaderState extends State<AnimatedSectionHeader>
                                     ? IconButton(
                                         icon: Icon(
                                           Icons.clear,
-                                          color: context.onSurfaceColor
-                                              .withValues(alpha: 0.6),
+                                          color: context.secondaryColor
+                                              .withValues(alpha: 0.7),
                                           size: context.iconSm,
                                         ),
                                         onPressed: _clearSearch,
@@ -255,8 +255,8 @@ class _AnimatedSectionHeaderState extends State<AnimatedSectionHeader>
                   height: 48,
                   decoration: BoxDecoration(
                     color: _isSearchExpanded
-                        ? context.colorScheme.errorContainer
-                        : context.primaryColor.withValues(alpha: 0.1),
+                        ? context.primaryColor.withValues(alpha: 0.8)
+                        : context.primaryColor.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(context.sm1),
                   ),
                   child: IconButton(
@@ -275,7 +275,7 @@ class _AnimatedSectionHeaderState extends State<AnimatedSectionHeader>
                         _isSearchExpanded ? Icons.close : Icons.search,
                         key: ValueKey<bool>(_isSearchExpanded),
                         color: _isSearchExpanded
-                            ? context.colorScheme.error
+                            ? context.secondaryColor.withValues(alpha: 0.7)
                             : context.primaryColor,
                         size: 22,
                       ),

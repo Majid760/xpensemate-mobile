@@ -1,12 +1,13 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/network/network_configs.dart';
 import 'package:xpensemate/core/route/utils/router_extension.dart';
 import 'package:xpensemate/core/service/permission_service.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
 import 'package:xpensemate/core/widget/app_custom_dialog.dart';
 import 'package:xpensemate/core/widget/app_dialogs.dart';
@@ -17,6 +18,7 @@ import 'package:xpensemate/features/auth/presentation/widgets/feel_card_widget.d
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_cubit.dart';
 import 'package:xpensemate/features/profile/presentation/cubit/cubit/profile_state.dart';
 import 'package:xpensemate/features/profile/presentation/pages/profile_edit_page.dart';
+import 'package:xpensemate/features/profile/presentation/widgets/action_row_widget.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key, this.onBackTap});
@@ -160,7 +162,6 @@ class _ProfilePageState extends State<ProfilePage>
 
           return Scaffold(
             backgroundColor: scheme.surface,
-            // ── Same Stack + BackgroundDecoration as LoginPage ──────────
             body: Stack(
               children: [
                 BackgroundDecoration(isDark: isDark),
@@ -206,11 +207,11 @@ class _ProfilePageState extends State<ProfilePage>
 
                                     // ── Stats card ───────────────────
                                     // Uses same FormCard as login's form card
-                                    FormCard(
-                                      isDark: isDark,
-                                      child: _StatsRow(
-                                          profileState: profileState,),
-                                    ),
+                                    // FormCard(
+                                    //   isDark: isDark,
+                                    //   child: _StatsRow(
+                                    //       profileState: profileState,),
+                                    // ),
 
                                     const SizedBox(height: 20),
 
@@ -255,10 +256,6 @@ class _ProfilePageState extends State<ProfilePage>
 
                                     const SizedBox(height: 20),
 
-                                    // ── Biometric row ────────────────
-                                    // Mirrors _BiometricSection from LoginPage exactly
-                                    _BiometricRow(isDark: isDark),
-
                                     const SizedBox(height: 20),
 
                                     // ── Preferences card ─────────────
@@ -269,15 +266,15 @@ class _ProfilePageState extends State<ProfilePage>
                                       isDark: isDark,
                                       child: Column(
                                         children: [
-                                          _ActionRow(
-                                            icon: Icons.notifications_outlined,
-                                            label:
-                                                context.l10n.notifications,
-                                            primary: primary,
-                                            onTap: () {},
-                                          ),
-                                          _Divider(),
-                                          _ActionRow(
+                                          // ActionRow(
+                                          //   icon: Icons.notifications_outlined,
+                                          //   label:
+                                          //       context.l10n.notifications,
+                                          //   primary: primary,
+                                          //   onTap: () {},
+                                          // ),
+                                          // _Divider(),
+                                          ActionRow(
                                             icon: Icons.settings_outlined,
                                             label: context.l10n.settings,
                                             primary: primary,
@@ -285,12 +282,49 @@ class _ProfilePageState extends State<ProfilePage>
                                                 context.goToSettings(),
                                           ),
                                           _Divider(),
-                                          _ActionRow(
+                                          ActionRow(
+                                            icon: Icons.widgets_outlined,
+                                            label: context.l10n.addHomeWidget,
+                                            primary: primary,
+                                            onTap: () {
+                                            
+                                            },
+                                          ),
+                                          _Divider(),
+                                          ActionRow(
                                             icon: Icons.shield_outlined,
                                             label: context
                                                 .l10n.privacyAndSecurity,
                                             primary: primary,
-                                            onTap: () {},
+                                            onTap: () {
+                                              AppUtils.launchURL(
+                                                NetworkConfigs.privacyPolicyUrl,
+                                              );
+                                            },
+                                          ),
+                                        
+                                          _Divider(),
+                                          ActionRow(
+                                            icon: Icons.description_outlined,
+                                            label: context.l10n.termsAndConditions,
+                                            primary: primary,
+                                            onTap: () {
+                                              AppUtils.launchURL(
+                                                NetworkConfigs.termsAndConditionsUrl,
+                                              );
+                                            },
+                                          ),
+
+                                            _Divider(),
+                                          ActionRow(
+                                            icon: Icons.info_outline,
+                                            label: context.l10n.about,
+                                            primary: primary,
+                                            onTap: () {
+                                              AppUtils.launchURL(
+                                                NetworkConfigs.aboutUrl,
+                                              );
+                                            },
                                           ),
                                         ],
                                       ),
@@ -309,8 +343,24 @@ class _ProfilePageState extends State<ProfilePage>
                                     const SizedBox(height: 12),
 
                                     // ── Sign out button ──────────────
-                                    _SignOutButton(
-                                      onTap: () => _handleLogout(context),
+                                  
+                                    AppButton.outline(
+                                      text: context.l10n.signOut,
+                                      borderColor: scheme.error.withValues(alpha: 0.35),
+                                      borderRadius:14,
+                                      textStyle: context.textTheme.bodyMedium
+                                          ?.copyWith(
+                                            color: scheme.error,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                          leadingIcon: Icon(
+                                            Icons.logout_rounded,
+                                            size: 18,
+                                            color: scheme.error
+                                                .withValues(alpha: 0.8),
+                                          ),
+                                          onPressed: () =>
+                                              _handleLogout(context),
                                     ),
 
                                     const Spacer(),
@@ -350,7 +400,7 @@ class _ProfilePageState extends State<ProfilePage>
   void _showEditProfile(BuildContext context) {
     // Navigate to edit profile — replace with your route
     Navigator.of(context).push(
-      MaterialPageRoute(
+      MaterialPageRoute<void>(
         builder: (_) => BlocProvider.value(
           value: context.read<ProfileCubit>(),
           child: const ProfileEditPage(),
@@ -640,90 +690,6 @@ class _StatItem extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Biometric Row — direct copy of _BiometricSection from LoginPage
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _BiometricRow extends StatelessWidget {
-  const _BiometricRow({required this.isDark});
-
-  final bool isDark;
-
-  @override
-  Widget build(BuildContext context) => Column(
-        children: [
-          // "or" divider — identical to login's biometric divider
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 28,
-                height: 0.5,
-                color: context.primaryColor.withValues(alpha: 0.4),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Text(
-                  context.l10n.quickAccess,
-                  style: context.textTheme.bodySmall?.copyWith(
-                    color: context.colorScheme.onSurfaceVariant
-                        .withValues(alpha: 0.7),
-                  ),
-                ),
-              ),
-              Container(
-                width: 28,
-                height: 0.5,
-                color: context.primaryColor.withValues(alpha: 0.4),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 16),
-
-          // Biometric button — identical container decoration to LoginPage
-          GestureDetector(
-            onTap: () {},
-            child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-              decoration: BoxDecoration(
-                color: context.primaryColor.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: context.primaryColor.withValues(alpha: 0.4),
-                  width: 0.5,
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Platform.isIOS
-                        ? Icons.face_unlock_outlined
-                        : Icons.fingerprint,
-                    size: 22,
-                    color: context.primaryColor,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    Platform.isIOS
-                        ? context.l10n.faceIdEnabled
-                        : context.l10n.fingerprintEnabled,
-                    style: context.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: context.primaryColor,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
 // Section Label
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -815,107 +781,8 @@ class _InfoRow extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Action Row (Settings / Notifications rows)
-// ─────────────────────────────────────────────────────────────────────────────
 
-class _ActionRow extends StatelessWidget {
-  const _ActionRow({
-    required this.icon,
-    required this.label,
-    required this.primary,
-    required this.onTap,
-    this.isDanger = false,
-  });
 
-  final IconData icon;
-  final String label;
-  final Color primary;
-  final VoidCallback onTap;
-  final bool isDanger;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = context.colorScheme;
-    final color = isDanger ? scheme.error : primary;
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        child: Row(
-          children: [
-            Icon(icon, size: 18, color: color.withValues(alpha: 0.7)),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Text(
-                label,
-                style: context.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: isDanger ? scheme.error : scheme.onSurface,
-                ),
-              ),
-            ),
-            if (!isDanger)
-              Icon(
-                Icons.chevron_right_rounded,
-                size: 18,
-                color: scheme.onSurfaceVariant.withValues(alpha: 0.5),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Sign Out Button — styled like "Create One" link in LoginPage
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _SignOutButton extends StatelessWidget {
-  const _SignOutButton({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = context.colorScheme;
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: scheme.error.withValues(alpha: 0.35),
-            width: 0.5,
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.logout_rounded,
-              size: 18,
-              color: scheme.error.withValues(alpha: 0.8),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              context.l10n.signOut,
-              textAlign: TextAlign.center,
-              style: context.textTheme.bodyMedium?.copyWith(
-                color: scheme.error,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Thin divider between rows inside FormCard

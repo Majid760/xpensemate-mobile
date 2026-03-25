@@ -240,7 +240,7 @@ class _QuickStatItem extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(context.sm),
             decoration: BoxDecoration(
-              color: context.onPrimaryColor.withValues(alpha: 0.2),
+              color: context.onPrimaryColor.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, color: context.onPrimaryColor, size: 24),

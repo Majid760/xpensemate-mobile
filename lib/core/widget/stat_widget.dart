@@ -89,7 +89,7 @@ class _StatsCardState extends State<StatsWidgetCard>
                       Container(
                         padding: EdgeInsets.all(context.xs),
                         decoration: BoxDecoration(
-                          color: context.primaryColor.withValues(alpha: 0.3),
+                          color: context.primaryColor.withValues(alpha: 0.6),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Icon(

@@ -1,6 +1,7 @@
 import 'package:awesome_drawer_bar/awesome_drawer_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:xpensemate/core/route/utils/router_extension.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/budget_goals_entity.dart';
@@ -256,7 +257,7 @@ class _DashboardPageWrapperState extends State<DashboardPageWrapper> {
   }
 
   void _toggleDrawer() => _drawerController.toggle?.call();
-  void _closeDrawer() => _drawerController.close?.call ();
+  void _closeDrawer() => [_drawerController.close?.call (), context.goToHome()];
 
   @override
   Widget build(BuildContext context) {

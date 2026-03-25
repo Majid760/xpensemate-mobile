@@ -124,7 +124,7 @@ class _FinancialOverviewCardState extends State<FinancialOverviewCard>
               onTap: _toggleExpanded,
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
-                    context.sm1, context.sm1, context.sm1, context.sm),
+                    context.sm1, context.sm1, context.sm1, context.sm,),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -159,7 +159,7 @@ class _FinancialOverviewCardState extends State<FinancialOverviewCard>
                         ),
                         // Visibility Toggle Button
                         Material(
-                          color: Colors.transparent,
+                          color: context.primaryColor,
                           child: InkWell(
                             onTap: _toggleBalanceVisibility,
                             borderRadius: BorderRadius.circular(12),

@@ -3,11 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
-import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_button.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
+import 'package:xpensemate/features/auth/presentation/widgets/background_decoration_widget.dart';
 import 'package:xpensemate/features/auth/presentation/widgets/custom_text_form_field.dart';
+import 'package:xpensemate/features/auth/presentation/widgets/feel_card_widget.dart';
+import 'package:xpensemate/features/auth/presentation/widgets/feild_lable_widget.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_entity.dart';
 
 class PaymentFormWidget extends StatefulWidget {
@@ -32,57 +34,47 @@ class PaymentFormWidget extends StatefulWidget {
 }
 
 class _PaymentFormWidgetState extends State<PaymentFormWidget>
-    with TickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   late final FormGroup _form;
   late final List<String> _paymentTypes;
   bool _isCustomPaymentTypeMode = false;
 
-  // Animation controllers and animations
-  late AnimationController _fadeController;
-  late AnimationController _slideController;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
+  // ── Animation Controllers ───────────────────────────────
+  late final AnimationController _animController;
+  late final Animation<double> _fadeIn;
+  late final Animation<Offset> _slideUp;
 
   @override
   void initState() {
     super.initState();
     _initializeForm();
-    _initializeAnimations();
+    
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    );
+
+    _fadeIn = CurvedAnimation(
+      parent: _animController,
+      curve: const Interval(0, 0.65, curve: Curves.easeOut),
+    );
+
+    _slideUp = Tween<Offset>(
+      begin: const Offset(0, 0.06),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _animController,
+      curve: const Interval(0, 0.65, curve: Curves.easeOutCubic),
+    ),);
+
+    _animController.forward();
   }
 
-  void _initializeAnimations() {
-    _fadeController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
-
-    _slideController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
-
-    _fadeAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(
-      CurvedAnimation(
-        parent: _fadeController,
-        curve: Curves.easeOutCubic,
-      ),
-    );
-
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.5),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _slideController,
-        curve: Curves.easeOutCubic,
-      ),
-    );
-
-    _fadeController.forward();
-    _slideController.forward();
+  @override
+  void dispose() {
+    _form.dispose();
+    _animController.dispose();
+    super.dispose();
   }
 
   void _initializeForm() {
@@ -108,9 +100,7 @@ class _PaymentFormWidgetState extends State<PaymentFormWidget>
       'amount': FormControl<String>(
         validators: [
           Validators.required,
-          Validators.pattern(
-            r'^(\d+(\.\d+)?|\.\d+|\d*)$',
-          ), // Allow only valid numeric input
+          Validators.pattern(r'^(\d+(\.\d+)?|\.\d+|\d*)$'),
         ],
       ),
       'payer': FormControl<String>(
@@ -126,15 +116,12 @@ class _PaymentFormWidgetState extends State<PaymentFormWidget>
       'notes': FormControl<String>(),
       'date': FormControl<DateTime>(
         validators: [Validators.required],
-        value: DateTime.now(), // Default value
+        value: DateTime.now(),
       ),
     });
 
     if (widget.payment != null) {
       _populateFormFromPayment(widget.payment!);
-    } else {
-      // Additional defaults just in case, though defined in control
-      // Payment type not set by default to force selection or could set first
     }
   }
 
@@ -146,47 +133,38 @@ class _PaymentFormWidgetState extends State<PaymentFormWidget>
     _form.control('date').value = payment.date;
 
     final type = payment.paymentType;
-    if (_paymentTypes.contains(type)) {
-      _form.control('paymentType').value = type;
+    // Normalize type comparison
+    final existingType = _paymentTypes.firstWhere(
+      (t) => t.toLowerCase() == type.toLowerCase(),
+      orElse: () => '',
+    );
+
+    if (existingType.isNotEmpty) {
+      _form.control('paymentType').value = existingType;
       _isCustomPaymentTypeMode = false;
     } else {
-      // If it's a custom type or one not in our static list anymore
-      // We can add it or just treat as custom mode
-      if (!_paymentTypes.contains(type)) {
-        _paymentTypes.add(type);
-        _form.control('paymentType').value = type;
-      }
+      _paymentTypes.add(type[0].toUpperCase() + type.substring(1));
+      _form.control('paymentType').value = _paymentTypes.last;
+      _isCustomPaymentTypeMode = false;
     }
-  }
-
-  @override
-  void dispose() {
-    _form.dispose();
-    _fadeController.dispose();
-    _slideController.dispose();
-    super.dispose();
   }
 
   Future<void> _submitForm() async {
     try {
       if (!_form.valid) {
+        _form.markAllAsTouched();
         AppSnackBar.show(
           context: context,
           message: context.l10n.fillAllRequired,
           type: SnackBarType.error,
         );
-        _form.markAllAsTouched();
         return;
       }
 
-      // Check amount validity specifically for negative values if pattern passed
-      final amountString =
-          (_form.control('amount').value as String?)?.trim() ?? '0';
+      final amountString = (_form.control('amount').value as String?)?.trim() ?? '0';
       final amount = double.tryParse(amountString);
       if (amount == null || amount < 0) {
-        _form.control('amount').setErrors({
-          'min': true,
-        }); // Manually set error if negative logic missed by pattern (pattern usually allows positive, but ensure)
+        _form.control('amount').setErrors({'pattern': true});
         return;
       }
 
@@ -198,18 +176,12 @@ class _PaymentFormWidgetState extends State<PaymentFormWidget>
           return;
         }
         paymentTypeValue = customType.trim();
-        // Add to list for internal consistency if needed again
-        if (!_paymentTypes
-            .any((t) => t.toLowerCase() == paymentTypeValue.toLowerCase())) {
-          _paymentTypes.add(paymentTypeValue);
-        }
       } else {
         paymentTypeValue = _form.control('paymentType').value as String;
       }
 
       final payment = PaymentEntity(
-        id: widget.payment?.id ??
-            DateTime.now().millisecondsSinceEpoch.toString(),
+        id: widget.payment?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
         userId: widget.payment?.userId ?? sl.authService.currentUser!.id,
         name: (_form.control('name').value as String).trim(),
         amount: amount,
@@ -229,62 +201,28 @@ class _PaymentFormWidgetState extends State<PaymentFormWidget>
   }
 
   List<DropdownMenuItem<String>> _buildPaymentTypeDropdownItems() {
-    final items = <DropdownMenuItem<String>>[];
-    final colorScheme = Theme.of(context).colorScheme;
-
-    // Add "Add Custom Type" option
-    items.add(
+    final primary = context.primaryColor;
+    final scheme = context.colorScheme;
+    
+    return [
       DropdownMenuItem<String>(
         value: 'ADD_CUSTOM_TYPE',
-        child: Container(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.md,
-            AppSpacing.sm,
-            AppSpacing.md,
-            0,
-          ),
-          child: Text(
-            '+ ${context.l10n.addCustomCategory}',
-            style: TextStyle(
-              color: colorScheme.primary,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+        child: Text(
+          context.l10n.addCustomCategory,
+          style: TextStyle(color: primary, fontWeight: FontWeight.w600),
         ),
       ),
-    );
-
-    items.add(
       DropdownMenuItem<String>(
         enabled: false,
-        child: Divider(
-          color: colorScheme.outline.withValues(alpha: 0.2),
-          height: 1,
+        child: Divider(color: scheme.outlineVariant.withValues(alpha: 0.4), height: 1, thickness: 0.5),
+      ),
+      ..._paymentTypes.map(
+        (type) => DropdownMenuItem<String>(
+          value: type,
+          child: Text(type, style: TextStyle(color: scheme.onSurface)),
         ),
       ),
-    );
-
-    items.addAll(
-      _paymentTypes
-          .map(
-            (type) => DropdownMenuItem<String>(
-              value: type,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                  vertical: AppSpacing.xs,
-                ),
-                child: Text(
-                  type,
-                  style: TextStyle(color: colorScheme.onSurface),
-                ),
-              ),
-            ),
-          )
-          .toList(),
-    );
-
-    return items;
+    ];
   }
 
   Future<void> _selectDate() async {
@@ -302,265 +240,255 @@ class _PaymentFormWidgetState extends State<PaymentFormWidget>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final textTheme = theme.textTheme;
+    final scheme = context.colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primary = context.primaryColor;
+    final l10n = context.l10n;
 
-    return FadeTransition(
-      opacity: _fadeAnimation,
-      child: SlideTransition(
-        position: _slideAnimation,
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ReactiveForm(
-                  formGroup: _form,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Name Field
-                      ReactiveAppField(
-                        formControlName: 'name',
-                        labelText: '${context.l10n.paymentName} *',
-                        hintText: context.l10n.enterValidAmount,
-                        prefixIcon: Icon(
-                          Icons.description_outlined,
-                          color: colorScheme.onSurfaceVariant
-                              .withValues(alpha: 0.6),
-                        ),
-                        textInputAction: TextInputAction.next,
-                        validationMessages: {
-                          'required': (error) =>
-                              context.l10n.paymentNameRequired,
-                          'minLength': (error) =>
-                              'Must be at least 2 characters',
-                        },
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-
-                      // Amount Field
-                      ReactiveAppField(
-                        formControlName: 'amount',
-                        labelText: '${context.l10n.amount} *',
-                        hintText: 'e.g 5000',
-                        fieldType: FieldType.number,
-                        prefixIcon: Icon(
-                          Icons.attach_money_outlined,
-                          color: colorScheme.onSurfaceVariant
-                              .withValues(alpha: 0.6),
-                        ),
-                        textInputAction: TextInputAction.next,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(
-                            RegExp(r'^\d*\.?\d*$'),
-                          ),
-                        ],
-                        validationMessages: {
-                          'required': (error) =>
-                              context.l10n.paymentAmountRequired,
-                          'pattern': (error) => 'Invalid amount',
-                          'min': (error) => 'Amount must be positive',
-                        },
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-
-                      // Payer Field
-                      ReactiveAppField(
-                        formControlName: 'payer',
-                        labelText: '${context.l10n.payer} *',
-                        hintText: context.l10n.payerRequired,
-                        prefixIcon: Icon(
-                          Icons.person_outline,
-                          color: colorScheme.onSurfaceVariant
-                              .withValues(alpha: 0.6),
-                        ),
-                        textInputAction: TextInputAction.next,
-                        validationMessages: {
-                          'required': (error) => context.l10n.payerRequired,
-                          'minLength': (error) =>
-                              'Must be at least 3 characters',
-                        },
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-
-                      // Payment Type Dropdown
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ReactiveAppField(
-                            formControlName: 'paymentType',
-                            labelText: '${context.l10n.paymentType} *',
-                            hintText: context.l10n.selectPaymentType,
-                            dropdownItems: _buildPaymentTypeDropdownItems(),
-                            fieldType: FieldType.dropdown,
-                            validationMessages: {
-                              'required': (error) =>
-                                  context.l10n.paymentTypeRequired,
-                            },
-                            onDropdownChanged: (value) {
-                              if (value.value == 'ADD_CUSTOM_TYPE') {
-                                setState(() {
-                                  _isCustomPaymentTypeMode = true;
-                                });
-                                _form.control('paymentType').value = null;
-                                _form.control('paymentType').setErrors({});
-                              } else if (value.value != null) {
-                                setState(() {
-                                  _isCustomPaymentTypeMode = false;
-                                });
-                                _form.control('customPaymentType').value = null;
-                                _form
-                                    .control('customPaymentType')
-                                    .setErrors({});
-                              }
-                            },
-                          ),
-                          if (_isCustomPaymentTypeMode) ...[
-                            const SizedBox(height: AppSpacing.md),
-                            ReactiveAppField(
-                              formControlName: 'customPaymentType',
-                              labelText: '${context.l10n.paymentType} *',
-                              hintText: 'Enter custom type',
-                              prefixIcon: Icon(
-                                Icons.category_outlined,
-                                color: colorScheme.onSurfaceVariant
-                                    .withValues(alpha: 0.6),
-                              ),
-                              textInputAction: TextInputAction.next,
-                              validationMessages: {
-                                'required': (error) =>
-                                    'Custom type is required',
-                              },
-                            ),
-                          ],
-                        ],
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-
-                      // Date Field (Custom Look akin to ExpenseForm)
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${context.l10n.date} *',
-                            style: textTheme.labelLarge?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                          const SizedBox(height: AppSpacing.xs),
-                          DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: context.colorScheme.surfaceContainer
-                                  .withValues(alpha: 0.7),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: context.colorScheme.outline
-                                    .withValues(alpha: 0.2),
-                                width: 1.5,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: context.colorScheme.primary
-                                      .withValues(alpha: 0.1),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: ReactiveFormConsumer(
-                              builder: (context, formModel, child) {
-                                final date = formModel.control('date').value
-                                    as DateTime?;
-                                return InkWell(
-                                  onTap: _selectDate,
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: AppSpacing.md,
-                                      vertical: AppSpacing.md,
+    return Scaffold(
+      backgroundColor: scheme.surface,
+      body: Stack(
+        children: [
+          BackgroundDecoration(isDark: isDark),
+          LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: FadeTransition(
+                    opacity: _fadeIn,
+                    child: SlideTransition(
+                      position: _slideUp,
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: ReactiveForm(
+                          formGroup: _form,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              FormCard(
+                                isDark: isDark,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: [
+                                    // ── Payment Name ─────────────────
+                                    FieldLabel(label: '${l10n.paymentName} *'),
+                                    const SizedBox(height: 6),
+                                    ReactiveAppField(
+                                      formControlName: 'name',
+                                      hintText: l10n.paymentName,
+                                      prefixIcon: Icon(Icons.description_outlined, size: 18, color: primary.withValues(alpha: 0.7)),
+                                      textInputAction: TextInputAction.next,
+                                      validationMessages: {
+                                        'required': (_) => l10n.fieldRequired,
+                                        'minLength': (_) => l10n.fieldTooShort,
+                                      },
                                     ),
-                                    // decoration is in decorated box for shadow
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.calendar_today_outlined,
-                                          color: colorScheme.onSurfaceVariant
-                                              .withValues(alpha: 0.6),
-                                          size: 20,
-                                        ),
-                                        const SizedBox(width: AppSpacing.sm),
-                                        Text(
-                                          date != null
+
+                                    const SizedBox(height: 20),
+
+                                    // ── Amount ───────────────────────
+                                    FieldLabel(label: '${l10n.amount} *'),
+                                    const SizedBox(height: 6),
+                                    ReactiveAppField(
+                                      formControlName: 'amount',
+                                      hintText: l10n.amount,
+                                      fieldType: FieldType.number,
+                                      prefixIcon: Icon(Icons.attach_money_outlined, size: 18, color: primary.withValues(alpha: 0.7)),
+                                      textInputAction: TextInputAction.next,
+                                      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$'))],
+                                      validationMessages: {
+                                        'required': (_) => l10n.fieldRequired,
+                                        'pattern': (_) => l10n.invalidAmount,
+                                      },
+                                    ),
+
+                                    const SizedBox(height: 20),
+
+                                    // ── Payer ────────────────────────
+                                    FieldLabel(label: '${l10n.payer} *'),
+                                    const SizedBox(height: 6),
+                                    ReactiveAppField(
+                                      formControlName: 'payer',
+                                      hintText: l10n.payer,
+                                      prefixIcon: Icon(Icons.person_outline, size: 18, color: primary.withValues(alpha: 0.7)),
+                                      textInputAction: TextInputAction.next,
+                                      validationMessages: {
+                                        'required': (_) => l10n.fieldRequired,
+                                        'minLength': (_) => l10n.fieldTooShort,
+                                      },
+                                    ),
+
+                                    const SizedBox(height: 24),
+
+                                    // ── Payment Type ─────────────────
+                                    FieldLabel(label: '${l10n.paymentType} *'),
+                                    const SizedBox(height: 6),
+                                    ReactiveAppField(
+                                      formControlName: 'paymentType',
+                                      hintText: l10n.selectPaymentType,
+                                      fieldType: FieldType.dropdown,
+                                      dropdownItems: _buildPaymentTypeDropdownItems(),
+                                      prefixIcon: Icon(Icons.category_outlined, size: 18, color: primary.withValues(alpha: 0.7)),
+                                      validationMessages: {'required': (_) => l10n.fieldRequired},
+                                      onDropdownChanged: (value) {
+                                        if (value.value == 'ADD_CUSTOM_TYPE') {
+                                          setState(() => _isCustomPaymentTypeMode = true);
+                                          _form.control('paymentType').value = null;
+                                          _form.control('paymentType').setErrors({});
+                                        } else if (value.value != null) {
+                                          setState(() => _isCustomPaymentTypeMode = false);
+                                          _form.control('customPaymentType').value = null;
+                                          _form.control('customPaymentType').setErrors({});
+                                        }
+                                      },
+                                    ),
+
+                                    if (_isCustomPaymentTypeMode) ...[
+                                      const SizedBox(height: 18),
+                                      FieldLabel(label: '${l10n.paymentType} *'),
+                                      const SizedBox(height: 6),
+                                      ReactiveAppField(
+                                        formControlName: 'customPaymentType',
+                                        hintText: l10n.paymentType,
+                                        prefixIcon: Icon(Icons.edit_outlined, size: 18, color: primary.withValues(alpha: 0.7)),
+                                        textInputAction: TextInputAction.next,
+                                        validationMessages: {'required': (_) => l10n.fieldRequired},
+                                      ),
+                                    ],
+
+                                    const SizedBox(height: 24),
+
+                                    // ── Date ─────────────────────────
+                                    FieldLabel(label: '${l10n.date} *'),
+                                    const SizedBox(height: 6),
+                                    ReactiveFormConsumer(
+                                      builder: (context, form, _) {
+                                        final date = form.control('date').value as DateTime?;
+                                        return _PickerTile(
+                                          icon: Icons.calendar_today_outlined,
+                                          text: date != null
                                               ? '${date.day}/${date.month}/${date.year}'
-                                              : context.l10n.selectTargetDate,
-                                          style: textTheme.bodyLarge?.copyWith(
-                                            color: date != null
-                                                ? colorScheme.onSurface
-                                                : colorScheme.onSurfaceVariant,
-                                          ),
-                                        ),
-                                      ],
+                                              : l10n.date,
+                                          hasValue: date != null,
+                                          onTap: _selectDate,
+                                        );
+                                      },
+                                    ),
+
+                                    const SizedBox(height: 24),
+
+                                    // ── Notes ────────────────────────
+                                    FieldLabel(label: '${l10n.note} (${l10n.optional})'),
+                                    const SizedBox(height: 6),
+                                    ReactiveAppField(
+                                      formControlName: 'notes',
+                                      hintText: l10n.addNotes,
+                                      fieldType: FieldType.textarea,
+                                      maxLines: 3,
+                                      prefixIcon: Icon(Icons.note_alt_outlined, size: 18, color: primary.withValues(alpha: 0.7)),
+                                      textInputAction: TextInputAction.newline,
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              const SizedBox(height: 24),
+
+                              // ── Action Buttons ───────────────────────
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: AppButton.primary(
+                                      text: (widget.payment == null ? l10n.save : l10n.update).toUpperCase(),
+                                      onPressed: _submitForm,
+                                      textColor: context.colorScheme.onPrimary,
                                     ),
                                   ),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-
-                      // Notes Field
-                      ReactiveAppField(
-                        formControlName: 'notes',
-                        labelText:
-                            '${context.l10n.note} (${context.l10n.optional})',
-                        hintText: context.l10n.addNotes,
-                        prefixIcon: Icon(
-                          Icons.note_alt_outlined,
-                          color: colorScheme.onSurfaceVariant
-                              .withValues(alpha: 0.6),
-                        ),
-                        textInputAction: TextInputAction.done,
-                        maxLines: 3,
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-
-                      // Buttons
-                      Row(
-                        children: [
-                          if (widget.onCancel != null) ...[
-                            Expanded(
-                              child: AppButton.outline(
-                                text: context.l10n.cancel,
-                                onPressed: widget.onCancel!,
+                                  if (widget.onCancel != null) ...[
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: AppButton.secondary(
+                                        text: l10n.cancel.toUpperCase(),
+                                        onPressed: widget.onCancel,
+                                        textColor: context.colorScheme.onPrimary,
+                                      ),
+                                    ),
+                                  ],
+                                ],
                               ),
-                            ),
-                            const SizedBox(width: AppSpacing.md),
-                          ],
-                          Expanded(
-                            child: AppButton.primary(
-                              text: widget.payment == null
-                                  ? context.l10n.save
-                                  : context.l10n.update,
-                              onPressed: _submitForm,
-                              textColor: colorScheme.onPrimary,
-                            ),
+                              const SizedBox(height: 32),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
-              ],
+              ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PickerTile extends StatelessWidget {
+  const _PickerTile({
+    required this.icon,
+    required this.text,
+    required this.hasValue,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String text;
+  final bool hasValue;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final primary = context.primaryColor;
+    final scheme = context.colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        decoration: BoxDecoration(
+          color: isDark
+              ? scheme.surfaceContainerHighest.withValues(alpha: 0.4)
+              : scheme.surfaceContainerLowest,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: scheme.outline.withValues(alpha: 0.2),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 18,
+              color: primary.withValues(alpha: 0.7),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                text,
+                style: context.textTheme.bodyMedium?.copyWith(
+                  color: hasValue ? scheme.onSurface : scheme.onSurfaceVariant,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
+

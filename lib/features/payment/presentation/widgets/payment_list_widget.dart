@@ -83,7 +83,7 @@ class _PaymentListWidgetState extends State<PaymentListWidget> {
             ),
           ),
           separatorBuilder: (context, index) =>
-              const SizedBox(height: AppSpacing.xs),
+              const SizedBox(height: AppSpacing.sm),
         ),
       );
 }

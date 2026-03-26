@@ -7,6 +7,7 @@ import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
 import 'package:xpensemate/core/widget/stat_widget.dart';
+import 'package:xpensemate/features/budget/presentation/widgets/stat_card.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_stats_entity.dart';
 
 class PaymentStatsWidget extends StatefulWidget {
@@ -185,11 +186,10 @@ class _QuickStatsRow extends StatelessWidget {
   Widget build(BuildContext context) => Row(
         children: [
           Expanded(
-            child: _QuickStatItem(
+            child: QuickStatItem(
               icon: Icons.account_balance_wallet_rounded,
               value: AppUtils.formatLargeNumber(stats?.walletBalance ?? 0),
               label: context.l10n.walletBalance,
-              iconBg: context.onPrimaryColor.withValues(alpha: 0.3),
 
             ),
           ),
@@ -199,11 +199,10 @@ class _QuickStatsRow extends StatelessWidget {
             color: context.onPrimaryColor.withValues(alpha: 0.2),
           ),
           Expanded(
-            child: _QuickStatItem(
+            child: QuickStatItem(
               icon: Icons.trending_up_rounded,
               value: '${(stats?.periodGrowth ?? 0).toStringAsFixed(1)}%',
               label: context.l10n.growth,
-              iconBg: context.onPrimaryColor.withValues(alpha: 0.3),
             ),
           ),
           Container(
@@ -212,11 +211,10 @@ class _QuickStatsRow extends StatelessWidget {
             color: context.onPrimaryColor.withValues(alpha: 0.2),
           ),
           Expanded(
-            child: _QuickStatItem(
+            child: QuickStatItem(
               icon: Icons.person_rounded,
               value: stats?.topPayer ?? 'N/A',
               label: context.l10n.topPayer,
-              iconBg: context.onPrimaryColor.withValues(alpha: 0.3),
             ),
           ),
         ],

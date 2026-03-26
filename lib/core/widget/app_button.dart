@@ -169,7 +169,7 @@ class AppButton extends StatefulWidget {
       padding: padding,
       height: height,
       minWidth: minWidth,
-      backgroundColor: backgroundColor,
+      backgroundColor: backgroundColor ,
       textColor: textColor,
       borderRadius: borderRadius,
       leadingIcon: leadingIcon,
@@ -552,48 +552,57 @@ class AppButton extends StatefulWidget {
       end: Alignment.topRight,
     );
 
-    final bgColor =
-        !enabled || isLoading ? (backgroundColor ?? colorScheme.primary) : null;
+    final isInteractive = enabled && !isLoading;
+    final bgColor = !isInteractive ? (backgroundColor ?? colorScheme.primaryContainer) : null;
+    final effectiveTextColor = textColor ?? (isInteractive ? colorScheme.onPrimary : colorScheme.onPrimaryContainer);
 
     return Material(
       color: Colors.transparent,
-      child: Container(
-        width: isFullWidth ? double.infinity : null,
-        constraints: BoxConstraints(
-          minWidth: minWidth ?? 0,
-          minHeight: effectiveHeight,
-        ),
-        decoration: enabled && !isLoading
-            ? BoxDecoration(
-                gradient: gradient,
+      child: DefaultTextStyle.merge(
+        style: TextStyle(color: effectiveTextColor),
+        child: IconTheme.merge(
+          data: IconThemeData(color: effectiveTextColor, size: 20),
+          child: Container(
+            width: isFullWidth ? double.infinity : null,
+            constraints: BoxConstraints(
+              minWidth: minWidth ?? 0,
+              minHeight: effectiveHeight,
+            ),
+            decoration: isInteractive
+                ? BoxDecoration(
+                    gradient: gradient,
+                    borderRadius: BorderRadius.circular(effectiveRadius),
+                    boxShadow: hasShadow
+                        ? [
+                            BoxShadow(
+                              color: colorScheme.shadow.withValues(alpha: 0.15),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ]
+                        : null,
+                  )
+                : BoxDecoration(
+                    color: bgColor,
+                    borderRadius: BorderRadius.circular(effectiveRadius),
+                  ),
+            child: Material(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(effectiveRadius),
+              child: InkWell(
+                onTap: isInteractive ? onPressed : null,
                 borderRadius: BorderRadius.circular(effectiveRadius),
-                boxShadow: hasShadow && enabled
-                    ? [
-                        BoxShadow(
-                          color: colorScheme.shadow.withValues(alpha: 0.15),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        ),
-                      ]
-                    : null,
-              )
-            : BoxDecoration(
-                color: bgColor,
-                borderRadius: BorderRadius.circular(effectiveRadius),
+                child: Container(
+                  width: isFullWidth ? double.infinity : null,
+                  constraints: BoxConstraints(minHeight: effectiveHeight),
+                  padding: padding ??
+                      EdgeInsets.symmetric(
+                        horizontal: context.lg,
+                        vertical: context.md,
+                      ),
+                  child: Center(child: child),
+                ),
               ),
-        child: Material(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(effectiveRadius),
-          child: InkWell(
-            onTap: (enabled && !isLoading) ? onPressed : null,
-            borderRadius: BorderRadius.circular(effectiveRadius),
-            child: Container(
-              width: isFullWidth ? double.infinity : null,
-              constraints: BoxConstraints(minHeight: effectiveHeight),
-              padding: padding ??
-                  EdgeInsets.symmetric(
-                      horizontal: context.lg, vertical: context.md),
-              child: Center(child: child),
             ),
           ),
         ),
@@ -627,21 +636,18 @@ class AppButton extends StatefulWidget {
     return ElevatedButton(
       onPressed: (enabled && !isLoading) ? onPressed : null,
       style: ElevatedButton.styleFrom(
-        backgroundColor:
-            backgroundColor ?? colorScheme.tertiary.withValues(alpha: 0.8),
-        foregroundColor: textColor ?? colorScheme.onSecondary,
+        backgroundColor: backgroundColor ?? colorScheme.secondaryContainer,
+        foregroundColor: textColor ?? colorScheme.onSecondaryContainer,
         disabledBackgroundColor: colorScheme.surfaceContainerHighest,
         disabledForegroundColor: colorScheme.onSurfaceVariant,
         elevation: hasShadow ? (elevation ?? 2) : 0,
-        shadowColor:
-            hasShadow ? colorScheme.shadow.withValues(alpha: 0.15) : null,
-        overlayColor: colorScheme.onSecondary.withValues(alpha: 0.1),
+        shadowColor: hasShadow ? colorScheme.shadow.withValues(alpha: 0.15) : null,
+        overlayColor: colorScheme.primary.withValues(alpha: 0.1),
         animationDuration: animationDuration,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(effectiveRadius),
         ),
-        padding: padding ??
-            EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
+        padding: padding ?? EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           effectiveHeight,
@@ -678,19 +684,18 @@ class AppButton extends StatefulWidget {
       onPressed: (enabled && !isLoading) ? onPressed : null,
       style: OutlinedButton.styleFrom(
         backgroundColor: backgroundColor ?? Colors.transparent,
-        foregroundColor: textColor ?? colorScheme.onSurface,
+        foregroundColor: textColor ?? colorScheme.primary,
         disabledForegroundColor: colorScheme.onSurfaceVariant,
         overlayColor: colorScheme.primary.withValues(alpha: 0.08),
         animationDuration: animationDuration,
         side: BorderSide(
-          color: borderColor ?? colorScheme.outlineVariant,
+          color: borderColor ?? (enabled ? colorScheme.primary : colorScheme.outlineVariant),
           width: 1.5,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(effectiveRadius),
         ),
-        padding: padding ??
-            EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
+        padding: padding ?? EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           effectiveHeight,
@@ -733,8 +738,7 @@ class AppButton extends StatefulWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(effectiveRadius),
         ),
-        padding: padding ??
-            EdgeInsets.symmetric(horizontal: context.md, vertical: context.sm),
+        padding: padding ?? EdgeInsets.symmetric(horizontal: context.md, vertical: context.sm),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           effectiveHeight,
@@ -791,15 +795,13 @@ class AppButton extends StatefulWidget {
         disabledBackgroundColor: colorScheme.surfaceContainerHighest,
         disabledForegroundColor: colorScheme.onSurfaceVariant,
         elevation: hasShadow ? (elevation ?? 2) : 0,
-        shadowColor:
-            hasShadow ? colorScheme.shadow.withValues(alpha: 0.15) : null,
+        shadowColor: hasShadow ? colorScheme.shadow.withValues(alpha: 0.15) : null,
         overlayColor: colorScheme.onPrimary.withValues(alpha: 0.1),
         animationDuration: animationDuration,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(effectiveRadius),
         ),
-        padding: padding ??
-            EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
+        padding: padding ?? EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           effectiveHeight,
@@ -855,19 +857,18 @@ class AppButton extends StatefulWidget {
       label: Text(text),
       style: OutlinedButton.styleFrom(
         backgroundColor: backgroundColor ?? Colors.transparent,
-        foregroundColor: textColor ?? colorScheme.onSurface,
+        foregroundColor: textColor ?? colorScheme.primary,
         disabledForegroundColor: colorScheme.onSurfaceVariant,
         overlayColor: colorScheme.primary.withValues(alpha: 0.08),
         animationDuration: animationDuration,
         side: BorderSide(
-          color: borderColor ?? colorScheme.outlineVariant,
+          color: borderColor ?? (enabled ? colorScheme.primary : colorScheme.outlineVariant),
           width: 1.5,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(effectiveRadius),
         ),
-        padding: padding ??
-            EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
+        padding: padding ?? EdgeInsets.symmetric(horizontal: context.lg, vertical: context.md),
         minimumSize: Size(
           isFullWidth ? double.infinity : (minWidth ?? 0),
           effectiveHeight,
@@ -881,6 +882,7 @@ class AppButton extends StatefulWidget {
       ),
     );
   }
+
 }
 
 class _AppButtonState extends State<AppButton>
@@ -957,14 +959,19 @@ class _AppButtonState extends State<AppButton>
     final textTheme = context.textTheme;
 
     if (widget.isLoading) {
-      return SizedBox(
-        width: 22,
-        height: 22,
-        child: CustomAppLoader(
-          size: 22,
-          strokeWidth: 2.4,
-          color: widget.textColor ?? colorScheme.onPrimary,
-        ),
+      return Builder(
+        builder: (context) {
+          final themeTextColor = DefaultTextStyle.of(context).style.color;
+          return SizedBox(
+            width: 22,
+            height: 22,
+            child: CustomAppLoader(
+              size: 22,
+              strokeWidth: 2.4,
+              color: widget.textColor ?? themeTextColor ?? colorScheme.onPrimary,
+            ),
+          );
+        },
       );
     }
 

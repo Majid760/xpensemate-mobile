@@ -545,20 +545,28 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
                               const SizedBox(height: 24),
           
                               // ── Action Buttons ───────────────────────
-                              AppButton.primary(
-                                text: (widget.expense == null ? l10n.add : l10n.save).toUpperCase(),
-                                onPressed: _submitForm,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: AppButton.primary(
+                                      text: (widget.expense == null ? l10n.add : l10n.save).toUpperCase(),
+                                      onPressed: _submitForm,
+                                      textColor: context.colorScheme.onPrimary,
+                                    ),
+                                  ),
+                                  if (widget.onCancel != null) ...[
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: AppButton.secondary(
+                                      text: l10n.cancel.toUpperCase(),
+                                      onPressed: widget.onCancel,
+                                      textColor: context.colorScheme.onPrimary,
+                                    ),
+                                  ),
+                                ],
+                                ],
                               ),
-          
-                              if (widget.onCancel != null) ...[
-                                const SizedBox(height: 12),
-                                AppButton.secondary(
-                                  text: l10n.cancel.toUpperCase(),
-                                  onPressed: widget.onCancel,
-                                  textColor: context.colorScheme.onPrimary,
-                                ),
-                              ],
-          
                               const SizedBox(height: 32),
                             ],
                           ),

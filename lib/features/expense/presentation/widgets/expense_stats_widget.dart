@@ -243,7 +243,7 @@ class _QuickStatItem extends StatelessWidget {
               color: context.onPrimaryColor.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: context.onPrimaryColor, size: 24),
+            child: Icon(icon, color: context.onPrimaryColor, size: context.md),
           ),
           SizedBox(height: context.xs),
           Text(

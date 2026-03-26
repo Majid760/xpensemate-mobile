@@ -6,6 +6,7 @@ import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
+import 'package:xpensemate/core/widget/stat_widget.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_stats_entity.dart';
 
 class PaymentStatsWidget extends StatefulWidget {
@@ -148,20 +149,20 @@ class _PaymentStatsWidgetState extends State<PaymentStatsWidget>
                       axisAlignment: -1,
                       child: Column(
                         children: [
-                          const SizedBox(height: AppSpacing.md1),
+                            SizedBox(height: context.lg),
                           Container(
                             height: 1,
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  Colors.white.withValues(alpha: 0),
-                                  Colors.white.withValues(alpha: 0.3),
-                                  Colors.white.withValues(alpha: 0),
+                                  context.onPrimaryColor.withValues(alpha: 0),
+                                  context.onPrimaryColor.withValues(alpha: 0.3),
+                                  context.onPrimaryColor.withValues(alpha: 0),
                                 ],
                               ),
                             ),
                           ),
-                          const SizedBox(height: AppSpacing.md1),
+                          SizedBox(height: context.lg),
                           _DetailedStatsGrid(stats: widget.stats),
                         ],
                       ),
@@ -188,7 +189,8 @@ class _QuickStatsRow extends StatelessWidget {
               icon: Icons.account_balance_wallet_rounded,
               value: AppUtils.formatLargeNumber(stats?.walletBalance ?? 0),
               label: context.l10n.walletBalance,
-              iconBg: context.onPrimaryColor.withValues(alpha: 0.2),
+              iconBg: context.onPrimaryColor.withValues(alpha: 0.3),
+
             ),
           ),
           Container(
@@ -201,7 +203,7 @@ class _QuickStatsRow extends StatelessWidget {
               icon: Icons.trending_up_rounded,
               value: '${(stats?.periodGrowth ?? 0).toStringAsFixed(1)}%',
               label: context.l10n.growth,
-              iconBg: context.onPrimaryColor.withValues(alpha: 0.2),
+              iconBg: context.onPrimaryColor.withValues(alpha: 0.3),
             ),
           ),
           Container(
@@ -214,7 +216,7 @@ class _QuickStatsRow extends StatelessWidget {
               icon: Icons.person_rounded,
               value: stats?.topPayer ?? 'N/A',
               label: context.l10n.topPayer,
-              iconBg: context.onPrimaryColor.withValues(alpha: 0.2),
+              iconBg: context.onPrimaryColor.withValues(alpha: 0.3),
             ),
           ),
         ],
@@ -245,10 +247,10 @@ class _QuickStatItem extends StatelessWidget {
             child: Icon(
               icon,
               color: context.onPrimaryColor,
-              size: AppSpacing.iconMd,
+              size: context.md,
             ),
           ),
-          const SizedBox(height: AppSpacing.sm),
+          const SizedBox(height: AppSpacing.xs),
           Text(
             value,
             style: context.textTheme.titleMedium?.copyWith(
@@ -284,7 +286,7 @@ class _DetailedStatsGrid extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: _StatsCard(
+                child: StatsWidgetCard(
                   icon: Icons.account_balance_wallet_rounded,
                   value: AppUtils.formatLargeNumber(stats?.totalAmount ?? 0),
                   label: context.l10n.totalBalance,
@@ -293,7 +295,7 @@ class _DetailedStatsGrid extends StatelessWidget {
               ),
               const SizedBox(width: AppSpacing.sm1),
               Expanded(
-                child: _StatsCard(
+                child: StatsWidgetCard(
                   icon: Icons.analytics_rounded,
                   value: AppUtils.formatLargeNumber(stats?.averagePayment ?? 0),
                   label: context.l10n.averagePayment,
@@ -306,7 +308,7 @@ class _DetailedStatsGrid extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: _StatsCard(
+                child: StatsWidgetCard(
                   icon: Icons.trending_up_rounded,
                   value: '+${(stats?.periodGrowth ?? 0).toStringAsFixed(1)}%',
                   label: context.l10n.growthWeekly,
@@ -315,7 +317,7 @@ class _DetailedStatsGrid extends StatelessWidget {
               ),
               const SizedBox(width: AppSpacing.sm1),
               Expanded(
-                child: _StatsCard(
+                child: StatsWidgetCard(
                   icon: Icons.person_rounded,
                   value: stats?.topPayer ?? 'N/A',
                   label: context.l10n.topPayer,
@@ -329,147 +331,3 @@ class _DetailedStatsGrid extends StatelessWidget {
       );
 }
 
-class _StatsCard extends StatefulWidget {
-  const _StatsCard({
-    required this.icon,
-    required this.value,
-    required this.label,
-    required this.subtitle,
-  });
-
-  final IconData icon;
-  final String value;
-  final String label;
-  final String subtitle;
-
-  @override
-  State<_StatsCard> createState() => _StatsCardState();
-}
-
-class _StatsCardState extends State<_StatsCard>
-    with SingleTickerProviderStateMixin {
-  bool _isHovered = false;
-  late AnimationController _controller;
-  late Animation<double> _translateAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _translateAnimation = Tween<double>(begin: 0, end: -2).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _handleHoverEnter(PointerEvent event) {
-    setState(() => _isHovered = true);
-    _controller.forward();
-  }
-
-  void _handleHoverExit(PointerEvent event) {
-    setState(() => _isHovered = false);
-    _controller.reverse();
-  }
-
-  @override
-  Widget build(BuildContext context) => MouseRegion(
-        onEnter: _handleHoverEnter,
-        onExit: _handleHoverExit,
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) => Transform.translate(
-            offset: Offset(0, _isHovered ? _translateAnimation.value : 0),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              padding: const EdgeInsets.all(AppSpacing.sm1),
-              decoration: BoxDecoration(
-                color: context.onPrimaryColor.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(AppSpacing.md),
-                border: Border.all(
-                  color: context.onPrimaryColor.withValues(alpha: 0.35),
-                  width: 1.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: context.onPrimaryColor.withValues(alpha: 0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(AppSpacing.sm),
-                        decoration: BoxDecoration(
-                          color: context.primaryColor.withValues(alpha: 0.3),
-                          borderRadius: BorderRadius.circular(AppSpacing.md),
-                        ),
-                        child: Icon(
-                          widget.icon,
-                          size: AppSpacing.iconSm,
-                          color: context.onPrimaryColor,
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          widget.value,
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: context.textTheme.titleMedium?.copyWith(
-                            color:
-                                context.onPrimaryColor.withValues(alpha: 0.95),
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.3,
-                            height: 1.2,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.sm1),
-                  Text(
-                    widget.label.toUpperCase(),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: context.textTheme.labelSmall?.copyWith(
-                      color:
-                          context.colorScheme.onPrimary.withValues(alpha: 0.95),
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.5,
-                      height: 1.2,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(
-                    widget.subtitle,
-                    style: context.textTheme.labelSmall?.copyWith(
-                      color:
-                          context.colorScheme.onPrimary.withValues(alpha: 0.8),
-                      fontSize: 10,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
-}

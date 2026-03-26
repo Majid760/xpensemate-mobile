@@ -5,6 +5,7 @@ import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
 import 'package:xpensemate/core/widget/stat_widget.dart';
+import 'package:xpensemate/features/budget/presentation/widgets/stat_card.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_stats_entity.dart';
 
 class ExpenseStatsWidget extends StatefulWidget {
@@ -191,7 +192,7 @@ class _QuickStatsRow extends StatelessWidget {
   Widget build(BuildContext context) => Row(
         children: [
           Expanded(
-            child: _QuickStatItem(
+            child: QuickStatItem(
               icon: Icons.account_balance_wallet_rounded,
               value: CurrencyFormatter.format(stats?.totalSpent ?? 0),
               label: context.l10n.totalSpent,
@@ -199,7 +200,7 @@ class _QuickStatsRow extends StatelessWidget {
           ),
           _buildDivider(),
           Expanded(
-            child: _QuickStatItem(
+            child: QuickStatItem(
               icon: Icons.calendar_today_rounded,
               value: CurrencyFormatter.format(stats?.dailyAverage ?? 0),
               label: context.l10n.dailyAverage,
@@ -207,7 +208,7 @@ class _QuickStatsRow extends StatelessWidget {
           ),
           _buildDivider(),
           Expanded(
-            child: _QuickStatItem(
+            child: QuickStatItem(
               icon: Icons.local_fire_department_rounded,
               value: '${stats?.trackingStreak ?? 0}',
               label: context.l10n.streak,
@@ -223,52 +224,7 @@ class _QuickStatsRow extends StatelessWidget {
       );
 }
 
-class _QuickStatItem extends StatelessWidget {
-  const _QuickStatItem({
-    required this.icon,
-    required this.value,
-    required this.label,
-  });
 
-  final IconData icon;
-  final String value;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) => Column(
-        children: [
-          Container(
-            padding: EdgeInsets.all(context.sm),
-            decoration: BoxDecoration(
-              color: context.onPrimaryColor.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: context.onPrimaryColor, size: context.md),
-          ),
-          SizedBox(height: context.xs),
-          Text(
-            value,
-            style: context.textTheme.titleMedium?.copyWith(
-              color: context.onPrimaryColor,
-              fontWeight: FontWeight.bold,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: context.xs / 2),
-          Text(
-            label,
-            style: context.textTheme.labelSmall?.copyWith(
-              color: context.onPrimaryColor.withValues(alpha: 0.8),
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
-      );
-}
 
 // Detailed Stats Grid - Detailed view (expanded state)
 class _DetailedStatsGrid extends StatelessWidget {

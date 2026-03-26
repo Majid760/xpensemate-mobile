@@ -352,7 +352,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
                     child: SlideTransition(
                       position: _slideUp,
                       child: Padding(
-                        padding: const EdgeInsets.all(24),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                         child: ReactiveForm(
                           formGroup: _form,
                           child: Column(

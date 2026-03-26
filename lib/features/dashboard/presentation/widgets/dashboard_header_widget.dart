@@ -3,6 +3,7 @@ import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/widget/stat_widget.dart';
+import 'package:xpensemate/features/budget/presentation/widgets/stat_card.dart';
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 
 class DashboardHeaderWidget extends StatelessWidget {
@@ -275,7 +276,7 @@ class _QuickStatsRow extends StatelessWidget {
   Widget build(BuildContext context) => Row(
         children: [
           Expanded(
-            child: _QuickStatItem(
+            child: QuickStatItem(
               icon: Icons.account_balance_wallet_rounded,
               value: isBalanceVisible
                   ? AppUtils.formatLargeNumber(weeklyBudget)
@@ -289,7 +290,7 @@ class _QuickStatsRow extends StatelessWidget {
             color: context.colorScheme.onPrimary.withValues(alpha: 0.2),
           ),
           Expanded(
-            child: _QuickStatItem(
+            child: QuickStatItem(
               icon: Icons.arrow_upward_rounded,
               value: isBalanceVisible
                   ? AppUtils.formatLargeNumber(totalSpent)
@@ -303,7 +304,7 @@ class _QuickStatsRow extends StatelessWidget {
             color: context.colorScheme.onPrimary.withValues(alpha: 0.2),
           ),
           Expanded(
-            child: _QuickStatItem(
+            child: QuickStatItem(
               icon: Icons.savings_rounded,
               value: isBalanceVisible
                   ? AppUtils.formatLargeNumber(availableBalance)
@@ -315,54 +316,7 @@ class _QuickStatsRow extends StatelessWidget {
       );
 }
 
-// ==================== Quick Stat Item ====================
-class _QuickStatItem extends StatelessWidget {
-  const _QuickStatItem({
-    required this.icon,
-    required this.value,
-    required this.label,
-  });
 
-  final IconData icon;
-  final String value;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: context.colorScheme.onPrimary.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: context.colorScheme.onPrimary, size: 24),
-          ),
-          SizedBox(height: context.sm),
-          Text(
-            value,
-            style: context.textTheme.titleMedium?.copyWith(
-              color: context.colorScheme.onPrimary,
-              fontWeight: FontWeight.bold,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: context.xs / 2),
-          Text(
-            label,
-            style: context.textTheme.labelSmall?.copyWith(
-              color: context.colorScheme.onPrimary.withValues(alpha: 0.8),
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
-      );
-}
 
 // ==================== Weekly Insights Section ====================
 class _WeeklyInsightsSection extends StatelessWidget {

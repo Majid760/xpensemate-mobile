@@ -88,45 +88,76 @@ class ExpenseCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.colorScheme;
     final primary = context.primaryColor;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return DecoratedBox(
       decoration: BoxDecoration(
         color: scheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        // ── Same border style as FormCard in LoginPage ──────────────────
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
+          color: isDark ? scheme.surface : scheme.surface,
           width: 0.5,
         ),
         boxShadow: [
+          // Subtle glow/shadow using the primary color
           BoxShadow(
-            color: primary.withValues(alpha: 0.05),
-            blurRadius: 12,
+            color: primary.withValues(alpha: isDark ? 0.18 : 0.10),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.35)
+                : Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
       ),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(16),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: HapticFeedback.lightImpact,
-          onTapDown: onTapDown,
-          onTapUp: onTapUp,
-          onTapCancel: onTapCancel,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: HapticFeedback.lightImpact,
+            onTapDown: onTapDown,
+            onTapUp: onTapUp,
+            onTapCancel: onTapCancel,
+            child: Stack(
               children: [
-                // ── Category icon ────────────────────────────────────────
-                _ExpenseIcon(expense: expense),
+                // ── Left accent bar ──────────────────────────────────
+                Positioned(
+                  left: 0,
+                  top: 14,
+                  bottom: 14,
+                  child: Container(
+                    width: 3.5,
+                    decoration: BoxDecoration(
+                      color: primary,
+                      borderRadius: const BorderRadius.only(
+                        topRight: Radius.circular(3),
+                        bottomRight: Radius.circular(3),
+                      ),
+                    ),
+                  ),
+                ),
 
-                const SizedBox(width: 14),
+                // ── Main content row ─────────────────────────────────
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(22, 16, 16, 16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // ── Category icon ────────────────────────────────────────
+                      _ExpenseIcon(expense: expense),
 
-                // ── Main content ─────────────────────────────────────────
-                Expanded(child: _ExpenseBody(expense: expense)),
+                      const SizedBox(width: 14),
+
+                      // ── Main content ─────────────────────────────────────────
+                      Expanded(child: _ExpenseBody(expense: expense)),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

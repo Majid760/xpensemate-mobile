@@ -561,7 +561,7 @@ class _ExpenseFormWidgetState extends State<ExpenseFormWidget>
                                     child: AppButton.secondary(
                                       text: l10n.cancel.toUpperCase(),
                                       onPressed: widget.onCancel,
-                                      textColor: context.colorScheme.onPrimary,
+                                      textColor: context.colorScheme.primary,
                                     ),
                                   ),
                                 ],

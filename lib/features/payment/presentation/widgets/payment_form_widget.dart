@@ -403,8 +403,8 @@ class _PaymentFormWidgetState extends State<PaymentFormWidget>
                                   Expanded(
                                     child: AppButton.primary(
                                       text: (widget.payment == null ? l10n.save : l10n.update).toUpperCase(),
-                                      onPressed: _submitForm,
                                       textColor: context.colorScheme.onPrimary,
+                                      onPressed: _submitForm,
                                     ),
                                   ),
                                   if (widget.onCancel != null) ...[
@@ -412,8 +412,8 @@ class _PaymentFormWidgetState extends State<PaymentFormWidget>
                                     Expanded(
                                       child: AppButton.secondary(
                                         text: l10n.cancel.toUpperCase(),
+                                        textColor: context.colorScheme.secondary,
                                         onPressed: widget.onCancel,
-                                        textColor: context.colorScheme.onPrimary,
                                       ),
                                     ),
                                   ],

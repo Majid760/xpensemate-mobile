@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/features/budget/presentation/widgets/stat_card.dart';
 
 class ExpandableExpenseHeader extends StatefulWidget {
   const ExpandableExpenseHeader({
@@ -61,7 +62,7 @@ class _ExpandableExpenseHeaderState extends State<ExpandableExpenseHeader> {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(24),
           child: Material(
-            color: Colors.transparent,
+            color: context.primaryColor,
             child: InkWell(
               onTap: widget.onToggle,
               child: Padding(
@@ -143,7 +144,9 @@ class _ExpandableExpenseHeaderState extends State<ExpandableExpenseHeader> {
                     Row(
                       children: [
                         Expanded(
-                          child: _buildStatCard(
+                          child:
+                          
+                           _buildStatCard(
                             context,
                             icon: Icons.percent_outlined,
                             label: context.l10n.totalSpent,
@@ -225,74 +228,27 @@ class _ExpandableExpenseHeaderState extends State<ExpandableExpenseHeader> {
       Container(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
         decoration: BoxDecoration(
-          color: context.colorScheme.onPrimary.withValues(alpha: 0.2),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: context.colorScheme.onPrimary.withValues(alpha: 0.35),
-            width: 1.5,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: context.colorScheme.shadow.withValues(alpha: 0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: context.colorScheme.onPrimary.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                icon,
-                color: context.colorScheme.onPrimary,
-                size: 20,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Flexible(
-              child: Text(
-                label,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: context.colorScheme.onPrimary.withValues(alpha: 0.95),
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.3,
-                  height: 1.2,
+                color: context.onPrimaryColor.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: context.primaryColor.withValues(alpha: 0.35),
+                  width: 1.5,
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: context.onPrimaryColor.withValues(alpha: 0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 4),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                value,
-                style: TextStyle(
-                  color: context.colorScheme.onPrimary,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.2,
-                  shadows: [
-                    Shadow(
-                      color: context.colorScheme.shadow.withValues(alpha: 0.16),
-                      offset: const Offset(0, 1),
-                      blurRadius: 2,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+        child:QuickStatItem(
+          icon: icon,
+          label: label,
+          value: value,
+        ), 
+        
+      
       );
 }
 
@@ -314,12 +270,20 @@ class _DetailedBudgetInfo extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: context.colorScheme.onPrimary.withValues(alpha: 0.15),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: context.colorScheme.onPrimary.withValues(alpha: 0.25),
-          ),
-        ),
+                color: context.onPrimaryColor.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: context.primaryColor.withValues(alpha: 0.35),
+                  width: 1.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: context.onPrimaryColor.withValues(alpha: 0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -339,7 +303,7 @@ class _DetailedBudgetInfo extends StatelessWidget {
                 _BudgetInfoItem(
                   label: context.l10n.remaining,
                   value: '\$${remaining.toStringAsFixed(2)}',
-                  color: _getRemainingColor(context, remaining),
+                  color:  context.colorScheme.onPrimary,
                 ),
               ],
             ),
@@ -398,7 +362,7 @@ class _DetailedBudgetInfo extends StatelessWidget {
 
   // Get gradient colors for progress bar based on progress
   List<Color> _getProgressGradientColors(
-      BuildContext context, double progress) {
+      BuildContext context, double progress,) {
     if (progress < 0.5) {
       // Green gradient for < 50% usage
       return [

@@ -326,7 +326,7 @@ class _ExpandableTextState extends State<_ExpandableText>
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
-    ));
+    ),);
   }
 
   @override
@@ -375,25 +375,26 @@ class _ExpandableTextState extends State<_ExpandableText>
       );
 }
 
-class _QuickStatItem extends StatelessWidget {
-  const _QuickStatItem({
+class QuickStatItem extends StatelessWidget {
+  const QuickStatItem({super.key, 
     required this.icon,
     required this.value,
     required this.label,
-    required this.iconBg,
+    this.iconBg,
+
   });
   final IconData icon;
   final String value;
   final String label;
-  final Color iconBg;
+  final Color? iconBg;
 
   @override
   Widget build(BuildContext context) => Column(
         children: [
           Container(
-            padding: EdgeInsets.all(context.sm),
+            padding:const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: context.onPrimaryColor.withValues(alpha: 0.2),
+              color: iconBg ?? context.onPrimaryColor.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
@@ -431,11 +432,10 @@ class QuickStatsRow extends StatelessWidget {
   Widget build(BuildContext context) => Row(
         children: [
           Expanded(
-            child: _QuickStatItem(
+            child: QuickStatItem(
               icon: Icons.emoji_events_outlined,
               value: budgetGoalsInsight?.totalGoals.toString() ?? '0',
               label: context.totalGoals,
-              iconBg: Colors.white.withValues(alpha: 0.2),
             ),
           ),
           Container(
@@ -444,11 +444,10 @@ class QuickStatsRow extends StatelessWidget {
             color: Colors.white.withValues(alpha: 0.2),
           ),
           Expanded(
-            child: _QuickStatItem(
+            child: QuickStatItem(
               icon: Icons.trending_up_rounded,
               value: budgetGoalsInsight?.activeGoals.length.toString() ?? '0',
               label: context.active,
-              iconBg: Colors.white.withValues(alpha: 0.2),
             ),
           ),
           Container(
@@ -457,11 +456,10 @@ class QuickStatsRow extends StatelessWidget {
             color: Colors.white.withValues(alpha: 0.2),
           ),
           Expanded(
-            child: _QuickStatItem(
+            child: QuickStatItem(
               icon: Icons.check_circle_outline,
               value: budgetGoalsInsight?.achievedGoals.length.toString() ?? '0',
               label: context.achieved,
-              iconBg: Colors.white.withValues(alpha: 0.2),
             ),
           ),
         ],

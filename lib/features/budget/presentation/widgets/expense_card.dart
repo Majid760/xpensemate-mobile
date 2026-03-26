@@ -1,6 +1,7 @@
 // Expense Card Widget with shadow and animation
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:xpensemate/core/theme/theme_context_extension.dart';
 
 class ExpenseCard extends StatelessWidget {
   const ExpenseCard({super.key, required this.expense});
@@ -12,22 +13,39 @@ class ExpenseCard extends StatelessWidget {
     const currencySymbol =
         r'$'; // Will be updated when localization is regenerated
     final dateFormat = DateFormat('MMM d, yyyy');
+    
 
+    final isDark = context.theme.brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: colorScheme.errorContainer),
-        boxShadow: [
-          BoxShadow(
-            color: colorScheme.shadow.withValues(alpha: .06),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+      decoration:BoxDecoration(
+                color: isDark
+                    ? context.colorScheme.surface
+                    : context.colorScheme.surface,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isDark
+                      ? context.colorScheme.surface
+                      : context.colorScheme.surface,
+                  width: 0.5,
+                ),
+                // Subtle glow/shadow using the accent color
+                boxShadow: [
+                  BoxShadow(
+                    color: colorScheme.onPrimary.withValues(alpha: .06),
+                    blurRadius: 16,
+                    offset: const Offset(0, 4),
+                  ),
+                  BoxShadow(
+                    color: isDark
+                        ? context.colorScheme.onPrimary.withValues(alpha: .6)
+                        : context.colorScheme.onPrimary.withValues(alpha: .06),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
       child: Row(
         children: [
           Container(

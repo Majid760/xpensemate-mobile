@@ -5,12 +5,13 @@ import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_constant.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
+import 'package:xpensemate/core/widget/stat_widget.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goals_insight_entity.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/stat_card.dart';
 
 class ExpandableStatsCard extends StatefulWidget {
   const ExpandableStatsCard(
-      {super.key, this.budgetGoalsInsight, required this.period});
+      {super.key, this.budgetGoalsInsight, required this.period,});
   final BudgetGoalsInsightEntity? budgetGoalsInsight;
   final String period;
 
@@ -191,25 +192,27 @@ class DetailedStatsGrid extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: StatsCard(
+                child:StatsWidgetCard(
                   icon: Icons.cancel_outlined,
                   value:
                       '${budgetGoalsInsight?.failedGoals.length ?? 0}/${budgetGoalsInsight?.terminatedGoals.length ?? 0}',
                   label: context.failedTerminated,
                   subtitle: context.goalsNotCompleted,
-                  color: context.primaryColor,
                 ),
+           
               ),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
-                child: StatsCard(
-                  icon: Icons.attach_money_rounded,
+                child:StatsWidgetCard(
+                 icon: Icons.attach_money_rounded,
                   value: AppUtils.formatLargeNumber(
-                      budgetGoalsInsight?.totalBudgeted ?? 0.0),
+                      budgetGoalsInsight?.totalBudgeted ?? 0.0,),
                   label: context.totalBudgeted,
                   subtitle: context.totalAmountAllocated,
-                  color: context.primaryColor,
+                  
                 ),
+                
+               
               ),
             ],
           ),
@@ -217,36 +220,33 @@ class DetailedStatsGrid extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: StatsCard(
+                child:StatsWidgetCard(
                   icon: Icons.analytics_outlined,
                   value:
                       '${budgetGoalsInsight?.avgProgress.toStringAsFixed(1) ?? '0.0'}%',
                   label: context.avgProgress,
                   subtitle: context.averageProgressGoals,
-                  color: context.primaryColor,
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
-                child: StatsCard(
+                child:StatsWidgetCard(
                   icon: Icons.event_outlined,
                   value:
                       budgetGoalsInsight?.closestDeadlineDate.toFormattedDate ??
                           context.noDeadlines,
                   label: context.closestDeadline,
                   subtitle: context.nextUpcomingDeadline,
-                  color: context.primaryColor,
                 ),
               ),
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
-          StatsCard(
+          StatsWidgetCard(
             icon: Icons.schedule_rounded,
             value: '${budgetGoalsInsight?.overdueGoals.length ?? 0}',
             label: context.overdueGoals,
             subtitle: context.goalsPastDeadline,
-            color: context.primaryColor,
           ),
         ],
       );

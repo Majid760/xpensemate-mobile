@@ -17,6 +17,12 @@ import 'package:xpensemate/features/budget/presentation/widgets/insight_card_sec
 class BudgetPage extends StatelessWidget {
   const BudgetPage({super.key});
 
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        backgroundColor: context.theme.scaffoldBackgroundColor,
+        body: const BudgetPageBody(),
+      );
+
   static void showAddBudgetSheet({
     required BuildContext context,
     void Function(BudgetGoalEntity)? onSave,
@@ -44,12 +50,6 @@ class BudgetPage extends StatelessWidget {
       ),
     );
   }
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        backgroundColor: context.theme.scaffoldBackgroundColor,
-        body: const BudgetPageBody(),
-      );
 }
 
 class BudgetPageBody extends StatelessWidget {

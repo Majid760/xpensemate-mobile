@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/widget/app_button.dart';
 
 class AppCustomDialog extends StatefulWidget {
   const AppCustomDialog({
@@ -36,7 +37,7 @@ class _AppCustomDialogState extends State<AppCustomDialog>
   late AnimationController _scaleController;
   late AnimationController _fadeController;
   late AnimationController _slideController;
-  
+
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -76,26 +77,32 @@ class _AppCustomDialogState extends State<AppCustomDialog>
     _scaleAnimation = Tween<double>(
       begin: 0.7,
       end: 1,
-    ).animate(CurvedAnimation(
-      parent: _scaleController,
-      curve: Curves.easeOutBack,
-    ),);
+    ).animate(
+      CurvedAnimation(
+        parent: _scaleController,
+        curve: Curves.easeOutBack,
+      ),
+    );
 
     _fadeAnimation = Tween<double>(
       begin: 0,
       end: 1,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeOut,
-    ),);
+    ).animate(
+      CurvedAnimation(
+        parent: _fadeController,
+        curve: Curves.easeOut,
+      ),
+    );
 
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.1),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.easeOutCubic,
-    ),);
+    ).animate(
+      CurvedAnimation(
+        parent: _slideController,
+        curve: Curves.easeOutCubic,
+      ),
+    );
 
     // Start animations
     _fadeController.forward();
@@ -183,147 +190,108 @@ class _DialogContent extends StatelessWidget {
   final IconData icon;
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
+    final primary = context.primaryColor;
+
+    return Container(
       constraints: const BoxConstraints(maxWidth: 400),
       decoration: BoxDecoration(
-        color: context.colorScheme.surface,
-        borderRadius: BorderRadius.circular(24),
+        color: scheme.surface,
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(
+          color: scheme.outlineVariant.withValues(alpha: 0.3),
+        ),
         boxShadow: [
           BoxShadow(
-            color: context.colorScheme.shadow.withValues(alpha: 0.15),
-            blurRadius: 24,
-            offset: const Offset(0, 8),
-          ),
-          BoxShadow(
-            color: context.colorScheme.shadow.withValues(alpha: 0.08),
-            blurRadius: 48,
+            color: scheme.shadow.withValues(alpha: 0.15),
+            blurRadius: 32,
             offset: const Offset(0, 16),
           ),
+          BoxShadow(
+            color: scheme.shadow.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
         ],
-        border: Border.all(
-          color: context.colorScheme.outline.withValues(alpha: 0.1),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(context.xl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Floating icon container
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: isDestructive
+                    ? scheme.errorContainer.withValues(alpha: 0.3)
+                    : scheme.primaryContainer.withValues(alpha: 0.3),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isDestructive
+                      ? scheme.error.withValues(alpha: 0.2)
+                      : primary.withValues(alpha: 0.2),
+                  width: 1.5,
+                ),
+              ),
+              child: Icon(
+                icon,
+                size: 32,
+                color: isDestructive ? scheme.error : primary,
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Title
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: context.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.w800,
+                color: scheme.onSurface,
+                letterSpacing: -0.5,
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Message
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: context.textTheme.bodyMedium?.copyWith(
+                color: scheme.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 32),
+
+            // Action Buttons
+            _buildActionButtons(context),
+          ],
         ),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Header with icon
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(context.lg),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: isDestructive
-                    ? [
-                        context.colorScheme.errorContainer.withValues(alpha: 0.3),
-                        context.colorScheme.errorContainer.withValues(alpha: 0.5),
-                      ]
-                    : [
-                        context.colorScheme.primaryContainer.withValues(alpha: 0.3),
-                        context.colorScheme.secondaryContainer.withValues(alpha: 0.3),
-                      ],
-              ),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(24),
-                topRight: Radius.circular(24),
-              ),
-            ),
-            child: Column(
-              children: [
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: isDestructive
-                        ? context.colorScheme.errorContainer.withValues(alpha: 0.3)
-                        : context.colorScheme.primaryContainer.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: isDestructive
-                          ? context.colorScheme.error.withValues(alpha: 0.4)
-                          : context.colorScheme.primary.withValues(alpha: 0.4),
-                      width: 1.5,
-                    ),
-                  ),
-                  child: Icon(
-                    icon,
-                    size: 28,
-                    color: isDestructive
-                        ? context.colorScheme.error
-                        : context.colorScheme.primary,
-                  ),
-                ),
-                SizedBox(height: context.md),
-                Text(
-                  title,
-                  style: context.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w800,
-                    color: context.colorScheme.onSurface,
-                    letterSpacing: -0.5,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-
-          // Content
-          Padding(
-            padding: EdgeInsets.all(context.lg),
-            child: Column(
-              children: [
-                Text(
-                  message,
-                  style: context.textTheme.bodyLarge?.copyWith(
-                    color: context.colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w500,
-                    height: 1.5,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: context.lg),
-
-                // Action buttons - conditional display
-                _buildActionButtons(
-                  context: context,
-                  confirmText: confirmText,
-                  cancelText: cancelText,
-                  onConfirm: onConfirm,
-                  onCancel: onCancel,
-                  isDestructive: isDestructive,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
+  }
 
-  /// Builds action buttons based on provided callbacks
-  Widget _buildActionButtons({
-    required BuildContext context,
-    required String confirmText,
-    required String cancelText,
-    required VoidCallback? onConfirm,
-    required VoidCallback? onCancel,
-    required bool isDestructive,
-  }) {
-    // If no callbacks provided, show no buttons
-    if (onConfirm == null && onCancel == null) {
-      return const SizedBox.shrink();
-    }
+  Widget _buildActionButtons(BuildContext context) {
+    if (onConfirm == null && onCancel == null) return const SizedBox.shrink();
 
-    // If only one callback is provided, show single full-width button
+    final primaryBg =
+        isDestructive ? context.colorScheme.error : context.primaryColor;
+    final primaryText = isDestructive
+        ? context.colorScheme.onError
+        : context.colorScheme.onPrimary;
+
     if (onConfirm != null && onCancel == null) {
       return SizedBox(
         width: double.infinity,
-        child: _DialogButton(
+        child: AppButton.primary(
           text: confirmText,
           onPressed: onConfirm,
-          isPrimary: true,
-          isDestructive: isDestructive,
+          backgroundColor: primaryBg,
+          textColor: primaryText,
         ),
       );
     }
@@ -331,176 +299,33 @@ class _DialogContent extends StatelessWidget {
     if (onCancel != null && onConfirm == null) {
       return SizedBox(
         width: double.infinity,
-        child: _DialogButton(
+        child: AppButton.primary(
           text: cancelText,
           onPressed: onCancel,
-          isPrimary: true,
-          isDestructive: false,
+          backgroundColor: primaryBg,
+          textColor: primaryText,
         ),
       );
     }
 
-    // If both callbacks are provided, show both buttons in a row
     return Row(
       children: [
         Expanded(
-          child: _DialogButton(
+          child: AppButton.secondary(
             text: cancelText,
-            onPressed: onCancel!,
-            isPrimary: false,
-            isDestructive: false,
+            onPressed: onCancel,
           ),
         ),
-        SizedBox(width: context.sm),
+        const SizedBox(width: 12),
         Expanded(
-          child: _DialogButton(
+          child: AppButton.primary(
             text: confirmText,
-            onPressed: onConfirm!,
-            isPrimary: true,
-            isDestructive: isDestructive,
+            onPressed: onConfirm,
+            backgroundColor: primaryBg,
+            textColor: primaryText,
           ),
         ),
       ],
-    );
-  }
-}
-
-class _DialogButton extends StatefulWidget {
-  const _DialogButton({
-    required this.text,
-    required this.onPressed,
-    required this.isPrimary,
-    required this.isDestructive,
-  });
-
-  final String text;
-  final VoidCallback onPressed;
-  final bool isPrimary;
-  final bool isDestructive;
-
-  @override
-  State<_DialogButton> createState() => _DialogButtonState();
-}
-
-class _DialogButtonState extends State<_DialogButton>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _pressController;
-  late Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _pressController = AnimationController(
-      duration: const Duration(milliseconds: 150),
-      vsync: this,
-    );
-    _scaleAnimation = Tween<double>(
-      begin: 1,
-      end: 0.95,
-    ).animate(CurvedAnimation(
-      parent: _pressController,
-      curve: Curves.easeInOut,
-    ),);
-  }
-
-  @override
-  void dispose() {
-    _pressController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _handleTap() async {
-    await _pressController.forward();
-    await _pressController.reverse();
-    widget.onPressed();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Color backgroundColor;
-    Color textColor;
-    Color borderColor;
-    List<Color> gradientColors;
-
-    if (widget.isPrimary) {
-      if (widget.isDestructive) {
-        backgroundColor = context.colorScheme.error;
-        textColor = context.colorScheme.onError;
-        borderColor = context.colorScheme.error;
-        gradientColors = [
-          context.colorScheme.error,
-          context.colorScheme.error.withValues(alpha: 0.8),
-        ];
-      } else {
-        backgroundColor = context.colorScheme.primary;
-        textColor = context.colorScheme.onPrimary;
-        borderColor = context.colorScheme.primary;
-        gradientColors = [
-          context.colorScheme.primary,
-          context.colorScheme.secondary,
-        ];
-      }
-    } else {
-      backgroundColor = context.colorScheme.surface;
-      textColor = context.colorScheme.onSurface;
-      borderColor = context.colorScheme.outline.withValues(alpha: 0.3);
-      gradientColors = [
-        context.colorScheme.surface,
-        context.colorScheme.surface,
-      ];
-    }
-
-    return ScaleTransition(
-      scale: _scaleAnimation,
-      child: GestureDetector(
-        onTapDown: (_) => _pressController.forward(),
-        onTapUp: (_) => _pressController.reverse(),
-        onTapCancel: () => _pressController.reverse(),
-        onTap: _handleTap,
-        child: Container(
-          height: 48,
-          decoration: BoxDecoration(
-            gradient: widget.isPrimary
-                ? LinearGradient(
-                    colors: gradientColors,
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  )
-                : null,
-            color: widget.isPrimary ? null : backgroundColor,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: borderColor, width: 1.5),
-            boxShadow: widget.isPrimary
-                ? [
-                    BoxShadow(
-                      color: (widget.isDestructive
-                              ? context.colorScheme.error
-                              : context.colorScheme.primary)
-                          .withValues(alpha: 0.25),
-                      blurRadius: 8,
-                      offset: const Offset(0, 3),
-                    ),
-                  ]
-                : [
-                    BoxShadow(
-                      color: context.colorScheme.shadow.withValues(alpha: 0.08),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-          ),
-          child: Center(
-            child: Text(
-              widget.text,
-              style: context.textTheme.labelLarge?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: textColor,
-                letterSpacing: 0.5,
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }
@@ -518,37 +343,39 @@ class AppCustomDialogs {
     bool isDestructive = true,
     IconData? icon,
     bool showAnimation = true,
-  }) => showDialog<bool>(
-      context: context,
-      barrierColor: context.colorScheme.scrim.withValues(alpha: 0.5),
-      builder: (context) => AppCustomDialog(
-        title: title,
-        message: message,
-        confirmText: confirmText,
-        cancelText: cancelText,
-        onConfirm: onConfirm,
-        onCancel: onCancel,
-        isDestructive: isDestructive,
-        icon: icon,
-        showAnimation: showAnimation,
-      ),
-    );
+  }) =>
+      showDialog<bool>(
+        context: context,
+        barrierColor: context.colorScheme.scrim.withValues(alpha: 0.5),
+        builder: (context) => AppCustomDialog(
+          title: title,
+          message: message,
+          confirmText: confirmText,
+          cancelText: cancelText,
+          onConfirm: onConfirm,
+          onCancel: onCancel,
+          isDestructive: isDestructive,
+          icon: icon,
+          showAnimation: showAnimation,
+        ),
+      );
 
   // Predefined logout dialog
   static Future<bool?> showLogout({
     required BuildContext context,
     VoidCallback? onConfirm,
     VoidCallback? onCancel,
-  }) => show(
-      context: context,
-      title: context.l10n.logout,
-      message: context.l10n.logoutConfirmationMessage,
-      confirmText: context.l10n.logout,
-      cancelText: context.l10n.cancel,
-      onConfirm: onConfirm,
-      onCancel: onCancel,
-      icon: Icons.logout_rounded,
-    );
+  }) =>
+      show(
+        context: context,
+        title: context.l10n.logout,
+        message: context.l10n.logoutConfirmationMessage,
+        confirmText: context.l10n.logout,
+        cancelText: context.l10n.cancel,
+        onConfirm: onConfirm,
+        onCancel: onCancel,
+        icon: Icons.logout_rounded,
+      );
 
   // Generic confirmation dialog
   static Future<bool?> showConfirmation({
@@ -561,17 +388,18 @@ class AppCustomDialogs {
     VoidCallback? onCancel,
     bool isDestructive = false,
     IconData? icon,
-  }) => show(
-      context: context,
-      title: title,
-      message: message,
-      confirmText: confirmText ?? context.l10n.confirm,
-      cancelText: cancelText ?? context.l10n.cancel,
-      onConfirm: onConfirm,
-      onCancel: onCancel,
-      isDestructive: isDestructive,
-      icon: icon ?? Icons.help_outline_rounded,
-    );
+  }) =>
+      show(
+        context: context,
+        title: title,
+        message: message,
+        confirmText: confirmText ?? context.l10n.confirm,
+        cancelText: cancelText ?? context.l10n.cancel,
+        onConfirm: onConfirm,
+        onCancel: onCancel,
+        isDestructive: isDestructive,
+        icon: icon ?? Icons.help_outline_rounded,
+      );
 
   // Delete confirmation dialog
   static Future<bool?> showDelete({
@@ -580,16 +408,17 @@ class AppCustomDialogs {
     required String message,
     VoidCallback? onConfirm,
     VoidCallback? onCancel,
-  }) => show(
-      context: context,
-      title: title,
-      message: message,
-      confirmText: context.l10n.delete,
-      cancelText: context.l10n.cancel,
-      onConfirm: onConfirm,
-      onCancel: onCancel,
-      icon: Icons.delete_outline_rounded,
-    );
+  }) =>
+      show(
+        context: context,
+        title: title,
+        message: message,
+        confirmText: context.l10n.delete,
+        cancelText: context.l10n.cancel,
+        onConfirm: onConfirm,
+        onCancel: onCancel,
+        icon: Icons.delete_outline_rounded,
+      );
 
   // Information dialog without action buttons
   static Future<bool?> showInfo({
@@ -598,16 +427,15 @@ class AppCustomDialogs {
     required String message,
     IconData? icon,
     bool showAnimation = true,
-  }) => show(
-      context: context,
-      title: title,
-      message: message,
-      onConfirm: null,
-      onCancel: null,
-      isDestructive: false,
-      icon: icon ?? Icons.info_outline_rounded,
-      showAnimation: showAnimation,
-    );
+  }) =>
+      show(
+        context: context,
+        title: title,
+        message: message,
+        isDestructive: false,
+        icon: icon ?? Icons.info_outline_rounded,
+        showAnimation: showAnimation,
+      );
 
   // Single action dialog (confirm only)
   static Future<bool?> showSingleAction({
@@ -619,17 +447,17 @@ class AppCustomDialogs {
     bool isDestructive = false,
     IconData? icon,
     bool showAnimation = true,
-  }) => show(
-      context: context,
-      title: title,
-      message: message,
-      confirmText: actionText,
-      onConfirm: onAction,
-      onCancel: null,
-      isDestructive: isDestructive,
-      icon: icon ?? (isDestructive ? Icons.warning_rounded : Icons.help_outline_rounded),
-      showAnimation: showAnimation,
-    );
+  }) =>
+      show(
+        context: context,
+        title: title,
+        message: message,
+        confirmText: actionText,
+        onConfirm: onAction,
+        isDestructive: isDestructive,
+        icon: icon ?? (isDestructive ? Icons.warning_rounded : Icons.help_outline_rounded),
+        showAnimation: showAnimation,
+      );
 
   // Dismissible dialog (cancel/close only)
   static Future<bool?> showDismissible({
@@ -640,15 +468,15 @@ class AppCustomDialogs {
     VoidCallback? onDismiss,
     IconData? icon,
     bool showAnimation = true,
-  }) => show(
-      context: context,
-      title: title,
-      message: message,
-      cancelText: dismissText ?? context.l10n.close,
-      onConfirm: null,
-      onCancel: onDismiss,
-      isDestructive: false,
-      icon: icon ?? Icons.info_outline_rounded,
-      showAnimation: showAnimation,
-    );
+  }) =>
+      show(
+        context: context,
+        title: title,
+        message: message,
+        cancelText: dismissText ?? context.l10n.close,
+        onCancel: onDismiss,
+        isDestructive: false,
+        icon: icon ?? Icons.info_outline_rounded,
+        showAnimation: showAnimation,
+      );
 }

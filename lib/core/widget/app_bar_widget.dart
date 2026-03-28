@@ -164,6 +164,19 @@ class _FilterDropdownSheetViewState extends State<FilterDropdownSheetView> {
                       color: context.onSurfaceColor,
                     ),
                   ),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    style: IconButton.styleFrom(
+                      backgroundColor: context.outlineColor.withValues(alpha: 0.1),
+                      padding: EdgeInsets.all(context.xs),
+                    ),
+                    icon: Icon(
+                      Icons.close_rounded,
+                      color: context.onSurfaceColor.withValues(alpha: 0.7),
+                      size: context.iconMd,
+                    ),
+                  ),
                 ],
               ),
             ),

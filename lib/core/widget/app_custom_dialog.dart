@@ -215,62 +215,88 @@ class _DialogContent extends StatelessWidget {
           ),
         ],
       ),
-      child: Padding(
-        padding: EdgeInsets.all(context.xl),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Floating icon container
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: isDestructive
-                    ? scheme.errorContainer.withValues(alpha: 0.3)
-                    : scheme.primaryContainer.withValues(alpha: 0.3),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: isDestructive
-                      ? scheme.error.withValues(alpha: 0.2)
-                      : primary.withValues(alpha: 0.2),
-                  width: 1.5,
+      child: Stack(
+        children: [
+          Padding(
+            padding: EdgeInsets.all(context.xl),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Floating icon container
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: isDestructive
+                        ? scheme.errorContainer.withValues(alpha: 0.3)
+                        : scheme.primaryContainer.withValues(alpha: 0.3),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: isDestructive
+                          ? scheme.error.withValues(alpha: 0.2)
+                          : primary.withValues(alpha: 0.2),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Icon(
+                    icon,
+                    size: 32,
+                    color: isDestructive ? scheme.error : primary,
+                  ),
                 ),
-              ),
-              child: Icon(
-                icon,
-                size: 32,
-                color: isDestructive ? scheme.error : primary,
-              ),
-            ),
-            const SizedBox(height: 24),
+                const SizedBox(height: 24),
 
-            // Title
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: context.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w800,
-                color: scheme.onSurface,
-                letterSpacing: -0.5,
-              ),
-            ),
-            const SizedBox(height: 12),
+                // Title
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: context.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: scheme.onSurface,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+                const SizedBox(height: 12),
 
-            // Message
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: context.textTheme.bodyMedium?.copyWith(
-                color: scheme.onSurfaceVariant,
-                fontWeight: FontWeight.w500,
-                height: 1.5,
-              ),
-            ),
-            const SizedBox(height: 32),
+                // Message
+                Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w500,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 32),
 
-            // Action Buttons
-            _buildActionButtons(context),
-          ],
-        ),
+                // Action Buttons
+                _buildActionButtons(context),
+              ],
+            ),
+          ),
+          Positioned(
+            right: 8,
+            top: 8,
+            child: IconButton(
+              onPressed: () {
+                if (onCancel != null) {
+                  onCancel!();
+                  Navigator.of(context).pop(false);
+                } else {
+                  Navigator.of(context).pop();
+                }
+              },
+              icon: Icon(
+                Icons.close_rounded,
+                color: scheme.onSurfaceVariant.withValues(alpha: 0.5),
+                size: 24,
+              ),
+              splashRadius: 20,
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -441,7 +441,7 @@ class QuickStatsRow extends StatelessWidget {
           Container(
             width: 1,
             height: 40,
-            color: Colors.white.withValues(alpha: 0.2),
+            color: context.onPrimaryColor.withValues(alpha: 0.2),
           ),
           Expanded(
             child: QuickStatItem(
@@ -453,7 +453,7 @@ class QuickStatsRow extends StatelessWidget {
           Container(
             width: 1,
             height: 40,
-            color: Colors.white.withValues(alpha: 0.2),
+            color: context.onPrimaryColor.withValues(alpha: 0.2),
           ),
           Expanded(
             child: QuickStatItem(

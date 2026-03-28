@@ -198,7 +198,11 @@ class _QuickStatsRow extends StatelessWidget {
               label: context.l10n.totalSpent,
             ),
           ),
-          _buildDivider(),
+          Container(
+        width: 1,
+        height: 40,
+        color: context.onPrimaryColor.withValues(alpha: 0.2),
+      ),
           Expanded(
             child: QuickStatItem(
               icon: Icons.calendar_today_rounded,
@@ -206,7 +210,11 @@ class _QuickStatsRow extends StatelessWidget {
               label: context.l10n.dailyAverage,
             ),
           ),
-          _buildDivider(),
+          Container(
+        width: 1,
+        height: 40,
+        color: context.onPrimaryColor.withValues(alpha: 0.2),
+      ),
           Expanded(
             child: QuickStatItem(
               icon: Icons.local_fire_department_rounded,
@@ -217,11 +225,6 @@ class _QuickStatsRow extends StatelessWidget {
         ],
       );
 
-  Widget _buildDivider() => Container(
-        width: 1,
-        height: 40,
-        color: Colors.white.withValues(alpha: 0.2),
-      );
 }
 
 

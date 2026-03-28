@@ -158,10 +158,9 @@ class _ExpandableStatsCardState extends State<ExpandableStatsCard>
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  context.colorScheme.primary,
-                                  context.colorScheme.secondary,
-                                  // context.colorScheme.onPrimary
-                                  //     .withValues(alpha: 0),
+                                  context.onPrimaryColor.withValues(alpha: 0),
+                                  context.onPrimaryColor.withValues(alpha: 0.3),
+                                  context.onPrimaryColor.withValues(alpha: 0),
                                 ],
                               ),
                             ),

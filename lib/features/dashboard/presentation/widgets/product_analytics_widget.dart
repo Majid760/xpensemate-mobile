@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_custom_dropdown_widget.dart';
 import 'package:xpensemate/core/widget/custom_app_loader.dart';
@@ -111,7 +112,7 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
                   SizedBox(height: context.lg),
                   // if analytics is not therre
                   if (analytics.categoriesData.isEmpty)
-                    _buildNoDataState(context)
+                    const _EmptyState()
                   else if (state.state == DashboardStates.loading)
                     _buildLoadingState(context)
                   else
@@ -179,13 +180,32 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
       );
 }
 
-Widget _buildNoDataState(BuildContext context) => Container(
-      height: 200,
-      padding: EdgeInsets.all(context.lg),
-      child: Center(
-        child: Text(
-          context.l10n.noDataAvailable,
-          style: context.textTheme.bodyMedium,
+
+
+
+class _EmptyState extends StatelessWidget {
+  const _EmptyState();
+
+  @override
+  Widget build(BuildContext context) => Container(
+        height: AppSpacing.xxxl * 2, // 128
+        alignment: Alignment.center,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.analytics,
+              size: AppSpacing.iconXxl,
+              color: context.colorScheme.onSurfaceVariant,
+            ),
+            SizedBox(height: context.sm),
+            Text(
+              context.l10n.noDataAvailable,
+              style: context.textTheme.bodyLarge?.copyWith(
+                color: context.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
         ),
-      ),
-    );
+      );
+}

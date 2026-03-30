@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/weekly_stats_entity.dart';
 
@@ -285,13 +286,13 @@ class _EmptyChart extends StatelessWidget {
           children: [
             Icon(
               Icons.bar_chart_outlined,
-              size: 32,
+              size: AppSpacing.iconXxl,
               color: context.colorScheme.onSurfaceVariant,
             ),
             SizedBox(height: context.sm),
             Text(
-              context.l10n.noSpendingData,
-              style: context.textTheme.bodySmall?.copyWith(
+              context.l10n.noDataAvailable,
+              style: context.textTheme.bodyLarge?.copyWith(
                 color: context.colorScheme.onSurfaceVariant,
               ),
             ),

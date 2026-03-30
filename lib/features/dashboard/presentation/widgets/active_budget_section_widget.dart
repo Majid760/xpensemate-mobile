@@ -128,13 +128,13 @@ class _EmptyState extends StatelessWidget {
           children: [
             Icon(
               Icons.bubble_chart,
-              size: AppSpacing.iconLg,
+              size: AppSpacing.iconXxl,
               color: context.colorScheme.onSurfaceVariant,
             ),
             SizedBox(height: context.sm),
             Text(
-              context.l10n.noBudgetsActive,
-              style: context.textTheme.bodySmall?.copyWith(
+              context.l10n.noDataAvailable,
+              style: context.textTheme.bodyLarge?.copyWith(
                 color: context.colorScheme.onSurfaceVariant,
               ),
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
+import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/currency_formatter.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/weekly_stats_entity.dart';
@@ -199,13 +200,13 @@ class _EmptyChart extends StatelessWidget {
           children: [
             Icon(
               Icons.trending_up_outlined,
-              size: 32,
+              size: AppSpacing.iconXxl,
               color: context.colorScheme.onSurfaceVariant,
             ),
             SizedBox(height: context.sm),
             Text(
-              context.l10n.noTrendData,
-              style: context.textTheme.bodySmall?.copyWith(
+              context.l10n.noDataAvailable,
+              style: context.textTheme.bodyLarge?.copyWith(
                 color: context.colorScheme.onSurfaceVariant,
               ),
             ),
@@ -245,7 +246,7 @@ class _InteractiveOverlay extends StatelessWidget {
       );
 
   void _handleTap(
-      BuildContext context, TapDownDetails details, List<double> data) {
+      BuildContext context, TapDownDetails details, List<double> data,) {
     final renderBox = context.findRenderObject();
     if (renderBox is RenderBox) {
       final localPosition = details.localPosition;
@@ -256,7 +257,7 @@ class _InteractiveOverlay extends StatelessWidget {
   }
 
   void _handlePan(
-      BuildContext context, DragUpdateDetails details, List<double> data) {
+      BuildContext context, DragUpdateDetails details, List<double> data,) {
     final renderBox = context.findRenderObject();
     if (renderBox is RenderBox) {
       final localPosition = details.localPosition;
@@ -429,7 +430,7 @@ class _LineChartPainter extends CustomPainter {
     final path = Path();
     final points = <Offset>[];
 
-    for (int i = 0; i < data.length; i++) {
+    for (var i = 0; i < data.length; i++) {
       final x = i * stepX;
       final y = chartHeight - (data[i] / maxValue * chartHeight);
       final animatedY = chartHeight - ((chartHeight - y) * animation.value);

@@ -34,7 +34,6 @@ final class AuthInterceptor extends QueuedInterceptor {
     try {
       // Skip auth header for public endpoints (login, register, etc.)
       if (_isPublicEndpoint(options.path)) {
-        print("this is public path => ${options.path}");
         logI('AuthInterceptor: skipping auth header for public endpoint ${options.path}');
         return handler.next(options);
       }

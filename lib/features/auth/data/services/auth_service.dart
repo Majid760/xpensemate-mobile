@@ -115,12 +115,14 @@ class AuthService {
 
   //// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Token >>>>>>>>>>>>>>>>>>>>
 
-  /// // save the user token to storage
+  /// save the user token to storage
   Future<void> saveTokenToStorage(AuthTokenModel token) async {
     try {
       await _localDataSource.storeTokens(token);
       accessToken = token.accessToken;
-      refreshToken = token.refreshToken ?? '';
+      if (token.refreshToken != null && token.refreshToken!.isNotEmpty) {
+        refreshToken = token.refreshToken!;
+      }
     } on Exception catch (e) {
       logE('AuthService: Error saving user token to storage: $e');
       rethrow;

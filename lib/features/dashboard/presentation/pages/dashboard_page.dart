@@ -179,8 +179,6 @@ class _DashboardContent extends StatelessWidget {
               child: ProductAnalyticsWidget(),
             ),
 
-            SizedBox(height: context.lg),
-
             SizedBox(height: context.xl),
           ],
         ),
@@ -194,7 +192,6 @@ class _WeeklyFinancialSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       BlocBuilder<DashboardCubit, DashboardState>(
-        // ✅ OPTIMIZATION 8: Precise buildWhen conditions
         buildWhen: (previous, current) =>
             previous.weeklyStats != current.weeklyStats ||
             previous.state != current.state,

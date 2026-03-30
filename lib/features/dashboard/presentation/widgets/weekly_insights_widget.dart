@@ -213,7 +213,7 @@ class _InsightCard extends StatelessWidget {
             Text(
               subtitle,
               style: context.textTheme.titleSmall?.copyWith(
-                color: context.colorScheme.onSurfaceVariant,
+                color: context.colorScheme.onSurface,
                 fontWeight: FontWeight.w400,
               ),
               overflow: TextOverflow.ellipsis,

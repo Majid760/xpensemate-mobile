@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/core/widget/custom_app_loader.dart';
 import 'package:xpensemate/core/widget/error_state_widget.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/weekly_stats_entity.dart';
-
 import 'package:xpensemate/features/dashboard/presentation/widgets/animated_dashboard_content.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/balance_remaining_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/daily_spending_pattern_widget.dart';
@@ -11,7 +11,6 @@ import 'package:xpensemate/features/dashboard/presentation/widgets/section_heade
 import 'package:xpensemate/features/dashboard/presentation/widgets/spending_trend_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/total_expenses_widget.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/weekly_insights_widget.dart';
-import 'package:xpensemate/core/widget/custom_app_loader.dart';
 
 class WeeklyFinancialOverviewWidget extends StatelessWidget {
   const WeeklyFinancialOverviewWidget({
@@ -88,7 +87,6 @@ class _LoadingStateSection extends StatelessWidget {
           children: [
             CustomAppLoader(
               color: context.primaryColor,
-              strokeWidth: 3,
             ),
             SizedBox(height: context.md),
             Text(

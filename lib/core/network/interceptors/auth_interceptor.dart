@@ -82,47 +82,60 @@ final class AuthInterceptor extends QueuedInterceptor {
         return handler.next(err);
       }
 
-      logI(
-        'Token expired or invalid (status ${err.response?.statusCode}), attempting to refresh...',
-      );
+      logI('Token expired or invalid (status ${err.response?.statusCode}), analyzing error...');
+      
+      final usedTokenStr = err.requestOptions.headers['Authorization']?.toString() ?? '';
+      final usedToken = usedTokenStr.startsWith('Bearer ') ? usedTokenStr.substring(7) : usedTokenStr;
+      final currentToken = _authService.token;
+
+      // 1. Concurrent refresh protection 
+      // If the token used in the failed request is DIFFERENT from the current service token,
+      // it means a previous request in the queue already refreshed it! We just retry.
+      if (usedToken != currentToken && currentToken.isNotEmpty) {
+        logI('Token was already refreshed by another concurrent request. Retrying directly...');
+        final newOptions = err.requestOptions.copyWith();
+        newOptions.headers['Authorization'] = 'Bearer $currentToken';
+        final retryDio = Dio(BaseOptions(baseUrl: NetworkConfigs.baseUrl));
+        return handler.resolve(await retryDio.fetch(newOptions));
+      }
+
       // Get the refresh token
       final refreshToken = _authService.userRefreshToken;
-      logI(
-        "refreshed token in storage => ${refreshToken.isNotEmpty ? refreshToken.substring(0, 6) : 'empty'}",
-      );
+      logI("Refresh token in storage => ${refreshToken.isNotEmpty ? refreshToken.substring(0, 6) : 'empty'}");
 
-      if (refreshToken.isEmpty) logE('No refresh token available');
+      // Stop immediately if completely logged out/no refresh token to prevent broken calls
+      if (refreshToken.isEmpty) {
+        logE('No refresh token available - passing error down.');
+        return handler.next(err);
+      }
 
       // Attempt to refresh the token
+      logI('Attempting to refresh token from network...');
       try {
         final dio = Dio(BaseOptions(baseUrl: NetworkConfigs.baseUrl));
         final response = await dio.post<dynamic>(
           NetworkConfigs.refreshToken,
           data: {'refreshToken': refreshToken},
         );
-        logI(
-          'RefreshToken response => : ${response.statusMessage} and status => ${response.statusCode}',
-        );
+        logI('RefreshToken response => : ${response.statusMessage} and status => ${response.statusCode}');
 
         if (response.statusCode == 200 && response.data != null) {
           // Parse the new token
-          final newToken =
-              AuthTokenModel.fromJson(response.data as Map<String, dynamic>);
-          // Save the new token using AuthService
-          scheduleMicrotask(() => _authService.saveTokenToStorage(newToken));
+          final newToken = AuthTokenModel.fromJson(response.data as Map<String, dynamic>);
+          
+          // CRITICAL: Await this synchronously so subsequent queued errors see the new token memory
+          await _authService.saveTokenToStorage(newToken);
           logI('Token refreshed successfully');
+          
           // Update the request with the new token and retry
           final newOptions = err.requestOptions.copyWith();
-          newOptions.headers['Authorization'] =
-              'Bearer ${newToken.accessToken}';
+          newOptions.headers['Authorization'] = 'Bearer ${newToken.accessToken}';
           return handler.resolve(await dio.fetch(newOptions));
         } else {
-          logI(
-            'Failed to refresh token: ${response.statusMessage} and status => ${response.statusCode}',
-          );
+          logE('Failed to refresh token: ${response.statusMessage} and status => ${response.statusCode}');
         }
       } on Exception catch (refreshError) {
-        AppLogger.e('Error refreshing token: $refreshError');
+        AppLogger.e('Error calling refresh token API: $refreshError');
       }
       return handler.next(err);
     } on Exception catch (e) {

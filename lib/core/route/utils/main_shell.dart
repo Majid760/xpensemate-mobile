@@ -56,7 +56,7 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
         ),
         NavItem(
           icon: Icons.account_balance_wallet_rounded,
-          label: context.l10n.expense,
+          label: context.l10n.transactions,
           route: '/home/expense',
         ),
         NavItem(icon: Icons.add, label: context.l10n.add, route: ''),

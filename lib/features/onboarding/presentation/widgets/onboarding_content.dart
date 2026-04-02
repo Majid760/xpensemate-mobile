@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import '../../../../../core/theme/colors/app_colors.dart';
+import 'package:xpensemate/core/theme/colors/app_colors.dart';
 
 class OnboardingContent extends StatelessWidget {
-  final String title;
-  final String description;
-  final String? lottieAsset;
 
   const OnboardingContent({
     super.key,
@@ -13,11 +10,13 @@ class OnboardingContent extends StatelessWidget {
     required this.description,
     this.lottieAsset,
   });
+  final String title;
+  final String description;
+  final String? lottieAsset;
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
+  Widget build(BuildContext context) => Padding(
+      padding: const EdgeInsets.all(24),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -58,7 +57,7 @@ class OnboardingContent extends StatelessWidget {
                             .textTheme
                             .bodyMedium
                             ?.color
-                            ?.withOpacity(0.7),
+                            ?.withValues(alpha: 0.7),
                       ),
                 ),
               ],
@@ -67,5 +66,4 @@ class OnboardingContent extends StatelessWidget {
         ],
       ),
     );
-  }
 }

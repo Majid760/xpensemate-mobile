@@ -1,4 +1,3 @@
-// lib/core/router/app_router.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -11,9 +10,11 @@ import 'package:xpensemate/core/route/utils/route_constants.dart';
 import 'package:xpensemate/core/route/utils/router_middleware_guard.dart';
 import 'package:xpensemate/core/service/analytics_service.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
+import 'package:xpensemate/core/state/transactions_tab_state.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/pages/budget_page.dart';
 import 'package:xpensemate/features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:xpensemate/features/dashboard/presentation/pages/transactions_page.dart';
 import 'package:xpensemate/features/expense/presentation/pages/expense_page.dart';
 import 'package:xpensemate/features/home/presentation/pages/home_page.dart';
 import 'package:xpensemate/features/onboarding/presentation/pages/onboarding_page.dart';
@@ -70,7 +71,12 @@ class AppRouter {
           navigationShell: navigationShell,
           customFabAction: (index) {
             if (index == 1) {
-              addExpense(context: context);
+              // Transactions branch: open the correct form based on active tab.
+              if (TransactionsTabState.activeTabIndex == 0) {
+                addExpense(context: context);
+              } else {
+                addPayment(context: context);
+              }
             } else if (index == 3) {
               addBudget(context: context);
             } else if (index == 4) {
@@ -104,13 +110,13 @@ class AppRouter {
             ],
           ),
 
-          // Branch 1: Expense
+          // Branch 1: Expense (Now Transactions)
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: '/home/expense',
                 name: RouteNames.expense,
-                builder: (context, state) => const ExpensePage(),
+                builder: (context, state) => const TransactionsPage(),
               ),
             ],
           ),

@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:xpensemate/core/enums.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/widget/animated_section_header.dart';
-import 'package:xpensemate/core/widget/app_bar_widget.dart';
 import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/features/expense/domain/entities/expense_entity.dart';
@@ -104,24 +102,12 @@ class _ExpensePageContentState extends State<ExpensePageContent>
             parent: AlwaysScrollableScrollPhysics(),
           ),
           slivers: [
-            // Filter Section
-            BlocSelector<ExpenseCubit, ExpenseState, FilterValue>(
-              selector: (state) => state.filterDefaultValue,
-              builder: (context, filterDefaultValue) => CustomAppBar(
-                defaultPeriod: filterDefaultValue,
-                onChanged: (value) =>
-                    context.expenseCubit.loadExpenseStats(period: value),
-              ),
-            ),
-
             // Stats Section
             const SliverToBoxAdapter(
               child: _ExpenseStatsSection(),
             ),
-
             // Search Header
             const _SearchHeaderSection(),
-
             // Expense List Widget
             SliverPadding(
               padding: EdgeInsets.symmetric(horizontal: context.md),

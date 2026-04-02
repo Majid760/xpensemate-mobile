@@ -49,6 +49,7 @@ class CustomAppBar extends StatelessWidget {
                   builder: (context) => FilterDropdownSheetView(
                     defaultPeriod: defaultPeriod,
                     onChanged: onChanged,
+                    title: context.l10n.transactions,
                   ),
                 ),
                 child: Padding(
@@ -70,9 +71,11 @@ class FilterDropdownSheetView extends StatefulWidget {
   const FilterDropdownSheetView({
     super.key,
     required this.defaultPeriod,
+    required this.title,
     this.onChanged,
   });
   final FilterValue defaultPeriod;
+  final String title;
   final ValueChanged<FilterValue>? onChanged;
 
   @override
@@ -158,7 +161,7 @@ class _FilterDropdownSheetViewState extends State<FilterDropdownSheetView> {
                   ),
                   context.sm.widthBox,
                   Text(
-                    context.l10n.overview,
+                    widget.title,
                     style: context.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: context.onSurfaceColor,

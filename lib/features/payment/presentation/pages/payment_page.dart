@@ -6,7 +6,6 @@ import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/core/widget/animated_section_header.dart';
-import 'package:xpensemate/core/widget/app_bar_widget.dart';
 import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
 import 'package:xpensemate/features/payment/domain/entities/payment_entity.dart';
@@ -104,8 +103,7 @@ class _PaymentPageContentState extends State<PaymentPageContent>
             parent: AlwaysScrollableScrollPhysics(),
           ),
           slivers: [
-            // Filter Section
-            const _FilterSection(),
+
 
             // Stats Section
             const _StatsSection(),
@@ -140,20 +138,7 @@ class _PaymentPageContentState extends State<PaymentPageContent>
   bool get wantKeepAlive => true;
 }
 
-// ✅ OPTIMIZATION: Extracted Filter Section
-class _FilterSection extends StatelessWidget {
-  const _FilterSection();
 
-  @override
-  Widget build(BuildContext context) =>
-      BlocSelector<PaymentCubit, PaymentState, FilterValue>(
-        selector: (state) => state.filterValue,
-        builder: (context, filterValue) => CustomAppBar(
-          defaultPeriod: filterValue,
-          onChanged: (value) => context.paymentCubit.fetchPaymentStats(value),
-        ),
-      );
-}
 
 // ✅ OPTIMIZATION: Extracted Stats Section with RepaintBoundary
 class _StatsSection extends StatelessWidget {

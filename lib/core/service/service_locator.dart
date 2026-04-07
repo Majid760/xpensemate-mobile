@@ -24,6 +24,11 @@ import 'package:xpensemate/features/auth/domain/repositories/auth_repository.dar
 import 'package:xpensemate/features/auth/domain/usecases/cases_export.dart';
 import 'package:xpensemate/features/auth/domain/usecases/use_cases_holder.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:xpensemate/features/budget-sharing/data/datasources/budget_sharing_remote_data_source.dart';
+import 'package:xpensemate/features/budget-sharing/data/repositories/budget_sharing_repository_impl.dart';
+import 'package:xpensemate/features/budget-sharing/domain/repositories/budget_sharing_repository.dart';
+import 'package:xpensemate/features/budget-sharing/domain/usecases/invite_user_usecase.dart';
+import 'package:xpensemate/features/budget-sharing/presentation/manager/budget_sharing_cubit.dart';
 import 'package:xpensemate/features/budget/data/datasources/budget_remote_data_source.dart';
 import 'package:xpensemate/features/budget/data/datasources/budget_remote_data_source_impl.dart';
 import 'package:xpensemate/features/budget/data/repositories/budget_repository_impl.dart';
@@ -186,6 +191,12 @@ Future<void> initLocator() async {
       () => PaymentRemoteDataSourceImpl(sl()),
     );
 
+    // budget-sharing 
+
+    sl.registerLazySingleton<BudgetSharingRemoteDataSource>(
+      () => BudgetSharingRemoteDataSourceImpl(sl()),
+    );
+
     // ---------- Settings Local DataSource ----------
     sl.registerLazySingleton<SettingsLocalDataSource>(
       () => SettingsLocalDataSourceImpl(sl()),
@@ -217,6 +228,10 @@ Future<void> initLocator() async {
     );
     sl.registerLazySingleton<PaymentRepository>(
       () => PaymentRepositoryImpl(sl()),
+    );
+      // budget-sharing 
+    sl.registerLazySingleton<BudgetSharingRepository>(
+      () => BudgetSharingRepositoryImpl(sl()),
     );
     
     // ---------- Settings Repository ----------
@@ -272,6 +287,9 @@ Future<void> initLocator() async {
     sl.registerLazySingleton(() => GetSettingsUseCase(sl()));
     sl.registerLazySingleton(() => SaveSettingsUseCase(sl()));
 
+    // budget-sharing use cases
+    sl.registerLazySingleton(() => InviteUserUseCase(sl()));
+
     // ---------- Presentation Layer ----------
     sl.registerLazySingleton(
       () => AuthUseCasesHolder(
@@ -317,6 +335,7 @@ Future<void> initLocator() async {
     sl.registerFactory(() => PaymentCubit(sl(), sl(), sl(), sl(), sl()));
     sl.registerFactory(() => OnboardingCubit(sl()));
     sl.registerFactory(() => SettingsCubit(sl()));
+    sl.registerFactory(() => BudgetSharingCubit(sl()));
 
     AppLogger.i('Service locator initialized successfully');
   } on Exception catch (e) {
@@ -366,4 +385,5 @@ extension ServiceLocatorExtension on GetIt {
   AnalyticsService get analytics => this<AnalyticsService>();
   NotificationService get notificationService => this<NotificationService>();
   SettingsCubit get settingsCubit => this<SettingsCubit>();
+  BudgetSharingCubit get budgetSharingCubit => this<BudgetSharingCubit>();
 }

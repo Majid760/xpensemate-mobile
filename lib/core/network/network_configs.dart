@@ -90,6 +90,9 @@ class NetworkConfigs {
   // budgets by period endpoint
   static const String budgetsByPeriod = '/budget-by-period/';
 
+  // budget sharing endpoints
+  static const String shareBudget = '/budgets/:budgetId/share';
+
   // payment  endpoints
 
   static const String createPayment = '/create-payment/';

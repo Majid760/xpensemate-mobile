@@ -30,6 +30,7 @@ extension GoRouterExtension on BuildContext {
   // Replace methods
   void replaceWithHome() => pushReplacement('/home');
   void replaceWithLogin() => pushReplacement('/login');
+  
 
   // Pop methods
   void popToRoot() => go('/');

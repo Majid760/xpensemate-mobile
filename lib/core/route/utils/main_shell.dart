@@ -66,9 +66,9 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
           route: '/home/budget',
         ),
         NavItem(
-          icon: Icons.currency_exchange_rounded,
-          label: context.l10n.payment,
-          route: '/home/payment',
+          icon: Icons.auto_awesome_rounded,
+          label: context.l10n.aiInsight,
+          route: '/home/ai-insight',
         ),
       ];
 
@@ -84,9 +84,9 @@ class _MainShellState extends State<MainShell> with TickerProviderStateMixin {
           route: '/home/budget',
         ),
         FabAction(
-          icon: Icons.payment_rounded,
-          label: context.l10n.addPayment,
-          route: '/home/payment',
+          icon: Icons.auto_awesome_rounded,
+          label: context.l10n.aiInsight,
+          route: '/home/ai-insight',
         ),
       ];
 

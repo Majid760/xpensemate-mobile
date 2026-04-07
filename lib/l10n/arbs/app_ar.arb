@@ -922,5 +922,6 @@
   "fingerprintEnabled": "بصمة الإصبع مفعلة",
   "privacyAndSecurity": "الخصوصية والأمان",
   "addHomeWidget": "إضافة أداة الشاشة الرئيسية",
-  "appVersionWithValue": "إصدار التطبيق: {version}"
+  "appVersionWithValue": "إصدار التطبيق: {version}",
+  "aiInsight": "رؤى الذكاء الاصطناعي"
 }

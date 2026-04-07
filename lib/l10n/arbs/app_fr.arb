@@ -537,5 +537,6 @@
   "fingerprintEnabled": "Empreinte Digitale Activée",
   "privacyAndSecurity": "Confidentialité et Sécurité",
   "addHomeWidget": "Ajouter le widget d'accueil",
-  "appVersionWithValue": "Version de l'application : {version}"
+  "appVersionWithValue": "Version de l'application : {version}",
+  "aiInsight": "IA Insights"
 }

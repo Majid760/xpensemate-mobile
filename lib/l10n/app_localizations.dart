@@ -2885,6 +2885,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'App Version: {version}'**
   String appVersionWithValue(String version);
+
+  /// Label for the AI Insights navigation tab
+  ///
+  /// In en, this message translates to:
+  /// **'AI Insights'**
+  String get aiInsight;
 }
 
 class _AppLocalizationsDelegate

@@ -2,11 +2,11 @@
 import 'package:go_router/go_router.dart';
 import 'package:xpensemate/core/route/utils/route_constants.dart';
 import 'package:xpensemate/core/route/utils/router_middleware_guard.dart';
+import 'package:xpensemate/features/ai-insights/presentation/pages/ai_insight_page.dart';
 import 'package:xpensemate/features/budget/presentation/pages/budget_page.dart';
 import 'package:xpensemate/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:xpensemate/features/expense/presentation/pages/expense_page.dart';
 import 'package:xpensemate/features/home/presentation/pages/home_page.dart';
-import 'package:xpensemate/features/payment/presentation/pages/payment_page.dart';
 
 abstract class HomeRoutes {
   static List<RouteBase> get routes => [
@@ -32,9 +32,9 @@ abstract class HomeRoutes {
               builder: (context, state) => const BudgetPage(),
             ),
             GoRoute(
-              path: 'payment',
-              name: RouteNames.payment,
-              builder: (context, state) => const PaymentPage(), // Placeholder
+              path: 'ai-insight',
+              name: RouteNames.aiInsight,
+              builder: (context, state) => const AiInsightPage(), // Placeholder
             ),
             GoRoute(
               path: 'notifications',

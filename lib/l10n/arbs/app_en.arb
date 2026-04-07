@@ -1028,5 +1028,9 @@
         "example": "1.0.0"
       }
     }
+  },
+  "aiInsight": "AI Insights",
+  "@aiInsight": {
+    "description": "Label for the AI Insights navigation tab"
   }
 }

@@ -11,6 +11,7 @@ import 'package:xpensemate/core/route/utils/router_middleware_guard.dart';
 import 'package:xpensemate/core/service/analytics_service.dart';
 import 'package:xpensemate/core/service/service_locator.dart';
 import 'package:xpensemate/core/state/transactions_tab_state.dart';
+import 'package:xpensemate/features/ai-insights/presentation/pages/ai_insight_page.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/pages/budget_page.dart';
 import 'package:xpensemate/features/dashboard/presentation/pages/dashboard_page.dart';
@@ -136,9 +137,9 @@ class AppRouter {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/home/payment',
-                name: RouteNames.payment,
-                builder: (context, state) => const PaymentPage(),
+                path: '/home/ai-insight',
+                name: RouteNames.aiInsight,
+                builder: (context, state) => const AiInsightPage(),
               ),
             ],
           ),

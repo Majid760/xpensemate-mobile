@@ -1492,4 +1492,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String appVersionWithValue(String version) {
     return 'Version de l\'application : $version';
   }
+
+  @override
+  String get aiInsight => 'IA Insights';
 }

@@ -24,6 +24,8 @@ abstract class RouteConstants {
   static const String onboarding = '/onboarding';
   static const String subscription = '/subscription';
 
+  // AI Insight
+  static const String aiInsight = '/ai-insight';
   // Error Routes
   static const String notFound = '/404';
 }
@@ -52,4 +54,7 @@ abstract class RouteNames {
   // Onboarding & Subscription
   static const String onboarding = 'onboarding';
   static const String subscription = 'subscription';
+
+  // AI Insight
+  static const String aiInsight = 'ai-insight';
 }

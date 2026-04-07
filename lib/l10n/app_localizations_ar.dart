@@ -1469,4 +1469,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String appVersionWithValue(String version) {
     return 'إصدار التطبيق: $version';
   }
+
+  @override
+  String get aiInsight => 'رؤى الذكاء الاصطناعي';
 }

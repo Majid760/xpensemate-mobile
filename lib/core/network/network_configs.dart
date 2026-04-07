@@ -92,6 +92,7 @@ class NetworkConfigs {
 
   // budget sharing endpoints
   static const String shareBudget = '/budgets/:budgetId/share';
+  static const String acceptBudgetShare = '/budgets/:budgetId/share/accept';
 
   // payment  endpoints
 

@@ -11,6 +11,10 @@ abstract class BudgetSharingRemoteDataSource {
     required String role,
     double? monthlyLimit,
   });
+
+  Future<Either<Failure, BudgetShareModel>> acceptInvite({
+    required String budgetId,
+  });
 }
 
 class BudgetSharingRemoteDataSourceImpl implements BudgetSharingRemoteDataSource {
@@ -34,6 +38,17 @@ class BudgetSharingRemoteDataSourceImpl implements BudgetSharingRemoteDataSource
         if (monthlyLimit != null) 'monthlyLimit': monthlyLimit,
       },
       fromJson: BudgetShareResultModel.fromJson,
+    );
+  }
+
+  @override
+  Future<Either<Failure, BudgetShareModel>> acceptInvite({
+    required String budgetId,
+  }) async {
+    final path = NetworkConfigs.acceptBudgetShare.replaceAll(':budgetId', budgetId);
+    return _networkClient.post(
+      path,
+      fromJson: (json) => BudgetShareModel.fromJson(json['share'] as Map<String, dynamic>? ?? {}),
     );
   }
 }

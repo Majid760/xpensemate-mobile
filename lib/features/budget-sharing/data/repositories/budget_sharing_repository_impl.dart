@@ -21,4 +21,9 @@ class BudgetSharingRepositoryImpl implements BudgetSharingRepository {
       role: role,
       monthlyLimit: monthlyLimit,
     );
+
+  @override
+  Future<Either<Failure, BudgetShareEntity>> acceptInvite({
+    required String budgetId,
+  }) async => remoteDataSource.acceptInvite(budgetId: budgetId);
 }

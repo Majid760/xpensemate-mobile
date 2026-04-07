@@ -28,6 +28,7 @@ import 'package:xpensemate/features/budget-sharing/data/datasources/budget_shari
 import 'package:xpensemate/features/budget-sharing/data/repositories/budget_sharing_repository_impl.dart';
 import 'package:xpensemate/features/budget-sharing/domain/repositories/budget_sharing_repository.dart';
 import 'package:xpensemate/features/budget-sharing/domain/usecases/invite_user_usecase.dart';
+import 'package:xpensemate/features/budget-sharing/domain/usecases/accept_invite_usecase.dart';
 import 'package:xpensemate/features/budget-sharing/presentation/manager/budget_sharing_cubit.dart';
 import 'package:xpensemate/features/budget/data/datasources/budget_remote_data_source.dart';
 import 'package:xpensemate/features/budget/data/datasources/budget_remote_data_source_impl.dart';
@@ -289,6 +290,7 @@ Future<void> initLocator() async {
 
     // budget-sharing use cases
     sl.registerLazySingleton(() => InviteUserUseCase(sl()));
+    sl.registerLazySingleton(() => AcceptInviteUseCase(sl()));
 
     // ---------- Presentation Layer ----------
     sl.registerLazySingleton(
@@ -335,7 +337,7 @@ Future<void> initLocator() async {
     sl.registerFactory(() => PaymentCubit(sl(), sl(), sl(), sl(), sl()));
     sl.registerFactory(() => OnboardingCubit(sl()));
     sl.registerFactory(() => SettingsCubit(sl()));
-    sl.registerFactory(() => BudgetSharingCubit(sl()));
+    sl.registerFactory(() => BudgetSharingCubit(sl(), sl()));
 
     AppLogger.i('Service locator initialized successfully');
   } on Exception catch (e) {

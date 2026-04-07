@@ -29,3 +29,23 @@ class BudgetSharingError extends BudgetSharingState {
   @override
   List<Object?> get props => [message];
 }
+
+class AcceptInviteLoading extends BudgetSharingState {}
+
+class AcceptInviteSuccess extends BudgetSharingState {
+  const AcceptInviteSuccess(this.result);
+
+  final BudgetShareEntity result;
+
+  @override
+  List<Object?> get props => [result];
+}
+
+class AcceptInviteError extends BudgetSharingState {
+  const AcceptInviteError(this.message);
+
+  final String message;
+
+  @override
+  List<Object?> get props => [message];
+}

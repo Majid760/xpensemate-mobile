@@ -27,9 +27,12 @@ import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:xpensemate/features/budget-sharing/data/datasources/budget_sharing_remote_data_source.dart';
 import 'package:xpensemate/features/budget-sharing/data/repositories/budget_sharing_repository_impl.dart';
 import 'package:xpensemate/features/budget-sharing/domain/repositories/budget_sharing_repository.dart';
-import 'package:xpensemate/features/budget-sharing/domain/usecases/invite_user_usecase.dart';
 import 'package:xpensemate/features/budget-sharing/domain/usecases/accept_invite_usecase.dart';
-import 'package:xpensemate/features/budget-sharing/presentation/manager/budget_sharing_cubit.dart';
+import 'package:xpensemate/features/budget-sharing/domain/usecases/decline_invite_usecase.dart';
+import 'package:xpensemate/features/budget-sharing/domain/usecases/invite_user_usecase.dart';
+import 'package:xpensemate/features/budget-sharing/domain/usecases/revoke_access_usecase.dart';
+import 'package:xpensemate/features/budget-sharing/domain/usecases/update_role_usecase.dart';
+import 'package:xpensemate/features/budget-sharing/presentation/cubit/invite_access_budget_cubit.dart';
 import 'package:xpensemate/features/budget/data/datasources/budget_remote_data_source.dart';
 import 'package:xpensemate/features/budget/data/datasources/budget_remote_data_source_impl.dart';
 import 'package:xpensemate/features/budget/data/repositories/budget_repository_impl.dart';
@@ -291,6 +294,9 @@ Future<void> initLocator() async {
     // budget-sharing use cases
     sl.registerLazySingleton(() => InviteUserUseCase(sl()));
     sl.registerLazySingleton(() => AcceptInviteUseCase(sl()));
+    sl.registerLazySingleton(() => DeclineInviteUseCase(sl()));
+    sl.registerLazySingleton(() => RevokeAccessUseCase(sl()));
+    sl.registerLazySingleton(() => UpdateRoleUseCase(sl()));
 
     // ---------- Presentation Layer ----------
     sl.registerLazySingleton(
@@ -337,7 +343,7 @@ Future<void> initLocator() async {
     sl.registerFactory(() => PaymentCubit(sl(), sl(), sl(), sl(), sl()));
     sl.registerFactory(() => OnboardingCubit(sl()));
     sl.registerFactory(() => SettingsCubit(sl()));
-    sl.registerFactory(() => BudgetSharingCubit(sl(), sl()));
+    sl.registerFactory(() => InviteAccessBudgetCubit(sl(), sl(), sl(), sl(), sl()));
 
     AppLogger.i('Service locator initialized successfully');
   } on Exception catch (e) {
@@ -387,5 +393,5 @@ extension ServiceLocatorExtension on GetIt {
   AnalyticsService get analytics => this<AnalyticsService>();
   NotificationService get notificationService => this<NotificationService>();
   SettingsCubit get settingsCubit => this<SettingsCubit>();
-  BudgetSharingCubit get budgetSharingCubit => this<BudgetSharingCubit>();
+  InviteAccessBudgetCubit get inviteAccessBudgetCubit => this<InviteAccessBudgetCubit>();
 }

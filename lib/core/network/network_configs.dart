@@ -6,7 +6,7 @@ class NetworkConfigs {
   // ------------------------------------------------------------------
   static const String baseUrl = String.fromEnvironment(
     'BASE_URL4',
-    defaultValue: 'http://192.168.0.104:5001/api/v1',
+    defaultValue: 'http://192.168.0.105:5001/api/v1',
   );
 
   // ------------------------------------------------------------------
@@ -93,6 +93,9 @@ class NetworkConfigs {
   // budget sharing endpoints
   static const String shareBudget = '/budgets/:budgetId/share';
   static const String acceptBudgetShare = '/budgets/:budgetId/share/accept';
+  static const String declineBudgetShare = '/budgets/:budgetId/share/decline';
+  static const String revokeBudgetShareAccess = '/budgets/:budgetId/share/:memberId';
+  static const String updateBudgetShareRole = '/budgets/:budgetId/share/:memberId/role';
 
   // payment  endpoints
 

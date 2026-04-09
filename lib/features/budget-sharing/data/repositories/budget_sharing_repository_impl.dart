@@ -2,6 +2,9 @@ import 'package:dartz/dartz.dart';
 import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/features/budget-sharing/data/datasources/budget_sharing_remote_data_source.dart';
 import 'package:xpensemate/features/budget-sharing/domain/entities/budget_share_entity.dart';
+import 'package:xpensemate/features/budget-sharing/domain/entities/decline_invite_entity.dart';
+import 'package:xpensemate/features/budget-sharing/domain/entities/revoke_access_entity.dart';
+import 'package:xpensemate/features/budget-sharing/domain/entities/update_role_entity.dart';
 import 'package:xpensemate/features/budget-sharing/domain/repositories/budget_sharing_repository.dart';
 
 class BudgetSharingRepositoryImpl implements BudgetSharingRepository {
@@ -26,4 +29,26 @@ class BudgetSharingRepositoryImpl implements BudgetSharingRepository {
   Future<Either<Failure, BudgetShareEntity>> acceptInvite({
     required String budgetId,
   }) async => remoteDataSource.acceptInvite(budgetId: budgetId);
+
+  @override
+  Future<Either<Failure, DeclineInviteEntity>> declineInvite({
+    required String budgetId,
+  }) async => remoteDataSource.declineInvite(budgetId: budgetId);
+
+  @override
+  Future<Either<Failure, RevokeAccessEntity>> revokeAccess({
+    required String budgetId,
+    required String memberId,
+  }) async => remoteDataSource.revokeAccess(budgetId: budgetId, memberId: memberId);
+
+  @override
+  Future<Either<Failure, UpdateRoleEntity>> updateRole({
+    required String budgetId,
+    required String memberId,
+    required String role,
+  }) async => remoteDataSource.updateRole(
+        budgetId: budgetId,
+        memberId: memberId,
+        role: role,
+      );
 }

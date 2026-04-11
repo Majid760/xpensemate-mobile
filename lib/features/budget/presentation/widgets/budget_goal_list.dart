@@ -6,7 +6,9 @@ import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_bottom_sheet.dart';
 import 'package:xpensemate/core/widget/app_custom_dialog.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
+import 'package:xpensemate/core/widget/custom_app_loader.dart';
 import 'package:xpensemate/core/widget/error_state_widget.dart';
+import 'package:xpensemate/features/budget-sharing/presentation/pages/budget_detail_page.dart';
 import 'package:xpensemate/features/budget/domain/entities/budget_goal_entity.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_state.dart';
@@ -14,7 +16,6 @@ import 'package:xpensemate/features/budget/presentation/pages/budget_expenses_pa
 import 'package:xpensemate/features/budget/presentation/pages/budget_form_page.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/budget_card_item.dart';
 import 'package:xpensemate/features/budget/presentation/widgets/no_more_widget.dart';
-import 'package:xpensemate/core/widget/custom_app_loader.dart';
 
 class BudgetGoalsListWidget extends StatefulWidget {
   const BudgetGoalsListWidget({
@@ -47,6 +48,20 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
           }
         },
       ),
+    );
+  }
+
+    void _openBudgetGoalDetail(BuildContext context) {
+    AppBottomSheet.show<void>(
+      context: context,
+      title: context.l10n.editBudget,
+      config: BottomSheetConfig(
+        height: MediaQuery.of(context).size.height * 0.8,
+        padding: EdgeInsets.symmetric(horizontal: context.sm),
+        blurSigma: 5,
+        barrierColor: Colors.transparent,
+      ),
+      child: const BudgetDetailPage(),
     );
   }
 
@@ -84,6 +99,7 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
               transitionDuration: const Duration(milliseconds: 400),
               itemBuilder: (context, budgetGoal, index) => BudgetGoalCard(
                 budgetGoal: budgetGoal,
+                onTap: () => _openBudgetGoalDetail(context),
                 index: index,
                 onEdit: (goal) {
                   _editBudget(goal, context);

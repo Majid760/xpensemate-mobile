@@ -108,14 +108,16 @@ class _BudgetPageContentState extends State<BudgetPageContent>
         ),
         slivers: [
           // Filter Section
-          const _FilterSection(),
+         const _FilterSection(),
+          
 
           // Stats Section
           const SliverPadding(
             padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
             sliver: SliverToBoxAdapter(
               child: _StatsSection(),
-            ),
+              ),
+            
           ),
 
           SliverToBoxAdapter(child: SizedBox(height: context.xl)),

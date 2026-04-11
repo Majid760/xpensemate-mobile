@@ -47,11 +47,11 @@ class _ProductAnalyticsWidgetState extends State<ProductAnalyticsWidget> {
               color: context.colorScheme.surface,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: context.colorScheme.outline.withValues(alpha: 0.1),
+                color: context.colorScheme.outline.withValues(alpha: 0.3),
               ),
               boxShadow: [
                 BoxShadow(
-                  color: context.colorScheme.shadow.withValues(alpha: 0.08),
+                  color: context.colorScheme.shadow.withValues(alpha: 0.2),
                   blurRadius: 20,
                   offset: const Offset(0, 4),
                 ),

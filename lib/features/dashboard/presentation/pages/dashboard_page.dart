@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpensemate/core/route/utils/router_extension.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
 import 'package:xpensemate/core/widget/app_snackbar.dart';
+import 'package:xpensemate/features/auth/presentation/widgets/background_decoration_widget.dart';
 import 'package:xpensemate/features/dashboard/domain/entities/budget_goals_entity.dart';
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:xpensemate/features/dashboard/presentation/widgets/active_budget_section_widget.dart';
@@ -93,44 +94,50 @@ class _DashboardPageState extends State<DashboardPage>
   @override
   Widget build(BuildContext context) {
     super.build(context); // Required for AutomaticKeepAliveClientMixin
-
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: context.colorScheme.surface,
       drawerScrimColor: Colors.transparent,
-      body: BlocListener<DashboardCubit, DashboardState>(
+      body:
+       BlocListener<DashboardCubit, DashboardState>(
         listenWhen: (previous, current) => previous.message != current.message,
         listener: _handleStateChange,
-        child: RefreshIndicator(
-          onRefresh: () async =>
-              context.read<DashboardCubit>().loadDashboardData(),
-          color: context.colorScheme.primary,
-          child: CustomScrollView(
-            cacheExtent: 500,
-            physics: const BouncingScrollPhysics(
-              parent: AlwaysScrollableScrollPhysics(),
-            ),
-            slivers: [
-              AppBarWidget(onProfileTap: widget.onProfileTap),
-
-              // Dashboard Header
-              const SliverToBoxAdapter(
-                child: RepaintBoundary(
-                  child: _DashboardHeader(),
+        child: Stack(
+          children: [
+            BackgroundDecoration(isDark: isDark),
+            RefreshIndicator(
+              onRefresh: () async =>
+                  context.read<DashboardCubit>().loadDashboardData(),
+              color: context.colorScheme.primary,
+              child: CustomScrollView(
+                cacheExtent: 500,
+                physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
                 ),
-              ),
-
-              // Main Content
-              SliverToBoxAdapter(
-                child: FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: SlideTransition(
-                    position: _slideAnimation,
-                    child: const _DashboardContent(),
+                slivers: [
+                  AppBarWidget(onProfileTap: widget.onProfileTap),
+            
+                  // Dashboard Header
+                  const SliverToBoxAdapter(
+                    child: RepaintBoundary(
+                      child: _DashboardHeader(),
+                    ),
                   ),
-                ),
+            
+                  // Main Content
+                  SliverToBoxAdapter(
+                    child: FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: SlideTransition(
+                        position: _slideAnimation,
+                        child: const _DashboardContent(),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

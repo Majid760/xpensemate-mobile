@@ -86,11 +86,11 @@ class _BalanceRemainingWidgetState extends State<BalanceRemainingWidget>
           color: context.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: context.colorScheme.outline.withValues(alpha: 0.1),
+            color: context.colorScheme.outline.withValues(alpha: 0.3),
           ),
           boxShadow: [
             BoxShadow(
-              color: context.colorScheme.shadow.withValues(alpha: 0.05),
+              color: context.colorScheme.shadow.withValues(alpha: 0.2),
               blurRadius: 10,
               offset: const Offset(0, 2),
             ),

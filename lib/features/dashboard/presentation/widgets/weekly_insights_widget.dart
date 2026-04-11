@@ -165,11 +165,13 @@ class _InsightCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: context.colorScheme.outline.withValues(alpha: 0.3),
+          ),
           boxShadow: [
             BoxShadow(
-              color: context.colorScheme.shadow.withValues(alpha: 0.05),
-              blurRadius: 8,
-              spreadRadius: 1,
+              color: context.colorScheme.shadow.withValues(alpha: 0.2),
+              blurRadius: 10,
               offset: const Offset(0, 2),
             ),
           ],

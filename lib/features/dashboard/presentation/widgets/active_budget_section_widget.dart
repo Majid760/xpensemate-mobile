@@ -23,13 +23,13 @@ class ActiveBudgetSectionWidget extends StatelessWidget {
           color: context.colorScheme.surface,
           borderRadius: BorderRadius.circular(AppSpacing.md1),
           border: Border.all(
-            color: context.colorScheme.outline.withValues(alpha: 0.1),
+            color: context.colorScheme.outline.withValues(alpha: 0.3),
           ),
           boxShadow: [
             BoxShadow(
-              color: context.colorScheme.shadow.withValues(alpha: 0.08),
-              blurRadius: AppSpacing.md1,
-              offset: const Offset(0, 4),
+              color: context.colorScheme.shadow.withValues(alpha: 0.2),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
             ),
             BoxShadow(
               color: context.colorScheme.primary.withValues(alpha: 0.02),

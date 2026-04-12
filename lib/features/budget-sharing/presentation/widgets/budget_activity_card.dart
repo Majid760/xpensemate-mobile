@@ -132,9 +132,9 @@ class BudgetActivityCard extends StatelessWidget {
                               padding: const EdgeInsets.all(4),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                border: Border.all(color: scheme.onSurface.withValues(alpha: 0.3)),
+                                border: Border.all(color: scheme.primary.withValues(alpha: 0.3)),
                               ),
-                              child: Icon(Icons.arrow_downward, size: 12, color: scheme.onSurface),
+                              child: Icon(Icons.arrow_downward, size: 12, color: scheme.primary),
                             ),
                         ],
                       ),

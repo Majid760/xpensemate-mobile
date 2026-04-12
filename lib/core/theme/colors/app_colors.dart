@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 abstract class AppColors {
   // ── Brand ─────────────────────────────────────────────────────────────────
   /// Vibrant teal — primary buttons, active nav, key numbers
-  static const Color primary = Color(0xFF25C4C3);
+  static const Color primary = Color.fromARGB(255, 25, 157, 157);
 
   /// Light teal tint — primary button backgrounds, chips
   static const Color primaryContainer = Color(0xFFB2F0EF);
@@ -30,7 +30,7 @@ abstract class AppColors {
 
   // ── Surface ───────────────────────────────────────────────────────────────
   /// Pure white — main card & dialog surface
-  static const Color surface = Color(0xFFFFFFFF);
+  static const Color surface = Color(0xFFFAF9F6);
 
   /// Warm off-white — input backgrounds, dividers, inactive surfaces
   static const Color surfaceVariant = Color(0xFFE0F4F4);

@@ -14,6 +14,7 @@ import 'package:xpensemate/core/state/transactions_tab_state.dart';
 import 'package:xpensemate/features/ai-insights/presentation/pages/ai_insight_page.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/pages/budget_page.dart';
+import 'package:xpensemate/features/budget-sharing/presentation/pages/budget_detail_page.dart';
 import 'package:xpensemate/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:xpensemate/features/dashboard/presentation/pages/transactions_page.dart';
 import 'package:xpensemate/features/expense/presentation/pages/expense_page.dart';
@@ -129,6 +130,13 @@ class AppRouter {
                 path: '/home/budget',
                 name: RouteNames.budget,
                 builder: (context, state) => const BudgetPage(),
+                routes: [
+                  GoRoute(
+                    path: RouteConstants.budgetDetail,
+                    name: RouteNames.budgetDetail,
+                    builder: (context, state) => const BudgetDetailPage(),
+                  ),
+                ],
               ),
             ],
           ),

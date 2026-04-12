@@ -923,5 +923,6 @@
   "privacyAndSecurity": "الخصوصية والأمان",
   "addHomeWidget": "إضافة أداة الشاشة الرئيسية",
   "appVersionWithValue": "إصدار التطبيق: {version}",
-  "aiInsight": "رؤى الذكاء الاصطناعي"
+  "aiInsight": "رؤى الذكاء الاصطناعي",
+  "budgetDetail": "تفاصيل الميزانية"
 }

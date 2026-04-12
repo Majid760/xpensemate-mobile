@@ -1,5 +1,23 @@
 {
   "@@locale": "en",
+  "shareBudget": "Share budget",
+  "inviteByEmailTitle": "INVITE BY EMAIL",
+  "searchNameOrEmail": "Search name or email...",
+  "inviteButtonLabel": "Invite",
+  "roleTitleLabel": "ROLE",
+  "pendingInvitesTitleLabel": "PENDING INVITES",
+  "manageMembersButton": "Manage members",
+  "spendingContribution": "Spending Contribution",
+  "activeMembersLabel": "Active members",
+  "pendingInvitesLabel": "Pending invites",
+  "spentWithPercentage": "{amount} · {percentage}%",
+  "@spentWithPercentage": {
+    "description": "Spent amount and percentage",
+    "placeholders": {
+      "amount": { "type": "String", "example": "$12" },
+      "percentage": { "type": "int", "example": "71" }
+    }
+  },
   "@@last_modified": "2024-01-15T10:00:00.000Z",
   "@@author": "Majid",
   "@@version": "1.0.0",
@@ -1033,4 +1051,28 @@
   "@aiInsight": {
     "description": "Label for the AI Insights navigation tab"
   }
+  ,"budgetMembers": "Budget members"
+  ,"members": "Members"
+  ,"pending": "Pending"
+  ,"stats": "Stats"
+  ,"inviteMember": "Invite member"
+  ,"spentLabel": "spent"
+  ,"owner": "Owner"
+  ,"editor": "Editor"
+  ,"viewer": "Viewer"
+  ,"memberCount": "{count, plural, =1{1 MEMBER} other{{count} MEMBERS}}"
+  ,"spentWithAmount": "{amount} spent"
+  ,"changeRole": "Change role"
+  ,"saveChanges2": "Save changes"
+  ,"revokeAccess": "Revoke access"
+  ,"changeRoleForMember": "Change role for {name}"
+  ,"revokeAccessConfirmTitle": "Revoke access"
+  ,"revokeAccessConfirmMessage": "Are you sure you want to revoke access for {name}?"
+  ,"revokeAccessConfirmButton": "Yes, revoke"
+  ,"sentInvites": "SENT INVITES"
+  ,"invitedAs": "Invited as {role} · {time}"
+  ,"revoke": "Revoke"
+  ,"resend": "Resend"
+  ,"daysAgo": "{days} days ago"
+  ,"budgetDetail": "Budget Detail"
 }

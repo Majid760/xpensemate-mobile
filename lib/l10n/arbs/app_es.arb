@@ -538,5 +538,6 @@
   "privacyAndSecurity": "Privacidad y Seguridad",
   "addHomeWidget": "Añadir widget de inicio",
   "appVersionWithValue": "Versión de la aplicación: {version}",
-  "aiInsight": "IA Insights"
+  "aiInsight": "IA Insights",
+  "budgetDetail": "Detalles del presupuesto"
 }

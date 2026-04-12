@@ -102,6 +102,72 @@ abstract class AppLocalizations {
     Locale('fr')
   ];
 
+  /// No description provided for @shareBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Share budget'**
+  String get shareBudget;
+
+  /// No description provided for @inviteByEmailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'INVITE BY EMAIL'**
+  String get inviteByEmailTitle;
+
+  /// No description provided for @searchNameOrEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Search name or email...'**
+  String get searchNameOrEmail;
+
+  /// No description provided for @inviteButtonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite'**
+  String get inviteButtonLabel;
+
+  /// No description provided for @roleTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'ROLE'**
+  String get roleTitleLabel;
+
+  /// No description provided for @pendingInvitesTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'PENDING INVITES'**
+  String get pendingInvitesTitleLabel;
+
+  /// No description provided for @manageMembersButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage members'**
+  String get manageMembersButton;
+
+  /// No description provided for @spendingContribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending Contribution'**
+  String get spendingContribution;
+
+  /// No description provided for @activeMembersLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Active members'**
+  String get activeMembersLabel;
+
+  /// No description provided for @pendingInvitesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending invites'**
+  String get pendingInvitesLabel;
+
+  /// Spent amount and percentage
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} · {percentage}%'**
+  String spentWithPercentage(String amount, int percentage);
+
   /// The title of the application
   ///
   /// In en, this message translates to:
@@ -2891,6 +2957,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'AI Insights'**
   String get aiInsight;
+
+  /// No description provided for @budgetMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget members'**
+  String get budgetMembers;
+
+  /// No description provided for @members.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get members;
+
+  /// No description provided for @pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get pending;
+
+  /// No description provided for @stats.
+  ///
+  /// In en, this message translates to:
+  /// **'Stats'**
+  String get stats;
+
+  /// No description provided for @inviteMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite member'**
+  String get inviteMember;
+
+  /// No description provided for @spentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'spent'**
+  String get spentLabel;
+
+  /// No description provided for @owner.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner'**
+  String get owner;
+
+  /// No description provided for @editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Editor'**
+  String get editor;
+
+  /// No description provided for @viewer.
+  ///
+  /// In en, this message translates to:
+  /// **'Viewer'**
+  String get viewer;
+
+  /// No description provided for @memberCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 MEMBER} other{{count} MEMBERS}}'**
+  String memberCount(num count);
+
+  /// No description provided for @spentWithAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} spent'**
+  String spentWithAmount(Object amount);
+
+  /// No description provided for @changeRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Change role'**
+  String get changeRole;
+
+  /// No description provided for @saveChanges2.
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get saveChanges2;
+
+  /// No description provided for @revokeAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoke access'**
+  String get revokeAccess;
+
+  /// No description provided for @changeRoleForMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Change role for {name}'**
+  String changeRoleForMember(Object name);
+
+  /// No description provided for @revokeAccessConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoke access'**
+  String get revokeAccessConfirmTitle;
+
+  /// No description provided for @revokeAccessConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to revoke access for {name}?'**
+  String revokeAccessConfirmMessage(Object name);
+
+  /// No description provided for @revokeAccessConfirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, revoke'**
+  String get revokeAccessConfirmButton;
+
+  /// No description provided for @sentInvites.
+  ///
+  /// In en, this message translates to:
+  /// **'SENT INVITES'**
+  String get sentInvites;
+
+  /// No description provided for @invitedAs.
+  ///
+  /// In en, this message translates to:
+  /// **'Invited as {role} · {time}'**
+  String invitedAs(Object role, Object time);
+
+  /// No description provided for @revoke.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoke'**
+  String get revoke;
+
+  /// No description provided for @daysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days ago'**
+  String daysAgo(Object days);
+
+  /// No description provided for @budgetDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget Detail'**
+  String get budgetDetail;
 }
 
 class _AppLocalizationsDelegate

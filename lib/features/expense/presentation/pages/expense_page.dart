@@ -156,7 +156,7 @@ class _ExpenseStatsSection extends StatelessWidget {
 class _SearchHeaderSection extends StatelessWidget {
   const _SearchHeaderSection();
 
-  @override
+  @override  
   Widget build(BuildContext context) => SliverPadding(
         padding: EdgeInsets.all(context.md),
         sliver: SliverToBoxAdapter(

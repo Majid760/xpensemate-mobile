@@ -43,7 +43,7 @@ class _AnimatedCardWidgetState extends State<AnimatedCardWidget>
 
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween(begin: 1.05, end: 1.0)
+        tween: Tween<double>(begin: 1.05, end: 1)
             .chain(CurveTween(curve: Curves.easeOutCubic)),
         weight: 100,
       ),

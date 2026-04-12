@@ -9,6 +9,41 @@ class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr([String locale = 'fr']) : super(locale);
 
   @override
+  String get shareBudget => 'Share budget';
+
+  @override
+  String get inviteByEmailTitle => 'INVITE BY EMAIL';
+
+  @override
+  String get searchNameOrEmail => 'Search name or email...';
+
+  @override
+  String get inviteButtonLabel => 'Invite';
+
+  @override
+  String get roleTitleLabel => 'ROLE';
+
+  @override
+  String get pendingInvitesTitleLabel => 'PENDING INVITES';
+
+  @override
+  String get manageMembersButton => 'Manage members';
+
+  @override
+  String get spendingContribution => 'Spending Contribution';
+
+  @override
+  String get activeMembersLabel => 'Active members';
+
+  @override
+  String get pendingInvitesLabel => 'Pending invites';
+
+  @override
+  String spentWithPercentage(String amount, int percentage) {
+    return '$amount · $percentage%';
+  }
+
+  @override
   String get appTitle => 'Xpensemate';
 
   @override
@@ -1495,4 +1530,91 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get aiInsight => 'IA Insights';
+
+  @override
+  String get budgetMembers => 'Budget members';
+
+  @override
+  String get members => 'Members';
+
+  @override
+  String get pending => 'Pending';
+
+  @override
+  String get stats => 'Stats';
+
+  @override
+  String get inviteMember => 'Invite member';
+
+  @override
+  String get spentLabel => 'spent';
+
+  @override
+  String get owner => 'Owner';
+
+  @override
+  String get editor => 'Editor';
+
+  @override
+  String get viewer => 'Viewer';
+
+  @override
+  String memberCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count MEMBERS',
+      one: '1 MEMBER',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String spentWithAmount(Object amount) {
+    return '$amount spent';
+  }
+
+  @override
+  String get changeRole => 'Change role';
+
+  @override
+  String get saveChanges2 => 'Save changes';
+
+  @override
+  String get revokeAccess => 'Revoke access';
+
+  @override
+  String changeRoleForMember(Object name) {
+    return 'Change role for $name';
+  }
+
+  @override
+  String get revokeAccessConfirmTitle => 'Revoke access';
+
+  @override
+  String revokeAccessConfirmMessage(Object name) {
+    return 'Are you sure you want to revoke access for $name?';
+  }
+
+  @override
+  String get revokeAccessConfirmButton => 'Yes, revoke';
+
+  @override
+  String get sentInvites => 'SENT INVITES';
+
+  @override
+  String invitedAs(Object role, Object time) {
+    return 'Invited as $role · $time';
+  }
+
+  @override
+  String get revoke => 'Revoke';
+
+  @override
+  String daysAgo(Object days) {
+    return '$days days ago';
+  }
+
+  @override
+  String get budgetDetail => 'Détails du budget';
 }

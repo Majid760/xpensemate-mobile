@@ -26,6 +26,9 @@ abstract class RouteConstants {
 
   // AI Insight
   static const String aiInsight = '/ai-insight';
+  // Budget Sharing Detail
+  static const String budgetDetail = 'detail';
+
   // Error Routes
   static const String notFound = '/404';
 }
@@ -57,4 +60,7 @@ abstract class RouteNames {
 
   // AI Insight
   static const String aiInsight = 'ai-insight';
+
+  // Budget Sharing Detail
+  static const String budgetDetail = 'budget-detail';
 }

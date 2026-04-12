@@ -24,6 +24,7 @@ class BudgetGoalCard extends StatefulWidget {
     this.onEdit,
     this.onDelete,
     this.onSelect,
+    this.onTap,
   });
 
   final BudgetGoalEntity budgetGoal;
@@ -32,6 +33,7 @@ class BudgetGoalCard extends StatefulWidget {
   final void Function(BudgetGoalEntity)? onEdit;
   final void Function(String id)? onDelete;
   final void Function(String id)? onSelect;
+  final void Function()? onTap;
 
   @override
   State<BudgetGoalCard> createState() => _BudgetGoalCardState();
@@ -89,7 +91,7 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
   @override
   Widget build(BuildContext context) {
     final progress = _budgetGoal.amount > 0
-        ? math.min(_budgetGoal.currentSpending / _budgetGoal.amount, 1.0)
+        ? math.min(_budgetGoal.currentSpending / _budgetGoal.amount, 1)
         : 0.0;
     final remaining = _budgetGoal.amount - _budgetGoal.currentSpending;
     final isCompleted = progress >= 1.0;
@@ -97,60 +99,60 @@ class _BudgetGoalCardState extends State<BudgetGoalCard>
     return AnimatedCardWidget(
       index: widget.index,
       child: AppDismissible(
-        objectKey: 'budget_${_budgetGoal.id}',
-        onDeleteConfirm: () async {
-          final result = await _showDeleteConfirmation(context);
-          if (result ?? false) {
-            widget.onDelete?.call(_budgetGoal.id);
-          }
-          return result ?? false;
-        },
-        onEdit: () => widget.onEdit?.call(widget.budgetGoal),
-        child: Card(
-          elevation: 2,
-          color: context.theme.cardColor,
-          shadowColor: context.theme.shadowColor.withValues(alpha: .1),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(ThemeConstants.radiusLarge),
-            side: BorderSide(
-              color: context.theme.dividerColor.withValues(alpha: .1),
+          objectKey: 'budget_${_budgetGoal.id}',
+          onDeleteConfirm: () async {
+            final result = await _showDeleteConfirmation(context);
+            if (result ?? false) {
+              widget.onDelete?.call(_budgetGoal.id);
+            }
+            return result ?? false;
+          },
+          onEdit: () => widget.onEdit?.call(widget.budgetGoal),
+          child: Card(
+            elevation: 2,
+            color: context.theme.cardColor,
+            shadowColor: context.theme.shadowColor.withValues(alpha: .1),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(ThemeConstants.radiusLarge),
+              side: BorderSide(
+                color: context.theme.dividerColor.withValues(alpha: .1),
+              ),
             ),
-          ),
-          child: InkWell(
-            onTap: HapticFeedback.lightImpact,
-            onTapDown: (_) => HapticFeedback.selectionClick(),
-            borderRadius: BorderRadius.circular(ThemeConstants.radiusLarge),
-            child: Column(
-              children: [
-                _BudgetTopSection(
-                  title: _budgetGoal.name,
-                  category: _budgetGoal.category,
-                  amount: _budgetGoal.amount,
-                  deadline: _budgetGoal.date.toString(),
-                  categoryColor: context.primaryColor,
-                  isCompleted: isCompleted,
-                  isOverdue:
-                      false, // Logic moved inside if needed or kept simple
-                  status: _status,
-                  budgetGoalEntity: _budgetGoal,
-                  onSelected: widget.onSelect,
-                ),
-                _BudgetBottomSection(
-                  progress: progress,
-                  spent: _budgetGoal.currentSpending,
-                  remaining: remaining,
-                  deadline: _budgetGoal.date.toString(),
-                  isOverdue: false,
-                  status: _status,
-                  categoryColor: context.primaryColor,
-                  onStatusChange: _updateStatus,
-                ),
-              ],
+            child: InkWell(
+              onTap:widget.onTap,
+              onTapDown: (_) => HapticFeedback.selectionClick(),
+              borderRadius: BorderRadius.circular(ThemeConstants.radiusLarge),
+              child: Column(
+                children: [
+                  _BudgetTopSection(
+                    title: _budgetGoal.name,
+                    category: _budgetGoal.category,
+                    amount: _budgetGoal.amount,
+                    deadline: _budgetGoal.date.toString(),
+                    categoryColor: context.primaryColor,
+                    isCompleted: isCompleted,
+                    isOverdue:
+                        false, // Logic moved inside if needed or kept simple
+                    status: _status,
+                    budgetGoalEntity: _budgetGoal,
+                    onSelected: widget.onSelect,
+                  ),
+                  _BudgetBottomSection(
+                    progress: progress.toDouble(),
+                    spent: _budgetGoal.currentSpending,
+                    remaining: remaining,
+                    deadline: _budgetGoal.date.toString(),
+                    isOverdue: false,
+                    status: _status,
+                    categoryColor: context.primaryColor,
+                    onStatusChange: _updateStatus,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 }
 
@@ -519,15 +521,15 @@ class _ProgressSection extends StatelessWidget {
         onSelected: onStatusChange,
         itemBuilder: (context) => [
           _buildPopupMenuItem(context, 'active', Icons.local_activity,
-              context.l10n.statusActive),
+              context.l10n.statusActive,),
           _buildPopupMenuItem(
-              context, 'achieved', Icons.star, context.l10n.statusAchieved),
+              context, 'achieved', Icons.star, context.l10n.statusAchieved,),
           _buildPopupMenuItem(
-              context, 'failed', Icons.sms_failed, context.l10n.statusFailed),
+              context, 'failed', Icons.sms_failed, context.l10n.statusFailed,),
           _buildPopupMenuItem(context, 'terminated', Icons.terminal,
-              context.l10n.statusTerminated),
+              context.l10n.statusTerminated,),
           _buildPopupMenuItem(
-              context, 'other', Icons.more_horiz, context.l10n.other),
+              context, 'other', Icons.more_horiz, context.l10n.other,),
         ],
       );
 
@@ -588,17 +590,17 @@ class _MenuButton extends StatelessWidget {
           onSelected: onSelected,
           itemBuilder: (context) => [
             _buildMenuItem(
-                context, 'edit', Icons.edit_outlined, context.l10n.edit),
+                context, 'edit', Icons.edit_outlined, context.l10n.edit,),
             _buildMenuItem(context, 'expenses', Icons.edit_outlined,
-                context.l10n.expense), // Used 'Expense' key
+                context.l10n.expense,), // Used 'Expense' key
             _buildMenuItem(
-                context, 'share', Icons.share_outlined, context.l10n.share),
+                context, 'share', Icons.share_outlined, context.l10n.share,),
             _buildMenuItem(context, 'archive', Icons.archive_outlined,
-                context.l10n.archive),
+                context.l10n.archive,),
             const PopupMenuDivider(),
             _buildMenuItem(context, 'delete', Icons.delete_outline_rounded,
                 context.l10n.delete,
-                isDestructive: true),
+                isDestructive: true,),
           ],
         ),
       );

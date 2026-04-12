@@ -54,7 +54,7 @@ class _BudgetGoalsListWidgetState extends State<BudgetGoalsListWidget> {
     void _openBudgetGoalDetail(BuildContext context) {
     AppBottomSheet.show<void>(
       context: context,
-      title: context.l10n.editBudget,
+      title: context.l10n.budgetDetail,
       config: BottomSheetConfig(
         height: MediaQuery.of(context).size.height * 0.8,
         padding: EdgeInsets.symmetric(horizontal: context.sm),

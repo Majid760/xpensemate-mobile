@@ -83,49 +83,40 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
       ),
     ];
 
-    return Scaffold(
-      backgroundColor: scheme.surface,
-      body: SingleChildScrollView(
-        padding: EdgeInsets.zero,
+    return SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Column(
-                children: [
-                  const BudgetDetailHeader(
+            const BudgetDetailHeader(
               category: 'ENTERTAINMENT',
               name: 'fun',
               amount: r'$23',
             ),
-                  const SizedBox(height: 16),
-                  const BudgetProgressCard(
-                    progress: 0,
-                    statusText: 'achieved',
-                  ),
-                  const SizedBox(height: 8),
-                  BudgetMembersCard(
-                    members: members,
-                    onViewAll: () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(builder: (context) => const BudgetMembersPage()),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  BudgetSpendingBreakdownCard(
-                    members: spendingMembers,
-                  ),
-                  const SizedBox(height: 8),
-                  BudgetActivityCard(
-                    activities: activities,
-                    onSeeAll: () {},
-                  ),
-                  const SizedBox(height: 24), // Padding bottom
-                ],
+            const SizedBox(height: 16),
+            const BudgetProgressCard(
+              progress: 0,
+              statusText: 'achieved',
+            ),
+            const SizedBox(height: 8),
+            BudgetMembersCard(
+              members: members,
+              onViewAll: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(builder: (context) => const BudgetMembersPage()),
               ),
             ),
+            const SizedBox(height: 8),
+            BudgetSpendingBreakdownCard(
+              members: spendingMembers,
+            ),
+            const SizedBox(height: 8),
+            BudgetActivityCard(
+              activities: activities,
+              onSeeAll: () {},
+            ),
+            const SizedBox(height: 24), // Padding bottom
           ],
         ),
-      ),
+      
     );
   }
 }

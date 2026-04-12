@@ -94,35 +94,3 @@ class InviteAccessBudgetCubit extends Cubit<InviteAccessBudgetCubitState> {
   }
 }
 
-
-
-
-// this is my budget screen , now the budget has the sharing feature a budget can share with familty member etc, so make some nice chaanges to current ui which can handle the sharing feature , the sharing feature has following functionalities
-
-
-
-// 1) budget owner can share the its budget with it family member etc via email/name search so ui must provide the sharing ui etc
-
-// 2) another user can see all his/her peding budgets share by another person, and can accpt or decline etc, i also want a minor change such budget show who is creator etc and editor i mean role/actor of budget
-
-// 3) revokeaccess an owner of budget can revoke access from a specific person , so i need ui for this too
-
-// 4) and owner of budget can update the role tool of any invitee of budget
-
-//  and these are some reading -Analytics UI requirment 
-
-// 1) all members of a budget and their role (name, email and avatar) 
-
-// 2)  pending budget invites sent by owner
-
-// 3) Invites received by the current user (across all budgets).
-
-// 4) All budgets shared with the current user (accepted).
-
-// 5) Per-member contribution breakdown for a budget.
-//    * Returns how much each member has spent.
-
-// 6) Paginated activity feed for a budget (most recent first).
-
-// the ui may contail whole seprate secreen bottom sheet , pop dialog, anything which must fulfil all abot functionalaties and requirements in modern elegane , etc so make sure the ui must be in reactjs or any other technology which you can render , so i can view the ui and copy it to my flutter app
-

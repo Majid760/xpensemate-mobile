@@ -1,6 +1,7 @@
 // lib/core/error/app_error.dart
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:xpensemate/core/utils/app_logger.dart';
 
 /// Base error class for all application errors
 sealed class AppError implements Exception {
@@ -232,99 +233,113 @@ class ErrorHandler {
   static AppError _handleHttpError(Response? response, StackTrace? stackTrace) {
     final statusCode = response?.statusCode ?? 0;
 
+    // Try to extract the real message from the backend response body first.
+    // Backend returns: { "type": "error", "title": "...", "message": "..." }
+    String? serverMessage;
+    try {
+      final data = response?.data;
+      if (data is Map<String, dynamic>) {
+        serverMessage = data['message']?.toString();
+      }
+    } on Exception catch (e) {
+      AppLogger.e('Error parsing backend response: $e');
+    }
+
     return switch (statusCode) {
       // Client Errors (4xx)
       400 => ValidationError(
-          message: ErrorMessages.badRequest,
+          message: serverMessage ?? ErrorMessages.badRequest,
           code: 'BAD_REQUEST',
           statusCode: statusCode,
           stackTrace: stackTrace,
         ),
       401 => AuthError(
-          message: ErrorMessages.unauthorized,
+          // Use the actual backend message (e.g., "Invalid email or password")
+          // instead of the generic "Session expired" whenever possible.
+          message: serverMessage ?? ErrorMessages.unauthorized,
           code: 'UNAUTHORIZED',
           statusCode: statusCode,
           stackTrace: stackTrace,
         ),
       402 => ServerError(
-          message: ErrorMessages.paymentRequired,
+          message: serverMessage ?? ErrorMessages.paymentRequired,
           code: 'PAYMENT_REQUIRED',
           statusCode: statusCode,
           stackTrace: stackTrace,
         ),
       403 => AuthError(
-          message: ErrorMessages.forbidden,
+          message: serverMessage ?? ErrorMessages.forbidden,
           code: 'FORBIDDEN',
           statusCode: statusCode,
           stackTrace: stackTrace,
         ),
       404 => ServerError(
-          message: ErrorMessages.notFound,
+          message: serverMessage ?? ErrorMessages.notFound,
           code: 'NOT_FOUND',
           statusCode: statusCode,
           stackTrace: stackTrace,
         ),
       405 => ServerError(
-          message: ErrorMessages.methodNotAllowed,
+          message: serverMessage ?? ErrorMessages.methodNotAllowed,
           code: 'METHOD_NOT_ALLOWED',
           statusCode: statusCode,
           stackTrace: stackTrace,
         ),
       406 => ServerError(
-          message: ErrorMessages.notAcceptable,
+          message: serverMessage ?? ErrorMessages.notAcceptable,
           code: 'NOT_ACCEPTABLE',
           statusCode: statusCode,
           stackTrace: stackTrace,
         ),
       408 => TimeoutError(
-          message: ErrorMessages.requestTimeout,
+          message: serverMessage ?? ErrorMessages.requestTimeout,
           code: 'REQUEST_TIMEOUT',
           stackTrace: stackTrace,
         ),
       409 => ServerError(
-          message: ErrorMessages.conflict,
+          message: serverMessage ?? ErrorMessages.conflict,
           code: 'CONFLICT',
           statusCode: statusCode,
           stackTrace: stackTrace,
         ),
       410 => ServerError(
-          message: ErrorMessages.gone,
+          message: serverMessage ?? ErrorMessages.gone,
           code: 'GONE',
           statusCode: statusCode,
           stackTrace: stackTrace,
         ),
       413 => FileError(
-          message: ErrorMessages.payloadTooLarge,
+          message: serverMessage ?? ErrorMessages.payloadTooLarge,
           code: 'PAYLOAD_TOO_LARGE',
           statusCode: statusCode,
           stackTrace: stackTrace,
         ),
       415 => FileError(
-          message: ErrorMessages.unsupportedMediaType,
+          message: serverMessage ?? ErrorMessages.unsupportedMediaType,
           code: 'UNSUPPORTED_MEDIA_TYPE',
           statusCode: statusCode,
           stackTrace: stackTrace,
         ),
       422 => ValidationError(
-          message: ErrorMessages.unprocessableEntity,
+          message: serverMessage ?? ErrorMessages.unprocessableEntity,
           code: 'UNPROCESSABLE_ENTITY',
           statusCode: statusCode,
           stackTrace: stackTrace,
         ),
       423 => ServerError(
-          message: ErrorMessages.locked,
+          message: serverMessage ?? ErrorMessages.locked,
           code: 'LOCKED',
           statusCode: statusCode,
           stackTrace: stackTrace,
         ),
       429 => ServerError(
-          message: ErrorMessages.tooManyRequests,
+          message: serverMessage ?? ErrorMessages.tooManyRequests,
           code: 'TOO_MANY_REQUESTS',
           statusCode: statusCode,
           stackTrace: stackTrace,
         ),
       451 => ServerError(
-          message: ErrorMessages.unavailableForLegalReasons,
+          message: serverMessage ?? ErrorMessages.unavailableForLegalReasons,
           code: 'UNAVAILABLE_FOR_LEGAL_REASONS',
           statusCode: statusCode,
           stackTrace: stackTrace,
@@ -332,42 +347,42 @@ class ErrorHandler {
 
       // Server Errors (5xx)
       500 => ServerError(
-          message: ErrorMessages.internalServerError,
+          message: serverMessage ?? ErrorMessages.internalServerError,
           code: 'INTERNAL_SERVER_ERROR',
           statusCode: statusCode,
           stackTrace: stackTrace,
         ),
       501 => ServerError(
-          message: ErrorMessages.notImplemented,
+          message: serverMessage ?? ErrorMessages.notImplemented,
           code: 'NOT_IMPLEMENTED',
           statusCode: statusCode,
           stackTrace: stackTrace,
         ),
       502 => ServerError(
-          message: ErrorMessages.badGateway,
+          message: serverMessage ?? ErrorMessages.badGateway,
           code: 'BAD_GATEWAY',
           statusCode: statusCode,
           stackTrace: stackTrace,
         ),
       503 => ServerError(
-          message: ErrorMessages.serviceUnavailable,
+          message: serverMessage ?? ErrorMessages.serviceUnavailable,
           code: 'SERVICE_UNAVAILABLE',
           statusCode: statusCode,
           stackTrace: stackTrace,
         ),
       504 => TimeoutError(
-          message: ErrorMessages.gatewayTimeout,
+          message: serverMessage ?? ErrorMessages.gatewayTimeout,
           code: 'GATEWAY_TIMEOUT',
           stackTrace: stackTrace,
         ),
       507 => ServerError(
-          message: ErrorMessages.insufficientStorage,
+          message: serverMessage ?? ErrorMessages.insufficientStorage,
           code: 'INSUFFICIENT_STORAGE',
           statusCode: statusCode,
           stackTrace: stackTrace,
         ),
       509 => ServerError(
-          message: ErrorMessages.bandwidthLimitExceeded,
+          message: serverMessage ?? ErrorMessages.bandwidthLimitExceeded,
           code: 'BANDWIDTH_LIMIT_EXCEEDED',
           statusCode: statusCode,
           stackTrace: stackTrace,
@@ -375,19 +390,19 @@ class ErrorHandler {
 
       // Fallback
       _ when statusCode >= 400 && statusCode < 500 => ServerError(
-          message: response?.data?.toString() ?? ErrorMessages.badRequest,
+          message: serverMessage ?? ErrorMessages.badRequest,
           code: 'CLIENT_ERROR',
           statusCode: statusCode,
           stackTrace: stackTrace,
         ),
       _ when statusCode >= 500 => ServerError(
-          message: ErrorMessages.genericServerError,
+          message: serverMessage ?? ErrorMessages.genericServerError,
           code: 'SERVER_ERROR',
           statusCode: statusCode,
           stackTrace: stackTrace,
         ),
       _ => UnknownError(
-          message: response?.data?.toString() ?? ErrorMessages.unknownError,
+          message: serverMessage ?? ErrorMessages.unknownError,
           code: 'UNKNOWN_ERROR',
           stackTrace: stackTrace,
         ),

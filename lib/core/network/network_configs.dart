@@ -106,6 +106,9 @@ class NetworkConfigs {
   static const String deletePayment = '/payment/:id';
   static const String getPaymentStats = '/payments/stats';
 
+  // user endpoints
+  static const String userSearch = '/user/search';
+
   // ------------------------------------------------------------------
   //  Static Pages URLs
   // ------------------------------------------------------------------

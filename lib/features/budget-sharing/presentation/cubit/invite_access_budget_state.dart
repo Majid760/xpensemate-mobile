@@ -3,49 +3,52 @@ import 'package:xpensemate/features/budget-sharing/domain/entities/budget_share_
 import 'package:xpensemate/features/budget-sharing/domain/entities/decline_invite_entity.dart';
 import 'package:xpensemate/features/budget-sharing/domain/entities/revoke_access_entity.dart';
 import 'package:xpensemate/features/budget-sharing/domain/entities/update_role_entity.dart';
+import 'package:xpensemate/features/budget-sharing/domain/entities/user_search_entity.dart';
 
-abstract class InviteAccessBudgetCubitState extends Equatable {
-  const InviteAccessBudgetCubitState();
+enum InviteAccessStatus { initial, loading, loaded, searching, searchLoaded, searchError, error, success }
 
-  @override
-  List<Object?> get props => [];
-}
-class InviteAccessBudgetCubitInitial extends InviteAccessBudgetCubitState {}
+class InviteAccessBudgetCubitState extends Equatable {
 
-class InviteAccessBudgetCubitLoading extends InviteAccessBudgetCubitState {}
-
-class InviteAccessBudgetCubitError extends InviteAccessBudgetCubitState {
-  const InviteAccessBudgetCubitError(this.message);
-
-  final String message;
-
-  @override
-  List<Object?> get props => [message];
-}
-
-
-class InviteAccessBudgetCubitSuccess extends InviteAccessBudgetCubitState {
-  const InviteAccessBudgetCubitSuccess({
+  const InviteAccessBudgetCubitState({
+    this.status = InviteAccessStatus.initial,
+    this.message,
+    this.searchResults = const [],
+    this.searchPage = 1,
+    this.hasMoreSearchResults = false,
     this.inviteUserResult,
     this.acceptInviteResult,
     this.declineInviteResult,
     this.revokeAccessResult,
     this.updateRoleResult,
   });
-
+  final InviteAccessStatus status;
+  final String? message;
+  final List<UserSearchEntity> searchResults;
+  final int searchPage;
+  final bool hasMoreSearchResults;
   final BudgetShareResultEntity? inviteUserResult;
   final BudgetShareEntity? acceptInviteResult;
   final DeclineInviteEntity? declineInviteResult;
   final RevokeAccessEntity? revokeAccessResult;
   final UpdateRoleEntity? updateRoleResult;
 
-  InviteAccessBudgetCubitSuccess copyWith({
+  InviteAccessBudgetCubitState copyWith({
+    InviteAccessStatus? status,
+    String? message,
+    List<UserSearchEntity>? searchResults,
+    int? searchPage,
+    bool? hasMoreSearchResults,
     BudgetShareResultEntity? inviteUserResult,
     BudgetShareEntity? acceptInviteResult,
     DeclineInviteEntity? declineInviteResult,
     RevokeAccessEntity? revokeAccessResult,
     UpdateRoleEntity? updateRoleResult,
-  }) => InviteAccessBudgetCubitSuccess(
+  }) => InviteAccessBudgetCubitState(
+      status: status ?? this.status,
+      message: message ?? this.message,
+      searchResults: searchResults ?? this.searchResults,
+      searchPage: searchPage ?? this.searchPage,
+      hasMoreSearchResults: hasMoreSearchResults ?? this.hasMoreSearchResults,
       inviteUserResult: inviteUserResult ?? this.inviteUserResult,
       acceptInviteResult: acceptInviteResult ?? this.acceptInviteResult,
       declineInviteResult: declineInviteResult ?? this.declineInviteResult,
@@ -55,6 +58,11 @@ class InviteAccessBudgetCubitSuccess extends InviteAccessBudgetCubitState {
 
   @override
   List<Object?> get props => [
+        status,
+        message,
+        searchResults,
+        searchPage,
+        hasMoreSearchResults,
         inviteUserResult,
         acceptInviteResult,
         declineInviteResult,
@@ -62,5 +70,3 @@ class InviteAccessBudgetCubitSuccess extends InviteAccessBudgetCubitState {
         updateRoleResult,
       ];
 }
-
-

@@ -5,12 +5,25 @@ import 'package:xpensemate/features/budget-sharing/domain/entities/budget_share_
 import 'package:xpensemate/features/budget-sharing/domain/entities/decline_invite_entity.dart';
 import 'package:xpensemate/features/budget-sharing/domain/entities/revoke_access_entity.dart';
 import 'package:xpensemate/features/budget-sharing/domain/entities/update_role_entity.dart';
+import 'package:xpensemate/features/budget-sharing/domain/entities/user_search_entity.dart';
 import 'package:xpensemate/features/budget-sharing/domain/repositories/budget_sharing_repository.dart';
 
 class BudgetSharingRepositoryImpl implements BudgetSharingRepository {
   BudgetSharingRepositoryImpl(this.remoteDataSource);
 
   final BudgetSharingRemoteDataSource remoteDataSource;
+
+  @override
+  Future<Either<Failure, UserSearchPaginationEntity>> searchUsers({
+    required String query,
+    required int page,
+    required int limit,
+  }) async =>
+      remoteDataSource.searchUsers(
+        query: query,
+        page: page,
+        limit: limit,
+      );
 
   @override
   Future<Either<Failure, BudgetShareResultEntity>> inviteUser({

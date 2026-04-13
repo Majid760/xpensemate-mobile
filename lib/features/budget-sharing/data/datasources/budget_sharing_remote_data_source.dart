@@ -3,9 +3,10 @@ import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/core/network/network_configs.dart';
 import 'package:xpensemate/core/network/network_contracts.dart';
 import 'package:xpensemate/features/budget-sharing/data/models/budget_share_model.dart';
+import 'package:xpensemate/features/budget-sharing/data/models/decline_invite_model.dart';
 import 'package:xpensemate/features/budget-sharing/data/models/revoke_access_model.dart';
 import 'package:xpensemate/features/budget-sharing/data/models/update_role_model.dart';
-import 'package:xpensemate/features/budget-sharing/data/models/decline_invite_model.dart';
+import 'package:xpensemate/features/budget-sharing/data/models/user_search_model.dart';
 
 abstract class BudgetSharingRemoteDataSource {
 
@@ -36,7 +37,12 @@ abstract class BudgetSharingRemoteDataSource {
     required String role,
   });
 
-  
+
+  Future<Either<Failure, UserSearchPaginationModel>> searchUsers({
+    required String query,
+    required int page,
+    required int limit,
+  });
 }
 
 class BudgetSharingRemoteDataSourceImpl implements BudgetSharingRemoteDataSource {
@@ -114,4 +120,19 @@ class BudgetSharingRemoteDataSourceImpl implements BudgetSharingRemoteDataSource
       fromJson: (json) => UpdateRoleModel.fromJson(json['share'] as Map<String, dynamic>? ?? {}),
     );
   }
+
+  @override
+  Future<Either<Failure, UserSearchPaginationModel>> searchUsers({
+    required String query,
+    required int page,
+    required int limit,
+  }) async => _networkClient.get(
+      NetworkConfigs.userSearch,
+      query: {
+        'q': query,
+        'page': page,
+        'limit': limit,
+      },
+      fromJson: UserSearchPaginationModel.fromJson,
+    );
 }

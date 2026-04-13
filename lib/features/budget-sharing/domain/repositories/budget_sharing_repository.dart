@@ -1,11 +1,19 @@
 import 'package:dartz/dartz.dart';
 import 'package:xpensemate/core/error/failures.dart';
 import 'package:xpensemate/features/budget-sharing/domain/entities/budget_share_entity.dart';
+import 'package:xpensemate/features/budget-sharing/domain/entities/decline_invite_entity.dart';
 import 'package:xpensemate/features/budget-sharing/domain/entities/revoke_access_entity.dart';
 import 'package:xpensemate/features/budget-sharing/domain/entities/update_role_entity.dart';
-import 'package:xpensemate/features/budget-sharing/domain/entities/decline_invite_entity.dart';
+import 'package:xpensemate/features/budget-sharing/domain/entities/user_search_entity.dart';
 
 abstract class BudgetSharingRepository {
+  // search users
+  Future<Either<Failure, UserSearchPaginationEntity>> searchUsers({
+    required String query,
+    required int page,
+    required int limit,
+  });
+
   // invite user
   Future<Either<Failure, BudgetShareResultEntity>> inviteUser({
     required String budgetId,

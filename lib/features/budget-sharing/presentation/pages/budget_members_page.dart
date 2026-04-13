@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:xpensemate/core/localization/localization_extensions.dart';
 import 'package:xpensemate/core/theme/app_spacing.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/features/auth/presentation/widgets/background_decoration_widget.dart' show BackgroundDecoration;
 import 'package:xpensemate/features/budget-sharing/presentation/widgets/budget_member_list_item.dart';
 import 'package:xpensemate/features/budget-sharing/presentation/widgets/budget_members_card.dart';
 import 'package:xpensemate/features/budget-sharing/presentation/widgets/budget_members_stats_tab.dart';
@@ -122,20 +123,25 @@ class _BudgetMembersPageState extends State<BudgetMembersPage>
       ),
     ];
 
-    return Scaffold(
+    return Stack(
+      
+      children:[
+            // ── Decorative background geometry ──────────────────────────
+     BackgroundDecoration(isDark: isDark),
+        Scaffold(
       backgroundColor: scheme.surface,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: scheme.primary,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: scheme.onSurface),
+          icon: Icon(Icons.arrow_back, color: scheme.onPrimary),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           context.l10n.budgetMembers,
           style: context.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
-            color: scheme.onSurface,
+            color: scheme.onPrimary,
           ),
         ),
         bottom: PreferredSize(
@@ -158,6 +164,9 @@ class _BudgetMembersPageState extends State<BudgetMembersPage>
           const BudgetMembersStatsTab(),
         ],
       ),
+    ),
+
+      ],
     );
   }
 }

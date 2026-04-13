@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xpensemate/core/theme/theme_context_extension.dart';
+import 'package:xpensemate/features/budget-sharing/presentation/widgets/share_budget_sheet.dart';
 
 class BudgetDetailHeader extends StatelessWidget {
   const BudgetDetailHeader({
@@ -76,8 +77,7 @@ class BudgetDetailHeader extends StatelessWidget {
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: () {
-                
-            
+                ShareBudgetSheet.show(context: context);
                 },
                 child: Container(
                   padding: const EdgeInsets.all(12),

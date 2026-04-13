@@ -47,8 +47,10 @@ class BudgetMembersTabHeader extends StatelessWidget {
                       child: Text(
                         tabs[index],
                         style: context.textTheme.labelLarge?.copyWith(
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                          color: isSelected ? scheme.primary : scheme.onSurface.withValues(alpha: 0.6),
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                          color: isSelected
+                              ? Colors.white
+                              : Colors.black.withValues(alpha: 0.55),
                         ),
                       ),
                     ),
@@ -57,7 +59,7 @@ class BudgetMembersTabHeader extends StatelessWidget {
                       height: 2,
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: isSelected ? scheme.primary : Colors.transparent,
+                        color: isSelected ? Colors.white : Colors.transparent,
                         borderRadius: const BorderRadius.vertical(top: Radius.circular(2)),
                       ),
                     ),

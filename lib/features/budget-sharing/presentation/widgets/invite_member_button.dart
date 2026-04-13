@@ -21,8 +21,8 @@ class InviteMemberButton extends StatelessWidget {
         height: 48,
         borderRadius: 12,
         borderColor: context.colorScheme.outline.withValues(alpha: 0.3),
-        textColor: context.colorScheme.primary,
-        backgroundColor: context.colorScheme.primaryContainer.withValues(alpha: 0.6),
+        textColor: context.colorScheme.onPrimary,
+        backgroundColor: context.colorScheme.primary,
       ),
     );
 }

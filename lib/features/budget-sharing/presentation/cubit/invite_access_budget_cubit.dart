@@ -23,7 +23,6 @@ class InviteAccessBudgetCubit extends Cubit<InviteAccessBudgetCubitState> {
     this._searchUsersUseCase,
   ) : super(const InviteAccessBudgetCubitState()) {
         _pagingController.addListener(_showPaginationError);
-
   }
 
   final InviteUserUseCase _inviteUserUseCase;
@@ -40,21 +39,31 @@ class InviteAccessBudgetCubit extends Cubit<InviteAccessBudgetCubitState> {
   late final _pagingController = PagingController<int, UserSearchEntity>(
     getNextPageKey: (state) =>
         state.lastPageIsEmpty ? null : state.nextIntPageKey,
-    fetchPage: (pageKey) async => fetchExpenses(pageKey, filterQuery),
+    fetchPage: (pageKey) async => fetchUsers(pageKey, filterQuery),
   );
   PagingController<int, UserSearchEntity> get pagingController =>
       _pagingController;
 
-    /// Fetches expenses for a specific page
-  Future<List<UserSearchEntity>> fetchExpenses(
+  void searchUsers(String query) {
+    if (filterQuery == query) return;
+    filterQuery = query;
+    _pagingController.refresh();
+  }
+
+    /// Fetches users for a specific page
+  Future<List<UserSearchEntity>> fetchUsers(
     int pageKey,
     String filterQuery,
   ) async {
-    AppLogger.breadcrumb('Fetching users page: $pageKey...');
+    final trimmedQuery = filterQuery.trim();
+    if (trimmedQuery.length < 2) {
+      return [];
+    }
+    AppLogger.breadcrumb('Fetching users page: $pageKey with query: $trimmedQuery...');
     try {
       final params = SearchUsersParams(
         page: pageKey,
-        query: filterQuery,
+        query: trimmedQuery,
       );
       final result = await _searchUsersUseCase(params);
       return result.fold(
@@ -100,7 +109,16 @@ class InviteAccessBudgetCubit extends Cubit<InviteAccessBudgetCubitState> {
     required String role,
     required double monthlyLimit,
   }) async {
-    emit(state.copyWith(status: InviteAccessStatus.loading));
+    if (state.invitingUserIds.contains(inviteeId) || 
+        state.invitedUserIds.contains(inviteeId)) {
+      return;
+    }
+
+    emit(state.copyWith(
+      status: InviteAccessStatus.loading,
+      invitingUserIds: {...state.invitingUserIds, inviteeId},
+    ));
+
     final result = await _inviteUserUseCase(
       InviteUserParams(
         budgetId: budgetId,
@@ -114,11 +132,14 @@ class InviteAccessBudgetCubit extends Cubit<InviteAccessBudgetCubitState> {
       (failure) => emit(state.copyWith(
         status: InviteAccessStatus.error,
         message: failure.message,
-      ),),
+        invitingUserIds: state.invitingUserIds.where((id) => id != inviteeId).toSet(),
+      )),
       (resultEntity) => emit(state.copyWith(
         status: InviteAccessStatus.success,
         inviteUserResult: resultEntity,
-      ),),
+        invitingUserIds: state.invitingUserIds.where((id) => id != inviteeId).toSet(),
+        invitedUserIds: {...state.invitedUserIds, inviteeId},
+      )),
     );
   }
 

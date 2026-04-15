@@ -14,6 +14,7 @@ import 'package:xpensemate/core/theme/app_theme.dart';
 import 'package:xpensemate/core/utils/app_logger.dart';
 import 'package:xpensemate/core/utils/app_utils.dart';
 import 'package:xpensemate/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:xpensemate/features/budget-sharing/presentation/cubit/invite_access_budget_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_cubit.dart';
 import 'package:xpensemate/features/budget/presentation/cubit/budget_expense_cubit.dart';
 import 'package:xpensemate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
@@ -143,7 +144,9 @@ class _MyAppState extends State<MyApp> {
             create: (context) => sl.settingsCubit,
             lazy: false,
           ),
-          // Other cubits/blocs
+          BlocProvider<InviteAccessBudgetCubit>(
+            create: (context) => sl.inviteAccessBudgetCubit,
+          ),
         ],
         child: Builder(
           builder: (context) =>

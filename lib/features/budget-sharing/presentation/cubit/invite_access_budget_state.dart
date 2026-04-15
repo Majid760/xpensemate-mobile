@@ -15,6 +15,8 @@ class InviteAccessBudgetCubitState extends Equatable {
     this.searchResults = const [],
     this.searchPage = 1,
     this.hasMoreSearchResults = false,
+    this.invitingUserIds = const {},
+    this.invitedUserIds = const {},
     this.inviteUserResult,
     this.acceptInviteResult,
     this.declineInviteResult,
@@ -26,6 +28,8 @@ class InviteAccessBudgetCubitState extends Equatable {
   final List<UserSearchEntity> searchResults;
   final int searchPage;
   final bool hasMoreSearchResults;
+  final Set<String> invitingUserIds;
+  final Set<String> invitedUserIds;
   final BudgetShareResultEntity? inviteUserResult;
   final BudgetShareEntity? acceptInviteResult;
   final DeclineInviteEntity? declineInviteResult;
@@ -38,6 +42,8 @@ class InviteAccessBudgetCubitState extends Equatable {
     List<UserSearchEntity>? searchResults,
     int? searchPage,
     bool? hasMoreSearchResults,
+    Set<String>? invitingUserIds,
+    Set<String>? invitedUserIds,
     BudgetShareResultEntity? inviteUserResult,
     BudgetShareEntity? acceptInviteResult,
     DeclineInviteEntity? declineInviteResult,
@@ -49,6 +55,8 @@ class InviteAccessBudgetCubitState extends Equatable {
       searchResults: searchResults ?? this.searchResults,
       searchPage: searchPage ?? this.searchPage,
       hasMoreSearchResults: hasMoreSearchResults ?? this.hasMoreSearchResults,
+      invitingUserIds: invitingUserIds ?? this.invitingUserIds,
+      invitedUserIds: invitedUserIds ?? this.invitedUserIds,
       inviteUserResult: inviteUserResult ?? this.inviteUserResult,
       acceptInviteResult: acceptInviteResult ?? this.acceptInviteResult,
       declineInviteResult: declineInviteResult ?? this.declineInviteResult,
@@ -63,6 +71,8 @@ class InviteAccessBudgetCubitState extends Equatable {
         searchResults,
         searchPage,
         hasMoreSearchResults,
+        invitingUserIds,
+        invitedUserIds,
         inviteUserResult,
         acceptInviteResult,
         declineInviteResult,

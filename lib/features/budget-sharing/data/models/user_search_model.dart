@@ -1,5 +1,6 @@
-import 'package:xpensemate/features/budget-sharing/domain/entities/user_search_entity.dart';
 
+import 'package:xpensemate/core/utils/app_logger.dart';
+import 'package:xpensemate/features/budget-sharing/domain/entities/user_search_entity.dart';
 class UserSearchModel extends UserSearchEntity {
   const UserSearchModel({
     required super.id,
@@ -42,9 +43,10 @@ class UserSearchPaginationModel extends UserSearchPaginationEntity {
   });
 
   factory UserSearchPaginationModel.fromJson(Map<String, dynamic> json) {
-    final data = json['data'] as Map<String, dynamic>? ?? {};
-    final usersList = data['users'] as List<dynamic>? ?? [];
-    final pagination = data['pagination'] as Map<String, dynamic>? ?? {};
+    try {
+    
+    final usersList = json['users'] as List<dynamic>? ?? [];
+    final pagination = json['pagination'] as Map<String, dynamic>? ?? {};
 
     return UserSearchPaginationModel(
       users: usersList
@@ -55,5 +57,15 @@ class UserSearchPaginationModel extends UserSearchPaginationEntity {
       total: pagination['total'] as int? ?? 0,
       hasMore: pagination['hasMore'] as bool? ?? false,
     );
+    } on Exception catch (e, stackTrace) {
+      AppLogger.e('Failed to parse user search: $e',  e,  stackTrace);
+      return const UserSearchPaginationModel(
+        users: [],
+        page: 1,
+        limit: 10,
+        total: 0,
+        hasMore: false,
+      );
+    }
   }
 }

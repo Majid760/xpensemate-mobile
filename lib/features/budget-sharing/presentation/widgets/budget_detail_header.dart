@@ -5,11 +5,13 @@ import 'package:xpensemate/features/budget-sharing/presentation/widgets/share_bu
 class BudgetDetailHeader extends StatelessWidget {
   const BudgetDetailHeader({
     super.key,
+    required this.budgetId,
     required this.category,
     required this.name,
     required this.amount,
   });
 
+  final String budgetId;
   final String category;
   final String name;
   final String amount;
@@ -77,7 +79,10 @@ class BudgetDetailHeader extends StatelessWidget {
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: () {
-                ShareBudgetSheet.show(context: context);
+                  ShareBudgetSheet.show(
+                    context: context,
+                    budgetId: budgetId,
+                  );
                 },
                 child: Container(
                   padding: const EdgeInsets.all(12),

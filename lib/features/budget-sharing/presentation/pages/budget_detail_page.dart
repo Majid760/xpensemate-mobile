@@ -88,6 +88,7 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
         child: Column(
           children: [
             const BudgetDetailHeader(
+              budgetId: 'budget_123',
               category: 'ENTERTAINMENT',
               name: 'fun',
               amount: r'$23',

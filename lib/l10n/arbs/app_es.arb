@@ -539,5 +539,11 @@
   "addHomeWidget": "Añadir widget de inicio",
   "appVersionWithValue": "Versión de la aplicación: {version}",
   "aiInsight": "IA Insights",
-  "budgetDetail": "Detalles del presupuesto"
+  "budgetDetail": "Detalles del presupuesto",
+  "noUsersFound": "No se encontraron usuarios que coincidan con su búsqueda",
+  "errorLoadingUsers": "Error al cargar usuarios. Por favor, inténtelo de nuevo.",
+  "noMoreUsers": "No se encontraron más usuarios",
+  "startTypingToSearch": "Comience a escribir para buscar usuarios",
+  "searchQueryTooShort": "Escriba al menos 2 caracteres para buscar"
+
 }

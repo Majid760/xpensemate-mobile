@@ -21,6 +21,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get inviteButtonLabel => 'Invite';
 
   @override
+  String get invitingLabel => 'Inviting...';
+
+  @override
+  String get invitedLabel => 'Invited';
+
+  @override
   String get roleTitleLabel => 'ROLE';
 
   @override
@@ -1595,9 +1601,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get revoke => 'Revoke';
 
   @override
-  String daysAgo(Object days) {
+  String daysAgo(int days) {
     return '$days days ago';
   }
+
+  @override
+  String get noUsersFound => 'No users found matching your search';
+
+  @override
+  String get errorLoadingUsers => 'Error loading users. Please try again.';
+
+  @override
+  String get noMoreUsers => 'No more users found';
+
+  @override
+  String get startTypingToSearch => 'Start typing to search users';
+
+  @override
+  String get searchQueryTooShort => 'Type at least 2 characters to search';
 
   @override
   String get budgetDetail => 'Budget Detail';

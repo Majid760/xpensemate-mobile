@@ -21,6 +21,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get inviteButtonLabel => 'Invite';
 
   @override
+  String get invitingLabel => 'Inviting...';
+
+  @override
+  String get invitedLabel => 'Invited';
+
+  @override
   String get roleTitleLabel => 'ROLE';
 
   @override
@@ -1610,9 +1616,26 @@ class AppLocalizationsEs extends AppLocalizations {
   String get revoke => 'Revoke';
 
   @override
-  String daysAgo(Object days) {
+  String daysAgo(int days) {
     return '$days days ago';
   }
+
+  @override
+  String get noUsersFound =>
+      'No se encontraron usuarios que coincidan con su búsqueda';
+
+  @override
+  String get errorLoadingUsers =>
+      'Error al cargar usuarios. Por favor, inténtelo de nuevo.';
+
+  @override
+  String get noMoreUsers => 'No se encontraron más usuarios';
+
+  @override
+  String get startTypingToSearch => 'Comience a escribir para buscar usuarios';
+
+  @override
+  String get searchQueryTooShort => 'Escriba al menos 2 caracteres para buscar';
 
   @override
   String get budgetDetail => 'Detalles del presupuesto';

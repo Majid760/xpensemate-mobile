@@ -126,6 +126,18 @@ abstract class AppLocalizations {
   /// **'Invite'**
   String get inviteButtonLabel;
 
+  /// No description provided for @invitingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Inviting...'**
+  String get invitingLabel;
+
+  /// No description provided for @invitedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Invited'**
+  String get invitedLabel;
+
   /// No description provided for @roleTitleLabel.
   ///
   /// In en, this message translates to:
@@ -3088,7 +3100,37 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{days} days ago'**
-  String daysAgo(Object days);
+  String daysAgo(int days);
+
+  /// No description provided for @noUsersFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No users found matching your search'**
+  String get noUsersFound;
+
+  /// No description provided for @errorLoadingUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading users. Please try again.'**
+  String get errorLoadingUsers;
+
+  /// No description provided for @noMoreUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'No more users found'**
+  String get noMoreUsers;
+
+  /// No description provided for @startTypingToSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Start typing to search users'**
+  String get startTypingToSearch;
+
+  /// No description provided for @searchQueryTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Type at least 2 characters to search'**
+  String get searchQueryTooShort;
 
   /// No description provided for @budgetDetail.
   ///

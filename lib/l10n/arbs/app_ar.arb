@@ -924,5 +924,11 @@
   "addHomeWidget": "إضافة أداة الشاشة الرئيسية",
   "appVersionWithValue": "إصدار التطبيق: {version}",
   "aiInsight": "رؤى الذكاء الاصطناعي",
-  "budgetDetail": "تفاصيل الميزانية"
+  "budgetDetail": "تفاصيل الميزانية",
+  "noUsersFound": "لم يتم العثور على مستخدمين يطابقون بحثك",
+  "errorLoadingUsers": "حدث خطأ أثناء تحميل المستخدمين. يرجى المحاولة مرة أخرى.",
+  "noMoreUsers": "لم يتم العثور على مزيد من المستخدمين",
+  "startTypingToSearch": "ابدأ الكتابة للبحث عن المستخدمين",
+  "searchQueryTooShort": "اكتب حرفين على الأقل للبحث"
+
 }
